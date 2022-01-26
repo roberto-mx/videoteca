@@ -1,0 +1,134 @@
+{
+    "ALTA_PROD": {
+        "encoded": [8]
+    },
+    "CAL_BLOQUES": {
+        "encoded": []
+    },
+    "CAL_CONTENIDO": {
+        "encoded": [3]
+    },
+    "CAL_FICHATEC": {
+        "encoded": [19, 20]
+    },
+    "CARGA_MAT": {
+        "encoded": []
+    },
+    "CAT_AREA": {
+        "encoded": []
+    },
+    "CAT_AREAC": {
+        "encoded": [1]
+    },
+    "CAT_LOC": {
+        "encoded": []
+    },
+    "CAT_NOMSUBSERV": {
+        "encoded": []
+    },
+    "CAT_SERV": {
+        "encoded": []
+    },
+    "CAT_STATUS": {
+        "encoded": []
+    },
+    "CAT_TIPOPROD": {
+        "encoded": [1]
+    },
+    "CONTROL_VIDEOTECA": {
+        "encoded": []
+    },
+    "DETALLE_PRESTAMOS": {
+        "encoded": []
+    },
+    "DETALLE_PROGRAMAS": {
+        "encoded": [3,4,5,6,7,8,9,11,12,13,14,15,18,19,20,21,28,29,30,35,37,38]
+    },
+    "FICHA_CONTENIDO": {
+        "encoded": [3]
+    },
+    "FORMATOS_CINTAS": {
+        "encoded": []
+    },
+    "HISTORIA_PRESTAMOS": {
+        "encoded": []
+    },
+    "INGRESO_MATERIAL": {
+        "encoded": []
+    },
+    "INVRFID": {
+        "encoded": []
+    },
+    "MAESTRO_CINTAS": {
+        "encoded": [13,15]
+    },
+    "NOMBRE_PROGRAMAS": {
+        "encoded": [3]
+    },
+    "ORDEN_TRABAJO": {
+        "encoded": [1,11,14]
+    },
+    "ORIGEN_SERIE": {
+        "encoded": [1]
+    },
+    "OT_D": {
+        "encoded": [3,4]
+    },
+    "OT_M": {
+        "encoded": [1,2]
+    },
+    "PERSONAS": {
+        "encoded": []
+    },
+    "POR_INGRESAR": {
+        "encoded": []
+    },
+    "PRESTAMOS": {
+        "encoded": []
+    },
+    "RECUPERA": {
+        "encoded": []
+    },
+    "REGISTRO_CALIFICACION": {
+        "encoded": [2,3,4,8,10,11,12,20,22,45,50]
+    },
+    "REGISTRO_STOCK": {
+        "encoded": [4,5,6,7,17,20,22,33]
+    },
+    "REGISTRO_SUBMASTER": {
+        "encoded": [3,4,5,9,12,13,15,16,18,19,20,21,23,24,25,26,27,28,45,49,50]
+    },
+    "RELACIONES_VIDEOS": {
+        "encoded": []
+    },
+    "SOLICITUD_MATERIAL": {
+        "encoded": []
+    },
+    "STOCK_MATVIRGEN": {
+        "encoded": []
+    },
+    "TBINVENTARIO": {
+        "encoded": []
+    },
+    "TIPO_SERIE": {
+        "encoded": [1]
+    },
+    "USUARIOS": {
+        "encoded": [3]
+    },
+    "USUARIOS_VID": {
+        "encoded": []
+    },
+    "VIDEOS": {
+        "encoded": []
+    },
+    "VIDEOS_PASO": {
+        "encoded": []
+    },
+    "VIDEOS_PROGRAMAS": {
+        "encoded": [4]
+    },
+    "VIDEOS_RELACIONADOS": {
+        "encoded": []
+    }
+}

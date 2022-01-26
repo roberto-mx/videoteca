@@ -77,10 +77,15 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'OPTIONS': {
-            'options': '-c search_path=videoteca'
-        },
-        'NAME': 'postgres',
+        'NAME': 'videoteca',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5432'
+    },
+    'users': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'user_data',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
