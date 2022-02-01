@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'videoteca',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'PASSWORD': 'pwd',
         'HOST': 'localhost',
         'PORT': '5432'
     },

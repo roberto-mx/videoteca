@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="#"><i class="icon icon-home"></i></a></li>
+                <li><a href="#">Inicio</a></li>
+                <li class="active">Archivo</li>
+{% endblock %}
+
+{% block content %}
+            <div class="bottom-buffer">
+              <form role="form" class="clearfix">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="cbarras">C&oacute;digo de barras<span class="form-text"></span>:</label>
+                      <input type="text" id="cbarras" class="form-control" placeholder="Código de barras">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="formato">Formato<span class="form-text"></span>:</label>
+                      <input type="text" id="formato" class="form-control" placeholder="Formato">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="tipoCinta">Tipo de video<span class="form-text"></span>:</label>
+                      <input type="text" id="tipoCinta" class="form-control" placeholder="Tipo">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="status">Estatus<span class="form-text"></span>:</label>
+                      <input type="text" id="status" class="form-control" placeholder="Estatus">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="secondName">A&ntilde;o inventario<span class="form-text"></span>:</label>
+                      <input type="number" id="secondName" class="form-control" placeholder="Año">
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="clearfix">
+                  <div class="pull-right">
+                    <button class="btn btn-default" type="reset">Limpiar</button>
+                    <button class="btn btn-primary" type="submit">Filtrar</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>C&oacute;digo de barras</th>
+                  <th>Formato de la cinta</th>
+                  <th>Tipo de video</th>
+                  <th>Estatus</th>
+                  <th>A&ntilde;o producci&oacute;n</th>
+                </tr>
+              </thead>
+            {% if mcintas_list %}
+              <tbody>
+              {# url 'inventario:detail' cinta.video_id #}
+              {% for cinta in mcintas_list %}
+                <tr>
+                  <td><a href="#">{{ cinta.video_cbarras }}</a></td>
+                  <td>{{ cinta.video_codificacion }}</td>
+                  <td>{{ cinta.video_tipo }}</td>
+                  <td>{{ cinta.video_estatus }}</td>
+                  <td>{{ cinta.video_anoproduccion }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+              {% else %}
+                <tr>
+                  <td colspan="5">No hay material videograbado registrado.</td>
+                </tr>
+            {% endif %}
+            </table>
+{% endblock %}

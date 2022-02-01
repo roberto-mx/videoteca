@@ -1,3 +1,4 @@
+import django
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.utils import timezone
@@ -391,51 +392,54 @@ class Command(BaseCommand):
     def load_detalle_programas(self, csv_reader):
         for row in csv_reader:
             try:
+                c_barras = to_str(row[2])
+                maestro_cintas = MaestroCintas.objects.get(video_cbarras=c_barras)
+
                 DetalleProgramas.objects.create(
-                    vp_id = to_int(row[0]),
-                    video_id = to_str(row[1]),
-                    video_cbarras = to_str(row[2]),
-                    vp_serie = to_str(row[3]),
-                    vp_subtitulo = to_str(row[4]),
-                    vp_sinopsis = to_str(row[5]),
-                    vp_participantes = to_str(row[6]),
-                    vp_personajes = to_str(row[7]),
-                    vp_areaconocimiento = to_str(row[8]),
-                    vp_asigmateria = to_str(row[9]),
-                    vp_niveleducativo = to_str(row[10]),
-                    vp_grado = to_str(row[11]),
-                    vp_ejetematico = to_str(row[12]),
-                    vp_tema = to_str(row[13]),
-                    vp_institproductora = to_str(row[14]),
-                    vp_idiomaoriginal = to_str(row[15]),
-                    vp_elenco = to_str(row[16]),
-                    vp_conductor = to_str(row[17]),
-                    vp_locutor = to_str(row[18]),
-                    vp_guionista = to_str(row[19]),
-                    vp_investigador = to_str(row[20]),
-                    vp_derechopatrimonial = to_str(row[21]),
-                    vp_fechacalificacion = to_date(row[22]),
-                    vp_calificador = to_str(row[23]),
-                    vp_fecha_modificacion = to_date(row[24]),
-                    vp_calificadormod = to_str(row[25]),
-                    vp_sistema = to_str(row[26]),
-                    vp_duracion = to_str(row[27]),
-                    vp_programa = to_str(row[28]),
-                    vp_subtitserie = to_str(row[29]),
-                    vp_orientacion = to_str(row[30]),
-                    vp_duracionin = to_str(row[31]),
-                    vp_duracionout = to_str(row[32]),
-                    vp_duracion1 = to_str(row[33]),
-                    tx = to_str(row[34]),
-                    vp_observaciones = to_str(row[35]),
-                    vp_fork = to_str(row[36]),
-                    vp_realizador = to_str(row[37]),
-                    vp_musicao = to_str(row[38]),
-                    vp_musicai = to_str(row[39]),
-                    vp_cantante = to_str(row[40]),
-                    vp_disquera = to_str(row[41]),
-                    vp_libreriam = to_str(row[42]),
-                    vp_registro_obra = to_str(row[43])
+                    vp_id=to_int(row[0]),
+                    video_id=to_str(row[1]),
+                    video_cbarras=maestro_cintas,
+                    vp_serie=to_str(row[3]),
+                    vp_subtitulo=to_str(row[4]),
+                    vp_sinopsis=to_str(row[5]),
+                    vp_participantes=to_str(row[6]),
+                    vp_personajes=to_str(row[7]),
+                    vp_areaconocimiento=to_str(row[8]),
+                    vp_asigmateria=to_str(row[9]),
+                    vp_niveleducativo=to_str(row[10]),
+                    vp_grado=to_str(row[11]),
+                    vp_ejetematico=to_str(row[12]),
+                    vp_tema=to_str(row[13]),
+                    vp_institproductora=to_str(row[14]),
+                    vp_idiomaoriginal=to_str(row[15]),
+                    vp_elenco=to_str(row[16]),
+                    vp_conductor=to_str(row[17]),
+                    vp_locutor=to_str(row[18]),
+                    vp_guionista=to_str(row[19]),
+                    vp_investigador=to_str(row[20]),
+                    vp_derechopatrimonial=to_str(row[21]),
+                    vp_fechacalificacion=to_date(row[22]),
+                    vp_calificador=to_str(row[23]),
+                    vp_fecha_modificacion=to_date(row[24]),
+                    vp_calificadormod=to_str(row[25]),
+                    vp_sistema=to_str(row[26]),
+                    vp_duracion=to_str(row[27]),
+                    vp_programa=to_str(row[28]),
+                    vp_subtitserie=to_str(row[29]),
+                    vp_orientacion=to_str(row[30]),
+                    vp_duracionin=to_str(row[31]),
+                    vp_duracionout=to_str(row[32]),
+                    vp_duracion1=to_str(row[33]),
+                    tx=to_str(row[34]),
+                    vp_observaciones=to_str(row[35]),
+                    vp_fork=to_str(row[36]),
+                    vp_realizador=to_str(row[37]),
+                    vp_musicao=to_str(row[38]),
+                    vp_musicai=to_str(row[39]),
+                    vp_cantante=to_str(row[40]),
+                    vp_disquera=to_str(row[41]),
+                    vp_libreriam=to_str(row[42]),
+                    vp_registro_obra=to_str(row[43])
                 )
             except DataError as ex:
                 logger.error(row)
@@ -598,13 +602,25 @@ class Command(BaseCommand):
     def load_maestro_cintas(self, csv_reader):
         for row in csv_reader:
             try:
+                status = to_str(row[5])
+                cat_tipo = None if status == '' else CatStatus.objects.get(id_status=status)
+
+                formato_id = to_int(row[2])
+                formato = None if formato_id == '' else FormatosCintas.objects.get(form_clave=formato_id)
+
+                tipo_id = to_int(row[22])
+                tipo_serie = None if tipo_id == None else TipoSerie.objects.get(tipo_id=tipo_id)
+
+                origen_id = to_int(row[23])
+                origen_serie = None if origen_id == None else OrigenSerie.objects.get(origen_id=origen_id)
+
                 MaestroCintas.objects.create(
                         video_id=to_int(row[0]),
                         video_cbarras=to_str(row[1]),
-                        form_clave=to_str(row[2]),
+                        form_clave=formato,
                         video_idproduccion=to_int(row[3]),
                         video_codificacion=to_str(row[4]),
-                        video_tipo=to_str(row[5]),
+                        video_tipo=cat_tipo,
                         video_fingreso=to_date(row[6]),
                         video_inventario=to_str(row[7]),
                         video_estatus=to_str(row[8]),
@@ -621,8 +637,8 @@ class Command(BaseCommand):
                         usua_clave=to_str(row[19]),
                         video_fchcal=to_date(row[20]),
                         video_target=to_str(row[21]),
-                        id_tipo=to_int(row[22]),
-                        id_origen=to_int(row[23])
+                        tipo_id=tipo_serie,
+                        origen_id=origen_serie
                 )
             except DataError as ex:
                 logger.error(row)
@@ -677,7 +693,7 @@ class Command(BaseCommand):
         for row in csv_reader:
             try:
                 OrigenSerie.objects.create(
-                    id_origen = to_int(row[0]),
+                    origen_id = to_int(row[0]),
                     origen = to_str(row[1]),
                 )
             except DataError as ex:
@@ -937,7 +953,7 @@ class Command(BaseCommand):
     def load_tipo_serie(self, csv_reader):
         for row in csv_reader:
             try:
-                TipoSerie.objects.create(id_tipo = to_int(row[0]), tipo = to_str(row[1]))
+                TipoSerie.objects.create(tipo_id = to_int(row[0]), tipo = to_str(row[1]))
             except DataError as ex:
                 logger.error(row)
                 logger.error(ex)

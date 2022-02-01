@@ -30,6 +30,11 @@ python manage.py migrate
 ```
 venv\Scripts\activate
 ```
+### Mac
+```
+virtualenv -p python3 venv
+source venv/bin/activate
+```
 
 
 ## Create User
@@ -39,7 +44,7 @@ python manage.py createsuperuser
 
 ## Migrate data
 ```
-python manage.py loaddata
+python manage.py loaddata [TABLE1,TABLE2]
 ```
 
 
@@ -98,3 +103,7 @@ Programas contenidos en las cintas relacionadas
     - Programa
     - Subtítulo
     -- Consultar insertar aceptar cancelar borrar60
+
+
+usuarios
+usuarios_vid

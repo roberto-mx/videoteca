@@ -6,10 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="{% static 'favicon.ico' %}" rel="shortcut icon">
-    <title>SEP - Videoteca</title>
+    <title>Videoteca - Dirección General de Televisi&oacute;n Educativa</title>
 
     <!-- CSS -->
-    <link href="/favicon.ico" rel="shortcut icon">
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
     
     <!-- Respond.js soporte de media queries para Internet Explorer 8 -->
@@ -32,21 +31,13 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">SEP - Videoteca</a>
+                <a class="navbar-brand" href="/">Dirección General de Televisi&oacute;n Educativa - Videoteca</a>
               </div>
               <div class="collapse navbar-collapse" id="subenlaces">
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#">Enlace</a></li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Desplegable <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a href="#">Acción</a></li>
-                      <li><a href="#">Otra acción</a></li>
-                      <li><a href="#">Algo más aquí</a></li>
-                      <li class="divider"></li>
-                      <li><a href="#">Enlace separado</a></li>
-                    </ul>
-                  </li>
+                  <li><a href="#">Inventario</a></li>
+                  <li><a href="#">Pr&eacute;stamo</a></li>
+                  <li><a href="#">Reportes</a></li>
                 </ul>
               </div>
             </div>
@@ -54,25 +45,37 @@
 
         <div class="container">
             <br /><br /><br />
-            <ol class="breadcrumb">
+            <!--<ol class="breadcrumb">
+              {% block breadcrumb %}
                 <li><a href="#"><i class="icon icon-home"></i></a></li>
                 <li><a href="#">Inicio</a></li>
-                <li class="active">Archivo</li>
-            </ol>
+              {% endblock %}
+            </ol>-->
+            <div class="row">
+              <div class="col-sm-8">
+                <ol class="breadcrumb">
+                  <li><a href="#"><i class="icon icon-home"></i></a></li>
+                  <li><a href="https://www.gob.mx">Inicio</a></li>
+                  <li><a href="index.html">Gráfica base</a></li>
+                  <li class="active">Formulario básico</li>
+                </ol>
+              </div>
+              <div class="col-sm-4">
+                <div class="user-credencials">
+                  <ul class="list-unstyled">
+                    <li>
+                      <span class="user-credencials__name">{% block usuario %}Alejandro Navarrete{% endblock %}</span>
+                      <button type="button" class="btn btn-link pull-right">Salir</button>
+                    </li>
+                    <li>{% block rol_usuario %}Administrador{% endblock %}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <br /><br /><br />
   
 
-            <form role="form">
-                <div class="form-group">
-                  <label class="control-label" for="email-01">Usuario:</label>
-                  <input class="form-control" id="email-01" placeholder="Usuario" type="text">
-                </div>
-                <div class="form-group">
-                  <label class="control-label" for="password-01">Contraseña</label>
-                  <input class="form-control" id="password-01" placeholder="Contraseña" type="password">
-                </div>
-                <button class="btn btn-primary pull-right" type="submit">Enviar</button>
-            </form>
-            <br /><br /><br />
+            {% block content %}{% endblock %}
 
         </div>
     </main>

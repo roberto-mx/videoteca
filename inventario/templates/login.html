@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="#"><i class="icon icon-user"></i></a></li>
+                <li class="active">Iniciar sesi&oacute;n</li>
+{% endblock %}
+
+{% block content %}
+            <form role="form">
+                <div class="form-group">
+                  <label class="control-label" for="usuario">Usuario:</label>
+                  <input class="form-control" id="usuario" placeholder="Usuario" type="text">
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="pwd">Contraseña</label>
+                  <input class="form-control" id="pwd" placeholder="Contraseña" type="password">
+                </div>
+                <button class="btn btn-primary pull-right" type="submit">Enviar</button>
+            </form>
+{% endblock %}

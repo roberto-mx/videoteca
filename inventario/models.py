@@ -1,6 +1,6 @@
 from django.db import models
 
-
+"""
 # TODO: create a new app and add this model, and create other database
 class Person(models.Model):
     matricula = models.CharField(max_length=255, blank=True, verbose_name='Matrícula')
@@ -8,17 +8,68 @@ class Person(models.Model):
     imagen_base64 = models.TextField(blank=True,null=True)
 
     class Meta:
+        #db_table = 'inventario_person'
         managed = False
+"""
+
+
+class CatStatus(models.Model):
+    id_status = models.CharField(primary_key=True, max_length=3)
+    status = models.CharField(max_length=20)
+    abreviacion = models.CharField(max_length=3)
+
+    class Meta:
+        db_table = 'cat_status'
+
+    def __str__(self):
+        return self.status
+
+
+class FormatosCintas(models.Model):
+    form_clave = models.IntegerField(primary_key=True)
+    form_descripcion = models.CharField('Formato de la cinta', max_length=25)
+    form_duracion = models.CharField(max_length=10, blank=True, null=True)
+    form_prefijo = models.CharField(max_length=15, blank=True, null=True)
+
+    class Meta:
+        db_table = 'formatos_cintas'
+        verbose_name = 'Formatos de cintas'
+        verbose_name_plural = 'Formatos de cintas'
+    
+    def __str__(self):
+        return self.form_descripcion
+
+
+class OrigenSerie(models.Model):
+    origen_id = models.IntegerField(primary_key=True)
+    origen = models.CharField(max_length=35)
+
+    class Meta:
+        db_table = 'origen_serie'
+            
+    def __str__(self):
+        return self.origen
+
+
+class TipoSerie(models.Model):
+    tipo_id = models.IntegerField(primary_key=True)
+    tipo = models.CharField(max_length=15)
+
+    class Meta:
+        db_table = 'tipo_serie'
+                    
+    def __str__(self):
+        return self.tipo
 
 
 class MaestroCintas(models.Model):
     video_id = models.IntegerField("Id")
     video_cbarras = models.CharField("Código de barras", max_length=12, primary_key=True)
-    form_clave = models.IntegerField("Clave")
+    form_clave = models.ForeignKey(FormatosCintas, null=True, on_delete=models.SET_NULL)
     video_idproduccion = models.IntegerField("Id producción", blank=True, null=True)
-    video_codificacion = models.CharField("Codificación", max_length=20, blank=True, null=True)
-    video_tipo = models.CharField("Tipo", max_length=1, blank=True, null=True) # CAT_STATUS?
-    video_fingreso = models.DateTimeField("Fecha ingreso", blank=True, null=True)
+    video_codificacion = models.CharField("Formato de la cinta", max_length=20, blank=True, null=True)
+    video_tipo = models.ForeignKey(CatStatus, verbose_name='Tipo de video', to_field='id_status', null=True, on_delete=models.SET_NULL)
+    video_fingreso = models.DateField("Fecha ingreso", blank=True, null=True)
     video_inventario = models.CharField("Inventario", max_length=4, blank=True, null=True)
     video_estatus = models.CharField("Estatus de la cinta", max_length=20)
     video_rack = models.CharField("Rack", max_length=4, blank=True, null=True)
@@ -32,22 +83,24 @@ class MaestroCintas(models.Model):
     video_fechamov = models.DateTimeField("Fecha de movimiento", blank=True, null=True)
     video_observaciones = models.CharField("Observaciones", max_length=300, blank=True, null=True)
     usua_clave = models.CharField("Clave", max_length=12, blank=True, null=True)
-    video_fchcal = models.DateTimeField("Fecha de calificación", blank=True, null=True)
+    video_fchcal = models.DateField("Fecha de calificación", blank=True, null=True)
     video_target = models.CharField("Target", max_length=45, blank=True, null=True)
-    id_tipo = models.IntegerField("Tipo de cinta", blank=True, null=True)
-    id_origen = models.IntegerField("Origen", blank=True, null=True)
+    tipo_id = models.ForeignKey(TipoSerie, to_field='tipo_id', verbose_name="Tipo de Serie", null=True, on_delete=models.SET_NULL)
+    origen_id = models.ForeignKey(OrigenSerie, to_field='origen_id', verbose_name="Origen de serie", null=True, on_delete=models.SET_NULL)
 
     class Meta:
         db_table = 'maestro_cintas'
         verbose_name = 'Material videograbado'
         verbose_name_plural = 'Material videograbado'
 
+    def __str__(self):
+        return self.video_cbarras
+
 
 class DetalleProgramas(models.Model):
     vp_id = models.IntegerField("Id", primary_key=True)
-    #video = models.ForeignKey(MaestroCintas, on_delete=models.DO_NOTHING, db_index=False, default=1, verbose_name="Video Id")
     video_id = models.IntegerField("Video Id")
-    video_cbarras = models.CharField("Código de barras", max_length=12)
+    video_cbarras = models.ForeignKey(MaestroCintas, verbose_name="Código de barras", max_length=12, null=True, on_delete=models.CASCADE)
     vp_serie = models.CharField("Serie", max_length=400, blank=True, null=True)
     vp_subtitulo = models.CharField("Subtítulo", max_length=150, blank=True, null=True)
     vp_sinopsis = models.TextField("Sinopsis", blank=True, null=True)
@@ -94,6 +147,11 @@ class DetalleProgramas(models.Model):
 
     class Meta:
         db_table = 'detalle_programas'
+        verbose_name = 'Detalle programas'
+        verbose_name_plural = 'Detalle programas'
+        
+    def __str__(self):
+        return f'({self.video_cbarras}) - {self.vp_serie}'
 
 
 class AltaProd(models.Model):
@@ -237,15 +295,6 @@ class CatServ(models.Model):
         db_table = 'cat_serv'
 
 
-class CatStatus(models.Model):
-    id_status = models.CharField(max_length=3)
-    status = models.CharField(max_length=20)
-    abreviacion = models.CharField(max_length=3)
-
-    class Meta:
-        db_table = 'cat_status'
-
-
 class CatTipoprod(models.Model):
     id_tipoprod = models.IntegerField(primary_key=True)
     tipoprod = models.CharField(max_length=25)
@@ -289,18 +338,6 @@ class FichaContenido(models.Model):
 
     class Meta:
         db_table = 'ficha_contenido'
-
-
-class FormatosCintas(models.Model):
-    form_clave = models.IntegerField(primary_key=True)
-    form_descripcion = models.CharField(max_length=25)
-    form_duracion = models.CharField(max_length=10, blank=True, null=True)
-    form_prefijo = models.CharField(max_length=15, blank=True, null=True)
-
-    class Meta:
-        db_table = 'formatos_cintas'
-        verbose_name = 'Formatos de cintas'
-        verbose_name_plural = 'Formatos de cintas'
 
 
 class HistoriaPrestamos(models.Model):
@@ -371,14 +408,6 @@ class OrdenTrabajo(models.Model):
 
     class Meta:
         db_table = 'orden_trabajo'
-
-
-class OrigenSerie(models.Model):
-    id_origen = models.IntegerField(primary_key=True)
-    origen = models.CharField(max_length=35)
-
-    class Meta:
-        db_table = 'origen_serie'
 
 
 class OtD(models.Model):
@@ -641,14 +670,6 @@ class Tbinventario(models.Model):
 
     class Meta:
         db_table = 'tbinventario'
-
-
-class TipoSerie(models.Model):
-    id_tipo = models.IntegerField()
-    tipo = models.CharField(max_length=15)
-
-    class Meta:
-        db_table = 'tipo_serie'
 
 
 class Usuarios(models.Model):
