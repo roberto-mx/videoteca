@@ -4,21 +4,22 @@
                 <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
                 <li><a href="/">Inicio</a></li>
                 <li><a href="/inventario">Inventario</a></li>
-                <li class="active">Actualizar cinta</li>
+                <li class="active">Eliminar programa</li>
 {% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title">Actualizar cinta #{{cinta.video_cbarras}}</h5>
+        <h5 class="card-title">Delete programa #{{object.video_cbarras}}</h5>
     </div>
     <div class="card-body">
         <form method="post">
             {% csrf_token %}
-            {{form.as_p}}
-            <a class="btn btn-default" href="/inventario/cintas/{{cinta.video_cbarras}}">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Actualizar</button>
-            <a class="btn btn-danger" href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+            <div class="alert alert-warning" role="alert">
+                Está seguro que desea eliminar el programa #<strong>{{ object }}</strong> ?
+            </div>
+            <a class="btn btn-default" href="/inventario">Cancelar</a>
+            <button type="submit" class="btn btn-danger">Eliminar</button>
         </form>
     </div>
 </div>

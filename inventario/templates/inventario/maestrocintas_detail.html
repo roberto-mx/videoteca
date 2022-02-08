@@ -81,7 +81,7 @@
                 {% for programa in programas %}
                   <tr>
                     <td>
-                      <a href="/inventario/detalle_programas/{{programa.vp_id}}">{{programa.video_id}}</a>
+                      <a href="/inventario/programas/{{programa.vp_id}}">{{programa.video_id}}</a>
                     </td>
                     <td>{{programa.vp_serie}}</td>
                     <td>{{programa.vp_subtitulo}}</td>
@@ -95,7 +95,7 @@
             <h3>No hay programas registrados en esta cinta</h3>
           {% endif %}
           <a href="/inventario" class="btn btn-default">Regresar</a>
-          <a href="/inventario/{{cinta.video_cbarras}}/editar" class="btn btn-primary">Editar</a>
+          <a href="/inventario/cintas/{{cinta.video_cbarras}}/editar" class="btn btn-primary">Editar</a>
     </div>
 </div>
 <br /><br />

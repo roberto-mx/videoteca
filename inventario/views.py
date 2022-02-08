@@ -127,7 +127,7 @@ class MaestroCintasCreateView(CreateView):
         'video_idproductor', 'video_productor', 'video_idcoordinador', 
         'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
         'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id')
-    success_url = '/inventario'#reverse_lazy('inventario:cintas-list')
+    success_url = reverse_lazy('inventario:cintas-list')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -149,14 +149,14 @@ class MaestroCintasUpdateView(UpdateView):
     fields = ('video_cbarras', 'form_clave', 'video_codificacion',)
 
     def get_success_url(self):
-        return reverse_lazy('inventario:cinta-detail', kwargs={'pk': self.object.id})
+        return reverse_lazy('inventario:cintas-detail', kwargs={'pk': self.object.video_cbarras})
 
 
 @method_decorator(login_required, name='dispatch')
 class MaestroCintasDeleteView(DeleteView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_delete.html'
-    success_url = '/inventario'#reverse_lazy('inventario:inventario-list')
+    success_url = reverse_lazy('inventario:cintas-list')
 
 
 class MaestroCintasFormView(FormView):
@@ -202,6 +202,34 @@ class DetalleProgramasDetailView(DetailView):
     model = DetalleProgramas
     template_name = 'inventario/detalleprogramas_detail.html'
     context_object_name = 'programa'
+
+
+@method_decorator(login_required, name='dispatch')
+class DetalleProgramasUpdateView(UpdateView):
+    model = DetalleProgramas
+    template_name = 'inventario/detalleprogramas_update.html'
+    context_object_name = 'programa'
+    fields = ('vp_id', 'video_id', 'vp_serie', 'vp_subtitulo',#, 'video_cbarras'
+        'vp_sinopsis', 'vp_participantes', 'vp_personajes', 'vp_areaconocimiento',
+        'vp_asigmateria', 'vp_niveleducativo', 'vp_grado', 'vp_ejetematico',
+        'vp_tema', 'vp_institproductora', 'vp_idiomaoriginal', 'vp_elenco',
+        'vp_conductor', 'vp_locutor', 'vp_guionista', 'vp_investigador',
+        'vp_derechopatrimonial', 'vp_fechacalificacion', 'vp_calificador',
+        'vp_fecha_modificacion', 'vp_calificadormod', 'vp_sistema', 'vp_duracion',
+        'vp_programa', 'vp_subtitserie', 'vp_orientacion', 'vp_duracionin',
+        'vp_duracionout', 'vp_duracion1', 'tx', 'vp_observaciones', 'vp_fork',
+        'vp_realizador', 'vp_musicao', 'vp_musicai', 'vp_cantante', 'vp_disquera',
+        'vp_libreriam', 'vp_registro_obra')
+
+    def get_success_url(self):
+        return reverse_lazy('inventario:programas-detail', kwargs={'pk': self.object.vp_id})
+
+
+@method_decorator(login_required, name='dispatch')
+class DetalleProgramasDeleteView(DeleteView):
+    model = DetalleProgramas
+    template_name = 'inventario/detalleprogramas_delete.html'
+    success_url = reverse_lazy('inventario:inventario-list')
 
 
 def login(request):

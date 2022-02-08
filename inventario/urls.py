@@ -2,7 +2,8 @@ from django.urls import path
 
 from .views import MaestroCintasListView, MaestroCintasCreateView, \
     MaestroCintasDetailView, MaestroCintasUpdateView, MaestroCintasDeleteView, MaestroCintasFormView
-from .views import DetalleProgramasListView, DetalleProgramasCreateView, DetalleProgramasDetailView
+from .views import DetalleProgramasListView, DetalleProgramasCreateView, \
+    DetalleProgramasDetailView, DetalleProgramasUpdateView, DetalleProgramasDeleteView
 from .views import FormatosCintasListView, \
     FormatosCintasCreateView, \
     FormatosCintasDetailView, \
@@ -21,6 +22,8 @@ urlpatterns = [
     path('programas/', DetalleProgramasListView.as_view(), name='programas-list'),
     path('programas/registrar/', DetalleProgramasCreateView.as_view(), name='programas-create'),
     path('programas/<int:pk>/', DetalleProgramasDetailView.as_view(), name='programas-detail'),
+    path('programas/<str:pk>/editar', DetalleProgramasUpdateView.as_view(), name='programas-update'),
+    path('programas/<str:pk>/eliminar', DetalleProgramasDeleteView.as_view(), name='programas-delete'),
 
     # CATALOGOS
     # Formatos Cintas
