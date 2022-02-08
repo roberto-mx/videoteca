@@ -99,7 +99,7 @@ class MaestroCintas(models.Model):
 
 class DetalleProgramas(models.Model):
     vp_id = models.IntegerField("Id", primary_key=True)
-    video_id = models.IntegerField("Video Id")
+    video_id = models.IntegerField("Folio")
     video_cbarras = models.ForeignKey(MaestroCintas, verbose_name="Código de barras", max_length=12, null=True, on_delete=models.CASCADE)
     vp_serie = models.CharField("Serie", max_length=400, blank=True, null=True)
     vp_subtitulo = models.CharField("Subtítulo", max_length=150, blank=True, null=True)

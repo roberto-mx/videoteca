@@ -1,0 +1,21 @@
+<nav class=" nav navbar-nav navbar-right">
+    {% if is_paginated %}
+        <ul class="pagination" style="margin-top: 0px;">
+          {% if page_obj.has_previous %}
+            <li><a href="?page=1">&laquo;</a></li>
+            <li>
+              <a href="?page={{page_obj.previous_page_number}}">{{ page_obj.previous_page_number }}</a>
+            </li>
+          {% endif %}
+            <li class="active">
+              <a href="?page={{page_obj.number}}">{{ page_obj.number }}</a>
+            </li>
+          {% if page_obj.has_next %}
+            <li>
+              <a href="?page={{page_obj.next_page_number}}">{{ page_obj.next_page_number }}</a>
+            </li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+          {% endif %}
+        </ul>
+    {% endif %}
+  </nav>

@@ -1,83 +1,133 @@
-{% extends "base.html" %}
+{% extends "__base.html" %}
 
 {% block breadcrumb %}
-                <li><a href="#"><i class="icon icon-home"></i></a></li>
-                <li><a href="#">Inicio</a></li>
-                <li class="active">Archivo</li>
+                <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
+                <li><a href="/">Inicio</a></li>
+                <li class="active">Inventario</li>
 {% endblock %}
 
 {% block content %}
-            <div class="bottom-buffer">
+            <p>
+              <a class="btn btn-primary" href="/inventario/cintas/registrar">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                <span>Agregar cinta</span>
+              </a>
+            </p>
+            <div class="bottom-buffer" style="margin-bottom: 15px;">
               <form role="form" class="clearfix">
                 <div class="row">
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label for="cbarras">C&oacute;digo de barras<span class="form-text"></span>:</label>
-                      <input type="text" id="cbarras" class="form-control" placeholder="Código de barras">
-                    </div>
+                  <div class="col-md-2">
+                    <!--<div class="form-group">
+                      <label for="cbarras">C&oacute;digo de barras<span class="form-text"></span>:</label>-->
+                      <input type="text" id="q" name="q" value="{{request.GET.q}}" class="form-control" placeholder="Código de barras">
+                    <!--</div>-->
                   </div>
-                  <div class="col-md-3">
-                    <div class="form-group">
+                  <div class="col-md-2">
+                    <!--<div class="form-group">
                       <label for="formato">Formato<span class="form-text"></span>:</label>
                       <input type="text" id="formato" class="form-control" placeholder="Formato">
-                    </div>
+                    </div>-->
+                    <select class="form-control" id="formato" name="formato">
+                      <option value="0">Formato</option>
+                      {% for formato in formatos_list %}
+                        <option value="{{ formato.form_clave }}">{{ formato.form_descripcion }}</option>
+                      {% endfor %}
+                    </select>
                   </div>
                   <div class="col-md-2">
-                    <div class="form-group">
+                    <!--<div class="form-group">
                       <label for="tipoCinta">Tipo de video<span class="form-text"></span>:</label>
                       <input type="text" id="tipoCinta" class="form-control" placeholder="Tipo">
-                    </div>
+                    </div>-->
+                    <select class="form-control" id="tipo" name="tipo">
+                      <option value="0">Tipo</option>
+                      {% for origen in origen_list %}
+                        <option value="{{ origen.origen_id }}">{{ origen.origen }}</option>
+                      {% endfor %}
+                    </select>
                   </div>
                   <div class="col-md-2">
-                    <div class="form-group">
+                    <!--<div class="form-group">
                       <label for="status">Estatus<span class="form-text"></span>:</label>
                       <input type="text" id="status" class="form-control" placeholder="Estatus">
-                    </div>
+                    </div>-->
+                    <select class="form-control" id="status" name="status">
+                      <option value="0">Estatus</option>
+                      {% for s in status_list %}
+                        <option value="{{ s.id_status }}">{{ s.status }}</option>
+                      {% endfor %}
+                    </select>
                   </div>
                   <div class="col-md-2">
-                    <div class="form-group">
-                      <label for="secondName">A&ntilde;o inventario<span class="form-text"></span>:</label>
-                      <input type="number" id="secondName" class="form-control" placeholder="Año">
-                    </div>
+                    <!--<div class="form-group">
+                      <label for="secondName">A&ntilde;o inventario<span class="form-text"></span>:</label>-->
+                      <input type="number" id="anio" class="form-control" placeholder="Año ingreso">
+                    <!--</div>-->
+                  </div>
+                  <div class="col-md-2">
+                    <button class="btn btn-primary btn-sm" type="submit">
+                      <span>Buscar</span>
+                    </button>
+                    <button class="btn btn-default btn-sm" type="reset">
+                      <span>Limpiar</span>
+                    </button>
                   </div>
                 </div>
-  
-                <div class="clearfix">
+
+                <!--<div class="clearfix">
                   <div class="pull-right">
                     <button class="btn btn-default" type="reset">Limpiar</button>
                     <button class="btn btn-primary" type="submit">Filtrar</button>
                   </div>
-                </div>
+                </div>-->
               </form>
             </div>
 
-            <table class="table table-striped">
+            <table class="table table-striped" style="margin-bottom: 0px;">
               <thead>
                 <tr>
                   <th>C&oacute;digo de barras</th>
                   <th>Formato de la cinta</th>
                   <th>Tipo de video</th>
                   <th>Estatus</th>
-                  <th>A&ntilde;o producci&oacute;n</th>
+                  <th>Fecha ingreso</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
-            {% if mcintas_list %}
+              {% if mcintas_list %}
               <tbody>
-              {# url 'inventario:detail' cinta.video_id #}
-              {% for cinta in mcintas_list %}
+                {% for cinta in mcintas_list %}
                 <tr>
-                  <td><a href="#">{{ cinta.video_cbarras }}</a></td>
+                  <td><a href="/inventario/cintas/{{cinta.video_cbarras}}/">{{ cinta.video_cbarras }}</a></td>
                   <td>{{ cinta.video_codificacion }}</td>
-                  <td>{{ cinta.video_tipo }}</td>
-                  <td>{{ cinta.video_estatus }}</td>
-                  <td>{{ cinta.video_anoproduccion }}</td>
+                  <td>{{ cinta.video_tipo|default:"" }}</td>
+                  <td>{{ cinta.video_estatus|default:"" }}</td>
+                  <td>{{ cinta.video_fingreso|default_if_none:"" }}</td>
+                  <td>
+                    <a href="cintas/{{cinta.video_cbarras}}/editar">Editar</a>
+                    <span> | </span>
+                    <a href="cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+                  </td>
                 </tr>
-              {% endfor %}
+                {% endfor %}
               </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="5">
+                    <span>Material videograbado: 162920 registros.</span>
+                  </td>
+                </tr>
+              </tfoot>
               {% else %}
+              <tbody>
                 <tr>
                   <td colspan="5">No hay material videograbado registrado.</td>
                 </tr>
-            {% endif %}
+              </tbody>
+              {% endif %}
             </table>
+
+            {% if is_paginated %}
+              {% include "__pagination.html" %}
+            {% endif %}
 {% endblock %}

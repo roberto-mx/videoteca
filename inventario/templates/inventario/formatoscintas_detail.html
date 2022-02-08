@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="#"><i class="icon icon-home"></i></a></li>
+                <li><a href="#">Inicio</a></li>
+                <li class="active">Archivo</li>
+{% endblock %}
+
+{% block content %}
+            <h1>{{ object.form_descripcion }}</h1>
+{% endblock %}

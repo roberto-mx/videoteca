@@ -1,0 +1,102 @@
+{% extends "__base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/inventario">Inventario</a></li>
+                <li class="active">Detalle de cinta</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Cinta #{{cinta.video_cbarras}}</h5>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Tipo de cinta:</dt>
+            <dd class="col-sm-9">{{ cinta.video_tipo|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Formato de la cinta:</dt>
+            <dd class="col-sm-9">{{ cinta.form_clave|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Id:</dt>
+            <dd class="col-sm-9">{{ cinta.video_id|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Código de barras:</dt>
+            <dd class="col-sm-9">{{ cinta.video_cbarras|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Formato de la cinta:</dt>
+            <dd class="col-sm-9">{{ cinta.form_clave|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Id producción:</dt>
+            <dd class="col-sm-9">{{ cinta.video_idproduccion|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Formato de la cinta:</dt>
+            <dd class="col-sm-9">{{ cinta.video_codificacion|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Tipo de video:</dt>
+            <dd class="col-sm-9">{{ cinta.video_tipo|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Fecha ingreso:</dt>
+            <dd class="col-sm-9">{{ cinta.video_fingreso|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Inventario:</dt>
+            <dd class="col-sm-9">{{ cinta.video_inventario|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Estatus de la cinta:</dt>
+            <dd class="col-sm-9">{{ cinta.video_estatus|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Rack:</dt>
+            <dd class="col-sm-9">{{ cinta.video_rack|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Nivel:</dt>
+            <dd class="col-sm-9">{{ cinta.video_nivel|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Año de producción:</dt>
+            <dd class="col-sm-9">{{ cinta.video_anoproduccion|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Id de productor:</dt>
+            <dd class="col-sm-9">{{ cinta.video_idproductor|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Productor:</dt>
+            <dd class="col-sm-9">{{ cinta.video_productor|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Id de coordinador:</dt>
+            <dd class="col-sm-9">{{ cinta.video_idcoordinador|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Coordinador:</dt>
+            <dd class="col-sm-9">{{ cinta.video_coordinador|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">usmov:</dt>
+            <dd class="col-sm-9">{{ cinta.video_usmov|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Fecha de movimiento:</dt>
+            <dd class="col-sm-9">{{ cinta.video_fechamov|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Observaciones:</dt>
+            <dd class="col-sm-9">{{ cinta.video_observaciones|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Clave:</dt>
+            <dd class="col-sm-9">{{ cinta.usua_clave|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Fecha de calificación:</dt>
+            <dd class="col-sm-9">{{ cinta.video_fchcal|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Target:</dt>
+            <dd class="col-sm-9">{{ cinta.video_target|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Tipo de Serie:</dt>
+            <dd class="col-sm-9">{{ cinta.tipo_id|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-3">Origen de serie:</dt>
+            <dd class="col-sm-9">{{ cinta.origen_id|default:"&nbsp;" }}</dd>
+          </dl>
+          {% if programas %}
+            <h3>Programas grabados en la cinta actual</h3>
+            <table class="table table-striped" style="margin-bottom: 0px;">
+                <thead>
+                  <tr>
+                    <th>Folio</th>
+                    <th>Serie</th>
+                    <th>Subtítulo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for programa in programas %}
+                  <tr>
+                    <td>
+                      <a href="/inventario/detalle_programas/{{programa.vp_id}}">{{programa.video_id}}</a>
+                    </td>
+                    <td>{{programa.vp_serie}}</td>
+                    <td>{{programa.vp_subtitulo}}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br />
+            <br />
+          {% else %}
+            <h3>No hay programas registrados en esta cinta</h3>
+          {% endif %}
+          <a href="/inventario" class="btn btn-default">Regresar</a>
+          <a href="/inventario/{{cinta.video_cbarras}}/editar" class="btn btn-primary">Editar</a>
+    </div>
+</div>
+<br /><br />
+{% endblock %}

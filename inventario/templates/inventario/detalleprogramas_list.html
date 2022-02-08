@@ -1,0 +1,57 @@
+{% extends "__base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="#"><i class="icon icon-home"></i></a></li>
+                <li><a href="#">Inicio</a></li>
+                <li class="active">Archivo</li>
+{% endblock %}
+
+{% block content %}
+            <p>
+              <a class="btn btn-primary" href="/inventario/programas/registrar">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                <span>Agregar programa</span>
+              </a>
+            </p>
+            <table class="table table-striped" style="margin-bottom: 0px;">
+              <thead>
+                <tr>
+                  <th>Video Id</th>
+                  <th>C&oacute;digo de barras</th>
+                  <th>Serie</th>
+                  <th>Subtítulo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              {% if programas_list %}
+              <tbody>
+                {% for programa in programas_list %}
+                <tr>
+                  <td><a href="/inventario/programas/{{programa.vp_id}}/">{{ programa.video_id }}</a></td>
+                  <td>{{ programa.video_cbarras }}</td>
+                  <td>{{ programa.vp_serie|default:"" }}</td>
+                  <td>{{ programa.vp_subtitulo|default:"" }}</td>
+                  <td>
+                    <a href="{{programa.vp_id}}/update">Editar</a>
+                    <span> | </span>
+                    <a href="{{programa.vp_id}}/delete">Eliminar</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="4">
+                    <span></span>
+                  </td>
+                </tr>
+              </tfoot>
+              {% else %}
+              <tbody>
+                <tr>
+                  <td colspan="4">No hay programas.</td>
+                </tr>
+              </tbody>
+              {% endif %}
+            </table>
+{% endblock %}

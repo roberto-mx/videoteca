@@ -1,0 +1,151 @@
+{% extends "__base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/inventario">Inventario</a></li>
+                <li class="active">Detalle de programa</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Programa #{{programa.video_cbarras}}</h5>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Folio:</dt>
+            <dd class="col-sm-9">{{ programa.video_id|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Código de barras:</dt>
+            <dd class="col-sm-9">{{ programa.video_cbarras|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Serie:</dt>
+            <dd class="col-sm-9">{{ programa.vp_serie|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Subtítulo:</dt>
+            <dd class="col-sm-9">{{ programa.vp_subtitulo|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Sinopsis:</dt>
+            <dd class="col-sm-9">{{ programa.vp_sinopsis|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Participantes:</dt>
+            <dd class="col-sm-9">{{ programa.vp_participantes|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Personajes:</dt>
+            <dd class="col-sm-9">{{ programa.vp_personajes|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Area de conocimiento:</dt>
+            <dd class="col-sm-9">{{ programa.vp_areaconocimiento|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Asig materia:</dt>
+            <dd class="col-sm-9">{{ programa.vp_asigmateria|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Nivel educativo:</dt>
+            <dd class="col-sm-9">{{ programa.vp_niveleducativo|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Grado:</dt>
+            <dd class="col-sm-9">{{ programa.vp_grado|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Eje temático:</dt>
+            <dd class="col-sm-9">{{ programa.vp_ejetematico|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Tema:</dt>
+            <dd class="col-sm-9">{{ programa.vp_tema|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Institución productora:</dt>
+            <dd class="col-sm-9">{{ programa.vp_institproductora|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Idioma original:</dt>
+            <dd class="col-sm-9">{{ programa.vp_idiomaoriginal|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Elenco:</dt>
+            <dd class="col-sm-9">{{ programa.vp_elenco|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Conductor:</dt>
+            <dd class="col-sm-9">{{ programa.vp_conductor|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Locutor:</dt>
+            <dd class="col-sm-9">{{ programa.vp_locutor|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Guionista:</dt>
+            <dd class="col-sm-9">{{ programa.vp_guionista|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Investigador:</dt>
+            <dd class="col-sm-9">{{ programa.vp_investigador|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Fecha de Calificación:</dt>
+            <dd class="col-sm-9">{{ programa.vp_derechopatrimonial|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Derecho patrimonial:</dt>
+            <dd class="col-sm-9">{{ programa.vp_fechacalificacion|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Calificador:</dt>
+            <dd class="col-sm-9">{{ programa.vp_calificador|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Última Actualización:</dt>
+            <dd class="col-sm-9">{{ programa.vp_fecha_modificacion|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Calificador mod:</dt>
+            <dd class="col-sm-9">{{ programa.vp_calificadormod|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Sistema:</dt>
+            <dd class="col-sm-9">{{ programa.vp_sistema|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Duración:</dt>
+            <dd class="col-sm-9">{{ programa.vp_duracion|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Programa:</dt>
+            <dd class="col-sm-9">{{ programa.vp_programa|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Subtitulos de serie:</dt>
+            <dd class="col-sm-9">{{ programa.vp_subtitserie|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Orientación:</dt>
+            <dd class="col-sm-9">{{ programa.vp_orientacion|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">In:</dt>
+            <dd class="col-sm-9">{{ programa.vp_duracionin|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Out:</dt>
+            <dd class="col-sm-9">{{ programa.vp_duracionout|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Duración:</dt>
+            <dd class="col-sm-9">{{ programa.vp_duracion1|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">TX:</dt>
+            <dd class="col-sm-9">{{ programa.tx|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Observaciones:</dt>
+            <dd class="col-sm-9">{{ programa.vp_observaciones|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Fork:</dt>
+            <dd class="col-sm-9">{{ programa.vp_fork|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Realizador:</dt>
+            <dd class="col-sm-9">{{ programa.vp_realizador|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Música de cierre:</dt>
+            <dd class="col-sm-9">{{ programa.vp_musicao|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Música de apertura:</dt>
+            <dd class="col-sm-9">{{ programa.vp_musicai|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Cantante:</dt>
+            <dd class="col-sm-9">{{ programa.vp_cantante|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Disquera:</dt>
+            <dd class="col-sm-9">{{ programa.vp_disquera|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Libreria m:</dt>
+            <dd class="col-sm-9">{{ programa.vp_libreriam|default:"&nbsp;" }}</dd>
+
+            <dt class="col-sm-3">Registro de Obra:</dt>
+            <dd class="col-sm-9">{{ programa.vp_registro_obra|default:"&nbsp;" }}</dd>
+          </dl>
+          <a href="/inventario" class="btn btn-default">Regresar</a>
+          <a href="/inventario" class="btn btn-primary">Editar</a>
+    </div>
+</div>
+<br /><br />
+{% endblock %}

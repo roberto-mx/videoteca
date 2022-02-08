@@ -1,0 +1,25 @@
+{% extends "__base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/inventario">Inventario</a></li>
+                <li class="active">Actualizar cinta</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Actualizar cinta #{{cinta.video_cbarras}}</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <a class="btn btn-default" href="/inventario">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+    </div>
+</div>
+<br /><br />
+{% endblock %}

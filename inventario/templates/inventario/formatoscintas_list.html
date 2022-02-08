@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="#"><i class="icon icon-home"></i></a></li>
+                <li><a href="#">Inicio</a></li>
+                <li class="active">Archivo</li>
+{% endblock %}
+
+{% block content %}
+
+<select id="cars" name="cars">
+  <option value="0">Todos</option>
+  {% for s in cat_status %}
+    <option value="{{ s.id_status }}">{{ m.status }}</option>
+  {% endfor %}
+</select>
+
+            {% for formato in formatos_list %}
+              <li>{{ formato.form_descripcion }}</li>
+            {% endfor %}
+{% endblock %}

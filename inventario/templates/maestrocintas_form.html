@@ -1,0 +1,139 @@
+{% extends "__base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="#"><i class="icon icon-home"></i></a></li>
+                <li><a href="#">Inicio</a></li>
+                <li class="active">Archivo</li>
+{% endblock %}
+
+{% block content %}
+            <h1>{{ object.form_descripcion }}</h1>
+
+
+            <form action="/your-name/" method="post">
+                {% csrf_token %}
+                {{ form.id.as_hidden }}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.cbarras.errors }}
+                    {{ form.cbarras.label_tag }}
+                    {{ form.cbarras }}
+                </div>
+                <div class="form-group">
+                    {{ form.formato.errors }}
+                    {{ form.formato.label_tag }}
+                    {{ form.formato }}
+                </div>
+                <div class="form-group">
+                    {{ form.idproduccion.errors }}
+                    {{ form.idproduccion.label_tag }}
+                    {{ form.idproduccion }}
+                </div>
+                <div class="form-group">
+                    {{ form.codificacion.errors }}
+                    {{ form.codificacion.label_tag }}
+                    {{ form.codificacion }}
+                </div>
+                <div class="form-group">
+                    {{ form.tipo.errors }}
+                    {{ form.tipo.label_tag }}
+                    {{ form.tipo }}
+                </div>
+                <div class="form-group">
+                    {{ form.fingreso.errors }}
+                    {{ form.fingreso.label_tag }}
+                    {{ form.fingreso }}
+                </div>
+                <div class="form-group">
+                    {{ form.inventario.errors }}
+                    {{ form.inventario.label_tag }}
+                    {{ form.inventario }}
+                </div>
+                <div class="form-group">
+                    {{ form.estatus.errors }}
+                    {{ form.estatus.label_tag }}
+                    {{ form.estatus }}
+                </div>
+                <div class="form-group">
+                    {{ form.rack.errors }}
+                    {{ form.rack.label_tag }}
+                    {{ form.rack }}
+                </div>
+                <div class="form-group">
+                    {{ form.nivel.errors }}
+                    {{ form.nivel.label_tag }}
+                    {{ form.nivel }}
+                </div>
+                <div class="form-group">
+                    {{ form.anoproduccion.errors }}
+                    {{ form.anoproduccion.label_tag }}
+                    {{ form.anoproduccion }}
+                </div>
+                <div class="form-group">
+                    {{ form.idproductor.errors }}
+                    {{ form.idproductor.label_tag }}
+                    {{ form.idproductor }}
+                </div>
+                <div class="form-group">
+                    {{ form.productor.errors }}
+                    {{ form.productor.label_tag }}
+                    {{ form.productor }}
+                </div>
+                <div class="form-group">
+                    {{ form.idcoordinador.errors }}
+                    {{ form.idcoordinador.label_tag }}
+                    {{ form.idcoordinador }}
+                </div>
+                <div class="form-group">
+                    {{ form.coordinador.errors }}
+                    {{ form.coordinador.label_tag }}
+                    {{ form.coordinador }}
+                </div>
+                <div class="form-group">
+                    {{ form.usmov.errors }}
+                    {{ form.usmov.label_tag }}
+                    {{ form.usmov }}
+                </div>
+                <div class="form-group">
+                    {{ form.fechamov.errors }}
+                    {{ form.fechamov.label_tag }}
+                    {{ form.fechamov }}
+                </div>
+                <div class="form-group">
+                    {{ form.observaciones.errors }}
+                    {{ form.observaciones.label_tag }}
+                    {{ form.observaciones }}
+                </div>
+                <div class="form-group">
+                    {{ form.usua_clave.errors }}
+                    {{ form.usua_clave.label_tag }}
+                    {{ form.usua_clave }}
+                </div>
+                <div class="form-group">
+                    {{ form.fchcal.errors }}
+                    {{ form.fchcal.label_tag }}
+                    {{ form.fchcal }}
+                </div>
+                <div class="form-group">
+                    {{ form.target.errors }}
+                    {{ form.target.label_tag }}
+                    {{ form.target }}
+                </div>
+                <div class="form-group">
+                    {{ form.tipo_id.errors }}
+                    {{ form.tipo_id.label_tag }}
+                    {{ form.tipo_id }}
+                </div>
+                <div class="form-group">
+                    {{ form.origen_id.errors }}
+                    {{ form.origen_id.label_tag }}
+                    {{ form.origen_id }}
+                </div>
+
+                <div class="form-group">
+                    <input class="btn btn-primary btn-sm" type="submit" value="Enviar" />
+                </div>
+            </form>
+
+
+{% endblock %}

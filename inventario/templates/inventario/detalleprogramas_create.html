@@ -1,0 +1,26 @@
+{% extends "__base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/inventario">Inventario</a></li>
+                <li><a href="/inventario/programas">Programas</a></li>
+                <li class="active">Registrar</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Registrar nuevo programa</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button class="btn btn-default btn-sm" type="reset">Limpiar</button>
+            <button class="btn btn-primary btn-sm" type="submit">Registrar</button>
+        </form>
+    </div>
+</div>
+<br /><br />
+{% endblock %}

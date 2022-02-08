@@ -37,10 +37,10 @@ def to_int2(int_value):
     return int(int_value)
 
  
-def get_metadata(file='tablas.json'):
+def get_metadata(file='tables.json'):
     with open(file) as json_file:
         data = json.load(json_file)
-    return data['TABLES']
+    return data.keys()
 
 class Command(BaseCommand):
     help = 'Truncates and load data to tables'

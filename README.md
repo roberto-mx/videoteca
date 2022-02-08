@@ -18,7 +18,7 @@ CREATE DATABASE pepe WITH TEMPLATE = template0 OWNER = postgres LC_COLLATE = 'es
 ## Virtual env
 ```
 pip install virtualenv
-virtualenv env
+virtualenv venv
 source env/bin/activate
 pip install django
 pip install psycopg2-binary

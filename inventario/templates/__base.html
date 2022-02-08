@@ -45,26 +45,20 @@
 
         <div class="container">
             <br /><br /><br />
-            <!--<ol class="breadcrumb">
-              {% block breadcrumb %}
-                <li><a href="#"><i class="icon icon-home"></i></a></li>
-                <li><a href="#">Inicio</a></li>
-              {% endblock %}
-            </ol>-->
             <div class="row">
               <div class="col-sm-8">
                 <ol class="breadcrumb">
-                  <li><a href="#"><i class="icon icon-home"></i></a></li>
-                  <li><a href="https://www.gob.mx">Inicio</a></li>
-                  <li><a href="index.html">Gráfica base</a></li>
-                  <li class="active">Formulario básico</li>
+                  {% block breadcrumb %}
+                    <li><a href="#"><i class="icon icon-home"></i></a></li>
+                    <li><a href="#">Inicio</a></li>
+                  {% endblock %}
                 </ol>
               </div>
               <div class="col-sm-4">
                 <div class="user-credencials">
                   <ul class="list-unstyled">
                     <li>
-                      <span class="user-credencials__name">{% block usuario %}Alejandro Navarrete{% endblock %}</span>
+                      <span class="user-credencials__name">{% block usuario %}Roberto Gutiérrez García{% endblock %}</span>
                       <button type="button" class="btn btn-link pull-right">Salir</button>
                     </li>
                     <li>{% block rol_usuario %}Administrador{% endblock %}</li>
