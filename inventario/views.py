@@ -107,7 +107,7 @@ class MaestroCintasListView(ListView):
         validated_query_string = "&".join([x for x in re.findall(
             r"(\w*=\w{1,})", query_string) if not "page=" in x])
         # Avoid passing the query path to template if no search result is found using the previous query
-        return "&" + validated_query_string.lower() if (validated_query_string and self.no_search_result) else ""
+        return "&" + validated_query_string if (validated_query_string and self.no_search_result) else ""
 
     def get_queryset(self):
         self.cbarras = self.request.GET.get('q', '')
@@ -116,7 +116,7 @@ class MaestroCintasListView(ListView):
         self.status = self.request.GET.get('status', '')
         self.anio = self.request.GET.get('anio', '')
         self.no_search_result = self.cbarras != '' or self.formato != '' \
-            or self.status != '' or self.anio != ''
+            or self.tipo != '' or self.status != '' or self.anio != ''
         rs = MaestroCintas.objects.all().order_by('video_cbarras')
         if self.cbarras != '':
             rs = rs.filter(video_cbarras__contains=self.cbarras)
@@ -127,7 +127,7 @@ class MaestroCintasListView(ListView):
         if self.status != '':
             rs = rs.filter(video_estatus=self.estatus[self.status])
         if self.anio != '':
-            rs = rs.filter(video_fechamov__year=self.anio)
+            rs = rs.filter(video_fechamov__year=int(self.anio))
         return rs
 
     #def get_ordering(self):
@@ -190,7 +190,12 @@ class MaestroCintasUpdateView(UpdateView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_update.html'
     context_object_name = 'cinta'
-    fields = ('video_cbarras', 'form_clave', 'video_codificacion',)
+    fields = ('video_id', 'video_cbarras', 'form_clave', 'video_codificacion', 
+        'video_codificacion', 'video_tipo', 'video_fingreso', 'video_inventario',
+        'video_estatus', 'video_rack', 'video_nivel', 'video_anoproduccion',
+        'video_idproductor', 'video_productor', 'video_idcoordinador', 
+        'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
+        'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id',)
 
     def get_success_url(self):
         return reverse_lazy('inventario:cintas-detail', kwargs={'pk': self.object.video_cbarras})
