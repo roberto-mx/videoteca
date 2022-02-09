@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block content %}
-            <p>
-              <a class="btn btn-primary" href="/inventario/cintas/registrar">
+            <p style="text-align: right;">
+              <a class="btn btn-secundary btn-sm" href="/inventario/cintas/registrar">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 <span>Agregar cinta</span>
               </a>
@@ -28,9 +28,13 @@
                       <input type="text" id="formato" class="form-control" placeholder="Formato">
                     </div>-->
                     <select class="form-control" id="formato" name="formato">
-                      <option value="0">Formato</option>
+                      <option value="">-- Formato --</option>
                       {% for formato in formatos_list %}
-                        <option value="{{ formato.form_clave }}">{{ formato.form_descripcion }}</option>
+                        {% if formato_filter == formato.form_clave %}
+                          <option value="{{ formato.form_clave }}" selected="selected">{{ formato.form_descripcion }}</option>
+                        {% else %}
+                          <option value="{{ formato.form_clave }}">{{ formato.form_descripcion }}</option>
+                        {% endif %}
                       {% endfor %}
                     </select>
                   </div>
@@ -39,10 +43,14 @@
                       <label for="tipoCinta">Tipo de video<span class="form-text"></span>:</label>
                       <input type="text" id="tipoCinta" class="form-control" placeholder="Tipo">
                     </div>-->
-                    <select class="form-control" id="tipo" name="tipo">
-                      <option value="0">Tipo</option>
-                      {% for origen in origen_list %}
-                        <option value="{{ origen.origen_id }}">{{ origen.origen }}</option>
+                    <select class="form-control" name="tipo">
+                      <option value="">-- Tipo --</option>
+                      {% for tipo in tipo_list %}
+                        {% if tipo_filter == tipo.id_status %}
+                          <option value="{{ tipo.id_status }}" selected="selected">{{ tipo.status }}</option>
+                        {% else %}
+                          <option value="{{ tipo.id_status }}">{{ tipo.status }}</option>
+                        {% endif %}
                       {% endfor %}
                     </select>
                   </div>
@@ -51,35 +59,29 @@
                       <label for="status">Estatus<span class="form-text"></span>:</label>
                       <input type="text" id="status" class="form-control" placeholder="Estatus">
                     </div>-->
-                    <select class="form-control" id="status" name="status">
-                      <option value="0">Estatus</option>
-                      {% for s in status_list %}
-                        <option value="{{ s.id_status }}">{{ s.status }}</option>
-                      {% endfor %}
+                    <select class="form-control" name="status">
+                      <option value="">-- Estatus --</option>
+                      <option value="1" {%if status_filter == '1' %} selected="selected"{%endif%}>En Videoteca</option>
+                      <option value="2" {%if status_filter == '2' %} selected="selected"{%endif%}>En Calificacion</option>
+                      <option value="3" {%if status_filter == '3' %} selected="selected"{%endif%}>Cinta Extraviada</option>
+                      <option value="4" {%if status_filter == '4' %} selected="selected"{%endif%}>Baja por Daño</option>
                     </select>
                   </div>
                   <div class="col-md-2">
                     <!--<div class="form-group">
                       <label for="secondName">A&ntilde;o inventario<span class="form-text"></span>:</label>-->
-                      <input type="number" id="anio" class="form-control" placeholder="Año ingreso">
+                      <input type="number" name="anio" class="form-control" placeholder="Año ingreso" value="{{anio_filter}}">
                     <!--</div>-->
                   </div>
                   <div class="col-md-2">
                     <button class="btn btn-primary btn-sm" type="submit">
                       <span>Buscar</span>
                     </button>
-                    <button class="btn btn-default btn-sm" type="reset">
+                    <a class="btn btn-default btn-sm" href="/inventario">
                       <span>Limpiar</span>
-                    </button>
+                    </a>
                   </div>
                 </div>
-
-                <!--<div class="clearfix">
-                  <div class="pull-right">
-                    <button class="btn btn-default" type="reset">Limpiar</button>
-                    <button class="btn btn-primary" type="submit">Filtrar</button>
-                  </div>
-                </div>-->
               </form>
             </div>
 
@@ -111,17 +113,17 @@
                 </tr>
                 {% endfor %}
               </tbody>
-              <tfoot>
+              <!--<tfoot>
                 <tr>
                   <td colspan="5">
                     <span style="visibility:hidden">Material videograbado: 162920 registros.</span>
                   </td>
                 </tr>
-              </tfoot>
+              </tfoot>-->
               {% else %}
               <tbody>
                 <tr>
-                  <td colspan="5">No hay material videograbado registrado.</td>
+                  <td colspan="5">No hay material videograbado registrado con estas características.</td>
                 </tr>
               </tbody>
               {% endif %}

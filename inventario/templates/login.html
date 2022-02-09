@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "__base.html" %}
 
 {% block breadcrumb %}
                 <li><a href="#"><i class="icon icon-user"></i></a></li>
@@ -6,7 +6,8 @@
 {% endblock %}
 
 {% block content %}
-            <form role="form">
+            <form role="form" method="POST">
+                {% csrf_token %}
                 <div class="form-group">
                   <label class="control-label" for="usuario">Usuario:</label>
                   <input class="form-control" id="usuario" placeholder="Usuario" type="text">
@@ -17,4 +18,7 @@
                 </div>
                 <button class="btn btn-primary pull-right" type="submit">Enviar</button>
             </form>
+            <br />
+            <br />
+            <br />
 {% endblock %}

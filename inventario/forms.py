@@ -1,4 +1,5 @@
 from django import forms
+from .models import MaestroCintas
 
 class Login(forms.Form):
     usuario = forms.CharField(label='Usuario', max_length=100)
@@ -14,6 +15,19 @@ class FormatosCintasForm(forms.Form):
     def send_email(self):
         pass
 
+
+class MaestroCintasFilter(forms.Form):
+    cbarras = forms.CharField(label="Código de barras", max_length=12)
+    formato = forms.ChoiceField(label="Formato")
+    tipo = forms.ChoiceField(label='Tipo de video')
+    estatus = forms.CharField(label="Estatus de la cinta", max_length=20)
+    year = forms.IntegerField(label="Año de registro")
+
+    def qs(request_get, queryset):
+        cbarras = request_get['q']
+        if cbarras == '':
+            return queryset
+        return MaestroCintas.objects.filter(video_cbarras=cbarras)
 
 class MaestrosCintasForm(forms.Form):
     id = forms.HiddenInput()

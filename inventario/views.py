@@ -12,9 +12,10 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+import re
 
 from .forms import Login, MaestrosCintasForm
-from .forms import FormatosCintasForm
+from .forms import MaestroCintasFilter, FormatosCintasForm
 
 from .models import CatStatus
 from .models import DetalleProgramas
@@ -75,34 +76,77 @@ class FormatosCintasCreateView(CreateView):
 
 @method_decorator(login_required, name='dispatch')
 class MaestroCintasListView(ListView):
-    #template_name = 'formatoscintas_form.html'
     model = MaestroCintas
     context_object_name = 'mcintas_list'
     ordering = ['-video_cbarras']
     paginate_by = 10
     page_range = 4
+    no_search_result = False
+    cbarras = ''
+    formato = '-'
+    tipo = ''
+    status = ''
+    anio = ''
+    estatus = {
+        '1': 'En Videoteca',
+        '2': 'En Calificacion',
+        '3': 'Cinta Extraviada',
+        '4': 'Baja por Daño'
+    }
 
-    #def get_queryset(self):
-    #    cbarras = self.request.GET.get('q')
-    #    formato = self.request.GET.get('formato', '0')
-    #    anio = self.request.GET.get('anio', '0')
-    #    rs = MaestroCintas.objects.all().order_by('video_cbarras')
-    #    if cbarras:
-    #        rs = rs.filter(video_cbarras__contains=cbarras)
-    #    if formato:
-    #        rs = rs.filter(form_clave=formato)
-    #    return rs
+    #def get_queryset(self, **kwargs):
+    #    search_results = MaestroCintasFilter(self.request.GET, self.queryset)
+    #    self.no_search_result = True if not search_results.qs else False
+    #    # Returns the default queryset if an empty queryset is returned by the django_filters
+    #    # You could as well return just the search result's queryset if you want to
+    #    return search_results.qs.distinct() or self.model.objects.all()
+
+    def get_query_string(self):
+        query_string = self.request.META.get("QUERY_STRING", "")
+        # Get all queries excluding pages from the request's meta
+        validated_query_string = "&".join([x for x in re.findall(
+            r"(\w*=\w{1,})", query_string) if not "page=" in x])
+        # Avoid passing the query path to template if no search result is found using the previous query
+        return "&" + validated_query_string.lower() if (validated_query_string and self.no_search_result) else ""
+
+    def get_queryset(self):
+        self.cbarras = self.request.GET.get('q', '')
+        self.formato = self.request.GET.get('formato', '')
+        self.tipo = self.request.GET.get('tipo', '')
+        self.status = self.request.GET.get('status', '')
+        self.anio = self.request.GET.get('anio', '')
+        self.no_search_result = self.cbarras != '' or self.formato != '' \
+            or self.status != '' or self.anio != ''
+        rs = MaestroCintas.objects.all().order_by('video_cbarras')
+        if self.cbarras != '':
+            rs = rs.filter(video_cbarras__contains=self.cbarras)
+        if self.formato != '':
+            rs = rs.filter(form_clave=self.formato)
+        if self.tipo != '':
+            rs = rs.filter(video_tipo=self.tipo)
+        if self.status != '':
+            rs = rs.filter(video_estatus=self.estatus[self.status])
+        if self.anio != '':
+            rs = rs.filter(video_fechamov__year=self.anio)
+        return rs
 
     #def get_ordering(self):
-    #    ordering = self.request.GET.get('ordering', '-date_created')
+    #    ordering = self.request.GET.get('ordering', '-video_fechamov')
     #    # validate ordering here
     #    return ordering
     
     def get_context_data(self, **kwargs):
         context = super(MaestroCintasListView, self).get_context_data(**kwargs)
-        context['status_list'] = CatStatus.objects.all()
+        context['tipo_list'] = CatStatus.objects.all()
         context['formatos_list'] = FormatosCintas.objects.all()
-        context['origen_list'] = OrigenSerie.objects.all()
+
+        context["no_search_result"] = self.no_search_result
+        context["query_string"] = self.get_query_string()
+        context['cbarras_filter'] = self.cbarras
+        context['formato_filter'] = int(self.formato) if self.formato != '' else 0
+        context['tipo_filter'] = self.tipo
+        context['status_filter'] = self.status
+        context['anio_filter'] = self.anio
 
         cintas = self.get_queryset()
         page = self.request.GET.get('page')
@@ -232,6 +276,11 @@ class DetalleProgramasDeleteView(DeleteView):
     success_url = reverse_lazy('inventario:inventario-list')
 
 
+# -------------------
+# Detalle programas
+# -------------------
+
+
 def login(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -243,9 +292,7 @@ def login(request):
             # ...
             # redirect to a new URL:
             return HttpResponseRedirect('/thanks/')
-
-    # if a GET (or any other method) we'll create a blank form
     else:
         form = Login()
 
-    return render(request, 'name.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
