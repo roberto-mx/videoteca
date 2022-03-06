@@ -12,6 +12,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+
+import datetime
 import re
 
 from .forms import Login, MaestrosCintasForm
@@ -74,7 +76,7 @@ class FormatosCintasCreateView(CreateView):
 # Maestro cintas
 # -------------------
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class MaestroCintasListView(ListView):
     model = MaestroCintas
     context_object_name = 'mcintas_list'
@@ -174,7 +176,7 @@ class MaestroCintasCreateView(CreateView):
     success_url = reverse_lazy('inventario:cintas-list')
 
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class MaestroCintasDetailView(DetailView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_detail.html'
@@ -185,7 +187,7 @@ class MaestroCintasDetailView(DetailView):
         return context
 
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class MaestroCintasUpdateView(UpdateView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_update.html'
@@ -197,11 +199,15 @@ class MaestroCintasUpdateView(UpdateView):
         'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
         'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id',)
 
+    def form_valid(self, form):
+        form.instance.video_fechamov = datetime.datetime.now()
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse_lazy('inventario:cintas-detail', kwargs={'pk': self.object.video_cbarras})
 
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class MaestroCintasDeleteView(DeleteView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_delete.html'
@@ -246,14 +252,14 @@ class DetalleProgramasCreateView(CreateView):
 
 
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class DetalleProgramasDetailView(DetailView):
     model = DetalleProgramas
     template_name = 'inventario/detalleprogramas_detail.html'
     context_object_name = 'programa'
 
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class DetalleProgramasUpdateView(UpdateView):
     model = DetalleProgramas
     template_name = 'inventario/detalleprogramas_update.html'
@@ -274,7 +280,7 @@ class DetalleProgramasUpdateView(UpdateView):
         return reverse_lazy('inventario:programas-detail', kwargs={'pk': self.object.vp_id})
 
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class DetalleProgramasDeleteView(DeleteView):
     model = DetalleProgramas
     template_name = 'inventario/detalleprogramas_delete.html'

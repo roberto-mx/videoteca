@@ -19,7 +19,7 @@ CREATE DATABASE pepe WITH TEMPLATE = template0 OWNER = postgres LC_COLLATE = 'es
 ```
 pip install virtualenv
 virtualenv venv
-source env/bin/activate
+source venv/bin/activate
 pip install django
 pip install psycopg2-binary
 
@@ -28,6 +28,8 @@ python manage.py migrate
 ```
 ### Windows
 ```
+virtualenv venv
+pip install -r requirements.txt
 venv\Scripts\activate
 ```
 ### Mac

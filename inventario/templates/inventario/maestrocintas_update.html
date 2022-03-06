@@ -10,17 +10,268 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title">Actualizar cinta #{{cinta.video_cbarras}}</h5>
+        <h2 class="card-title">Cinta No. {{cinta.video_cbarras}}</h2>
+        <hr class="red">
     </div>
     <div class="card-body">
-        <form method="post">
+        <form class="form-horizontal" role="form" method="post">
             {% csrf_token %}
-            {{form.as_p}}
-            <a class="btn btn-default" href="/inventario/cintas/{{cinta.video_cbarras}}">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Actualizar</button>
-            <a class="btn btn-danger" href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+
+            {{ form.non_field_errors }}
+            <input class="form-control" type="hidden" name="video_id" value="118703" id="id_video_id" required>
+            <div class="form-group">
+                {{ form.video_id.errors }}
+                <label class="col-sm-3 control-label" for="{{ form.video_cbarras.id_for_label }}">Código de barras:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_cbarras" value="{{ form.video_cbarras.value|default_if_none:'' }}" maxlength="12" id="id_video_cbarras" readonly required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_form_clave">Form clave:</label>
+                <div class="col-sm-9">
+                    {{ form.form_clave }}
+                    <!--<select class="form-control" name="form_clave" required id="id_form_clave">
+                        <option value="">---------</option>
+                        <option value="1">3/4-10-Ext-</option>
+                        <option value="2">Betacam 10 Min</option>
+                        <option value="3">Betacam 120 Min</option>
+                        <option value="4">Betacam 20 Min</option>
+                        <option value="5">Betacam Externo 20 Min</option>
+                        <option value="6">Betacam 30 Min</option>
+                        <option value="7">Betacam Externo 30 Min</option>
+                        <option value="9">Betacam Externo 5 Min</option>
+                        <option value="10">Betacam 60 Min</option>
+                        <option value="11">Betacam Externo 60 Min</option>
+                        <option value="12">Betacam 90 Min</option>
+                        <option value="13">Disco Compacto Externo</option>
+                        <option value="14">Vhs 120 Min</option>
+                        <option value="15">Vhs Externo 120 Min</option>
+                        <option value="16">Vhs 30 Min</option>
+                        <option value="17">Vhs 60 Min</option>
+                        <option value="18">DatT-64-Min</option>
+                        <option value="19">3/4-60-Ext-</option>
+                        <option value="20">Betacam Externo 90 Min</option>
+                        <option value="23">Dat</option>
+                        <option value="24">Dat</option>
+                        <option value="25">Betacam 62 Min SX</option>
+                        <option value="26">Betacam 20 Min SX</option>
+                        <option value="27">Betacam 32 Min SX</option>
+                        <option value="28">Betacam 60 Min SX</option>
+                        <option value="29">Betacam 90 Min SX</option>
+                        <option value="30">Betacam 94 Min SX</option>
+                        <option value="31">Betacam 32 Min</option>
+                        <option value="32">Betacam 22 Min SX</option>
+                        <option value="33">Betacam 12 Min SX</option>
+                        <option value="34">Betacam  6 Min.SX</option>
+                        <option value="99" selected>Indefinido</option>
+                        <option value="35">Mini DV</option>
+                        <option value="36">PF (Para Fonoteca)</option>
+                        <option value="37">Disco Compacto (CDR)</option>
+                        <option value="38">DVR-R</option>
+                        <option value="39">DVCAM 94 Min</option>
+                        <option value="40">DVCAM 40 Min</option>
+                        <option value="41">Betacam 5 Min</option>
+                        <option value="42">Disco Compacto (BRD)</option>
+                    </select>-->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_codificacion">Formato de la cinta:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_codificacion" value="{{ form.video_calificacion.value|default_if_none:'' }}" maxlength="20" id="id_video_codificacion">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_tipo">Tipo de video:</label>
+                <div class="col-sm-9">
+                    <select class="form-control" name="video_tipo" required id="id_video_tipo">
+                        <option value="">---------</option>
+                        <option value="M/S">Master/Submaster</option>
+                        <option value="P">Pistas</option>
+                        <option value="K/L">Stock y/o Locacion</option>
+                        <option value="BI">Banco de Imagen</option>
+                        <option value="M">Master</option>
+                        <option value="S" selected>Submaster</option>
+                        <option value="K">Stock</option>
+                        <option value="L">Locacion</option>
+                        <option value="PR">Prestamo</option>
+                        <option value="R">Reciclado</option>
+                        <option value="V">Virgen</option>
+                        <option value="MD">Mat. Desgastado</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_fingreso">Fecha ingreso:</label>
+                <div class="col-sm-9">
+                    <div class="datepicker-group">
+                        <input class="form-control" name="video_fingreso" id="id_video_fingreso" value="{{ form.video_fingreso.value|date:"Y-m-d" }}" type="text">
+                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_inventario">Inventario:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_inventario" value="{{ form.video_inventario.value|default_if_none:'' }}" maxlength="4" id="id_video_inventario">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_estatus">Estatus de la cinta:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_estatus" value="{{ form.video_status.value|default_if_none:'' }}" maxlength="20" id="id_video_estatus">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_rack">Rack:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_rack" value="{{ form.video_rack.value|default_if_none:'' }}" maxlength="4" id="id_video_rack">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_nivel">Nivel:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_nivel" value="{{ form.video_nivel.value|default_if_none:'' }}" maxlength="4" id="id_video_nivel">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_anoproduccion">Año de producción:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="number" name="video_anoproduccion" value="{{ form.video_anoproduccion.value|default_if_none:'' }}" id="id_video_anoproduccion">
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_idproductor">Id de productor:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="number" name="video_idproductor" value="0" id="id_video_idproductor">
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_productor">Productor:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_productor" value="{{ form.video_productor.value|default_if_none:'' }}" maxlength="100" id="id_video_productor">
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_idcoordinador">Id de coordinador:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="number" name="video_idcoordinador" value="0" id="id_video_idcoordinador">
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_coordinador">Coordinador:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_coordinador" value="{{ form.video_coordinador.value|default_if_none:'' }}" maxlength="80" id="id_video_coordinador">
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_usmov">Usmov:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="number" name="video_usmov" value="0" id="id_video_usmov">
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_observaciones">Observaciones:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_observaciones" value="{{ form.video_observaciones.value|default_if_none:'' }}" maxlength="300" id="id_video_observaciones">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_usua_clave">Clave:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="usua_clave" value="{{ form.usua_clave.value|default_if_none:'' }}" maxlength="12" id="id_usua_clave">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_fchcal">Fecha de calificación:</label>
+                <div class="col-sm-9">
+                    <div class="datepicker-group">
+                        <input class="form-control" name="video_fchcal" value="{{ form.video_fchcal.value|date:'Y-m-d' }}" id="id_video_fchcal" type="text">
+                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_target">Target:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_target" value="{{ form.video_target.value|default_if_none:'' }}" maxlength="45" id="id_video_target">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_tipo_id">Tipo de Serie:</label>
+                <div class="col-sm-9">
+                    {{ form.tipo_id }}<!--
+                    <select class="form-control" name="tipo_id" required id="id_tipo_id">
+                        <option value="" selected>---------</option>
+                        <option value="0">No especifica</option>
+                        <option value="1">Unitario</option>
+                        <option value="2">Cápsula</option>            
+                        <option value="3">Película</option>
+                        <option value="4">Documental</option>
+                        <option value="5">Promo</option>
+                        <option value="6">Serie Curricula</option>
+                        <option value="7">Serie Cultural</option>
+                        <option value="8">Noticiero</option>
+                    </select>-->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_origen_id">Origen de serie:</label>
+                <div class="col-sm-9">
+                    <select class="form-control" name="origen_id" required id="id_origen_id">
+                        <option value="" selected>---------</option>
+                        <option value="0">No Especifica</option>
+                        <option value="1">Coproducción</option>
+                        <option value="2">Producción Interna</option>
+                        <option value="3">Producción de otras Instituciones</option>
+                        <option value="4">Producción Adquirida</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="id_video_fechamov">&Uacute;ltimo movimiento:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" name="video_fechamov" value="{{ form.video_fechamov.value|date:'Y-m-d P' }}" id="id_video_fechamov" readonly>
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <div class="pull-right">
+                    <a class="btn btn-default" href="/inventario/cintas/{{cinta.video_cbarras}}">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <a class="btn btn-danger" href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+                </div>
+            </div>
+            </form>
         </form>
     </div>
 </div>
 <br /><br />
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $gmx(document).ready(function(){
+      $.datepicker.regional.es = {
+        closeText: 'Cerrar',
+        prevText: 'Ant',
+        nextText: 'Sig',
+        currentText: 'Hoy',
+        monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+        monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
+        dayNamesMin: ['Dom','Lun','Mar','Mie','Jue','Vie','S&aacute;b'],
+        weekHeader: 'Sm',
+        dateFormat: 'yy-mm-dd',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''};
+      $.datepicker.setDefaults($.datepicker.regional.es);
+      $( "#id_video_fingreso" ).datepicker( { changeYear: true } );
+      $( "#id_video_fchcal" ).datepicker( { changeYear: true } );
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
 {% endblock %}
