@@ -10,142 +10,237 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title">Programa #{{programa.video_cbarras}}</h2>
+        <h2 class="card-title">{{ programa.vp_serie|default:"&nbsp;" }}</h2>
+        <h5 class="card-title">{{ programa.vp_programa|default:"&nbsp;" }}</h5>
         <hr class="red">
     </div>
     <div class="card-body">
         <dl class="row">
-            <dt class="col-sm-3">Folio:</dt>
-            <dd class="col-sm-9">{{ programa.video_id|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-6 titulo">Código de barras</dt>
+            <dt class="col-sm-6 titulo">Folio</dt>
 
-            <dt class="col-sm-3">Código de barras:</dt>
-            <dd class="col-sm-9">{{ programa.video_cbarras|default:"&nbsp;" }}</dd>
+            <dl class="col-sm-6">
+                <a href="/inventario/cintas/{{ programa.video_cbarras }}/">{{ programa.video_cbarras|default:"&nbsp;" }}</a>
+            </dl>
+            <dl class="col-sm-6">{{ programa.video_id|default:"&nbsp;" }}</dl>
 
-            <dt class="col-sm-3">Serie:</dt>
-            <dd class="col-sm-9">{{ programa.vp_serie|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-6 titulo">Título de la serie</dt>
+            <dt class="col-sm-6 titulo">Título del programa</dt>
 
-            <dt class="col-sm-3">Subtítulo:</dt>
-            <dd class="col-sm-9">{{ programa.vp_subtitulo|default:"&nbsp;" }}</dd>
+            <dd class="col-sm-6">{{ programa.vp_serie|default:"&nbsp;" }}</dd>
+            <dd class="col-sm-6">{{ programa.vp_programa|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Sinopsis:</dt>
-            <dd class="col-sm-9">{{ programa.vp_sinopsis|default:"&nbsp;" }}</dd>
+            <div class="col-sm-12">&nbsp;</div>
 
-            <dt class="col-sm-3">Participantes:</dt>
-            <dd class="col-sm-9">{{ programa.vp_participantes|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-6 titulo">Subtítulo de la serie</dt>
+            <dt class="col-sm-6 titulo">Subtítulo del programa</dt>
 
-            <dt class="col-sm-3">Personajes:</dt>
-            <dd class="col-sm-9">{{ programa.vp_personajes|default:"&nbsp;" }}</dd>
+            <dd class="col-sm-6">{{ programa.vp_subtitserie|default:"&nbsp;" }}</dd>
+            <dd class="col-sm-6">{{ programa.vp_subtitulo|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Area de conocimiento:</dt>
-            <dd class="col-sm-9">{{ programa.vp_areaconocimiento|default:"&nbsp;" }}</dd>
+        </div>
+    </div>
+    <div class="panel-group ficha-collapse" id="description">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-parent="#description" data-toggle="collapse" href="#panel-01" aria-expanded="true" aria-controls="panel-01">
+              Descripci&oacute;n
+              </a>
+            </h4>
+            <button type="button" class="collpase-button collapsed" data-parent="#description" data-toggle="collapse" href="#panel-01"></button>
+          </div>
+          <div class="panel-collapse collapse in" id="panel-01">
+            <div class="panel-body">
+                <div class="card-body">
+                    <div class="row">
 
-            <dt class="col-sm-3">Asig materia:</dt>
-            <dd class="col-sm-9">{{ programa.vp_asigmateria|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-12 titulo">Sinopsis</dt>
+                        <dd class="col-sm-12">{{ programa.vp_sinopsis|default:"&nbsp;" }}</dd>
+            
+                        <div class="col-sm-12">&nbsp;</div>
 
-            <dt class="col-sm-3">Nivel educativo:</dt>
-            <dd class="col-sm-9">{{ programa.vp_niveleducativo|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Participantes</dt>
+                        <dt class="col-sm-6 titulo">Personajes</dt>
+            
+                        <dd class="col-sm-6">{{ programa.vp_participantes|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_personajes|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Grado:</dt>
-            <dd class="col-sm-9">{{ programa.vp_grado|default:"&nbsp;" }}</dd>
+                        <div class="col-sm-12">&nbsp;</div>
 
-            <dt class="col-sm-3">Eje temático:</dt>
-            <dd class="col-sm-9">{{ programa.vp_ejetematico|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Derecho patrimonial</dt>
+                        <dt class="col-sm-6 titulo">Registro de Obra</dt>
 
-            <dt class="col-sm-3">Tema:</dt>
-            <dd class="col-sm-9">{{ programa.vp_tema|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_derechopatrimonial|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_registro_obra|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Institución productora:</dt>
-            <dd class="col-sm-9">{{ programa.vp_institproductora|default:"&nbsp;" }}</dd>
+                        <div class="col-sm-12">&nbsp;</div>
 
-            <dt class="col-sm-3">Idioma original:</dt>
-            <dd class="col-sm-9">{{ programa.vp_idiomaoriginal|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-2 titulo">Duración:</dt>
+                        <dd class="col-sm-2">{{ programa.vp_duracion|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-1 titulo">In:</dt>
+                        <dd class="col-sm-2">{{ programa.vp_duracionin|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-1 titulo">Out:</dt>
+                        <dd class="col-sm-2">{{ programa.vp_duracionout|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-1 titulo">TX:</dt>
+                        <dd class="col-sm-1">{{ programa.tx|default:"&nbsp;" }}</dd>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="panel-group ficha-collapse" id="mapa_curricular">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-parent="#mapa_curricular" data-toggle="collapse" href="#panel-02" aria-expanded="true" aria-controls="panel-02">
+                    Mapa curricular
+                </a>
+                </h4>
+                <button type="button" class="collpase-button collapsed" data-parent="#mapa_curricular" data-toggle="collapse" href="#panel-02"></button>
+            </div>
+            <div class="panel-collapse collapse in" id="panel-02">
+                <div class="panel-body">
+                    <div class="row">
+                        <dt class="col-sm-6 titulo">Area de conocimiento</dt>
+                        <dt class="col-sm-6 titulo">Eje temático</dt>
 
-            <dt class="col-sm-3">Elenco:</dt>
-            <dd class="col-sm-9">{{ programa.vp_elenco|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_areaconocimiento|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_ejetematico|default:"&nbsp;" }}</dd>
+            
+                        <dt class="col-sm-6 titulo">Nivel educativo</dt>
+                        <dt class="col-sm-6 titulo">Tema</dt>
+            
+                        <dd class="col-sm-6">{{ programa.vp_niveleducativo|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_tema|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Conductor:</dt>
-            <dd class="col-sm-9">{{ programa.vp_conductor|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Asignatura/materia</dt>
+                        <dt class="col-sm-6 titulo">Grado</dt>
 
-            <dt class="col-sm-3">Locutor:</dt>
-            <dd class="col-sm-9">{{ programa.vp_locutor|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_asigmateria|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_grado|default:"&nbsp;" }}</dd>
+            
+                        <dt class="col-sm-12 titulo">Orientación curricular</dt>
+                        <dd class="col-sm-12">{{ programa.vp_orientacion|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Guionista:</dt>
-            <dd class="col-sm-9">{{ programa.vp_guionista|default:"&nbsp;" }}</dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group ficha-collapse" id="tecnicas">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-parent="#tecnicas" data-toggle="collapse" href="#panel-03" aria-expanded="true" aria-controls="panel-03">
+                    Especificaciones técnicas
+                </a>
+                </h4>
+                <button type="button" class="collpase-button collapsed" data-parent="#tecnicas" data-toggle="collapse" href="#panel-03"></button>
+            </div>
+            <div class="panel-collapse collapse in" id="panel-03">
+                <div class="panel-body">
+                    <div class="row">
+                        <dt class="col-sm-12 titulo">Observaciones:</dt>
+                        <dd class="col-sm-12">{{ programa.vp_observaciones|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Investigador:</dt>
-            <dd class="col-sm-9">{{ programa.vp_investigador|default:"&nbsp;" }}</dd>
+                        <div class="col-sm-12">&nbsp;</div>
 
-            <dt class="col-sm-3">Fecha de Calificación:</dt>
-            <dd class="col-sm-9">{{ programa.vp_derechopatrimonial|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Idioma original:</dt>
+                        <dt class="col-sm-6 titulo">Sistema:</dt>
 
-            <dt class="col-sm-3">Derecho patrimonial:</dt>
-            <dd class="col-sm-9">{{ programa.vp_fechacalificacion|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_idiomaoriginal|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_sistema|default:"&nbsp;" }}</dd>
+            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-group ficha-collapse" id="realizacion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-parent="#realizacion" data-toggle="collapse" href="#panel-04" aria-expanded="true" aria-controls="panel-04">
+                    Datos de Realización
+                </a>
+                </h4>
+                <button type="button" class="collpase-button collapsed" data-parent="#realizacion" data-toggle="collapse" href="#panel-04"></button>
+            </div>
+            <div class="panel-collapse collapse in" id="panel-04">
+                <div class="panel-body">
+                    <div class="row">
+                        <dt class="col-sm-6 titulo">Guionista</dt>
+                        <dt class="col-sm-6 titulo">Locutor</dt>
+                        <dd class="col-sm-6">{{ programa.vp_guionista|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_locutor|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Calificador:</dt>
-            <dd class="col-sm-9">{{ programa.vp_calificador|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Investigador:</dt>
+                        <dt class="col-sm-6 titulo">Elenco</dt>
+                        <dd class="col-sm-6">{{ programa.vp_investigador|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_elenco|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Última Actualización:</dt>
-            <dd class="col-sm-9">{{ programa.vp_fecha_modificacion|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Conductor</dt>
+                        <dt class="col-sm-6 titulo">Institución productora</dt>
+                        <dd class="col-sm-6">{{ programa.vp_conductor|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_institproductora|default:"&nbsp;" }}</dd>
+            
+                        <dt class="col-sm-6 titulo">Realizador</dt>
+                        <dt class="col-sm-6 titulo">Cantante</dt>
+                        <dd class="col-sm-6">{{ programa.vp_realizador|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_cantante|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Calificador mod:</dt>
-            <dd class="col-sm-9">{{ programa.vp_calificadormod|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Música de apertura</dt>
+                        <dt class="col-sm-6 titulo">Música de cierre</dt>
+                        <dd class="col-sm-6">{{ programa.vp_musicai|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_musicao|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Sistema:</dt>
-            <dd class="col-sm-9">{{ programa.vp_sistema|default:"&nbsp;" }}</dd>
+                        <dt class="col-sm-6 titulo">Disquera</dt>
+                        <dt class="col-sm-6 titulo">Libreria musical</dt>
+                        <dd class="col-sm-6">{{ programa.vp_disquera|default:"&nbsp;" }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_libreriam|default:"&nbsp;" }}</dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="panel-group ficha-collapse" id="meta">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-parent="#meta" data-toggle="collapse" href="#panel-05" aria-expanded="true" aria-controls="panel-05">
+                    Calificaci&oacute;n
+                </a>
+                </h4>
+                <button type="button" class="collpase-button collapsed" data-parent="#meta" data-toggle="collapse" href="#panel-05"></button>
+            </div>
+            <div class="panel-collapse collapse in" id="panel-05">
+                <div class="panel-body">
+                    <div class="row">
+                        <dt class="col-sm-6 titulo">Fecha de Calificación:</dt>
+                        <dt class="col-sm-6 titulo">Calificador:</dt>
+                        <dd class="col-sm-6">{{ programa.vp_fechacalificacion|date:'Y-m-d' }}</dd>
+                        <dd class="col-sm-6">{{ programa.vp_calificador|default:"&nbsp;" }}</dd>
 
-            <dt class="col-sm-3">Duración:</dt>
-            <dd class="col-sm-9">{{ programa.vp_duracion|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Programa:</dt>
-            <dd class="col-sm-9">{{ programa.vp_programa|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Subtitulos de serie:</dt>
-            <dd class="col-sm-9">{{ programa.vp_subtitserie|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Orientación:</dt>
-            <dd class="col-sm-9">{{ programa.vp_orientacion|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">In:</dt>
-            <dd class="col-sm-9">{{ programa.vp_duracionin|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Out:</dt>
-            <dd class="col-sm-9">{{ programa.vp_duracionout|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Duración:</dt>
-            <dd class="col-sm-9">{{ programa.vp_duracion1|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">TX:</dt>
-            <dd class="col-sm-9">{{ programa.tx|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Observaciones:</dt>
-            <dd class="col-sm-9">{{ programa.vp_observaciones|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Fork:</dt>
-            <dd class="col-sm-9">{{ programa.vp_fork|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Realizador:</dt>
-            <dd class="col-sm-9">{{ programa.vp_realizador|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Música de cierre:</dt>
-            <dd class="col-sm-9">{{ programa.vp_musicao|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Música de apertura:</dt>
-            <dd class="col-sm-9">{{ programa.vp_musicai|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Cantante:</dt>
-            <dd class="col-sm-9">{{ programa.vp_cantante|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Disquera:</dt>
-            <dd class="col-sm-9">{{ programa.vp_disquera|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Libreria m:</dt>
-            <dd class="col-sm-9">{{ programa.vp_libreriam|default:"&nbsp;" }}</dd>
-
-            <dt class="col-sm-3">Registro de Obra:</dt>
-            <dd class="col-sm-9">{{ programa.vp_registro_obra|default:"&nbsp;" }}</dd>
-          </dl>
-          <a href="/inventario" class="btn btn-default">Regresar</a>
-          <a href="/inventario/programas/{{programa.vp_id}}/editar" class="btn btn-primary">Editar</a>
+                        <dt class="col-sm-12 titulo">Calificador mod:</dt>
+                        <dd class="col-sm-12">{{ programa.vp_calificadormod|default:"&nbsp;" }}</dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    <div>
+        <div class="row">
+            <dt class="col-sm-4">Fecha de última actualización:</dt>
+            <dd class="col-sm-8">{{ programa.vp_fecha_modificacion|date:'Y-m-d' }}</dd>
+        </div>
+        <div class="clearfix">
+            <div class="pull-right">
+                <a href="/inventario" class="btn btn-default">Regresar</a>
+                <a href="/inventario/programas/{{programa.vp_id}}/editar" class="btn btn-primary">Editar</a>
+            </div>
+        </div>
     </div>
 </div>
 <br /><br />

@@ -167,12 +167,13 @@ class MaestroCintasListView(ListView):
 class MaestroCintasCreateView(CreateView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_create.html'
-    fields = ('video_id', 'video_cbarras', 'form_clave', 'video_codificacion', 
-        'video_codificacion', 'video_tipo', 'video_fingreso', 'video_inventario',
-        'video_estatus', 'video_rack', 'video_nivel', 'video_anoproduccion',
-        'video_idproductor', 'video_productor', 'video_idcoordinador', 
-        'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
-        'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id')
+    #fields = ('video_id', 'video_cbarras', 'form_clave', 'video_codificacion', 
+    #    'video_codificacion', 'video_tipo', 'video_fingreso', 'video_inventario',
+    #    'video_estatus', 'video_rack', 'video_nivel', 'video_anoproduccion',
+    #    'video_idproductor', 'video_productor', 'video_idcoordinador', 
+    #    'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
+    #    'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id')
+    form_class = MaestrosCintasForm
     success_url = reverse_lazy('inventario:cintas-list')
 
 
@@ -192,12 +193,13 @@ class MaestroCintasUpdateView(UpdateView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_update.html'
     context_object_name = 'cinta'
-    fields = ('video_id', 'video_cbarras', 'form_clave', 'video_codificacion', 
-        'video_codificacion', 'video_tipo', 'video_fingreso', 'video_inventario',
-        'video_estatus', 'video_rack', 'video_nivel', 'video_anoproduccion',
-        'video_idproductor', 'video_productor', 'video_idcoordinador', 
-        'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
-        'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id',)
+    form_class = MaestrosCintasForm
+    #fields = ('video_id', 'video_cbarras', 'form_clave', 'video_codificacion', 
+    #    'video_codificacion', 'video_tipo', 'video_fingreso', 'video_inventario',
+    #    'video_estatus', 'video_rack', 'video_nivel', 'video_anoproduccion',
+    #    'video_idproductor', 'video_productor', 'video_idcoordinador', 
+    #    'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
+    #    'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id',)
 
     def form_valid(self, form):
         form.instance.video_fechamov = datetime.datetime.now()

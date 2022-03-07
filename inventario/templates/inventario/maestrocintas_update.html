@@ -20,92 +20,35 @@
             {{ form.non_field_errors }}
             <input class="form-control" type="hidden" name="video_id" value="118703" id="id_video_id" required>
             <div class="form-group">
-                {{ form.video_id.errors }}
+                {{ form.video_cbarras.errors }}
                 <label class="col-sm-3 control-label" for="{{ form.video_cbarras.id_for_label }}">Código de barras:</label>
                 <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_cbarras" value="{{ form.video_cbarras.value|default_if_none:'' }}" maxlength="12" id="id_video_cbarras" readonly required>
+                    {{ form.video_cbarras }}
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_form_clave">Form clave:</label>
+                <label class="col-sm-3 control-label" for="id_form_clave">Formato:</label>
                 <div class="col-sm-9">
                     {{ form.form_clave }}
-                    <!--<select class="form-control" name="form_clave" required id="id_form_clave">
-                        <option value="">---------</option>
-                        <option value="1">3/4-10-Ext-</option>
-                        <option value="2">Betacam 10 Min</option>
-                        <option value="3">Betacam 120 Min</option>
-                        <option value="4">Betacam 20 Min</option>
-                        <option value="5">Betacam Externo 20 Min</option>
-                        <option value="6">Betacam 30 Min</option>
-                        <option value="7">Betacam Externo 30 Min</option>
-                        <option value="9">Betacam Externo 5 Min</option>
-                        <option value="10">Betacam 60 Min</option>
-                        <option value="11">Betacam Externo 60 Min</option>
-                        <option value="12">Betacam 90 Min</option>
-                        <option value="13">Disco Compacto Externo</option>
-                        <option value="14">Vhs 120 Min</option>
-                        <option value="15">Vhs Externo 120 Min</option>
-                        <option value="16">Vhs 30 Min</option>
-                        <option value="17">Vhs 60 Min</option>
-                        <option value="18">DatT-64-Min</option>
-                        <option value="19">3/4-60-Ext-</option>
-                        <option value="20">Betacam Externo 90 Min</option>
-                        <option value="23">Dat</option>
-                        <option value="24">Dat</option>
-                        <option value="25">Betacam 62 Min SX</option>
-                        <option value="26">Betacam 20 Min SX</option>
-                        <option value="27">Betacam 32 Min SX</option>
-                        <option value="28">Betacam 60 Min SX</option>
-                        <option value="29">Betacam 90 Min SX</option>
-                        <option value="30">Betacam 94 Min SX</option>
-                        <option value="31">Betacam 32 Min</option>
-                        <option value="32">Betacam 22 Min SX</option>
-                        <option value="33">Betacam 12 Min SX</option>
-                        <option value="34">Betacam  6 Min.SX</option>
-                        <option value="99" selected>Indefinido</option>
-                        <option value="35">Mini DV</option>
-                        <option value="36">PF (Para Fonoteca)</option>
-                        <option value="37">Disco Compacto (CDR)</option>
-                        <option value="38">DVR-R</option>
-                        <option value="39">DVCAM 94 Min</option>
-                        <option value="40">DVCAM 40 Min</option>
-                        <option value="41">Betacam 5 Min</option>
-                        <option value="42">Disco Compacto (BRD)</option>
-                    </select>-->
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="id_video_codificacion">Formato de la cinta:</label>
                 <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_codificacion" value="{{ form.video_calificacion.value|default_if_none:'' }}" maxlength="20" id="id_video_codificacion">
+                    {{ form.video_codificacion }}
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="id_video_tipo">Tipo de video:</label>
                 <div class="col-sm-9">
-                    <select class="form-control" name="video_tipo" required id="id_video_tipo">
-                        <option value="">---------</option>
-                        <option value="M/S">Master/Submaster</option>
-                        <option value="P">Pistas</option>
-                        <option value="K/L">Stock y/o Locacion</option>
-                        <option value="BI">Banco de Imagen</option>
-                        <option value="M">Master</option>
-                        <option value="S" selected>Submaster</option>
-                        <option value="K">Stock</option>
-                        <option value="L">Locacion</option>
-                        <option value="PR">Prestamo</option>
-                        <option value="R">Reciclado</option>
-                        <option value="V">Virgen</option>
-                        <option value="MD">Mat. Desgastado</option>
-                    </select>
+                    {{ form.video_tipo }}
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="id_video_fingreso">Fecha ingreso:</label>
                 <div class="col-sm-9">
                     <div class="datepicker-group">
-                        <input class="form-control" name="video_fingreso" id="id_video_fingreso" value="{{ form.video_fingreso.value|date:"Y-m-d" }}" type="text">
+                        <input class="form-control" name="video_fingreso" id="id_video_fingreso" value="{{ form.video_fingreso.value|date:'Y-m-d' }}" type="text">
                         <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                     </div>
                 </div>
@@ -242,36 +185,8 @@
                     <a class="btn btn-danger" href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
                 </div>
             </div>
-            </form>
         </form>
     </div>
 </div>
 <br /><br />
-{% endblock %}
-
-{% block script %}
-<script type="text/javascript">
-    $gmx(document).ready(function(){
-      $.datepicker.regional.es = {
-        closeText: 'Cerrar',
-        prevText: 'Ant',
-        nextText: 'Sig',
-        currentText: 'Hoy',
-        monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
-        monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-        dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
-        dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
-        dayNamesMin: ['Dom','Lun','Mar','Mie','Jue','Vie','S&aacute;b'],
-        weekHeader: 'Sm',
-        dateFormat: 'yy-mm-dd',
-        firstDay: 1,
-        isRTL: false,
-        showMonthAfterYear: false,
-        yearSuffix: ''};
-      $.datepicker.setDefaults($.datepicker.regional.es);
-      $( "#id_video_fingreso" ).datepicker( { changeYear: true } );
-      $( "#id_video_fchcal" ).datepicker( { changeYear: true } );
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
 {% endblock %}

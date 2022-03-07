@@ -10,6 +10,7 @@
 
     <!-- CSS -->
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
     
     <!-- Respond.js soporte de media queries para Internet Explorer 8 -->
     <!-- ie8.js EventTarget para cada nodo en Internet Explorer 8 -->
@@ -77,7 +78,30 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://framework-gb.cdn.gob.mx/qa/gobmx.js"></script>
     <script src="https://framework-gb.cdn.gob.mx/assets/scripts/jquery-ui-datepicker.js"></script>
-    {% block script %}{% endblock %}
+    <script type="text/javascript">
+      $gmx(document).ready(function(){
+        $.datepicker.regional.es = {
+          closeText: 'Cerrar',
+          prevText: 'Ant',
+          nextText: 'Sig',
+          currentText: 'Hoy',
+          monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+          monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+          dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
+          dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
+          dayNamesMin: ['Dom','Lun','Mar','Mie','Jue','Vie','S&aacute;b'],
+          weekHeader: 'Sm',
+          dateFormat: 'yy-mm-dd',
+          firstDay: 1,
+          isRTL: false,
+          showMonthAfterYear: false,
+          yearSuffix: ''};
+        $.datepicker.setDefaults($.datepicker.regional.es);
+        $( "#id_video_fingreso" ).datepicker( { changeYear: true } );
+        $( "#id_video_fchcal" ).datepicker( { changeYear: true } );
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    </script>
 
 </body>
 </html>

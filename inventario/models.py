@@ -142,7 +142,7 @@ class DetalleProgramas(models.Model):
     vp_musicai = models.CharField("Música de apertura", max_length=600, blank=True, null=True)
     vp_cantante = models.CharField("Cantante", max_length=600, blank=True, null=True)
     vp_disquera = models.CharField("Disquera", max_length=600, blank=True, null=True)
-    vp_libreriam = models.CharField("Libreria m", max_length=600, blank=True, null=True)
+    vp_libreriam = models.CharField("Libreria musical", max_length=600, blank=True, null=True)
     vp_registro_obra = models.CharField("Registro de Obra", max_length=600, blank=True, null=True)
 
     class Meta:
