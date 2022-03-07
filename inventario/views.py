@@ -17,7 +17,7 @@ import datetime
 import re
 
 from .forms import Login, MaestrosCintasForm
-from .forms import MaestroCintasFilter, FormatosCintasForm
+from .forms import MaestroCintasFilter, FormatosCintasForm, DetalleProgramasForm
 
 from .models import CatStatus
 from .models import DetalleProgramas
@@ -266,17 +266,18 @@ class DetalleProgramasUpdateView(UpdateView):
     model = DetalleProgramas
     template_name = 'inventario/detalleprogramas_update.html'
     context_object_name = 'programa'
-    fields = ('vp_id', 'video_id', 'vp_serie', 'vp_subtitulo',#, 'video_cbarras'
-        'vp_sinopsis', 'vp_participantes', 'vp_personajes', 'vp_areaconocimiento',
-        'vp_asigmateria', 'vp_niveleducativo', 'vp_grado', 'vp_ejetematico',
-        'vp_tema', 'vp_institproductora', 'vp_idiomaoriginal', 'vp_elenco',
-        'vp_conductor', 'vp_locutor', 'vp_guionista', 'vp_investigador',
-        'vp_derechopatrimonial', 'vp_fechacalificacion', 'vp_calificador',
-        'vp_fecha_modificacion', 'vp_calificadormod', 'vp_sistema', 'vp_duracion',
-        'vp_programa', 'vp_subtitserie', 'vp_orientacion', 'vp_duracionin',
-        'vp_duracionout', 'vp_duracion1', 'tx', 'vp_observaciones', 'vp_fork',
-        'vp_realizador', 'vp_musicao', 'vp_musicai', 'vp_cantante', 'vp_disquera',
-        'vp_libreriam', 'vp_registro_obra')
+    form_class = DetalleProgramasForm
+    #fields = ('vp_id', 'video_id', 'vp_serie', 'vp_subtitulo',#, 'video_cbarras'
+    #    'vp_sinopsis', 'vp_participantes', 'vp_personajes', 'vp_areaconocimiento',
+    #    'vp_asigmateria', 'vp_niveleducativo', 'vp_grado', 'vp_ejetematico',
+    #    'vp_tema', 'vp_institproductora', 'vp_idiomaoriginal', 'vp_elenco',
+    #    'vp_conductor', 'vp_locutor', 'vp_guionista', 'vp_investigador',
+    #    'vp_derechopatrimonial', 'vp_fechacalificacion', 'vp_calificador',
+    #    'vp_fecha_modificacion', 'vp_calificadormod', 'vp_sistema', 'vp_duracion',
+    #    'vp_programa', 'vp_subtitserie', 'vp_orientacion', 'vp_duracionin',
+    #    'vp_duracionout', 'vp_duracion1', 'tx', 'vp_observaciones', 'vp_fork',
+    #    'vp_realizador', 'vp_musicao', 'vp_musicai', 'vp_cantante', 'vp_disquera',
+    #    'vp_libreriam', 'vp_registro_obra')
 
     def get_success_url(self):
         return reverse_lazy('inventario:programas-detail', kwargs={'pk': self.object.vp_id})

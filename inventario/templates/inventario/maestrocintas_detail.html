@@ -75,7 +75,7 @@
                   <tr>
                     <th>Folio</th>
                     <th>Serie</th>
-                    <th>Subtítulo</th>
+                    <th>Programa</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -84,8 +84,8 @@
                     <td>
                       <a href="/inventario/programas/{{programa.vp_id}}">{{programa.video_id}}</a>
                     </td>
-                    <td>{{programa.vp_serie}}</td>
-                    <td>{{programa.vp_subtitulo}}</td>
+                    <td>{{ programa.vp_serie|default:'-' }}</td>
+                    <td>{{ programa.vp_programa|default:'-' }}</td>
                   </tr>
                 {% endfor %}
                 </tbody>

@@ -10,13 +10,14 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title">Programa No. {{programa.video_cbarras}}</h2>
+        <h2 class="card-title">{{ programa.vp_serie|default:"&nbsp;" }}</h2>
+        <h5 class="card-title">{{ programa.vp_programa|default:"&nbsp;" }}</h5>
         <hr class="red">
     </div>
     <div class="card-body">
         <form method="post">
             {% csrf_token %}
-            {{form.as_p}}
+            {{ form.as_p }}
             <a class="btn btn-default" href="/inventario/programas/{{programa.vp_id}}">Cancelar</a>
             <button type="submit" class="btn btn-primary">Actualizar</button>
             <a class="btn btn-danger" href="/inventario/programas/{{programa.vp_id}}/eliminar">Eliminar</a>

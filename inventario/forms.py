@@ -1,5 +1,5 @@
 from django import forms
-from .models import MaestroCintas
+from .models import MaestroCintas, DetalleProgramas
 
 import datetime
 
@@ -80,5 +80,29 @@ class MaestrosCintasForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(MaestrosCintasForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+
+class DetalleProgramasForm(forms.ModelForm):
+    class Meta:
+        model = DetalleProgramas
+        fields = ['vp_id', 'video_id', 'vp_serie', 'vp_subtitulo',#, 'video_cbarras'
+            'vp_sinopsis', 'vp_participantes', 'vp_personajes', 'vp_areaconocimiento',
+            'vp_asigmateria', 'vp_niveleducativo', 'vp_grado', 'vp_ejetematico',
+            'vp_tema', 'vp_institproductora', 'vp_idiomaoriginal', 'vp_elenco',
+            'vp_conductor', 'vp_locutor', 'vp_guionista', 'vp_investigador',
+            'vp_derechopatrimonial', 'vp_fechacalificacion', 'vp_calificador',
+            'vp_fecha_modificacion', 'vp_calificadormod', 'vp_sistema', 'vp_duracion',
+            'vp_programa', 'vp_subtitserie', 'vp_orientacion', 'vp_duracionin',
+            'vp_duracionout', 'vp_duracion1', 'tx', 'vp_observaciones', 'vp_fork',
+            'vp_realizador', 'vp_musicao', 'vp_musicai', 'vp_cantante', 'vp_disquera',
+            'vp_libreriam', 'vp_registro_obra']
+        widgets = {
+            'video_id': forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DetalleProgramasForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
