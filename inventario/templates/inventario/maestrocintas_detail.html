@@ -95,9 +95,11 @@
           {% else %}
             <h3>No hay programas registrados en esta cinta</h3>
           {% endif %}
-          <a href="/inventario" class="btn btn-default">Regresar</a>
-          <a href="/inventario/cintas/{{cinta.video_cbarras}}/editar" class="btn btn-primary">Editar</a>
+          <div class="pull-right">
+            <a class="btn btn-default active" href="/inventario">Regresar</a>
+            <a class="btn btn-primary active" href="/inventario/cintas/{{cinta.video_cbarras}}/editar">Editar</a>
+          </div>
     </div>
 </div>
-<br /><br />
+<br /><br /><br /><br />
 {% endblock %}
