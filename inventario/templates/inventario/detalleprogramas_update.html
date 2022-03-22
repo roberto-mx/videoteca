@@ -14,17 +14,17 @@
         <h5 class="card-title">{{ programa.vp_programa|default:"&nbsp;" }}</h5>
         <hr class="red">
     </div>
-    <div class="card-body">
-        <form method="post">
+    <form method="post">
+        <div class="card-body">
             {% csrf_token %}
             <dl class="row">
                 <dt class="col-sm-6">Código de barras</dt>
                 <dt class="col-sm-6">Folio</dt>
 
                 <dl class="col-sm-6">
-                    <a href="/inventario/cintas/{{ form.video_cbarras }}/">{{ form.video_cbarras }}</a>
+                    <a href="/inventario/cintas/{{ programa.video_cbarras }}/">{{ programa.video_cbarras }}</a>
                 </dl>
-                <dl class="col-sm-6">{{ form.video_id }}</dl>
+                <dl class="col-sm-6">{{ programa.video_id }}</dl>
 
                 <dt class="col-sm-6">Título de la serie</dt>
                 <dt class="col-sm-6">Título del programa</dt>
@@ -39,8 +39,7 @@
 
                 <dd class="col-sm-6">{{ form.vp_subtitserie }}</dd>
                 <dd class="col-sm-6">{{ form.vp_subtitulo }}</dd>
-
-            </div>
+            </d1>
         </div>
         <div class="panel-group ficha-collapse" id="description">
             <div class="panel panel-default">
@@ -222,7 +221,12 @@
                         <div class="row">
                             <dt class="col-sm-6">Fecha de Calificación:</dt>
                             <dt class="col-sm-6">Calificador:</dt>
-                            <dd class="col-sm-6">{{ form.vp_fechacalificacion }}</dd>
+                            <dd class="col-sm-6">
+                                <div class="datepicker-group">
+                                    <input class="form-control" name="vp_fechacalificacion" value="{{ form.vp_fechacalificacion|date:'Y-m-d' }}" id="id_vp_fechacalificacion" type="text">
+                                    <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                                </div>
+                            </dd>
                             <dd class="col-sm-6">{{ form.vp_calificador }}</dd>
 
                             <dt class="col-sm-12">Calificador mod:</dt>
@@ -233,8 +237,6 @@
                 </div>
             </div>
         </div>
-        </form>
-    <div>
         <div class="row">
             <dt class="col-sm-4">Fecha de última actualización:</dt>
             <dd class="col-sm-8">{{ programa.vp_fecha_modificacion|date:'Y-m-d' }}</dd>
@@ -242,11 +244,17 @@
         <div class="clearfix">
             <div class="pull-right">
                 <a class="btn btn-default active" href="/inventario/programas/{{programa.vp_id}}">Cancelar</a>
-                <button class="btn btn-primary active" type="submit">Actualizar</button>
                 <a class="btn btn-danger active" href="/inventario/programas/{{programa.vp_id}}/eliminar">Eliminar</a>
+                <button class="btn btn-primary active" type="submit">Actualizar</button>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <br /><br />
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $( "#id_vp_fechacalificacion" ).datepicker( { changeYear: true } );
+    </script>
 {% endblock %}

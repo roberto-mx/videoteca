@@ -1,10 +1,10 @@
 {% extends "__base.html" %}
 
 {% block breadcrumb %}
-                <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/inventario">Inventario</a></li>
-                <li class="active">Actualizar cinta</li>
+<li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
+<li><a href="/">Inicio</a></li>
+<li><a href="/inventario">Inventario</a></li>
+<li class="active">Actualizar cinta</li>
 {% endblock %}
 
 {% block content %}
@@ -13,180 +13,182 @@
         <h2 class="card-title">Cinta No. {{cinta.video_cbarras}}</h2>
         <hr class="red">
     </div>
-    <div class="card-body">
-        <form class="form-horizontal" role="form" method="post">
-            {% csrf_token %}
 
+    <form class="form-horizontal" role="form" method="post">
+
+        <div class="card-body">
+            {% csrf_token %}
             {{ form.non_field_errors }}
             <input class="form-control" type="hidden" name="video_id" value="118703" id="id_video_id" required>
+
             <div class="form-group">
-                {{ form.video_cbarras.errors }}
-                <label class="col-sm-3 control-label" for="{{ form.video_cbarras.id_for_label }}">Código de barras:</label>
-                <div class="col-sm-9">
-                    {{ form.video_cbarras }}
+                <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_cbarras.id_for_label }}">Código de barras</label>
+                <label class="col-sm-4 control-label" style="text-align: left;" for="id_form_clave">Formato de cinta</label>
+                <label class="col-sm-4 control-label" style="text-align: left;" for="id_video_anoproduccion">Año de producción:</label>
+                <div class="col-sm-4">
+                    <input type="text" name="video_cbarras" value="{{form.video_cbarras.value}}" placeholder="Código de barras" maxlength="12" class="form-control" id="id_video_cbarras" readonly="readonly">
+                    {{ form.video_cbarras.errors }}
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_form_clave">Formato:</label>
-                <div class="col-sm-9">
+                <div class="col-sm-4">
                     {{ form.form_clave }}
+                    {{ form.form_clave.errors }}
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_codificacion">Formato de la cinta:</label>
-                <div class="col-sm-9">
-                    {{ form.video_codificacion }}
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_tipo">Tipo de video:</label>
-                <div class="col-sm-9">
-                    {{ form.video_tipo }}
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_fingreso">Fecha ingreso:</label>
-                <div class="col-sm-9">
-                    <div class="datepicker-group">
-                        <input class="form-control" name="video_fingreso" id="id_video_fingreso" value="{{ form.video_fingreso.value|date:'Y-m-d' }}" type="text">
-                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_inventario">Inventario:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_inventario" value="{{ form.video_inventario.value|default_if_none:'' }}" maxlength="4" id="id_video_inventario">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_estatus">Estatus de la cinta:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_estatus" value="{{ form.video_status.value|default_if_none:'' }}" maxlength="20" id="id_video_estatus">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_rack">Rack:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_rack" value="{{ form.video_rack.value|default_if_none:'' }}" maxlength="4" id="id_video_rack">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_nivel">Nivel:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_nivel" value="{{ form.video_nivel.value|default_if_none:'' }}" maxlength="4" id="id_video_nivel">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_anoproduccion">Año de producción:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="number" name="video_anoproduccion" value="{{ form.video_anoproduccion.value|default_if_none:'' }}" id="id_video_anoproduccion">
-                </div>
-            </div>
-            <!--<div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_idproductor">Id de productor:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="number" name="video_idproductor" value="0" id="id_video_idproductor">
-                </div>
-            </div>-->
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_productor">Productor:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_productor" value="{{ form.video_productor.value|default_if_none:'' }}" maxlength="100" id="id_video_productor">
-                </div>
-            </div>
-            <!--<div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_idcoordinador">Id de coordinador:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="number" name="video_idcoordinador" value="0" id="id_video_idcoordinador">
-                </div>
-            </div>-->
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_coordinador">Coordinador:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_coordinador" value="{{ form.video_coordinador.value|default_if_none:'' }}" maxlength="80" id="id_video_coordinador">
-                </div>
-            </div>
-            <!--<div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_usmov">Usmov:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="number" name="video_usmov" value="0" id="id_video_usmov">
-                </div>
-            </div>-->
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_observaciones">Observaciones:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_observaciones" value="{{ form.video_observaciones.value|default_if_none:'' }}" maxlength="300" id="id_video_observaciones">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_usua_clave">Clave:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="usua_clave" value="{{ form.usua_clave.value|default_if_none:'' }}" maxlength="12" id="id_usua_clave">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_fchcal">Fecha de calificación:</label>
-                <div class="col-sm-9">
-                    <div class="datepicker-group">
-                        <input class="form-control" name="video_fchcal" value="{{ form.video_fchcal.value|date:'Y-m-d' }}" id="id_video_fchcal" type="text">
-                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_target">Target:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_target" value="{{ form.video_target.value|default_if_none:'' }}" maxlength="45" id="id_video_target">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_tipo_id">Tipo de Serie:</label>
-                <div class="col-sm-9">
-                    {{ form.tipo_id }}<!--
-                    <select class="form-control" name="tipo_id" required id="id_tipo_id">
-                        <option value="" selected>---------</option>
-                        <option value="0">No especifica</option>
-                        <option value="1">Unitario</option>
-                        <option value="2">Cápsula</option>            
-                        <option value="3">Película</option>
-                        <option value="4">Documental</option>
-                        <option value="5">Promo</option>
-                        <option value="6">Serie Curricula</option>
-                        <option value="7">Serie Cultural</option>
-                        <option value="8">Noticiero</option>
-                    </select>-->
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_origen_id">Origen de serie:</label>
-                <div class="col-sm-9">
-                    <select class="form-control" name="origen_id" required id="id_origen_id">
-                        <option value="" selected>---------</option>
-                        <option value="0">No Especifica</option>
-                        <option value="1">Coproducción</option>
-                        <option value="2">Producción Interna</option>
-                        <option value="3">Producción de otras Instituciones</option>
-                        <option value="4">Producción Adquirida</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="id_video_fechamov">&Uacute;ltimo movimiento:</label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" name="video_fechamov" value="{{ form.video_fechamov.value|date:'Y-m-d P' }}" id="id_video_fechamov" readonly>
+                <div class="col-sm-4">
+                    {{ form.video_anoproduccion }}
+                    {{ form.video_anoproduccion.errors }}
                 </div>
             </div>
 
-            <div class="clearfix">
-                <div class="pull-right">
-                    <a class="btn btn-default active" href="/inventario/cintas/{{cinta.video_cbarras}}">Cancelar</a>
-                    <button class="btn btn-primary active" type="submit">Actualizar</button>
-                    <a class="btn btn-danger active" href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+        </div><!-- card-body -->
+
+        <div class="panel-group ficha-collapse" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-parent="#accordion" data-toggle="collapse" href="#panel-dg" aria-expanded="true" aria-controls="panel-dg">
+                  Datos generales
+                  </a>
+                </h4>
+                <button type="button" class="collpase-button collapsed" data-parent="#accordion" data-toggle="collapse" href="#panel-dg"></button>
+              </div>
+              <div class="panel-collapse collapse in" id="panel-dg">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_codificacion.id_for_label }}">Formato de la cinta</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_tipo.id_for_label }}">Tipo de video</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.origen_id.id_for_label }}">Origen de serie</label>
+                        <div class="col-sm-4">
+                            {{ form.video_codificacion }}
+                            {{ form.video_codificacion.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.video_tipo }}
+                            {{ form.video_tipo.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.origen_id }}
+                            {{ form.origen_id.errors }}
+                        </div>
+
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_productor.id_for_label }}">Productor</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_coordinador.id_for_label }}">Coordinador</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_estatus.id_for_label }}">Estatus de la cinta</label>
+                        <div class="col-sm-4">
+                            {{ form.video_productor }}
+                            {{ form.video_productor.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.video_coordinador }}
+                            {{ form.video_coordinador.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.video_estatus }}
+                            {{ form.video_estatus.errors }}
+                        </div>
+
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_target.id_for_label }}">Clasificación</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.tipo_id.id_for_label }}">Tipo de Serie</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_fingreso.id_for_label }}">Fecha ingreso</label>
+                        <div class="col-sm-4">
+                            {{ form.video_target }}
+                            {{ form.video_target.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.tipo_id }}
+                            {{ form.tipo_id.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="datepicker-group">
+                                <input class="form-control" name="video_fingreso" id="id_video_fingreso"
+                                    value="{{ form.video_fingreso.value|date:'Y-m-d' }}" type="text">
+                                <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                            </div>
+                            {{ form.video_fingreso.errors }}
+                        </div>
+
+                        <label class="col-sm-12 control-label" style="text-align: left;" for="{{ form.video_observaciones.id_for_label }}">Observaciones</label>
+                        <div class="col-sm-12">
+                            {{ form.video_observaciones }}
+                            {{ form.video_observaciones.errors }}
+                        </div>
+                    </div>
                 </div>
+              </div>
             </div>
-        </form>
-    </div>
+        </div><!-- panel colapsable -->
+        
+        <div class="panel-group ficha-collapse" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-parent="#accordion" data-toggle="collapse" href="#panel-inv" aria-expanded="true" aria-controls="panel-inv">
+                  Inventario
+                  </a>
+                </h4>
+                <button type="button" class="collpase-button collapsed" data-parent="#accordion" data-toggle="collapse" href="#panel-inv"></button>
+              </div>
+              <div class="panel-collapse collapse in" id="panel-inv">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_rack.id_for_label }}">Rack</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_nivel.id_for_label }}">Nivel</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.usua_clave.id_for_label }}">Clave</label>
+                        <div class="col-sm-4">
+                            {{ form.video_rack }}
+                            {{ form.video_rack.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.video_nivel }}
+                            {{ form.video_nivel.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.usua_clave }}
+                            {{ form.usua_clave.errors }}
+                        </div>
+
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_fechamov.id_for_label }}">Fecha de &uacute;ltimo movimiento</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_fchcal.id_for_label }}">Fecha de calificación</label>
+                        <label class="col-sm-4 control-label" style="text-align: left;" for="{{ form.video_usmov.id_for_label }}">Movimiento usuario</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="video_fechamov" value="{{ form.video_fechamov.value }}" class="form-control" id="id_video_fechamov" readonly="readonly">
+                            {{ form.video_fechamov.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="datepicker-group">
+                                <input class="form-control" name="video_fchcal"
+                                    value="{{ form.video_fchcal.value|date:'Y-m-d' }}" id="id_video_fchcal" type="text">
+                                <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                            </div>
+                            {{ form.video_fchcal.errors }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ form.video_usmov }}
+                            {{ form.video_usmov.errors }}
+                        </div>
+
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div><!-- panel colapsable -->
+    
+        <div class="clearfix">
+            <div class="pull-right">
+                <a class="btn btn-default active" href="/inventario/cintas/{{cinta.video_cbarras}}">Cancelar</a>
+                <button class="btn btn-primary active" type="submit">Actualizar</button>
+                <a class="btn btn-danger active"
+                    href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+            </div>
+        </div>
+
+    </form>
 </div>
 <br /><br />
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $( "#id_video_fingreso" ).datepicker( { changeYear: true } );
+        $( "#id_video_fchcal" ).datepicker( { changeYear: true } );
+    </script>
 {% endblock %}

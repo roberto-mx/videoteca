@@ -42,11 +42,18 @@ class MaestrosCintasForm(forms.ModelForm):
             'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id']
         widgets = {
             'video_id': forms.HiddenInput(),
-            'video_fechamov': forms.HiddenInput(attrs={'value':datetime.datetime.now()}),
+            'video_fechamov': forms.TextInput(attrs={'value':datetime.datetime.now()}),
             'video_cbarras': forms.TextInput(attrs={'placeholder': 'Código de barras'}),
+            'video_observaciones': forms.Textarea(),
+            #'video_usmov': forms.TypedChoiceField(coerce=lambda x: x == 1, 
+            #                       choices=((0, 'No'), (1, 'Yes')))
         }
 
-
+    video_usmov = forms.TypedChoiceField(
+        coerce=lambda x: x == 1,
+        choices=((0, 'No'), (1, 'Yes')),
+        disabled=True
+    )
     """
     video_id = forms.CharField(widget=forms.HiddenInput())
     video_cbarras = forms.CharField(

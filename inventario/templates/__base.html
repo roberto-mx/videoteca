@@ -79,7 +79,7 @@
     <script src="https://framework-gb.cdn.gob.mx/qa/gobmx.js"></script>
     <script src="https://framework-gb.cdn.gob.mx/assets/scripts/jquery-ui-datepicker.js"></script>
     <script type="text/javascript">
-      $gmx(document).ready(function(){
+      $gmx(document).ready( function() {
         $.datepicker.regional.es = {
           closeText: 'Cerrar',
           prevText: 'Ant',
@@ -102,6 +102,7 @@
         $('[data-toggle="tooltip"]').tooltip();
       });
     </script>
+    {% block script %}{% endblock %}
 
 </body>
 </html>

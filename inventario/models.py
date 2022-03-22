@@ -84,7 +84,7 @@ class MaestroCintas(models.Model):
     video_observaciones = models.CharField("Observaciones", max_length=300, blank=True, null=True)
     usua_clave = models.CharField("Clave", max_length=12, blank=True, null=True)
     video_fchcal = models.DateField("Fecha de calificación", blank=True, null=True)
-    video_target = models.CharField("Target", max_length=45, blank=True, null=True)
+    video_target = models.CharField("Clasificación del contenido", max_length=45, blank=True, null=True)
     tipo_id = models.ForeignKey(TipoSerie, to_field='tipo_id', verbose_name="Tipo de Serie", null=True, on_delete=models.SET_NULL)
     origen_id = models.ForeignKey(OrigenSerie, to_field='origen_id', verbose_name="Origen de serie", null=True, on_delete=models.SET_NULL)
 
