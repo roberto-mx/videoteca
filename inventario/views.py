@@ -24,6 +24,7 @@ from .models import DetalleProgramas
 from .models import FormatosCintas
 from .models import MaestroCintas
 from .models import OrigenSerie
+from .models import Usuario
 
 
 class AdminLogin(LoginView):
@@ -300,12 +301,23 @@ def login(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = Login(request.POST)
-        # check whether it's valid:
+
+
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
+            username = request.POST.get('usuario')
+            password = request.POST.get('pwd')
+            try:
+                user = Usuario.objects.using('users').get(usuario=username, password=password)
+                if user is not None:
+                    return HttpResponseRedirect('/inventario/')
+                else:
+                    print('Someone tried to login and failed.')
+                    print(f'They used username: {username} and password: {password}')
+
+                    return HttpResponseRedirect('/')
+            except Exception as ex:
+                print(ex)
+                return HttpResponseRedirect('/')
     else:
         form = Login()
 

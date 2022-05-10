@@ -1,16 +1,14 @@
 from django.db import models
 
-"""
-# TODO: create a new app and add this model, and create other database
-class Person(models.Model):
+class Usuario(models.Model):
     matricula = models.CharField(max_length=255, blank=True, verbose_name='Matrícula')
-    nombres = models.CharField(max_length=255, blank=True, verbose_name='Nombre(s)')
+    usuario = models.CharField(max_length=255, blank=True, verbose_name='Usuario')
+    password = models.CharField(max_length=255, blank=True, verbose_name='Contraseña')
     imagen_base64 = models.TextField(blank=True,null=True)
 
     class Meta:
-        #db_table = 'inventario_person'
-        managed = False
-"""
+        db_table = 'inventario_usuario'
+        app_label = 'usuarios'
 
 
 class CatStatus(models.Model):

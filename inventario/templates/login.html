@@ -6,15 +6,15 @@
 {% endblock %}
 
 {% block content %}
-            <form role="form" method="POST">
+            <form action="#" role="form" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                   <label class="control-label" for="usuario">Usuario:</label>
-                  <input class="form-control" id="usuario" placeholder="Usuario" type="text">
+                  <input class="form-control" id="usuario" name="usuario" placeholder="Usuario" type="text">
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="pwd">Contraseña</label>
-                  <input class="form-control" id="pwd" placeholder="Contraseña" type="password">
+                  <input class="form-control" id="pwd" name="pwd" placeholder="Contraseña" type="password">
                 </div>
                 <button class="btn btn-primary pull-right active" type="submit">Enviar</button>
             </form>
