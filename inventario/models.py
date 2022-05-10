@@ -1,13 +1,14 @@
 from django.db import models
 
 class Usuario(models.Model):
+    id = models.IntegerField('id', primary_key=True)
     matricula = models.CharField(max_length=255, blank=True, verbose_name='Matrícula')
     usuario = models.CharField(max_length=255, blank=True, verbose_name='Usuario')
     password = models.CharField(max_length=255, blank=True, verbose_name='Contraseña')
     imagen_base64 = models.TextField(blank=True,null=True)
 
     class Meta:
-        db_table = 'inventario_usuario'
+        db_table = 'usuarios_rh'
         app_label = 'usuarios'
 
 
