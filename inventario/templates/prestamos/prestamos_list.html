@@ -1,0 +1,443 @@
+
+{% extends '__basePrestamos.html' %}
+{% block content %}
+<div class="container">
+ <div class="col-md-6">
+      <div class="form-group datepicker-group">
+      <label><b>Fecha de Inicio:</b></label>
+      <input class="form-control" id="input1" type="text">
+      <label><b>Fecha Fin:</b></label>
+      <input class="form-control" id="input2" type="text">
+   </div>
+</div>
+<form method="get">
+    <div class="col-md-3">
+      <input name ="q" id="searchFolio" value="{{request.GET.q}}" placeholder="Buscar préstamo..">
+  </div>
+ </form>
+  <div class="col-md-12">
+    <div class="col-md-6">
+      <p>
+       <a class="btn btn-primary" id="buttonOut" data-toggle="modal" data-target="#modalOut">Prestamo con Código de Barras</a>
+      </p>
+    </div>
+    <div class="col-md-6"> 
+         <a class="btn btn-danger" id="buttonIn" data-toggle="modal" data-target="#modalIn">Devolución con Código de Barras</a>
+    </div>
+  </div>
+  <div id="listaPersonas"></div>
+    
+  <div id="RowsSearch"></div>
+<div class ="col-md-12" id="RowsInicio">
+  <table class="table table-bordered" id="bajasList">
+    <thead>
+      <tr>
+      <th>Detalle</th>
+        <th>Folio Prestamo</th>
+        <th>Usuario</th>
+        <th>Fecha Hora Préstamo</th>
+        <th>Devolución</th>
+        <th>Estatus</th>        
+      </tr>
+    </thead>
+    <tbody>
+    {% for prestamo in prestamos %} 
+       <tr>
+       <!--   -->
+        <td style="display:none"> {{prestamo.pres_folio }}</td>
+          <td><a> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+          <td> {{prestamo.pres_folio}}</td>
+          <td>{{ prestamo.usua_clave }}</td>
+          <td>{{ prestamo.pres_fechahora  }} </a></td>
+          <td>{{ prestamo.pres_fecha_devolucion }}</td>
+          <td>{{ prestamo.pres_estatus }}</td>
+        </tr>
+      {% empty %}
+        <tr class="table-active">
+          <td colspan="3">No data</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div id="Pages"> 
+    {% if is_paginated %}
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    
+    {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span>     </span></li>
+        {% else %}
+          <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+    {% endfor %}
+ 
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+      </ul>
+    {% endif %}
+  </div>
+    <div class="modal fade"  id="modalIn">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Ingresar Devolución por Código de Barras</h4>
+          </div>
+          <div class="modal-body">
+             <div id="inputUsuario">
+            <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Gafete de Usuario que devuelve" id="searchUsuarioIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+            </div>
+            <div id="inputVideo">
+                 <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Ingrese con el Lector código de barras" id="searchBarCodeIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModal">Cerrar</button>
+              <button type="button" class="btn btn-primary" id="cleanTable">Limpiar</button> 
+
+            <table id="resultTableIn" class="modal-footer">
+            </table>
+          </div>
+          <div class="form-group">
+              <div class="alert alert-success" id="ins_success" style="display:none">
+
+              </div>
+               <div class="alert alert-danger" id="ins_error" style="display:none">
+
+              </div>
+          </div>  
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+     <div class="modal fade"  id="modalOut">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Prestamo por Código de Barras</h4>
+          </div>
+          <div class="modal-body">
+            <div id="buscarUsuario">
+            <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Usuario" id="searchUsuarioOut" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+            </div>
+            <div id="buscarCodigo">
+              <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Ingrese con el Lector código de barras" id="searchBarCodeOut" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModal">Cerrar</button>
+              <button type="button" class="btn btn-primary" id="continuarPrestamo">Continuar</button> 
+
+            <table id="resultTableOut" class="modal-footer">
+            </table>
+          </div>
+          <div class="form-group">
+              <div class="alert alert-success" id="out_success" style="display:none">
+
+              </div>
+               <div class="alert alert-danger" id="out_error" style="display:none">
+
+              </div>
+          </div>  
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+<div class="row">
+  <div class="col-lg-12">
+        <div class="alert alert-success" id="upt_success" style="display:none">
+
+        </div>
+         <div class="alert alert-danger" id="upt_error" style="display:none">
+
+        </div>
+  </div>
+</div>
+   
+
+
+<script>
+
+$('#input1').datepicker({changeYear: true});
+$('#input2').datepicker({changeYear: true});
+$('#searchBarCodeIn').val("").focus();
+$('#searchBarCodeOut').val("").focus();
+/*
+document.body.addEventListener('keydown', event => {
+  if ( (event.ctrlKey && 'cvxspwuazj'.indexOf(event.key) !== -1) || ( event.ctrlKey && event.shiftKey ) ) {
+    event.preventDefault()
+  }
+})
+*/
+
+$('#searchBarCodeIn').keyup(function(e){
+    if( e.keyCode == 13 ){
+        readCodeBar();
+    }
+});
+
+$('#searchBarCodeOut').keyup(function(e){
+    if( e.keyCode == 13 ){
+        addItemOut();
+    }
+});
+
+$('#searchFolio').keyup(function(e){
+    clearTimeout($.data(this, 'timer'));
+    if($("#searchFolio").val()==""){
+        $("#RowsSearch").hide();
+        $("#RowsInicio").show();
+        $("#Pages").show();
+            
+    }
+    else {
+        $(this).data('timer', setTimeout(search, 500));
+    }
+});
+
+$("#buttonIn").click(function(){
+  setTimeout(function() { $('#searchBarCodeIn').val("").focus() }, 1000);
+  
+});
+$("#buttonOut").click(function(){
+  console.log(":S");
+  setTimeout(function() { $('#searchBarCodeOut').val("").focus() }, 1000);
+  
+});
+
+function cleanTable(){
+  $("#resultTableIn tr").remove(); 
+}
+
+$("#cleanTable").click(function(){
+   cleanTable(); 
+});
+$("#closeModal").click(function(){
+   cleanTable(); 
+});
+
+$("#continuarPrestamo").click(function(){
+  usuario =  $('#searchUsuarioOut').val();
+  if (usuario == ""){
+     alert("Ingrese un valor para el usuario");
+      $('#searchUsuarioOut').focus();  
+  }
+  else{
+      console.log(get_data());
+         $.ajax({
+            data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data())},
+            url: "{% url 'registro_salida_videoteca' %}",
+            type: 'POST'
+            })
+              .done(function(response){
+                if(response['error']==true){
+                  $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+                }
+                else{
+                    $('#resultTableIn').append('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+                }
+                $('#searchBarCodeIn').val("").focus()
+                })
+                .fail(function(){
+                  $('#alertWarning').show('slow');
+                  $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+                  setTimeout(function(){ 
+                  cleanForm();
+                  location.reload();
+                  }, 3000);      
+                })
+    }     
+  });
+
+
+$(document).on("click",".glyphicon-plus",function(){
+            var this_html=$(this);
+            var id=this_html.parent().parent().parent().children().first().text();
+            console.log(id);
+            $.ajax({
+                url:"{% url 'registro_entrada_videoteca' %}",
+                type:'POST',
+                data:{grupo:$("#idGrupo").val(), alumno: id, diplomado:$("#idDiplomado").val()}
+            })
+            .done(function(response){
+                if(response['error']==false){
+                    $("#ins_error").hide();
+                    $("#ins_success").text(response['errorMessage']);
+                    $("#ins_success").show();
+                    $("#noData").hide();
+                    var html_data="<tr><td style='display:none'>"+response['id']+"</td><td>"+response["alumno_matricula"]+"</td><td><a href=/alumno/edit/"+ response['id_alumno']+"?redirect_page=>" + response["alumno_nombres"]+" </a></td> ";
+                      for (var i = 0; i < response["length"]; i++) {
+                          html_data += "<td> 0,0 </td><td>0,0</td>";
+                      }
+                    
+                    html_data +="<td> <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span> Consulta </button> </td> <td>  <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button> Eliminar del Grupo </td></tr>";
+                    $("#tablaPrincipal tbody").append(html_data);
+                }
+                else{
+                    console.log(":( ");
+                    $("#ins_success").hide();
+                    $("#ins_error").text(response['errorMessage']);
+                    $("#ins_error").show();
+                }
+            })
+            .fail(function(){
+                 $("#ins_success").hide();
+                 $("#ins_error").text("Something Went Wrong!");
+                 $("#ins_error").show();
+            })
+            .always(function(){
+                $(".btn-insert-data").removeAttr("disabled");
+                $(".btn-insert-data").text("INSERT STUDENT");
+            })
+        
+    });
+
+
+
+
+function readCodeBar(){
+  codigoBarras= $('#searchBarCodeIn').val();
+  console.log(codigoBarras);
+  usuario =  $('#searchUsuarioIn').val();
+  if (usuario == ""){
+     alert("Ingrese el Gafete del usuario");
+      $('#searchUsuarioIn').focus();  
+  }
+  else{
+    $.ajax({
+    data: {'codigoBarras': codigoBarras, 'matricula' : usuario},
+    url: "{% url 'registro_entrada_videoteca' %}",
+    type: 'POST'
+    })
+      .done(function(response){
+        if(response['error']==true){
+              $('#resultTableIn').prepend('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+            }
+            else{
+                $('#resultTableIn').prepend('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+            }
+            $('#searchBarCodeIn').val("").focus()
+        })
+        .fail(function(){
+          $('#ins_error').show('slow');
+          $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
+          setTimeout(function(){  $('#ins_error').hide(); }, 1000);      
+        })
+  }
+}
+
+function addItemOut(){
+  codigoBarras= $('#searchBarCodeOut').val();
+   $.ajax({
+  data: {'codigoBarras': codigoBarras, 'funcion' : 'registerIn'},
+  url: "{% url 'validacion_salida_videoteca' %}",
+  type: 'POST'
+  })
+    .done(function(response){
+      if(f_valida_repetido(codigoBarras)== 1){
+          $("#out_error").text("Registro duplicado");
+          $("#out_error").show();
+          setTimeout(function() {  $("#out_error").hide() }, 1000);
+          $('#searchBarCodeOut').val("").focus()
+      }
+      else{
+          if(response['error']==true){
+            $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none" > <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
+          }
+          else{
+              $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"> <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td>  <td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
+          }
+          $('#searchBarCodeOut').val("").focus()
+      }  
+      })
+      .fail(function(){
+        $('#out_error').show('slow');
+        $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
+        setTimeout(function(){ $("#out_error").hide() }, 1000);      
+      })
+
+}
+
+function f_valida_repetido(codigoBarras){
+  var v_valor = 0;
+  if ($('#resultTableOut tbody tr').length > 0){
+   
+      $('#resultTableOut tbody tr').each(function(){
+                if ($(this).find('input.codbarras').val() == codigoBarras){
+                    alert('valor repetido');
+                   v_valor = 1;
+                }
+            });
+        }           
+      return v_valor;      
+    }
+function get_data(){
+  var data = [];
+  if ($('#resultTableOut tbody tr').length > 0){
+   
+      $('#resultTableOut tbody tr').each(function(){
+                data.push($(this).find('input.codbarras').val());
+              });
+        }           
+      return data;      
+}  
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('input[type=text]').forEach( node => node.addEventListener('keypress', e => {
+        
+      }))
+    });
+   
+     
+
+function search(force) {
+  var existingString = $("#searchFolio").val();
+    if (!force && existingString.length < 3) return; 
+  $.ajax({
+      type:'GET',
+      data:{q:$("#searchFolio").val()}
+            })
+    .done(function(response){
+      $("#RowsSearch").show();
+      $("#RowsInicio").hide();
+      $("#Pages").hide();
+      $("#RowsSearch").empty();
+      $("#RowsSearch").append(response);
+      console.log(response)
+      })
+    .fail(function(){
+      $("#RowsSearch").hide();
+      $("#RowsInicio").show();
+      $("#Pages").show();
+      })  
+
+}                
+
+
+
+
+
+$(document).on("click",".eliminar",function(){
+            var this_html=$(this);
+            var id =this_html.parent().parent().children().eq(0).text();
+            console.log(this_html.parent().parent().children().eq(0).text());
+            this_html.parent().parent().remove();
+           /* var opcion = confirm("Se va a dar eliminar la Compensacion registrada al empleado: "+ empleado +". ¿Es correcto?");
+            if (opcion == true) {
+            }*/
+           
+        });    
+
+
+</script>
+
+{% endblock %}
