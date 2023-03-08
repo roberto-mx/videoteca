@@ -318,13 +318,33 @@ class ControlVideoteca(models.Model):
         db_table = 'control_videoteca'
 
 
-class DetallePrestamos(models.Model):
-    pres_folio = models.IntegerField()
-    vide_clave = models.IntegerField()
-    depr_estatus = models.CharField(max_length=1)
+class Videos(models.Model):
+    vide_clave = models.IntegerField(primary_key=True)
+    vide_codigo =  models.ForeignKey(MaestroCintas, verbose_name="Codigo de Barras", null=True, on_delete=models.CASCADE)
+    vide_videoteca = models.CharField(max_length=45, blank=True, null=True)
+    vide_numero_cinta = models.CharField(max_length=14, blank=True, null=True)
+    vide_tipo_video = models.CharField(max_length=4, blank=True, null=True)
+    form_clave = models.IntegerField(blank=True, null=True)
+    vide_consecutivo = models.IntegerField(blank=True, null=True)
+    tivi_clave = models.CharField(max_length=45, blank=True, null=True)
+    usvi_clave = models.IntegerField(blank=True, null=True)
+    vide_fecha_ingreso = models.CharField(max_length=45, blank=True, null=True)
+    vide_cinta_programa = models.CharField(max_length=45, blank=True, null=True)
+    vide_cintas_totales = models.CharField(max_length=45, blank=True, null=True)
+    vide_programas_totales = models.CharField(max_length=45, blank=True, null=True)
+    vide_inventario = models.CharField(max_length=1, null=True)
+    vide_estatus = models.CharField(max_length=1)
+    usua_captura = models.CharField(max_length=10, blank=True, null=True)
+    usua_modifica = models.CharField(max_length=10, blank=True, null=True)
+    vide_fechahora_modificacion = models.DateTimeField(blank=True, null=True)
+    marca = models.CharField(max_length=15, blank=True, null=True)
+    vide_rack = models.CharField(max_length=45, blank=True, null=True)
+    vide_nivel = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
-        db_table = 'detalle_prestamos'
+        db_table = 'videos'
+
+
 
 
 class FichaContenido(models.Model):
@@ -463,6 +483,17 @@ class Prestamos(models.Model):
     class Meta:
         db_table = 'prestamos'
 
+class DetallePrestamos(models.Model):
+    #pres_folio = models.IntegerField()
+    pres_folio = models.ForeignKey(Prestamos, verbose_name="Folio Prestamo", null=True, on_delete=models.CASCADE)
+    vide_clave = models.ForeignKey(Videos, verbose_name="Clave de Video", null=True, on_delete=models.CASCADE)
+    #vide_clave = models.IntegerField()
+    depr_estatus = models.CharField(max_length=1)
+    usuario_recibe = models.CharField(max_length=10, null=True)
+    pres_fecha_devolucion = models.DateTimeField(null=True)
+    usuario_devuelve =  models.CharField(max_length=10, null=True)
+    class Meta:
+        db_table = 'detalle_prestamos'
 
 class Recupera(models.Model):
     video_clave = models.CharField(max_length=10)
@@ -698,32 +729,6 @@ class UsuariosVid(models.Model):
     class Meta:
         db_table = 'usuarios_vid'
 
-
-class Videos(models.Model):
-    vide_clave = models.IntegerField(primary_key=True)
-    vide_codigo = models.CharField(max_length=12)
-    vide_videoteca = models.CharField(max_length=45, blank=True, null=True)
-    vide_numero_cinta = models.CharField(max_length=14, blank=True, null=True)
-    vide_tipo_video = models.CharField(max_length=4, blank=True, null=True)
-    form_clave = models.IntegerField(blank=True, null=True)
-    vide_consecutivo = models.IntegerField(blank=True, null=True)
-    tivi_clave = models.CharField(max_length=45, blank=True, null=True)
-    usvi_clave = models.IntegerField(blank=True, null=True)
-    vide_fecha_ingreso = models.CharField(max_length=45, blank=True, null=True)
-    vide_cinta_programa = models.CharField(max_length=45, blank=True, null=True)
-    vide_cintas_totales = models.CharField(max_length=45, blank=True, null=True)
-    vide_programas_totales = models.CharField(max_length=45, blank=True, null=True)
-    vide_inventario = models.CharField(max_length=1)
-    vide_estatus = models.CharField(max_length=1)
-    usua_captura = models.CharField(max_length=10, blank=True, null=True)
-    usua_modifica = models.CharField(max_length=10, blank=True, null=True)
-    vide_fechahora_modificacion = models.DateTimeField(blank=True, null=True)
-    marca = models.CharField(max_length=15, blank=True, null=True)
-    vide_rack = models.CharField(max_length=45, blank=True, null=True)
-    vide_nivel = models.CharField(max_length=45, blank=True, null=True)
-
-    class Meta:
-        db_table = 'videos'
 
 
 class VideosPaso(models.Model):

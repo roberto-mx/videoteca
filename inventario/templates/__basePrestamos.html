@@ -11,13 +11,10 @@
     <!-- CSS -->
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
-    
-    <!-- Respond.js soporte de media queries para Internet Explorer 8 -->
-    <!-- ie8.js EventTarget para cada nodo en Internet Explorer 8 -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ie8/0.2.2/ie8.js"></script>
-    <![endif]-->
+    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"></script>
+    <script src="https://framework-gb.cdn.gob.mx/qa/gobmx.js"></script>
+    <script src="https://framework-gb.cdn.gob.mx/assets/scripts/jquery-ui-datepicker.js"></script>
 </head>
 <body>
 
@@ -38,7 +35,6 @@
                 <ul class="nav navbar-nav navbar-right">
                   <li><a href="/inventario">Inventario</a></li>
                   <li><a href="{% url 'prestamos_list' %}">Pr&eacute;stamo</a></li>
-                  <li><a href="#">Usuarios</a></li>
                   <li><a href="#">Reportes</a></li>
                 </ul>
               </div>
@@ -59,10 +55,10 @@
               <div class="col-sm-4">
                 <div class="user-credencials">
                   <ul class="list-unstyled">
-                     {% if user.is_authenticated %}
+                         {% if user.is_authenticated %}
                           <li>
                           <span>{{ user.first_name }} {{ user.last_name }} </span>
-                          <button type="button" class="btn btn-link pull-right" href="{% url 'logout' %}">Salir</button>
+                          <a type="button" class="btn btn-link pull-right" href="{% url 'logout' %}">Salir</a>
                           </li>
                         {% else %}
 
@@ -83,55 +79,6 @@
 
         </div>
     </main>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://framework-gb.cdn.gob.mx/qa/gobmx.js"></script>
-    <script src="https://framework-gb.cdn.gob.mx/assets/scripts/jquery-ui-datepicker.js"></script>
-    
-    <script type="text/javascript">
-      $gmx(document).ready( function() {
-        $.datepicker.regional.es = {
-          closeText: 'Cerrar',
-          prevText: 'Ant',
-          nextText: 'Sig',
-          currentText: 'Hoy',
-          monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
-          monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-          dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
-          dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
-          dayNamesMin: ['Dom','Lun','Mar','Mie','Jue','Vie','S&aacute;b'],
-          weekHeader: 'Sm',
-          dateFormat: 'yy-mm-dd',
-          firstDay: 1,
-          isRTL: false,
-          showMonthAfterYear: false,
-          yearSuffix: ''};
-        $.datepicker.setDefaults($.datepicker.regional.es);
-        $( "#id_video_fingreso" ).datepicker( { changeYear: true } );
-        $( "#id_video_fchcal" ).datepicker( { changeYear: true } );
-        $('#input1').datepicker({changeYear: true});
-        $('#input2').datepicker({changeYear: true});
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#searchPerson').keyup(function(e){
-          doSearch(); });
-        $('#searchFolio').keyup(function(e){
-        clearTimeout($.data(this, 'timer'));
-        if($("#searchFolio").val()==""){
-            $("#RowsSearch").hide();
-            $("#RowsInicio").show();
-            $("#Pages").show();
-            
-          }
-        else {
-          $(this).data('timer', setTimeout(search, 500));
-      }
-      });
-
-
-
-      });
-    </script>
-    {% block script %}{% endblock %}
 
 </body>
 </html>

@@ -17,15 +17,15 @@ from django.utils.decorators import method_decorator
 import datetime
 import re
 
-from .forms import Login, MaestrosCintasForm
-from .forms import MaestroCintasFilter, FormatosCintasForm, DetalleProgramasForm
+from ..forms import Login, MaestrosCintasForm
+from ..forms import MaestroCintasFilter, FormatosCintasForm, DetalleProgramasForm
 
-from .models import CatStatus
-from .models import DetalleProgramas
-from .models import FormatosCintas
-from .models import MaestroCintas
-from .models import OrigenSerie
-from .models import Usuario
+from ..models import CatStatus
+from ..models import DetalleProgramas
+from ..models import FormatosCintas
+from ..models import MaestroCintas
+from ..models import OrigenSerie
+from ..models import Usuario
 
 
 class AdminLogin(LoginView):
@@ -232,7 +232,7 @@ class MaestroCintasFormView(FormView):
 class DetalleProgramasListView(ListView):
     model = DetalleProgramas
     context_object_name = 'programas_list'
-    paginate_by = 10
+    paginate_by = 25
     #def get_context_data(self, **kwargs):
     #    context = super(DetalleProgramasListView, self).get_context_data(**kwargs)
     #    return context
@@ -325,3 +325,7 @@ def login(request):
         form = Login()
 
     return render(request, 'login.html', {'form': form})
+
+
+
+

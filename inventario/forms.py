@@ -1,5 +1,6 @@
 from django import forms
-from .models import MaestroCintas, DetalleProgramas
+from .models import MaestroCintas, DetalleProgramas, UsuariosVid, DetallePrestamos, Prestamos
+from django.forms.models import inlineformset_factory
 
 import datetime
 
@@ -113,3 +114,31 @@ class DetalleProgramasForm(forms.ModelForm):
         super(DetalleProgramasForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
+
+class UsuarioForm(forms.ModelForm):
+    class Meta:
+        model = UsuariosVid
+        fields = '__all__'
+   
+class PrestamoForm(forms.ModelForm):
+    pres_fecha_devolucion = forms.DateField(input_formats=['%d/%m/%Y'])
+    class Meta:
+        model = DetallePrestamos
+        fields = '__all__'
+        
+
+PrestamoInlineFormset = inlineformset_factory(
+    Prestamos,
+    DetallePrestamos,
+    form=PrestamoForm,
+    extra=0,
+    # max_num=5,
+    # fk_name=None,
+    # fields=None, exclude=None, can_order=False,
+    # can_delete=True, max_num=None, formfield_callback=None,
+    # widgets=None, validate_max=False, localized_fields=None,
+    # labels=None, help_texts=None, error_messages=None,
+    # min_num=None, validate_min=False, field_classes=None
+)
+    
+    

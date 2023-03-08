@@ -12,6 +12,7 @@ from .views import FormatosCintasListView, \
 
 app_name = 'inventario'
 urlpatterns = [
+      
     # Maestro cintas
     path('', MaestroCintasListView.as_view(), name='cintas-list'),
     path('cintas/registrar/', MaestroCintasCreateView.as_view(), name='cintas-create'),

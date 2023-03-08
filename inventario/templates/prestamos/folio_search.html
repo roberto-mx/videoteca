@@ -1,0 +1,29 @@
+{% block content %}
+  <table class="table table-bordered" id="bajasList">
+    <thead>
+       <tr>
+        <th>Folio Prestamo</th>
+        <th>Usuario</th>
+        <th>Fecha Hora Préstamo</th>
+        <th>Devolución</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      {% for prestamo in prestamos %}
+        <tr>
+           <tr>
+          <td> {{prestamo.pres_folio}}</td>
+          <td>{{ prestamo.usua_clave }}</td>
+          <td>{{ prestamo.pres_fechahora  }} </a></td>
+          <td>{{ prestamo.pres_fecha_devolucion }}</td>
+          <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Devolución  </button></td>
+        </tr></tr>
+      {% empty %}
+        <tr class="table-active">
+          <td colspan="3">No data</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
