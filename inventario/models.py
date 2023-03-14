@@ -473,7 +473,7 @@ class PorIngresar(models.Model):
 
 class Prestamos(models.Model):
     pres_folio = models.IntegerField(primary_key=True)
-    usvi_clave = models.IntegerField()
+    usvi_clave = models.CharField(max_length=10)
     usua_clave = models.CharField(max_length=10)
     pres_fechahora = models.DateTimeField()
     pres_fecha_prestamo = models.DateTimeField()
@@ -487,6 +487,8 @@ class DetallePrestamos(models.Model):
     #pres_folio = models.IntegerField()
     pres_folio = models.ForeignKey(Prestamos, verbose_name="Folio Prestamo", null=True, on_delete=models.CASCADE)
     vide_clave = models.ForeignKey(Videos, verbose_name="Clave de Video", null=True, on_delete=models.CASCADE)
+    vide_codigo = models.ForeignKey(MaestroCintas, verbose_name="Codigo de Barras", null=True, on_delete=models.CASCADE)
+    
     #vide_clave = models.IntegerField()
     depr_estatus = models.CharField(max_length=1)
     usuario_recibe = models.CharField(max_length=10, null=True)
