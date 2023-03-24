@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from inventario.views import login, PrestamosListView, GetFolioPrestamo, GetFolioDetail, RegisterInVideoteca, ValidateOutVideoteca, RegisterOutVideoteca
+from inventario.views import login, PrestamosListView, PrestamoDetalle, GetFolioPrestamo, GetFolioDetail, RegisterInVideoteca, ValidateOutVideoteca, RegisterOutVideoteca
 from django.contrib.auth import views
 from django.views.generic import TemplateView
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('inventario/', include('inventario.urls'), name="inventario_list"),
     path('prestamos/', PrestamosListView.as_view(), name='prestamos_list' ),
+    path('prestamos/detalles/', PrestamoDetalle, name='prestamos_detalles' ),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),
     path('detail_folio/<int:pk>', GetFolioDetail, name='search_folio_detail'),
     path('register_in/', RegisterInVideoteca,  name="registro_entrada_videoteca"),

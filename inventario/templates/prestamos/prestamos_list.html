@@ -1,89 +1,82 @@
-
 {% extends '__basePrestamos.html' %}
+
 {% block content %}
 <div class="container">
- <div class="col-md-6">
-      <div class="form-group datepicker-group">
-      <label><b>Fecha de Inicio:</b></label>
-      <input class="form-control" id="input1" type="text">
-      <label><b>Fecha Fin:</b></label>
-      <input class="form-control" id="input2" type="text">
-   </div>
-</div>
-<form method="get">
-    <div class="col-md-3">
-      <input name ="q" id="searchFolio" value="{{request.GET.q}}" placeholder="Buscar préstamo..">
-  </div>
- </form>
   <div class="col-md-12">
     <div class="col-md-6">
       <p>
-       <a class="btn btn-primary" id="buttonOut" data-toggle="modal" data-target="#modalOut">Prestamo con Código de Barras</a>
+       <a class="btn btn-primary" id="buttonOut" data-toggle="modal" data-target="#modalOut"> <i class='fas fa-barcode' style='font-size:36px'></i>Prestamo con Código de Barras</a>
+       
       </p>
     </div>
     <div class="col-md-6"> 
-         <a class="btn btn-danger" id="buttonIn" data-toggle="modal" data-target="#modalIn">Devolución con Código de Barras</a>
+      <a class="btn btn-danger"  id="buttonIn"   data-toggle="modal" data-target="#modalIn">  <i class='fas fa-barcode' style='font-size:36px'></i>Devolución con Código de Barras </a>
+      
     </div>
   </div>
   <div id="listaPersonas"></div>
     
   <div id="RowsSearch"></div>
-<div class ="col-md-12" id="RowsInicio">
-  <table class="table table-bordered" id="bajasList">
+<div class ="col-md-12" id="RowsInicio" >
+  <table class="table table-bordered" id="DataTable" name="DataTable">
     <thead>
       <tr>
-      <th>Detalle</th>
+        <th>Detalle</th>
         <th>Folio Prestamo</th>
         <th>Usuario</th>
-        <th>Fecha Hora Préstamo</th>
+        <th>Fecha-Hora-Prestamo</th>
         <th>Devolución</th>
-        <th>Estatus</th>        
+        <th>Estatus</th>
+        
       </tr>
     </thead>
     <tbody>
-    {% for prestamo in prestamos %} 
-       <tr>
-       <!--   -->
-        <td style="display:none"> {{prestamo.pres_folio }}</td>
-          <td><a> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-          <td> {{prestamo.pres_folio}}</td>
-          <td>{{ prestamo.usua_clave }}</td>
-          <td>{{ prestamo.pres_fechahora  }} </a></td>
-          <td>{{ prestamo.pres_fecha_devolucion }}</td>
-          <td>{{ prestamo.pres_estatus }}</td>
+      {% for data in prestamos   %} 
+        <tr>
+            <td><a class = "btn btn-primary btn-sm ver-detalle" value={{data.pres_folio}} id="verDetalle" data-toggle="modal" data-target="#modalCintas" data-detalles="{{ detalles }}"><i class='fas fa-plus-circle' style='font-size:12px'></i></a></td>
+            <td>{{ data.pres_folio }} </td>
+            <td>{{ data.usua_clave }} </td>
+            <td>{{ data.pres_fechahora }} </td>
+            <td>{{ data.pres_fecha_devolucion }}</td>
+            <td>{{ data.pres_estatus }}</td>
         </tr>
-      {% empty %}
-        <tr class="table-active">
-          <td colspan="3">No data</td>
-        </tr>
+        {% empty %}
       {% endfor %}
-    </tbody>
+    </tbody> 
   </table>
-  <div id="Pages"> 
-    {% if is_paginated %}
-      <ul class="pagination">
-        {% if page_obj.has_previous %}
-          <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
-        {% else %}
-          <li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-    
-    {% for i in paginator.page_range %}
-        {% if page_obj.number == i %}
-          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span>     </span></li>
-        {% else %}
-          <li><a href="?page={{ i }}">{{ i }}</a></li>
-        {% endif %}
-    {% endfor %}
- 
-    {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-      </ul>
-    {% endif %}
+{% comment %} Modal Listar Cintas {% endcomment %}
+
+<div class="modal fade" id="modalCintas">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title mb-3"> Lista de Cintas <i class='fas fa-photo-video'></i></h4>
+      </div>
+      <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
+        <div class="modal-body" id="muestraData" >
+          <table class="table table-bordered" id="muestraDataTable" name="DataTable">
+            <thead>
+              <tr>
+                <th>Código de barras</th>
+                <th>Fecha devolucion</th>
+              </tr>
+            </thead>
+            <tbody>
+           {% comment %} Aquí no va nada, todo lo puse en mi javascript {% endcomment %}
+            
+            </tbody> 
+          </table>
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
+      </div>
+    </div>
   </div>
+</div>
+
+{% comment %}  {% endcomment %}
     <div class="modal fade"  id="modalIn">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -149,33 +142,52 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-
-<div class="row">
-  <div class="col-lg-12">
-        <div class="alert alert-success" id="upt_success" style="display:none">
-
-        </div>
-         <div class="alert alert-danger" id="upt_error" style="display:none">
-
-        </div>
-  </div>
-</div>
-   
-
-
 <script>
 
-$('#input1').datepicker({changeYear: true});
-$('#input2').datepicker({changeYear: true});
-$('#searchBarCodeIn').val("").focus();
-$('#searchBarCodeOut').val("").focus();
-/*
-document.body.addEventListener('keydown', event => {
-  if ( (event.ctrlKey && 'cvxspwuazj'.indexOf(event.key) !== -1) || ( event.ctrlKey && event.shiftKey ) ) {
-    event.preventDefault()
-  }
-})
-*/
+const alertMessage = (type, message, title) => Swal.fire({icon: type,title: title,text: message }) 
+
+$(document).ready(function() {
+  $('.ver-detalle').click(function() {
+    const detalles = $(this).data('detalles');
+    const pres_folio = $(this).attr('value');
+
+    $.ajax({
+      url: '{% url "prestamos_detalles" %}',
+      type: 'GET',
+      data: { 
+        q: pres_folio
+      },
+      success: function(data) {
+        let table = $('<table>');
+        let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
+        let tbody = $('<tbody>');
+        //Operación ternaria donde hago la validación, si hay o no más cintas
+        //($('li', data).length === 0) ? console.log(alertMessage('info','Oops!','Sin más cintas')) 
+
+        if($('li', data).length === 0){
+          console.log(alertMessage('info','Solo hay esa cinta!','Oops!'))   
+          $("#modalCintas").modal('hide');     
+        }
+        $('li', data).each(function(index) {
+          let liText = $(this).text().trim();
+          let liParts = liText.split(' - '); 
+          let codigo = liParts[0];
+          let fecha = liParts[1];
+          let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha + '</td>');
+          tbody.append(row);
+        });
+        table.append(thead).append(tbody);
+        $('#muestraData').html(table);
+        table.DataTable( generarDataTable() );
+      }
+    });
+  });
+});
+  
+$(document).ready(function() {
+  const table = $('#DataTable').DataTable( generarDataTable() );
+});
+
 
 $('#searchBarCodeIn').keyup(function(e){
     if( e.keyCode == 13 ){
@@ -195,7 +207,6 @@ $('#searchFolio').keyup(function(e){
         $("#RowsSearch").hide();
         $("#RowsInicio").show();
         $("#Pages").show();
-            
     }
     else {
         $(this).data('timer', setTimeout(search, 500));
@@ -251,7 +262,7 @@ $("#continuarPrestamo").click(function(){
                   setTimeout(function(){ 
                   cleanForm();
                   location.reload();
-                  }, 3000);      
+                  }, 1000);      
                 })
     }     
   });
@@ -371,7 +382,13 @@ function f_valida_repetido(codigoBarras){
    
       $('#resultTableOut tbody tr').each(function(){
                 if ($(this).find('input.codbarras').val() == codigoBarras){
-                    alert('valor repetido');
+                    {% comment %} alert('valor repetido'); {% endcomment %}
+                    Swal.fire({
+                      icon: 'info',
+                      title: 'Oops...', 
+                      text: 'Valor repetido!',
+                      
+                    })
                    v_valor = 1;
                 }
             });
@@ -422,10 +439,6 @@ function search(force) {
 
 }                
 
-
-
-
-
 $(document).on("click",".eliminar",function(){
             var this_html=$(this);
             var id =this_html.parent().parent().children().eq(0).text();
@@ -439,5 +452,9 @@ $(document).on("click",".eliminar",function(){
 
 
 </script>
-
+<style>
+  .detalle ul{
+    display:none;
+  }
+</style>
 {% endblock %}

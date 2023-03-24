@@ -19,6 +19,7 @@ class PrestamosListView(ListView):
     model = Prestamos
     template_name = 'prestamos/prestamos_list.html'
     def get(self, request, *args, **kwargs):
+        
         #queryset =DetallePrestamos.objects.filter(Q(pres_folio__pres_fecha_prestamo__year = '2022')).order_by('-pres_folio__pres_fechahora')
         queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year = '2022')).order_by('-pres_fechahora')
         #list = []  
@@ -30,6 +31,15 @@ class PrestamosListView(ListView):
          #   'compensacion' : list,
         }#)
         return render(request, 'prestamos/prestamos_list.html' , content)    
+    
+
+@csrf_exempt
+   
+def PrestamoDetalle(request):
+    q = int(request.GET.get("q"))
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
+    context = {'detalles': queryset}
+    return render(request, 'prestamos/prestamos_detalle_list.html', context)
 
 @csrf_exempt
 def GetFolioPrestamo(request):
@@ -77,13 +87,13 @@ def GetFolioDetail(request):
 
 @csrf_exempt      
 def RegisterInVideoteca(request):
-    usuario = request.POST['matricula']
-    admin = request.user
-    from django.db import connections
-    cursor = connections['users'].cursor()
-    cursor.execute("select nombres, apellido1, apellido2, activo from people_person where matricula = '"+ usuario + "'")
-    row = cursor.fetchall()
-    print(row[0][3])    
+    # usuario = request.POST['matricula']
+    # admin = request.user
+    # from django.db import connections
+    # cursor = connections['users'].cursor()
+    # cursor.execute("select nombres, apellido1, apellido2, activo from people_person where matricula = '"+ usuario + "'")
+    # row = cursor.fetchall()
+    # print(row[0][3])    
     if request.method == 'POST':
         print(request.POST['codigoBarras'])
         now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
@@ -93,7 +103,7 @@ def RegisterInVideoteca(request):
             error="Código no encontrado"
             maestroCinta = MaestroCintas.objects.get(pk = codigoBarras)
             error= "Busqueda en Maestro Cintas"
-            #videos = Videos.objects.get(vide_codigo_id=codigoBarras)
+           
             error= "Busqueda en Videos"
             detallesPrestamo = DetallePrestamos.objects.filter( Q(vide_clave = maestroCinta.video_id) )
             #& Q(depr_estatus ='A')
@@ -108,7 +118,7 @@ def RegisterInVideoteca(request):
             
             detallePrestamo.depr_estatus='I'
             detallePrestamo.pres_fecha_devolucion = now
-            detallePrestamo.usuario_devuelve = usuario
+            # detallePrestamo.usuario_devuelve = usuario
             detallePrestamo.usuario_recibe = 'M090077'
             detallePrestamo.save()
             maestroCinta.video_estatus='En Videoteca'
@@ -151,7 +161,7 @@ def RegisterOutVideoteca(request):
         data = json.loads(request.POST['codigos'])
         for codigo in data:
             maestroCinta = MaestroCintas.objects.get(pk = codigo)
-            videos = Videos.objects.get(vide_codigo_id=codigo)
+
             prestamo = Prestamos()
             prestamo.usua_clave = usuario
             prestamo.pres_fechahora = now
@@ -162,7 +172,7 @@ def RegisterOutVideoteca(request):
 
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
-            detPrestamos.vide_clave = videos
+            # detPrestamos.vide_clave = videos
             detPrestamos.depr_estatus = 'X'
             detPrestamos.save()
 
