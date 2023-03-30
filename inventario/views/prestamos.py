@@ -10,40 +10,63 @@ from django.template.loader import get_template
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
+from django.http import JsonResponse
+from django.core import serializers
     # ---------------------------
     # Prestamos
     # ---------------------------
 
 @method_decorator(login_required, name='dispatch')
 class PrestamosListView(ListView):
-    model = Prestamos
-    template_name = 'prestamos/prestamos_list.html'
-    def get(self, request, *args, **kwargs):
-        
-        #queryset =DetallePrestamos.objects.filter(Q(pres_folio__pres_fecha_prestamo__year = '2022')).order_by('-pres_folio__pres_fechahora')
-        queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year = '2022')).order_by('-pres_fechahora')
-        #list = []  
-        #for comp in querysetComp:
-         #   consulta=Compensaciones.objects.filter(Q(compensacion = comp))
-         #   list.append(CompToShow(comp.nombre + " (" + str(comp.numero -consulta.count()) +")", comp.pk ))
-        content = {#t.render(
-            'prestamos': queryset, 
-         #   'compensacion' : list,
-        }#)
-        return render(request, 'prestamos/prestamos_list.html' , content)    
+    def get(self, request):
+        queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year='2022')).order_by('-pres_fechahora')
+        context = {
+            'prestamos': queryset,
+        }
+        return render(request, 'prestamos/prestamos_list.html', context)
     
 
 @csrf_exempt
-   
 def PrestamoDetalle(request):
     q = int(request.GET.get("q"))
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
-    context = {'detalles': queryset}
+    context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
+
+def Filtrar_prestamos(request):
+    q = request.GET.get('q')
+
+    # Obtener los pres_folio que coinciden con el vide_codigo
+    pres_folios = DetallePrestamos.objects.filter(vide_codigo_id=q).values_list('pres_folio_id', flat=True)
+
+    # Crear una lista para almacenar los datos de prestamos
+    prestamos_data = []
+
+    # Obtener los datos de Prestamos para cada pres_folio encontrado
+    for pres_folio_id in pres_folios:
+        prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
+        if prestamo:
+            # Acceder a los datos de Prestamos
+            prestamo_data = {
+                "folio": prestamo.pres_folio,
+                "usua_clave": prestamo.usua_clave,
+                "pres_fechahora": prestamo.pres_fechahora,
+                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
+                "estatus": prestamo.pres_estatus
+            }
+            
+            prestamos_data.append(prestamo_data)
+
+    # Retornar los datos de prestamos en formato JSON
+    return JsonResponse(prestamos_data, safe=False)
+
+
+
+
 
 @csrf_exempt
 def GetFolioPrestamo(request):
-  
     q=request.GET.get("q")
     queryset =DetallePrestamos.objects.filter(Q(pres_folio__pres_fecha_prestamo__year = '2022')).order_by('-pres_folio__pres_fechahora')
     if q and q !=" ":
@@ -73,7 +96,7 @@ def GetFolioDetail(request):
     id=request.POST.get("id").strip()
     detailPrestamo =DetallePrestamos.objects.get(pres_folio = id)
     #videoDetail = MaestroCintas.objects.get(video_id =detailPrestamo.vide_clave )
-   # programaDetail = DetalleProgramas.objects.filter(video_cbarras=videoDetail.video_cbarras)
+    # programaDetail = DetalleProgramas.objects.filter(video_cbarras=videoDetail.video_cbarras)
     t = get_template('prestamos/detalle_prestamos.html')
     content = t.render(
     {

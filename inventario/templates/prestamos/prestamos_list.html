@@ -1,24 +1,55 @@
 {% extends '__basePrestamos.html' %}
 
 {% block content %}
-<div class="container">
-  <div class="col-md-12">
-    <div class="col-md-6">
-      <p>
-       <a class="btn btn-primary" id="buttonOut" data-toggle="modal" data-target="#modalOut"> <i class='fas fa-barcode' style='font-size:36px'></i>Prestamo con Código de Barras</a>
-       
-      </p>
-    </div>
-    <div class="col-md-6"> 
-      <a class="btn btn-danger"  id="buttonIn"   data-toggle="modal" data-target="#modalIn">  <i class='fas fa-barcode' style='font-size:36px'></i>Devolución con Código de Barras </a>
-      
-    </div>
-  </div>
-  <div id="listaPersonas"></div>
+<div class="card">
+  <nav class="navbar bg-body-tertiary">
+    <form class="container-fluid justify-content-start">
+      <a type="button" class="btn btn-primary btn-sm" id="buttonOut" data-toggle="modal" data-target="#modalOut">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Prestamo con Código de Barras</span>
+        </div>
+      </a>
+
+      <a  type = "button" class="btn btn-danger btn-sm"  id="buttonIn"   data-toggle="modal" data-target="#modalIn">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Devolución con Código de Barras</span>
+        </div>
+      </a>
+
+      <div style="display: flex; flex-direction: column; align-items: end;">
+        
+        
+        {% comment %} <button type="submit">Buscar</button> {% endcomment %}
+      </div>
+    </form>
+  </nav>
+</div>
+{% comment %}  {% endcomment %}
+<form id="search-form">
+  <label for="exampleFormControlInput1" class="form-label">Código de Barras</label>
+  <button id="reload" class="btn btn-primary btn-sm" type="button" style="max-width: 300px;" >Click para recargar</button>
+  <input type="text" class="form-control" placeholder="Buscar ..." id="busqueda" style="max-width: 300px;">
+</form>
+<br>
+
+<table class="table table-bordered " id="tableMuestra">
+  <thead>
+    <tr>
+      {% comment %} <th>Detalle</th> {% endcomment %}
+      <th>Folio Prestamo</th>
+      <th>Usuario</th>
+      <th>Fecha-Hora-Prestamo</th>
+      <th>Devolución</th>
+      <th>Estatus</th>
+    </tr>
+  </thead>
+  <tbody>
     
-  <div id="RowsSearch"></div>
-<div class ="col-md-12" id="RowsInicio" >
-  <table class="table table-bordered" id="DataTable" name="DataTable">
+  </tbody> 
+</table>
+
+{% comment %}  {% endcomment %}
+  <table class="table table-bordered " id="TablePrestamo">
     <thead>
       <tr>
         <th>Detalle</th>
@@ -27,7 +58,6 @@
         <th>Fecha-Hora-Prestamo</th>
         <th>Devolución</th>
         <th>Estatus</th>
-        
       </tr>
     </thead>
     <tbody>
@@ -77,7 +107,7 @@
 </div>
 
 {% comment %}  {% endcomment %}
-    <div class="modal fade"  id="modalIn">
+<div class="modal fade"  id="modalIn">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -109,7 +139,7 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-     <div class="modal fade"  id="modalOut">
+    <div class="modal fade"  id="modalOut">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -144,7 +174,69 @@
 
 <script>
 
-const alertMessage = (type, message, title) => Swal.fire({icon: type,title: title,text: message }) 
+{% comment %} $('#TablePrestamo').closest('.dataTables_wrapper').hide(); {% endcomment %}
+
+//const alertMessage = (type, message, title) => Swal.fire({icon: type,title: title,text: message }) 
+$(document).ready(function() {
+  const table = $('#TablePrestamo').DataTable();
+  //$('#TablePrestamo').closest('.dataTables_wrapper').hide();
+}) 
+
+const reload = document.getElementById('reload');
+
+reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de parametros
+    location.reload();
+});  
+
+$(document).ready(function() {
+  $('#busqueda').on('keyup', function() {
+      const vide_codigo = $(this).val();
+      $.ajax({
+          url: '{% url "prestamos_filter" %}',
+          data: {'q': vide_codigo},
+          dataType: 'json',
+          success: function(res) {
+            if (typeof vide_codigo === 'undefined' || vide_codigo === '') {
+              alertMessage('info', 'No existe', 'Oops!');
+            } else {
+              alertMessage('success', 'Bien', 'Bien');
+              // Inicializar el DataTable
+              const prestamos = res;
+              const tabla = $('#tableMuestra').DataTable({
+                destroy: true,
+                data: prestamos,
+                columns: [
+                  {"data":"folio"},
+                  {"data":"usua_clave"},
+                  {"data":"pres_fechahora"},
+                  {"data":"pres_fecha_devolucion"},
+                  {"data":"estatus"}
+                ],
+              });
+            }
+          }
+      });
+  });
+});
+
+function alertMessage(type, message, title) {
+  const alertTypes = {
+    'info': 'alert-info',
+    'success': 'alert-success',
+    'warning': 'alert-warning',
+    'danger': 'alert-danger',
+  };
+  const alertType = alertTypes[type];
+  const alertBox = `
+    <div class="alert ${alertType} alert-dismissible fade show" role="alert">
+      <strong>${title}</strong> ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>`;
+  $('#alert-container').html(alertBox);
+}
+
+
+ 
 
 $(document).ready(function() {
   $('.ver-detalle').click(function() {
@@ -162,32 +254,26 @@ $(document).ready(function() {
         let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
         let tbody = $('<tbody>');
         //Operación ternaria donde hago la validación, si hay o no más cintas
-        //($('li', data).length === 0) ? console.log(alertMessage('info','Oops!','Sin más cintas')) 
-
+     
         if($('li', data).length === 0){
           console.log(alertMessage('info','Solo hay esa cinta!','Oops!'))   
           $("#modalCintas").modal('hide');     
         }
         $('li', data).each(function(index) {
-          let liText = $(this).text().trim();
+          let liText  = $(this).text().trim();
           let liParts = liText.split(' - '); 
-          let codigo = liParts[0];
-          let fecha = liParts[1];
-          let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha + '</td>');
+          let codigo  = liParts[0];
+          let fecha   = liParts[1];
+          let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
           tbody.append(row);
         });
         table.append(thead).append(tbody);
         $('#muestraData').html(table);
-        table.DataTable( generarDataTable() );
+        table.DataTable(); 
       }
     });
   });
 });
-  
-$(document).ready(function() {
-  const table = $('#DataTable').DataTable( generarDataTable() );
-});
-
 
 $('#searchBarCodeIn').keyup(function(e){
     if( e.keyCode == 13 ){

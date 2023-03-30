@@ -4,7 +4,9 @@
   {% endfor %}
 
 </ul>
-{% comment %} 
-<body>
-	<h1>Bienvenido, {{ detalle.vide_codigo }}</h1>
-</body> {% endcomment %}
+{% comment %} <ul>
+  {% for detalle in busqueda %} 
+      <li> {{detalle.pres_folio_id}} </li>
+  {% endfor %}
+
+</ul> {% endcomment %}

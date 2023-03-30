@@ -23,7 +23,7 @@ const generarDataTable = () => {
       "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
       "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
       "sInfoPostFix": "",
-      "sSearch": "Busca código de barras:",
+      "sSearch": "Buscar folio:",
       "sUrl": "",
       "sInfoThousands": ",",
       "sLoadingRecords": "Cargando...",
