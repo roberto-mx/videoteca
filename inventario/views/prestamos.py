@@ -49,11 +49,11 @@ def Filtrar_prestamos(request):
         if prestamo:
             # Acceder a los datos de Prestamos
             prestamo_data = {
-                "folio": prestamo.pres_folio,
+                "pres_folio": prestamo.pres_folio,
                 "usua_clave": prestamo.usua_clave,
                 "pres_fechahora": prestamo.pres_fechahora,
                 "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-                "estatus": prestamo.pres_estatus
+                "pres_estatus": prestamo.pres_estatus
             }
             
             prestamos_data.append(prestamo_data)

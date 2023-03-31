@@ -27,28 +27,13 @@
 {% comment %}  {% endcomment %}
 <form id="search-form">
   <label for="exampleFormControlInput1" class="form-label">Código de Barras</label>
-  <button id="reload" class="btn btn-primary btn-sm" type="button" style="max-width: 300px;" >Click para recargar</button>
   <input type="text" class="form-control" placeholder="Buscar ..." id="busqueda" style="max-width: 300px;">
 </form>
 <br>
 
-<table class="table table-bordered " id="tableMuestra">
-  <thead>
-    <tr>
-      {% comment %} <th>Detalle</th> {% endcomment %}
-      <th>Folio Prestamo</th>
-      <th>Usuario</th>
-      <th>Fecha-Hora-Prestamo</th>
-      <th>Devolución</th>
-      <th>Estatus</th>
-    </tr>
-  </thead>
-  <tbody>
-    
-  </tbody> 
-</table>
+<button id="reload" class="btn btn-primary btn-sm" type="button" > Click para recargar <i class='fas fa-redo-alt'></i> </button>
+<br><br>
 
-{% comment %}  {% endcomment %}
   <table class="table table-bordered " id="TablePrestamo">
     <thead>
       <tr>
@@ -174,13 +159,9 @@
 
 <script>
 
-{% comment %} $('#TablePrestamo').closest('.dataTables_wrapper').hide(); {% endcomment %}
+//$('#tableMuestra').closest('.dataTables_wrapper').hide();
 
-//const alertMessage = (type, message, title) => Swal.fire({icon: type,title: title,text: message }) 
-$(document).ready(function() {
-  const table = $('#TablePrestamo').DataTable();
-  //$('#TablePrestamo').closest('.dataTables_wrapper').hide();
-}) 
+
 
 const reload = document.getElementById('reload');
 
@@ -189,59 +170,43 @@ reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de p
 });  
 
 $(document).ready(function() {
-  $('#busqueda').on('keyup', function() {
-      const vide_codigo = $(this).val();
-      $.ajax({
-          url: '{% url "prestamos_filter" %}',
-          data: {'q': vide_codigo},
-          dataType: 'json',
-          success: function(res) {
-            if (typeof vide_codigo === 'undefined' || vide_codigo === '') {
-              alertMessage('info', 'No existe', 'Oops!');
-            } else {
-              alertMessage('success', 'Bien', 'Bien');
-              // Inicializar el DataTable
-              const prestamos = res;
-              const tabla = $('#tableMuestra').DataTable({
-                destroy: true,
-                data: prestamos,
-                columns: [
-                  {"data":"folio"},
-                  {"data":"usua_clave"},
-                  {"data":"pres_fechahora"},
-                  {"data":"pres_fecha_devolucion"},
-                  {"data":"estatus"}
-                ],
-              });
-            }
-          }
-      });
+  $('#TablePrestamo').DataTable({
+    columns: [
+     
+    {
+      "data": "pres_folio",
+      "render": function(data, type, row, meta) {
+        return "<a class='btn btn-primary btn-sm ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas' data-detalles='" + row.detalles + "'><i class='fas fa-plus-circle' style='font-size:12px'></i></a>";
+      }
+    },
+        {"data": "pres_folio"},
+        {"data": "usua_clave"},
+        {"data": "pres_fechahora"},
+        {"data": "pres_fecha_devolucion"},
+        {"data": "pres_estatus"},
+    ],
+    createdRow: function(row, data, dataIndex) {
+      $(row).data('folio', data.pres_folio);
+    }
   });
-});
 
-function alertMessage(type, message, title) {
-  const alertTypes = {
-    'info': 'alert-info',
-    'success': 'alert-success',
-    'warning': 'alert-warning',
-    'danger': 'alert-danger',
-  };
-  const alertType = alertTypes[type];
-  const alertBox = `
-    <div class="alert ${alertType} alert-dismissible fade show" role="alert">
-      <strong>${title}</strong> ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>`;
-  $('#alert-container').html(alertBox);
-}
+  $('#busqueda').on('keyup', function() {
+    const vide_codigo = $(this).val();
+    $.ajax({
+        url: '{% url "prestamos_filter" %}',
+        data: {'q': vide_codigo},
+        dataType: 'json',
+        success: function(res) {
+          const prestamos = res;
+          // Actualizar los datos de la tabla existente
+          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
+        }
+    });
+  });
 
-
- 
-
-$(document).ready(function() {
-  $('.ver-detalle').click(function() {
+  $('#TablePrestamo').on('click', '.ver-detalle', function() {
     const detalles = $(this).data('detalles');
-    const pres_folio = $(this).attr('value');
+    const pres_folio = $(this).closest('tr').data('folio');
 
     $.ajax({
       url: '{% url "prestamos_detalles" %}',
@@ -250,7 +215,7 @@ $(document).ready(function() {
         q: pres_folio
       },
       success: function(data) {
-        let table = $('<table>');
+        let tabla = $('<table>');
         let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
         let tbody = $('<tbody>');
         //Operación ternaria donde hago la validación, si hay o no más cintas
@@ -267,13 +232,14 @@ $(document).ready(function() {
           let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
           tbody.append(row);
         });
-        table.append(thead).append(tbody);
-        $('#muestraData').html(table);
-        table.DataTable(); 
+        tabla.append(thead).append(tbody);
+        $('#muestraData').html(tabla);
+        tabla.DataTable(); 
       }
     });
   });
 });
+
 
 $('#searchBarCodeIn').keyup(function(e){
     if( e.keyCode == 13 ){
