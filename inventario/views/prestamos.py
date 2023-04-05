@@ -13,6 +13,15 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.http import JsonResponse
 from django.core import serializers
+from fpdf import FPDF
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from django.shortcuts import get_object_or_404
+import tempfile
+
+
     # ---------------------------
     # Prestamos
     # ---------------------------
@@ -51,7 +60,7 @@ def Filtrar_prestamos(request):
             prestamo_data = {
                 "pres_folio": prestamo.pres_folio,
                 "usua_clave": prestamo.usua_clave,
-                "pres_fechahora": prestamo.pres_fechahora,
+                "pres_fechahora": prestamo.pres_fechahora,  
                 "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
                 "pres_estatus": prestamo.pres_estatus
             }
@@ -62,8 +71,108 @@ def Filtrar_prestamos(request):
     return JsonResponse(prestamos_data, safe=False)
 
 
+# class PDF(FPDF):
+#     def generate_pdf(self, data):
+#         # Convertir los datos JSON a una lista de Python
+#         data = json.loads(data)
+#         # Configurar la página y la fuente
+#         self.add_page()
+#         self.set_font('Arial','B',16)
+#         # Agregar el título
+#         self.cell(40, 10, 'PDF VIDEOTECA', 0 , 1)
+#         # Agregar los datos
+#         for row in data:
+#             self.cell(40,10, str(row['pres_folio']), 1)
+#             self.cell(40,10, str(row['usua_clave']), 1)
+#             self.cell(40,10, str(row['pres_fechahora']), 1)
+#             self.cell(40,10, str(row['pres_fecha_devolucion']), 1)
+#             self.cell(40,10, str(row['pres_estatus']), 1)
+#             self.ln()
+
+# @csrf_exempt
+# def generar_pdf(request):
+#     # Obtener los datos de la solicitud AJAX
+#     data = request.GET.getlist('data[]')
+#     # Generar el PDF
+#     pdf = PDF()
+#     pdf.generate_pdf(data)
+#     # Retornar el PDF como una respuesta HTTP
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
+#     pdf_output = pdf.output(dest='S').encode('latin1')
+#     response.write(pdf_output)
+#     return response
+
+# ---------------------------------------------------------------------------------------------------------------------------#
+
+class PDF(FPDF):
+
+    def header(self):
+        # Configuración de la cabecera del PDF
+        # self.image('https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg', x=10, y=8, w=33)
+        # self.image('C:\Users\MIJIMENEZ\Desktop\videoteca\images', 10, 8, 33)
+        self.set_font('Arial', 'B', 15)
+        # self.cell(80)
+        self.cell(30, 10, 'Videoteca', 1, 0, 'C')
+        self.ln(10)
+
+    def footer(self):
+        # Configuración del pie de página del PDF
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
+    def generate_pdf(self, data):
+        # Generación del contenido del PDF
+        self.add_page()
+        # self.set_size('A4', 'L') # or whatever page size and orientation you want
+        self.set_font('Arial', 'B', 12)
+        for row in data:
+            # self.cell(40,10, str(row['pres_folio']), 1)
+            # self.cell(40,10, str(row['usua_clave']), 1)
+            # self.cell(40,10, str(row['pres_fechahora']), 1)
+            # self.cell(40,10, str(row['pres_fecha_devolucion']), 1)
+            # self.cell(40,10, str(row['pres_estatus']), 1)
+
+            self.cell(40,10, str(row[0]), 1)  # Usar el índice 0 en lugar de 'Folio'
+            self.cell(40,10, str(row[1]), 1)  # Usar el índice 1 en lugar de 'Usuario'
+            self.cell(40,10, str(row[2]), 1)  # Usar el índice 2 en lugar de 'Fecha y Hora Prestamo'
+            self.cell(40,10, str(row[3]), 1)  # Usar el índice 3 en lugar de 'Fecha de devolución'
+            self.cell(40,10, str(row[4]), 1)  # Usar el índice 4 en lugar de 'Estatus'
+            self.ln()
+
+def generar_pdf(request):
+
+    q = request.GET.get('q')
+    # Obtener los pres_folios que coinciden con el vide_codigo
+    detalle_prestamos = DetallePrestamos.objects.filter(vide_codigo=q)
+    pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
+    # Obtener los datos de prestamos para cada pres_folio encontrado
+    prestamos_data = []
+    for pres_folio_id in pres_folios:
+        prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
+        if prestamo:
+            # Acceder a los datos de prestamos
+            prestamo_data = {
+                "pres_folio": prestamo.pres_folio,
+                "usua_clave": prestamo.usua_clave,
+                "pres_fechahora": prestamo.pres_fechahora,
+                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
+                "pres_estatus": prestamo.pres_estatus
+            }
+            prestamos_data.append(prestamo_data)
+
+            
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
+    pdf = PDF('L', 'mm', (250, 350))
+    pdf.generate_pdf(prestamo_data)
+    response.write(pdf.output(dest='S').encode('latin1'))
+    return response
 
 
+# ---------------------------------------------------------------------------------------------------------------------------#
 
 @csrf_exempt
 def GetFolioPrestamo(request):
