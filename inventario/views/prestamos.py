@@ -70,52 +70,30 @@ def Filtrar_prestamos(request):
     # Retornar los datos de prestamos en formato JSON
     return JsonResponse(prestamos_data, safe=False)
 
-
-# class PDF(FPDF):
-#     def generate_pdf(self, data):
-#         # Convertir los datos JSON a una lista de Python
-#         data = json.loads(data)
-#         # Configurar la página y la fuente
-#         self.add_page()
-#         self.set_font('Arial','B',16)
-#         # Agregar el título
-#         self.cell(40, 10, 'PDF VIDEOTECA', 0 , 1)
-#         # Agregar los datos
-#         for row in data:
-#             self.cell(40,10, str(row['pres_folio']), 1)
-#             self.cell(40,10, str(row['usua_clave']), 1)
-#             self.cell(40,10, str(row['pres_fechahora']), 1)
-#             self.cell(40,10, str(row['pres_fecha_devolucion']), 1)
-#             self.cell(40,10, str(row['pres_estatus']), 1)
-#             self.ln()
-
-# @csrf_exempt
-# def generar_pdf(request):
-#     # Obtener los datos de la solicitud AJAX
-#     data = request.GET.getlist('data[]')
-#     # Generar el PDF
-#     pdf = PDF()
-#     pdf.generate_pdf(data)
-#     # Retornar el PDF como una respuesta HTTP
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
-#     pdf_output = pdf.output(dest='S').encode('latin1')
-#     response.write(pdf_output)
-#     return response
-
 # ---------------------------------------------------------------------------------------------------------------------------#
 
 class PDF(FPDF):
 
     def header(self):
         # Configuración de la cabecera del PDF
-        # self.image('https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg', x=10, y=8, w=33)
-        # self.image('C:\Users\MIJIMENEZ\Desktop\videoteca\images', 10, 8, 33)
-        self.set_font('Arial', 'B', 15)
-        # self.cell(80)
-        self.cell(280, 10, 'Videoteca', 1, 0, 'C')
-        self.ln(10)
+        self.image('images/EducaciónAprende.jpeg', x=10, y=8, w=50)
+        self.image('images/logo-aprendemx.png', x=65, y=5, w=50)
+        self.ln(5)
 
+        self.set_font('Arial', 'B', 8)
+        self.cell(580,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.ln(3)
+        self.cell(540,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
+        self.ln(3)
+        self.cell(618,1, 'Audiovisual', 0, 20, 'C')
+        self.ln(3)
+        self.cell(558,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
+
+        self.ln(40)
+        self.set_font('Arial', 'B', 15)
+        self.cell(280, 10, 'Videoteca', 0, 0, 'C')
+        self.ln(10)
+        
     def footer(self):
         # Configuración del pie de página del PDF
         self.set_y(-15)
@@ -124,16 +102,16 @@ class PDF(FPDF):
 
     def generate_table(self, data):
         # Generación del contenido de la tabla en el PDF
-        self.set_font('Arial', 'B', 12)
-        # Encabezado de la tabla
-        self.cell(40, 10, 'Folio', 1)
-        self.cell(40, 10, 'Usuario', 1)
-        self.cell(80, 10, 'Fecha y Hora Prestamo', 1)
-        self.cell(80, 10, 'Fecha de devolución', 1)
-        self.cell(40, 10, 'Estatus', 1)
+        self.set_fill_color(144, 12, 63)
+        self.set_text_color(255, 255, 255) # Establece el color de la letra en blanco
+        self.cell(40, 10, 'Folio', 1, 0, '', True)
+        self.cell(40, 10, 'Usuario', 1, 0, '', True)
+        self.cell(80, 10, 'Fecha y Hora Prestamo', 1, 0, '', True)
+        self.cell(80, 10, 'Fecha de devolución', 1, 0, '', True)
+        self.cell(40, 10, 'Estatus', 1, 0, '', True)
+        self.set_text_color(0, 0, 0)
         self.ln()
 
-        # Celdas de la tabla
         for row in data:
             self.cell(40, 10, str(row['pres_folio']), 1)
             self.cell(40, 10, str(row['usua_clave']), 1)
@@ -160,7 +138,8 @@ def generar_pdf(request):
             prestamos_data.append(prestamo_data)
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="Videoteca_{q}.pdf"'
     pdf = PDF('L', 'mm', (250, 350))
 
     # Abre una nueva página en el documento PDF
