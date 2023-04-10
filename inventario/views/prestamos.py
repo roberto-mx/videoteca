@@ -113,7 +113,7 @@ class PDF(FPDF):
         # self.image('C:\Users\MIJIMENEZ\Desktop\videoteca\images', 10, 8, 33)
         self.set_font('Arial', 'B', 15)
         # self.cell(80)
-        self.cell(30, 10, 'Videoteca', 1, 0, 'C')
+        self.cell(280, 10, 'Videoteca', 1, 0, 'C')
         self.ln(10)
 
     def footer(self):
@@ -122,37 +122,34 @@ class PDF(FPDF):
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
-    def generate_pdf(self, data):
-        # Generación del contenido del PDF
-        self.add_page()
-        # self.set_size('A4', 'L') # or whatever page size and orientation you want
+    def generate_table(self, data):
+        # Generación del contenido de la tabla en el PDF
         self.set_font('Arial', 'B', 12)
-        for row in data:
-            # self.cell(40,10, str(row['pres_folio']), 1)
-            # self.cell(40,10, str(row['usua_clave']), 1)
-            # self.cell(40,10, str(row['pres_fechahora']), 1)
-            # self.cell(40,10, str(row['pres_fecha_devolucion']), 1)
-            # self.cell(40,10, str(row['pres_estatus']), 1)
+        # Encabezado de la tabla
+        self.cell(40, 10, 'Folio', 1)
+        self.cell(40, 10, 'Usuario', 1)
+        self.cell(80, 10, 'Fecha y Hora Prestamo', 1)
+        self.cell(80, 10, 'Fecha de devolución', 1)
+        self.cell(40, 10, 'Estatus', 1)
+        self.ln()
 
-            self.cell(40,10, str(row[0]), 1)  # Usar el índice 0 en lugar de 'Folio'
-            self.cell(40,10, str(row[1]), 1)  # Usar el índice 1 en lugar de 'Usuario'
-            self.cell(40,10, str(row[2]), 1)  # Usar el índice 2 en lugar de 'Fecha y Hora Prestamo'
-            self.cell(40,10, str(row[3]), 1)  # Usar el índice 3 en lugar de 'Fecha de devolución'
-            self.cell(40,10, str(row[4]), 1)  # Usar el índice 4 en lugar de 'Estatus'
+        # Celdas de la tabla
+        for row in data:
+            self.cell(40, 10, str(row['pres_folio']), 1)
+            self.cell(40, 10, str(row['usua_clave']), 1)
+            self.cell(80, 10, str(row['pres_fechahora']), 1)
+            self.cell(80, 10, str(row['pres_fecha_devolucion']), 1)
+            self.cell(40, 10, str(row['pres_estatus']), 1)
             self.ln()
 
 def generar_pdf(request):
-
     q = request.GET.get('q')
-    # Obtener los pres_folios que coinciden con el vide_codigo
     detalle_prestamos = DetallePrestamos.objects.filter(vide_codigo=q)
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
-    # Obtener los datos de prestamos para cada pres_folio encontrado
     prestamos_data = []
     for pres_folio_id in pres_folios:
         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
         if prestamo:
-            # Acceder a los datos de prestamos
             prestamo_data = {
                 "pres_folio": prestamo.pres_folio,
                 "usua_clave": prestamo.usua_clave,
@@ -162,14 +159,21 @@ def generar_pdf(request):
             }
             prestamos_data.append(prestamo_data)
 
-            
-
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
     pdf = PDF('L', 'mm', (250, 350))
-    pdf.generate_pdf(prestamo_data)
+
+    # Abre una nueva página en el documento PDF
+    pdf.add_page()
+
+    # Agrega los datos de los préstamos a la página actual
+    pdf.generate_table(prestamos_data)
+
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
+
+
+
 
 
 # ---------------------------------------------------------------------------------------------------------------------------#
