@@ -75,26 +75,54 @@ def Filtrar_prestamos(request):
 class PDF(FPDF):
 
     def header(self):
+        
         # Configuración de la cabecera del PDF
         self.image('images/EducaciónAprende.jpeg', x=10, y=8, w=50)
         self.image('images/logo-aprendemx.png', x=65, y=5, w=50)
-        self.ln(5)
+        self.ln()
 
         self.set_font('Arial', 'B', 8)
-        self.cell(580,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.cell(480,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
-        self.cell(540,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
+        self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(618,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(518,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(558,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
-
+        self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(40)
+
+        self.set_font('Arial', 'B', 8)
+        self.cell(84, 10, 'NOMBRE:    _______________________________', 0, 0, 'C')
+        self.ln(7)
+        self.cell(83, 10, 'DIRECCIÓN: _______________________________', 0, 0, 'C')
+        self.ln(7)
+        self.cell(83, 10, 'PUESTO:    _______________________________', 0, 0, 'C')
+
+        self.cell(103, 10, 'EXTENSIÓN:    _______________________________', 0, 0, 'C')
+        self.cell(103, 10, 'CORREO:       _______________________________', 0, 0, 'C')
+        self.ln(40)
+        
         self.set_font('Arial', 'B', 15)
-        self.cell(280, 10, 'Videoteca', 0, 0, 'C')
-        self.ln(10)
+        self.cell(280, 10, 'PRESTAMO VIDEOTECA', 0, 0, 'C')
+        self.ln(20)
         
     def footer(self):
+
+        # self.ln(30)
+        # self.ln()
+
+        self.ln()
+        self.set_font('Arial', 'B', 8)
+        self.cell(103, 10, 'RECIBE:', 0, 0, 'C')
+        self.cell(200, 10, 'DEVUELVE:', 0, 0, 'C')
+        self.ln()
+
+
+        self.cell(103, 10, '________________________________________', 0, 0, 'C')
+        # self.ln(8)
+        self.cell(200, 10, '________________________________________', 0, 0, 'C')
+        # self.ln()
+
         # Configuración del pie de página del PDF
         self.set_y(-15)
         self.set_font('Arial', 'I', 8)
@@ -140,13 +168,14 @@ def generar_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
     response['Content-Disposition'] = f'attachment; filename="Videoteca_{q}.pdf"'
-    pdf = PDF('L', 'mm', (250, 350))
+    pdf = PDF('P', 'mm', (300, 350))
 
     # Abre una nueva página en el documento PDF
     pdf.add_page()
 
     # Agrega los datos de los préstamos a la página actual
     pdf.generate_table(prestamos_data)
+    
 
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
