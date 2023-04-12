@@ -61,13 +61,7 @@
   <tbody>
     {% for data in prestamos   %} 
       <tr>
-
-        {% comment %} <td></td> {% endcomment %}
-          <td>
-            {% comment %} <button type = "button" class="btn btn-primary btn-sm ver-detalle" value={{data.pres_folio}} id="verDetalle" data-toggle="modal" data-target="#modalCintas" data-detalles="{{ detalles }}">
-
-            </button> {% endcomment %}
-          </td>
+          <td></td>
           <td>{{ data.pres_folio }} </td>
           <td>{{ data.usua_clave }} </td>
           <td>{{ data.pres_fechahora }} </td>
@@ -84,16 +78,10 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title mb-3"> Lista de Cintas <i class="fa-solid fa-user-chef"></i> <!-- uses solid style -->
+        <h4 class="modal-title mb-3"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i> <!-- uses solid style -->
       </div>
       <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
         <div class="modal-body" id="muestraData" >
-          <button id = "btn-generar-pdf" class="btn btn-primary btn-sm"  type = "button">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-              <span>Descargar PDF</span>
-              <i class="fas fa-file-pdf" style="font-size:18px;"></i>
-            </div>
-          </button>
           <table class="table table-bordered" id="muestraDataTable" name="DataTable">
             <thead>
               <tr>
@@ -109,7 +97,8 @@
         
       </div>
       <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
+            <button id = "pdf-generate" class="btn btn-primary btn-sm"  type = "button"><i class="fas fa-file-pdf"></i> Descargar PDF </button>
       </div>
     </div>
   </div>
@@ -200,7 +189,7 @@ $(document).ready(function() {
           alertMessage('warning', 'El código de barras ingresado no existe.', 'Oops!', 'swal-wide');
           return;
         }
-        console.log({PDF:res})
+
         $.ajax({
           url: '{% url "generar_pdf" %}',
           data: {'q': vide_codigo},
@@ -213,8 +202,6 @@ $(document).ready(function() {
   });
 });
   
-
-
 const reload = document.getElementById('reload');
 
 reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de parametros
@@ -258,39 +245,52 @@ $(document).ready(function() {
     });
   });
 
+  
   $('#TablePrestamo').on('click', '.ver-detalle', function() {
-    const detalles = $(this).data('detalles');
+    //pdf-generate
+    const detalles   = $(this).data('detalles');
     const pres_folio = $(this).closest('tr').data('folio');
-
-    $.ajax({
-      url: '{% url "prestamos_detalles" %}',
-      type: 'GET',
-      data: { 
-        q: pres_folio
-      },
-      success: function(data) {
-        let tabla = $('<table>');
-        let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
-        let tbody = $('<tbody>');
-        //Operación ternaria donde hago la validación, si hay o no más cintas
-     
-        if($('li', data).length === 0){
-          alertMessage('info','Solo hay esa cinta!','Oops!')   
-          $("#modalCintas").modal('hide');     
+    $('#pdf-generate').on('click', function() {
+  
+      
+   
+      $.ajax({
+        url: '{% url "prestamos_detalles" %}',
+        type: 'GET',
+        data: { 
+          q: pres_folio
+        },
+        success: function(data) {
+          let tabla = $('<table>');
+          let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
+          let tbody = $('<tbody>');
+          //Operación ternaria donde hago la validación, si hay o no más cintas
+      
+          if($('li', data).length === 0){
+            alertMessage('info','Solo hay esa cinta!','Oops!')   
+            $("#modalCintas").modal('hide');     
+          }
+          $('li', data).each(function(index) {
+            let liText  = $(this).text().trim();
+            let liParts = liText.split(' - '); 
+            let codigo  = liParts[0];
+            let fecha   = liParts[1];
+            let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
+            tbody.append(row);
+          });
+          tabla.append(thead).append(tbody);
+          $('#muestraData').html(tabla);
+          tabla.DataTable(); 
+          $.ajax({
+            url: '{% url "generar_pdf_modal" %}',
+            data: {'q': pres_folio},
+            success: function() {
+              window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
+            }
+          });
         }
-        $('li', data).each(function(index) {
-          let liText  = $(this).text().trim();
-          let liParts = liText.split(' - '); 
-          let codigo  = liParts[0];
-          let fecha   = liParts[1];
-          let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
-          tbody.append(row);
-        });
-        tabla.append(thead).append(tbody);
-        $('#muestraData').html(tabla);
-        tabla.DataTable(); 
-      }
-    });
+      });
+    })
   });
 });
 

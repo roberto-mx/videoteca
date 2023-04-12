@@ -178,9 +178,96 @@ def generar_pdf(request):
 
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
+# ---------------------------------PDF2----------------------------------------------------------------------------------------
+@csrf_exempt
+class GENERATE(FPDF):
+    def __init__(self, orientation='P', unit='mm', format='A4', q=None):
+        super().__init__(orientation, unit, format)
+        self.q = q
 
+    def header(self):
+        
+        # Configuración de la cabecera del PDF
+        self.image('images/EducaciónAprende.jpeg', x=10, y=8, w=50)
+        self.image('images/logo-aprendemx.png', x=65, y=5, w=50)
+        self.ln()
 
+        self.set_font('Arial', 'B', 8)
+        self.cell(480,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.ln(3)
+        self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
+        self.ln(3)
+        self.cell(518,1, 'Audiovisual', 0, 20, 'C')
+        self.ln(3)
+        self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
+        self.ln(40)
 
+        self.set_font('Arial', 'B', 8)
+        self.cell(84, 10,   'NOMBRE:      _______________________________', 0, 0, 'C')
+        # self.ln(7)
+        self.cell(306, 10,  'DIRECCIÓN:   _______________________________', 0, 0, 'C')
+        self.ln(17)
+        self.cell(83, 10,   'PUESTO:      _______________________________', 0, 0, 'C')
+
+        self.cell(103, 10,  'EXTENSIÓN:   _______________________________', 0, 0, 'C')
+        self.cell(103, 10,  'CORREO:      _______________________________', 0, 0, 'C')
+        self.ln(40)
+        
+        self.set_font('Arial', 'B', 15)
+        self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
+        self.ln(20)
+        
+    def footer2(self):
+
+        self.ln(40)
+        self.set_font('Arial', 'B', 8)
+        self.cell(103, 10, 'RECIBE:', 0, 0, 'C')
+        self.cell(200, 10, 'DEVUELVE:', 0, 0, 'C')
+        self.ln()
+
+        self.cell(103, 10, '________________________________________', 0, 0, 'C')
+        # self.ln(8)
+        self.cell(200, 10, '________________________________________', 0, 0, 'C')
+        # self.ln()
+
+        # Configuración del pie de página del PDF
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
+    def generate_Table(self, data):
+        # Generación del contenido de la tabla en el PDF
+        self.set_fill_color(144, 12, 63)
+        self.set_text_color(255, 255, 255) # Establece el color de la letra en blanco
+        self.cell(85, 10, 'Código de Barras', 1, 0, '', True)
+        self.cell(85, 10, 'Fecha Prestamo y Devolucón', 1, 0, '', True)
+        self.set_text_color(0, 0, 0)
+        self.ln()
+
+        for row in data:
+            self.cell(85, 10, str(row['vide_codigo']), 1)
+            self.cell(85, 10, str(row['pres_fecha_devolucion']), 1)
+            self.ln()
+
+def generar_pdf_modal(request):
+    q = int(request.GET.get("q"))
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
+   
+    response = HttpResponse(content_type='application/pdf')
+    # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="Videoteca_{q}.pdf"'
+    pdf = GENERATE('P', 'mm', (300, 350), q)
+
+    # Abre una nueva página en el documento PDF
+    pdf.add_page()
+
+    # Agrega los datos de los préstamos a la página actual
+    pdf.generate_Table(queryset)
+    
+
+    response.write(pdf.output(dest='S').encode('latin1'))
+    return response
+    # return render(request, 'prestamos/prestamos_detalle_list.html', context)
 
 
 # ---------------------------------------------------------------------------------------------------------------------------#
