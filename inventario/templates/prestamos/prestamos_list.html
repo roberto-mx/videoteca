@@ -11,8 +11,7 @@
         </div>
       </a>
 
-      <a  type = "button" class="btn btn-danger btn-sm"  id="buttonIn" {{'url   
-      '}} data-toggle="modal" data-target="#modalIn">
+      <a  type = "button" class="btn btn-danger btn-sm"  id="buttonIn" {{'url'}} data-toggle="modal" data-target="#modalIn">
         <div style="display: flex; flex-direction: column; align-items: center;">
           <span>Devolución con Código de Barras</span>
           <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
@@ -20,63 +19,81 @@
       </a>
       
       {% comment %} <a type= "submit"  class = "btn btn-primary btn-sm" href="{% url 'generar_pdf' %}"> {% endcomment %}
-      <button id = "btn-generar-pdf" class="btn btn-primary btn-sm" type = "button">
+      <button id = "btn-generar-pdf" class="btn btn-primary btn-sm"  type = "button">
         <div style="display: flex; flex-direction: column; align-items: center;">
           <span>Descargar PDF</span>
           <i class="fas fa-file-pdf" style="font-size:18px;"></i>
         </div>
       </button>
 
-      {% comment %} </button> {% endcomment %}
-     
     </form>
   </nav>
 </div>
-{% comment %}  {% endcomment %}
+
 <br>
 <form id="search-form">
-  <label for="exampleFormControlInput1" class="form-label">Código de Barras</label>
-  <input type="number" min="0" max="9" required=""  class="form-control" placeholder="Buscar ..." id="busqueda" style="max-width: 300px;">
+  <label for="exampleFormControlInput1" class="form-label"> Barcode </label>
+  <input type="number" min="0" max="9" required=""  class="form-control" placeholder="search  ..." id="busqueda" style="max-width: 300px;">
 </form>
 <br>
-<button id="reload" class="btn btn-primary btn-sm" type="button" > Click para recargar <i class='fas fa-redo-alt'></i> </button>
+
+<button id="reload" class="btn btn-secondary btn-sm" type="button" >
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <span> Click para recargar </span>
+    <i class="fa-solid fa-rotate-right"></i>
+  </div>
+</button>
+
 <br><br>
 
-  <table class="table table-bordered " id="TablePrestamo">
-    <thead>
+<table class="table table-bordered " id="TablePrestamo">
+  <thead>
+    <tr>
+      {% comment %} <th>Mostrar</th> {% endcomment %}
+      <th>Acciones</th>
+      <th>Folio Prestamo</th>
+      <th>Usuario</th>
+      <th>Fecha-Hora-Prestamo</th>
+      <th>Devolución</th>
+      <th>Estatus</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for data in prestamos   %} 
       <tr>
-        <th>Acciones</th>
-        <th>Folio Prestamo</th>
-        <th>Usuario</th>
-        <th>Fecha-Hora-Prestamo</th>
-        <th>Devolución</th>
-        <th>Estatus</th>
+
+        {% comment %} <td></td> {% endcomment %}
+          <td>
+            {% comment %} <button type = "button" class="btn btn-primary btn-sm ver-detalle" value={{data.pres_folio}} id="verDetalle" data-toggle="modal" data-target="#modalCintas" data-detalles="{{ detalles }}">
+
+            </button> {% endcomment %}
+          </td>
+          <td>{{ data.pres_folio }} </td>
+          <td>{{ data.usua_clave }} </td>
+          <td>{{ data.pres_fechahora }} </td>
+          <td>{{ data.pres_fecha_devolucion }}</td>
+          <td>{{ data.pres_estatus }}</td>
       </tr>
-    </thead>
-    <tbody>
-      {% for data in prestamos   %} 
-        <tr>
-            <td><a class = "btn btn-primary btn-sm ver-detalle" value={{data.pres_folio}} id="verDetalle" data-toggle="modal" data-target="#modalCintas" data-detalles="{{ detalles }}"><i class='fas fa-plus-circle' style='font-size:12px'></i></a></td>
-            <td>{{ data.pres_folio }} </td>
-            <td>{{ data.usua_clave }} </td>
-            <td>{{ data.pres_fechahora }} </td>
-            <td>{{ data.pres_fecha_devolucion }}</td>
-            <td>{{ data.pres_estatus }}</td>
-        </tr>
-        {% empty %}
-      {% endfor %}
-    </tbody> 
-  </table>
+      {% empty %}
+    {% endfor %}
+  </tbody> 
+</table>
 {% comment %} Modal Listar Cintas {% endcomment %}
 
 <div class="modal fade" id="modalCintas">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title mb-3"> Lista de Cintas <i class='fas fa-photo-video'></i></h4>
+        <h4 class="modal-title mb-3"> Lista de Cintas <i class="fa-solid fa-user-chef"></i> <!-- uses solid style -->
       </div>
       <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
         <div class="modal-body" id="muestraData" >
+          <button id = "btn-generar-pdf" class="btn btn-primary btn-sm"  type = "button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span>Descargar PDF</span>
+              <i class="fas fa-file-pdf" style="font-size:18px;"></i>
+            </div>
+          </button>
           <table class="table table-bordered" id="muestraDataTable" name="DataTable">
             <thead>
               <tr>
@@ -166,37 +183,23 @@
 
 <script>
 
-  const alertMessage = (type, message, title) => {
-    Swal.fire
-    ({
-      icon: type,
-      title: title,
-      text: message,
-    });
-  }
-
-//  $(document).ready(function() {
-//    $('#btn-generar-pdf').on('click', function() {
-//      const vide_codigo = $('#busqueda').val();
-//      $.ajax({
-//        url: '{% url "prestamos_filter" %}',
-//        data: {'q': vide_codigo},
-//        dataType: 'json',
-//        success: function(res) {
-//          console.log({dataPDF:res})
-//        }
-//      });
-//    });
-//  });
-
 $(document).ready(function() {
   $('#btn-generar-pdf').on('click', function() {
     const vide_codigo = $('#busqueda').val();
+    if (vide_codigo === '') {
+      alertMessage('warning', 'Debes ingresar un código de barras para generar el PDF.', 'Oops!', 'swal-wide');
+      return; 
+    }
+
     $.ajax({
       url: '{% url "prestamos_filter" %}',
       data: {'q': vide_codigo},
       dataType: 'json',
       success: function(res) {
+        if (res.length === 0) {
+          alertMessage('warning', 'El código de barras ingresado no existe.', 'Oops!', 'swal-wide');
+          return;
+        }
         console.log({PDF:res})
         $.ajax({
           url: '{% url "generar_pdf" %}',
@@ -209,7 +212,7 @@ $(document).ready(function() {
     });
   });
 });
-
+  
 
 
 const reload = document.getElementById('reload');
@@ -220,14 +223,11 @@ reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de p
 
 $(document).ready(function() {
   $('#TablePrestamo').DataTable({
-    columns: [
+    columns: [ 
       {
         "data": "pres_folio",
         "render": function(data, type, row, meta) {
-          return "<a class='btn btn-danger btn-sm ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas' data-detalles='" + row.detalles + "'><i class='fas fa-plus-circle' style='font-size:12px'></i></a> " 
-          //+ 
-          //"<a class='btn btn-primary btn-sm ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas' data-detalles='" + row.detalles + "'><i class='fas fa-file-pdf' style='font-size:12px'></i></a> "
-          
+          return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas' data-detalles='" + row.detalles + "'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
         }
       },
       {"data": "pres_folio"},
@@ -275,7 +275,7 @@ $(document).ready(function() {
         //Operación ternaria donde hago la validación, si hay o no más cintas
      
         if($('li', data).length === 0){
-          console.log(alertMessage('info','Solo hay esa cinta!','Oops!'))   
+          alertMessage('info','Solo hay esa cinta!','Oops!')   
           $("#modalCintas").modal('hide');     
         }
         $('li', data).each(function(index) {

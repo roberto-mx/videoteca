@@ -73,6 +73,9 @@ def Filtrar_prestamos(request):
 # ---------------------------------------------------------------------------------------------------------------------------#
 
 class PDF(FPDF):
+    def __init__(self, orientation='P', unit='mm', format='A4', q=None):
+        super().__init__(orientation, unit, format)
+        self.q = q
 
     def header(self):
         
@@ -92,31 +95,27 @@ class PDF(FPDF):
         self.ln(40)
 
         self.set_font('Arial', 'B', 8)
-        self.cell(84, 10, 'NOMBRE:    _______________________________', 0, 0, 'C')
-        self.ln(7)
-        self.cell(83, 10, 'DIRECCIÓN: _______________________________', 0, 0, 'C')
-        self.ln(7)
-        self.cell(83, 10, 'PUESTO:    _______________________________', 0, 0, 'C')
+        self.cell(84, 10,   'NOMBRE:      _______________________________', 0, 0, 'C')
+        # self.ln(7)
+        self.cell(306, 10,  'DIRECCIÓN:   _______________________________', 0, 0, 'C')
+        self.ln(17)
+        self.cell(83, 10,   'PUESTO:      _______________________________', 0, 0, 'C')
 
-        self.cell(103, 10, 'EXTENSIÓN:    _______________________________', 0, 0, 'C')
-        self.cell(103, 10, 'CORREO:       _______________________________', 0, 0, 'C')
+        self.cell(103, 10,  'EXTENSIÓN:   _______________________________', 0, 0, 'C')
+        self.cell(103, 10,  'CORREO:      _______________________________', 0, 0, 'C')
         self.ln(40)
         
         self.set_font('Arial', 'B', 15)
-        self.cell(280, 10, 'PRESTAMO VIDEOTECA', 0, 0, 'C')
+        self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
         self.ln(20)
         
     def footer(self):
 
-        # self.ln(30)
-        # self.ln()
-
-        self.ln()
+        self.ln(40)
         self.set_font('Arial', 'B', 8)
         self.cell(103, 10, 'RECIBE:', 0, 0, 'C')
         self.cell(200, 10, 'DEVUELVE:', 0, 0, 'C')
         self.ln()
-
 
         self.cell(103, 10, '________________________________________', 0, 0, 'C')
         # self.ln(8)
@@ -168,7 +167,7 @@ def generar_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
     response['Content-Disposition'] = f'attachment; filename="Videoteca_{q}.pdf"'
-    pdf = PDF('P', 'mm', (300, 350))
+    pdf = PDF('P', 'mm', (300, 350), q)
 
     # Abre una nueva página en el documento PDF
     pdf.add_page()

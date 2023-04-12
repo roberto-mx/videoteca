@@ -77,14 +77,6 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'videoteca',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'admin',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432'
-    # },
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'videoteca2',
@@ -93,22 +85,15 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5433'
     },
-    #     'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'videoteca3',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'admin',
-    #     'HOST': 'localhost',
-    #     'PORT': '5434'
-    # },
-    # 'users': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'RecursosHumanos',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'admin',
-    #     'HOST': 'localhost',
-    #     'PORT': '5450'
-    # }
+
+    'users': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'RecursosHumanos',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5450'
+    }
 }
 
 
