@@ -11,7 +11,7 @@
         </div>
       </a>
 
-      <a  type = "button" class="btn btn-danger btn-sm"  id="buttonIn" {{'url'}} data-toggle="modal" data-target="#modalIn">
+      <a type = "button" class="btn btn-danger btn-sm"  id="buttonIn" {{'url'}} data-toggle="modal" data-target="#modalIn">
         <div style="display: flex; flex-direction: column; align-items: center;">
           <span>Devolución con Código de Barras</span>
           <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
@@ -61,6 +61,7 @@
   <tbody>
     {% for data in prestamos   %} 
       <tr>
+
           <td></td>
           <td>{{ data.pres_folio }} </td>
           <td>{{ data.usua_clave }} </td>
@@ -97,8 +98,8 @@
         
       </div>
       <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
-            <button id = "pdf-generate" class="btn btn-primary btn-sm"  type = "button"><i class="fas fa-file-pdf"></i> Descargar PDF </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
+        <button type="button" class="btn btn-primary" id="btn-descargar-pdf"><i class="fas fa-file-pdf" ></i>Descargar PDF</button>
       </div>
     </div>
   </div>
@@ -172,6 +173,7 @@
 
 <script>
 
+//PDF para los folios
 $(document).ready(function() {
   $('#btn-generar-pdf').on('click', function() {
     const vide_codigo = $('#busqueda').val();
@@ -214,7 +216,7 @@ $(document).ready(function() {
       {
         "data": "pres_folio",
         "render": function(data, type, row, meta) {
-          return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas' data-detalles='" + row.detalles + "'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
+        return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas' data-detalles='" + row.detalles + "'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
         }
       },
       {"data": "pres_folio"},
@@ -244,55 +246,115 @@ $(document).ready(function() {
         }
     });
   });
+});
+  
+$('#TablePrestamo').on('click', '.ver-detalle', function() {
+  const detalles = $(this).data('detalles');
+  const pres_folio = $(this).closest('tr').data('folio');
+
+  $.ajax({
+    url: '{% url "prestamos_detalles" %}',
+    type: 'GET',
+    data: { 
+      q: pres_folio
+    },
+    success: function(data) {
+      $('#btn-descargar-pdf').on('click', function() {
+        $.ajax({
+          url: '{% url "generar_pdf_modal" %}',
+          data: {'q': pres_folio},
+          success: function() {
+            window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
+          }
+        });
+      });
+      let tabla = $('<table>');
+      let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
+      let tbody = $('<tbody>');
+      //Operación ternaria donde hago la validación, si hay o no más cintas
+    
+      if($('li', data).length === 0){
+        alertMessage('info','Solo hay esa cinta!','Oops!')   
+        $("#modalCintas").modal('hide');     
+      }
+      $('li', data).each(function(index) {
+        let liText  = $(this).text().trim();
+        let liParts = liText.split(' - '); 
+        let codigo  = liParts[0];
+        let fecha   = liParts[1];
+        let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
+        tbody.append(row);
+      });
+      tabla.append(thead).append(tbody);
+      $('#muestraData').html(tabla);
+      tabla.DataTable(); 
+    }
+  })
+})
+
+//$('#btn-descargar-pdf').on('click', function() {
+//  const pres_folio = $(this).closest('.modal-content').data('folio');
+//
+//  console.log(pres_folio)
+//  $.ajax({
+//    url: '{% url "generar_pdf_modal" %}',
+//    type: 'GET',
+//    data: { 
+//      q: pres_folio
+//    },
+//    success: function(data) {
+//      // La respuesta del servidor debe ser la URL del archivo PDF generado
+//      // Descargar el archivo usando la función de descarga de archivos de JavaScript
+//      const downloadLink = document.createElement('a');
+//      downloadLink.href = data;
+//      downloadLink.download = 'archivo.pdf';
+//      document.body.appendChild(downloadLink);
+//      downloadLink.click();
+//      document.body.removeChild(downloadLink);
+//    },
+//    error: function() {
+//      alert('Error al generar el PDF');
+//    }
+//  });
+//});
 
   
-  $('#TablePrestamo').on('click', '.ver-detalle', function() {
-    //pdf-generate
-    const detalles   = $(this).data('detalles');
-    const pres_folio = $(this).closest('tr').data('folio');
-    $('#pdf-generate').on('click', function() {
-  
-      
-   
-      $.ajax({
-        url: '{% url "prestamos_detalles" %}',
-        type: 'GET',
-        data: { 
-          q: pres_folio
-        },
-        success: function(data) {
-          let tabla = $('<table>');
-          let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
-          let tbody = $('<tbody>');
-          //Operación ternaria donde hago la validación, si hay o no más cintas
-      
-          if($('li', data).length === 0){
-            alertMessage('info','Solo hay esa cinta!','Oops!')   
-            $("#modalCintas").modal('hide');     
-          }
-          $('li', data).each(function(index) {
-            let liText  = $(this).text().trim();
-            let liParts = liText.split(' - '); 
-            let codigo  = liParts[0];
-            let fecha   = liParts[1];
-            let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
-            tbody.append(row);
-          });
-          tabla.append(thead).append(tbody);
-          $('#muestraData').html(tabla);
-          tabla.DataTable(); 
-          $.ajax({
-            url: '{% url "generar_pdf_modal" %}',
-            data: {'q': pres_folio},
-            success: function() {
-              window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
-            }
-          });
-        }
-      });
-    })
-  });
-});
+
+//  $('#TablePrestamo').on('click', '.ver-detalle', function() {
+//    const detalles = $(this).data('detalles');
+//    const pres_folio = $(this).closest('tr').data('folio');
+//
+//    $.ajax({
+//      url: '{% url "prestamos_detalles" %}',
+//      type: 'GET',
+//      data: { 
+//        q: pres_folio
+//      },
+//      success: function(data) {
+//        let tabla = $('<table>');
+//        let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
+//        let tbody = $('<tbody>');
+//        //Operación ternaria donde hago la validación, si hay o no más cintas
+//     
+//        if($('li', data).length === 0){
+//          alertMessage('info','Solo hay esa cinta!','Oops!')   
+//          $("#modalCintas").modal('hide');     
+//        }
+//        $('li', data).each(function(index) {
+//          let liText  = $(this).text().trim();
+//          let liParts = liText.split(' - '); 
+//          let codigo  = liParts[0];
+//          let fecha   = liParts[1];
+//          let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
+//          tbody.append(row);
+//        });
+//        tabla.append(thead).append(tbody);
+//        $('#muestraData').html(tabla);
+//        tabla.DataTable(); 
+//      }
+//    });
+//  });
+//});
 
 $('#searchBarCodeIn').keyup(function(e){
     if( e.keyCode == 13 ){
