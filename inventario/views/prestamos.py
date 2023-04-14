@@ -96,16 +96,20 @@ def RegisterInVideoteca(request):
             #videos = Videos.objects.get(vide_codigo_id=codigoBarras)
             error= "Busqueda en Videos"
             detallesPrestamo = DetallePrestamos.objects.filter( Q(vide_clave = maestroCinta.video_id) )
+            detallesPrestamoMaster = DetallePrestamos.objects.filter(Q(vide_codigo = codigoBarras ))
             #& Q(depr_estatus ='A')
             error= "No se encontro en Prestamos"
             if detallesPrestamo.count() > 0:
                 detallePrestamo = detallesPrestamo.latest('pres_folio')
-                prestamo = Prestamos.objects.get(pres_folio= detallePrestamo.pres_folio_id)
+            elif detallesPrestamoMaster.count() > 0:
+                detallePrestamo = detallesPrestamoMaster.latest('pres_folio')
             else:
                 print("Hay que revisar los registros de esté codigo de barras")
                 registro_data={"error": True, "errorMessage":"Hay que revisar los registros de esté codigo de barras"}
                 return JsonResponse(registro_data,safe=True)
             
+            prestamo = Prestamos.objects.get(pres_folio= detallePrestamo.pres_folio_id)
+
             detallePrestamo.depr_estatus='I'
             detallePrestamo.pres_fecha_devolucion = now
             detallePrestamo.usuario_devuelve = usuario
@@ -121,9 +125,9 @@ def RegisterInVideoteca(request):
                 prestamo.pres_fecha_devolucion = now
                 prestamo.save()
 
-            registro_data={"error":False,"errorMessage":"Registro Exitoso!"}
+            registro_data={"error":False,"errorMessage":" Registro Exitoso!"}
         except Exception as e:
-            registro_data={"error":True,"errorMessage":"No se dio de alta correctamente el reingreso: "+ error}
+            registro_data={"error":True,"errorMessage":" No se dio de alta correctamente el reingreso: "+ error}
            
     return JsonResponse(registro_data,safe=True)
 
@@ -145,30 +149,38 @@ def ValidateOutVideoteca(request):
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
-    now = datetime.datetime.now()
+    now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
+    #datetime.datetime.now()
     if request.method == 'POST':
         usuario = request.POST['usuario']
         data = json.loads(request.POST['codigos'])
+        prestamo = Prestamos()
+        prestamo.usua_clave = usuario
+        prestamo.usvi_clave = 'B970086'
+        prestamo.pres_fechahora = now
+        prestamo.pres_fecha_prestamo = now
+        prestamo.pres_fecha_devolucion = now
+        prestamo.pres_estatus = 'X'
+        prestamo.save()
         for codigo in data:
-            maestroCinta = MaestroCintas.objects.get(pk = codigo)
-            videos = Videos.objects.get(vide_codigo_id=codigo)
-            prestamo = Prestamos()
-            prestamo.usua_clave = usuario
-            prestamo.pres_fechahora = now
-            prestamo.pres_fecha_prestamo = now
-            prestamo.pres_fecha_devolucion = now
-            prestamo.pres_estatus = 'X'
-            prestamo.save()
-
-            detPrestamos = DetallePrestamos()
-            detPrestamos.pres_folio = prestamo
-            detPrestamos.vide_clave = videos
-            detPrestamos.depr_estatus = 'X'
-            detPrestamos.save()
-
-            maestroCinta.video_estatus = 'X'
-            maestroCinta.save()
-
-        registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
+            if codigo != None:
+                try:
+                    maestroCinta = MaestroCintas.objects.get(pk = codigo)
+                    maestroCinta.video_estatus = 'X'
+                    maestroCinta.save()
+                    
+                    videos = Videos.objects.get(Q(vide_clave=maestroCinta.video_id))
+                        
+                except Exception as e:
+                    registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}  
+           
+                detPrestamos = DetallePrestamos()
+                detPrestamos.pres_folio = prestamo
+                detPrestamos.vide_codigo = maestroCinta
+                if videos is not None:
+                    detPrestamos.vide_clave = videos
+                detPrestamos.depr_estatus = 'X'
+                detPrestamos.save()
+        registro_data={"error":False,"errorMessage":"Se creo el folio: "+ prestamo.pres_folio, "folio": prestamo.pres_folio}    
     return JsonResponse(registro_data,safe=True)
     

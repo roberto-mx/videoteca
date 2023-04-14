@@ -472,7 +472,7 @@ class PorIngresar(models.Model):
 
 
 class Prestamos(models.Model):
-    pres_folio = models.IntegerField(primary_key=True)
+    pres_folio = models.AutoField(primary_key=True)
     usvi_clave = models.CharField(max_length=10)
     usua_clave = models.CharField(max_length=10)
     pres_fechahora = models.DateTimeField()

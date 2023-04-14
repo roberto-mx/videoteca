@@ -99,8 +99,9 @@
             </div>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModal">Cerrar</button>
-              <button type="button" class="btn btn-primary" id="cleanTable">Limpiar</button> 
+              <button type="button" class="btn btn-danger"  id="cleanTableReturn">Limpiar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModalReturn">Cerrar</button>
+              <button type="button" class="btn btn-primary" id="endReturn">Finalizar Entrega</button> 
 
             <table id="resultTableIn" class="modal-footer">
             </table>
@@ -131,7 +132,8 @@
             </div>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModal">Cerrar</button>
+              <button type="button" class="btn btn-danger"id="cleanTableOut">Limpiar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModalOut">Cerrar</button>
               <button type="button" class="btn btn-primary" id="continuarPrestamo">Continuar</button> 
 
             <table id="resultTableOut" class="modal-footer">
@@ -212,15 +214,27 @@ $("#buttonOut").click(function(){
   
 });
 
-function cleanTable(){
+function cleanTableReturn(){
   $("#resultTableIn tr").remove(); 
 }
 
-$("#cleanTable").click(function(){
-   cleanTable(); 
+$("#cleanTableReturn").click(function(){
+   cleanTableReturn(); 
 });
-$("#closeModal").click(function(){
-   cleanTable(); 
+$("#closeModalReturn").click(function(){
+   cleanTableReturn(); 
+});
+
+function cleanTableOut(){
+  $("#resultTableOut tr").remove(); 
+}
+
+$("#cleanTableOut").click(function(){
+   cleanTableOut(); 
+});
+
+$("#closeModalOut").click(function(){
+   cleanTableOut(); 
 });
 
 $("#continuarPrestamo").click(function(){
@@ -230,9 +244,9 @@ $("#continuarPrestamo").click(function(){
       $('#searchUsuarioOut').focus();  
   }
   else{
-      console.log(get_data());
+      console.log(get_data('#resultTableOut tbody tr'));
          $.ajax({
-            data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data())},
+            data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableOut tbody tr'))},
             url: "{% url 'registro_salida_videoteca' %}",
             type: 'POST'
             })
@@ -256,6 +270,38 @@ $("#continuarPrestamo").click(function(){
     }     
   });
 
+$("#endReturn").click(function(){
+  usuario =  $('#searchUsuarioIn').val();
+  if (usuario == ""){
+     alert("Ingrese un valor para el usuario");
+      $('#searchUsuarioIn').focus();  
+  }
+  else{
+      console.log(get_data('#resultTableIn tbody tr'));
+         $.ajax({
+            data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableIn tbody tr'))},
+            url: "{% url 'registro_entrada_videoteca' %}",
+            type: 'POST'
+            })
+              .done(function(response){
+                if(response['error']==true){
+                  $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+                }
+                else{
+                    $('#resultTableIn').append('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+                }
+                $('#searchBarCodeIn').val("").focus()
+                })
+                .fail(function(){
+                  $('#alertWarning').show('slow');
+                  $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+                  setTimeout(function(){ 
+                  cleanForm();
+                  location.reload();
+                  }, 3000);      
+                })
+    }     
+  });
 
 $(document).on("click",".glyphicon-plus",function(){
             var this_html=$(this);
@@ -318,10 +364,10 @@ function readCodeBar(){
     })
       .done(function(response){
         if(response['error']==true){
-              $('#resultTableIn').prepend('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+              $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none" > <input type="text" class="codbarrasError" value="'+codigoBarras + '"></input></td><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
             }
             else{
-                $('#resultTableIn').prepend('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+                $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"> <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
             }
             $('#searchBarCodeIn').val("").focus()
         })
@@ -349,7 +395,7 @@ function addItemOut(){
       }
       else{
           if(response['error']==true){
-            $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none" > <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
+            $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none" > <input type="text" class="codbarrasError" value="'+codigoBarras + '"></input></td><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
           }
           else{
               $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"> <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td>  <td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
@@ -378,11 +424,12 @@ function f_valida_repetido(codigoBarras){
         }           
       return v_valor;      
     }
-function get_data(){
+function get_data(table){
   var data = [];
-  if ($('#resultTableOut tbody tr').length > 0){
+  //'#resultTableOut tbody tr'
+  if ($(table).length > 0){
    
-      $('#resultTableOut tbody tr').each(function(){
+      $(table).each(function(){
                 data.push($(this).find('input.codbarras').val());
               });
         }           
