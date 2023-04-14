@@ -242,9 +242,15 @@ $(document).ready(function() {
     
   });
 
+  const tablaOriginal = $('#TablePrestamo').DataTable().data().toArray();
+
   $('#busqueda').on('keyup', function() {
     const vide_codigo = $(this).val();
-    $.ajax({
+    if(vide_codigo == ''){
+      // Mostrar la tabla original si el input está vacío
+      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal).draw();
+    }else{
+      $.ajax({
         url: '{% url "prestamos_filter" %}',
         data: {'q': vide_codigo},
         dataType: 'json',
@@ -254,7 +260,8 @@ $(document).ready(function() {
           // Actualizar los datos de la tabla existente
           $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
         }
-    });
+      });
+    }
   });
 });
 
