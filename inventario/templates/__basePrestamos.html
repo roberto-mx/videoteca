@@ -71,8 +71,10 @@
                   <ul class="list-unstyled">
                          {% if user.is_authenticated %}
                           <li>
-                          <span>{{ user.first_name }} {{ user.last_name }} </span>
-                          <a type="button" class="btn btn-link pull-right" href="{% url 'logout' %}">Salir</a>
+                          {% comment %} <span>{{ user.first_name }} {{ user.last_name }} </span>
+                          <a type="button" class="btn btn-link pull-right" href="{% url 'logout' %}">Salir</a> {% endcomment %}
+                          <a type="submit"  class="btn btn-default btn-block " href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> <strong> Logout </strong> </a> 
+                          {% comment %} <a type="submit" href="{% url 'logout' %}" class="btn btn-primary btn-lg"> <i class="fa-solid fa-turn-down-left"></i>Salir </a><i class="fa-solid fa-arrow-turn-down-left"></i> {% endcomment %}
                           </li>
                         {% else %}
 

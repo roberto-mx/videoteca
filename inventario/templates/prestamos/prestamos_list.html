@@ -4,7 +4,7 @@
 <div class="card">
   <nav class="navbar bg-body-tertiary">
     <form class="container-fluid justify-content-start">
-      <a type="button" class="btn btn-primary btn-sm" id="buttonOut" data-toggle="modal" data-target="#modalOut">
+      <a type="button" class="btn btn-default btn-sm" id="buttonOut" data-toggle="modal" data-target="#modalOut">
         <div style="display: flex; flex-direction: column; align-items: center;">
           <span>Prestamo con Código de Barras</span>
           <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
@@ -37,10 +37,10 @@
 </form>
 <br>
 
-<button id="reload" class="btn btn-secondary btn-sm" type="button" >
+<button id="reload" class="btn btn-secondary btn-sm popover-test" type="button" >
   <div style="display: flex; flex-direction: column; align-items: center;">
-    <span> Click para recargar </span>
-    <i class="fa-solid fa-rotate-right"></i>
+    <span><strong> Click para recargar </strong></span>
+    <i class="fa-solid fa-rotate"></i>
   </div>
 </button>
 
@@ -49,7 +49,6 @@
 <table class="table table-bordered " id="TablePrestamo">
   <thead>
     <tr>
-      {% comment %} <th>Mostrar</th> {% endcomment %}
       <th>Acciones</th>
       <th>Folio Prestamo</th>
       <th>Usuario</th>
@@ -62,7 +61,9 @@
     {% for data in prestamos   %} 
       <tr>
 
-          <td></td>
+          <td>
+            <a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>
+          </td>
           <td>{{ data.pres_folio }} </td>
           <td>{{ data.usua_clave }} </td>
           <td>{{ data.pres_fechahora }} </td>
@@ -79,15 +80,16 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title mb-3"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i> <!-- uses solid style -->
+        <h4 class="modal-title mb-3"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i> </h4><!-- uses solid style -->
+        <input type="text" id="inputDetalles" disabled>
+
       </div>
       <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
         <div class="modal-body" id="muestraData" >
           <table class="table table-bordered" id="muestraDataTable" name="DataTable">
             <thead>
               <tr>
-                <th>Código de barras</th>
-                <th>Fecha devolucion</th>
+               {% comment %} Esta tabla se pinta en el jquery {% endcomment %}
               </tr>
             </thead>
             <tbody>
@@ -173,6 +175,13 @@
 
 <script>
 
+{% comment %} let boton = document.getElementById('verDetalle');
+let resultado = document.getElementById('resultado');
+
+      boton.onclick = function(e){
+      resultado.value =  this.value;
+} {% endcomment %}
+
 //PDF para los folios
 $(document).ready(function() {
   $('#btn-generar-pdf').on('click', function() {
@@ -210,13 +219,15 @@ reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de p
     location.reload();
 });  
 
+
+
 $(document).ready(function() {
   $('#TablePrestamo').DataTable({
     columns: [ 
       {
         "data": "pres_folio",
         "render": function(data, type, row, meta) {
-        return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas' data-detalles='" + row.detalles + "'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
+        return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
         }
       },
       {"data": "pres_folio"},
@@ -228,6 +239,7 @@ $(document).ready(function() {
     createdRow: function(row, data, dataIndex) {
       $(row).data('folio', data.pres_folio);
     }
+    
   });
 
   $('#busqueda').on('keyup', function() {
@@ -247,10 +259,14 @@ $(document).ready(function() {
     });
   });
 });
-  
+
 $('#TablePrestamo').on('click', '.ver-detalle', function() {
   const detalles = $(this).data('detalles');
   const pres_folio = $(this).closest('tr').data('folio');
+  
+  // Asignamos el valor de pres_folio al input
+  $('#inputDetalles').val(`No. de Folio - ${pres_folio}`).prop('disabled', true);
+  //console.log(`pinto folio ${$('#inputDetalles').val()}`  );
 
   $.ajax({
     url: '{% url "prestamos_detalles" %}',

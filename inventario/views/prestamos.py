@@ -42,6 +42,11 @@ def PrestamoDetalle(request):
     context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
 
+    # q = int(request.GET.get("q"))
+    # queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
+    # prestamo = list(queryset)  # convertimos el queryset en una lista
+    # return JsonResponse({'prestamo': prestamo})
+
 def Filtrar_prestamos(request):
     q = request.GET.get('q')
 
@@ -165,16 +170,13 @@ def generar_pdf(request):
 
     response = HttpResponse(content_type='application/pdf')
     # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
-    response['Content-Disposition'] = f'attachment; filename="Videoteca_{q}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = PDF('P', 'mm', (300, 350), q)
-
     # Abre una nueva página en el documento PDF
     pdf.add_page()
 
     # Agrega los datos de los préstamos a la página actual
     pdf.generate_table(prestamos_data)
-    
-
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
 # ---------------------------------PDF2----------------------------------------------------------------------------------------
@@ -236,10 +238,10 @@ class GENERATE(FPDF):
 
     def generate_Table(self, data):
         # Generación del contenido de la tabla en el PDF
-        self.set_fill_color(144, 12, 63)
-        self.set_text_color(255, 255, 255) # Establece el color de la letra en blanco
+        self.set_fill_color(31, 237, 237)
+        self.set_text_color(6, 28, 28) # Establece el color de la letra en blanco
         self.cell(90, 10, 'Código de Barras', 1, 0, '', True)
-        self.cell(90, 10, 'Fecha Prestamo y Devolucón', 1, 0, '', True)
+        self.cell(90, 10, 'Fecha de Devolucón', 1, 0, '', True)
         self.set_text_color(0, 0, 0)
         self.ln()
 
@@ -254,7 +256,7 @@ def generar_pdf_modal(request):
 
     response = HttpResponse(content_type='application/pdf')
     # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
-    response['Content-Disposition'] = f'attachment; filename="Videoteca_{q}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="Videoteca_Folio_{q}.pdf"'
     pdf = GENERATE('P', 'mm', (200, 380), q)
 
     # Abre una nueva página en el documento PDF
