@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ajax_datatable',
 
 ]
 
@@ -78,19 +79,20 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'videoteca',
+        'NAME': 'videoteca2',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'PASSWORD': '1595',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '5433'
     },
+
     'users': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'RecursosHumanos',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '5450'
     }
 }
 

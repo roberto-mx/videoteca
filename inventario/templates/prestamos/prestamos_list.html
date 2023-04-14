@@ -1,90 +1,114 @@
-
 {% extends '__basePrestamos.html' %}
+
 {% block content %}
-<div class="container">
- <div class="col-md-6">
-      <div class="form-group datepicker-group">
-      <label><b>Fecha de Inicio:</b></label>
-      <input class="form-control" id="input1" type="text">
-      <label><b>Fecha Fin:</b></label>
-      <input class="form-control" id="input2" type="text">
-   </div>
+<div class="card">
+  <nav class="navbar bg-body-tertiary">
+    <form class="container-fluid justify-content-start">
+      <a type="button" class="btn btn-default btn-sm" id="buttonOut" data-toggle="modal" data-target="#modalOut">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Prestamo con Código de Barras</span>
+          <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
+        </div>
+      </a>
+
+      <a type = "button" class="btn btn-danger btn-sm"  id="buttonIn" {{'url'}} data-toggle="modal" data-target="#modalIn">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Devolución con Código de Barras</span>
+          <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
+        </div>
+      </a>
+      
+      {% comment %} <a type= "submit"  class = "btn btn-primary btn-sm" href="{% url 'generar_pdf' %}"> {% endcomment %}
+      <button id = "btn-generar-pdf" class="btn btn-primary btn-sm"  type = "button">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Descargar PDF</span>
+          <i class="fas fa-file-pdf" style="font-size:18px;"></i>
+        </div>
+      </button>
+
+    </form>
+  </nav>
 </div>
-<form method="get">
-    <div class="col-md-3">
-      <input name ="q" id="searchFolio" value="{{request.GET.q}}" placeholder="Buscar préstamo..">
+
+<br>
+<form id="search-form">
+  <label for="exampleFormControlInput1" class="form-label"> Barcode </label>
+  <input type="number" min="0" max="9" required=""  class="form-control" placeholder="search  ..." id="busqueda" style="max-width: 300px;">
+</form>
+<br>
+
+<button id="reload" class="btn btn-secondary btn-sm popover-test" type="button" >
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <span><strong> Click para recargar </strong></span>
+    <i class="fa-solid fa-rotate"></i>
   </div>
- </form>
-  <div class="col-md-12">
-    <div class="col-md-6">
-      <p>
-       <a class="btn btn-primary" id="buttonOut" data-toggle="modal" data-target="#modalOut">Prestamo con Código de Barras</a>
-      </p>
-    </div>
-    <div class="col-md-6"> 
-         <a class="btn btn-danger" id="buttonIn" data-toggle="modal" data-target="#modalIn">Devolución con Código de Barras</a>
-    </div>
-  </div>
-  <div id="listaPersonas"></div>
-    
-  <div id="RowsSearch"></div>
-<div class ="col-md-12" id="RowsInicio">
-  <table class="table table-bordered" id="bajasList">
-    <thead>
+</button>
+
+<br><br>
+
+<table class="table table-bordered " id="TablePrestamo">
+  <thead>
+    <tr>
+      <th>Acciones</th>
+      <th>Folio Prestamo</th>
+      <th>Usuario</th>
+      <th>Fecha-Hora-Prestamo</th>
+      <th>Devolución</th>
+      <th>Estatus</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for data in prestamos   %} 
       <tr>
-      <th>Detalle</th>
-        <th>Folio Prestamo</th>
-        <th>Usuario</th>
-        <th>Fecha Hora Préstamo</th>
-        <th>Devolución</th>
-        <th>Estatus</th>        
+
+          <td>
+            <a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>
+          </td>
+          <td>{{ data.pres_folio }} </td>
+          <td>{{ data.usua_clave }} </td>
+          <td>{{ data.pres_fechahora }} </td>
+          <td>{{ data.pres_fecha_devolucion }}</td>
+          <td>{{ data.pres_estatus }}</td>
       </tr>
-    </thead>
-    <tbody>
-    {% for prestamo in prestamos %} 
-       <tr>
-       <!--   -->
-        <td style="display:none"> {{prestamo.pres_folio }}</td>
-          <td><a> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-          <td> {{prestamo.pres_folio}}</td>
-          <td>{{ prestamo.usua_clave }}</td>
-          <td>{{ prestamo.pres_fechahora  }} </a></td>
-          <td>{{ prestamo.pres_fecha_devolucion }}</td>
-          <td>{{ prestamo.pres_estatus }}</td>
-        </tr>
       {% empty %}
-        <tr class="table-active">
-          <td colspan="3">No data</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <div id="Pages"> 
-    {% if is_paginated %}
-      <ul class="pagination">
-        {% if page_obj.has_previous %}
-          <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
-        {% else %}
-          <li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-    
-    {% for i in paginator.page_range %}
-        {% if page_obj.number == i %}
-          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span>     </span></li>
-        {% else %}
-          <li><a href="?page={{ i }}">{{ i }}</a></li>
-        {% endif %}
     {% endfor %}
- 
-    {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-      </ul>
-    {% endif %}
+  </tbody> 
+</table>
+{% comment %} Modal Listar Cintas {% endcomment %}
+
+<div class="modal fade" id="modalCintas">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title mb-3"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i> </h4><!-- uses solid style -->
+        <input type="text" id="inputDetalles" disabled>
+
+      </div>
+      <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
+        <div class="modal-body" id="muestraData" >
+          <table class="table table-bordered" id="muestraDataTable" name="DataTable">
+            <thead>
+              <tr>
+               {% comment %} Esta tabla se pinta en el jquery {% endcomment %}
+              </tr>
+            </thead>
+            <tbody>
+           {% comment %} Aquí no va nada, todo lo puse en mi javascript {% endcomment %}
+            </tbody> 
+          </table>
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
+        <button type="button" class="btn btn-primary" id="btn-descargar-pdf"><i class="fas fa-file-pdf" ></i>Descargar PDF</button>
+      </div>
+    </div>
   </div>
-    <div class="modal fade"  id="modalIn">
+</div>
+
+{% comment %}  {% endcomment %}
+<div class="modal fade"  id="modalIn">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -117,7 +141,7 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-     <div class="modal fade"  id="modalOut">
+    <div class="modal fade"  id="modalOut">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -151,33 +175,200 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-
-<div class="row">
-  <div class="col-lg-12">
-        <div class="alert alert-success" id="upt_success" style="display:none">
-
-        </div>
-         <div class="alert alert-danger" id="upt_error" style="display:none">
-
-        </div>
-  </div>
-</div>
-   
-
-
 <script>
 
-$('#input1').datepicker({changeYear: true});
-$('#input2').datepicker({changeYear: true});
-$('#searchBarCodeIn').val("").focus();
-$('#searchBarCodeOut').val("").focus();
-/*
-document.body.addEventListener('keydown', event => {
-  if ( (event.ctrlKey && 'cvxspwuazj'.indexOf(event.key) !== -1) || ( event.ctrlKey && event.shiftKey ) ) {
-    event.preventDefault()
-  }
+{% comment %} let boton = document.getElementById('verDetalle');
+let resultado = document.getElementById('resultado');
+
+      boton.onclick = function(e){
+      resultado.value =  this.value;
+} {% endcomment %}
+
+//PDF para los folios
+$(document).ready(function() {
+  $('#btn-generar-pdf').on('click', function() {
+    const vide_codigo = $('#busqueda').val();
+    if (vide_codigo === '') {
+      alertMessage('warning', 'Debes ingresar un código de barras para generar el PDF.', 'Oops!', 'swal-wide');
+      return; 
+    }
+
+    $.ajax({
+      url: '{% url "prestamos_filter" %}',
+      data: {'q': vide_codigo},
+      dataType: 'json',
+      success: function(res) {
+        if (res.length === 0) {
+          alertMessage('warning', 'El código de barras ingresado no existe.', 'Oops!', 'swal-wide');
+          return;
+        }
+
+        $.ajax({
+          url: '{% url "generar_pdf" %}',
+          data: {'q': vide_codigo},
+          success: function() {
+            window.open('{% url "generar_pdf" %}?q=' + vide_codigo);
+          }
+        });
+      }
+    });
+  });
+});
+  
+const reload = document.getElementById('reload');
+
+reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de parametros
+    location.reload();
+});  
+
+$(document).ready(function() {
+  $('#TablePrestamo').DataTable({
+    columns: [ 
+      {
+        "data": "pres_folio",
+        "render": function(data, type, row, meta) {
+        return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
+        }
+      },
+      {"data": "pres_folio"},
+      {"data": "usua_clave"},
+      {"data": "pres_fechahora"},
+      {"data": "pres_fecha_devolucion"},
+      {"data": "pres_estatus"},
+    ],
+    createdRow: function(row, data, dataIndex) {
+      $(row).data('folio', data.pres_folio);
+    }
+    
+  });
+
+  $('#busqueda').on('keyup', function() {
+    const vide_codigo = $(this).val();
+    $.ajax({
+        url: '{% url "prestamos_filter" %}',
+        data: {'q': vide_codigo},
+        dataType: 'json',
+        success: function(res) {
+          const prestamos = res;
+          console.log({dataVuelta: res})
+          // Actualizar los datos de la tabla existente
+          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
+        }
+    });
+  });
+});
+
+$('#TablePrestamo').on('click', '.ver-detalle', function() {
+  const detalles = $(this).data('detalles');
+  const pres_folio = $(this).closest('tr').data('folio');
+  
+  // Asignamos el valor de pres_folio al input
+  $('#inputDetalles').val(`No. de Folio - ${pres_folio}`).prop('disabled', true);
+  //console.log(`pinto folio ${$('#inputDetalles').val()}`  );
+
+  $.ajax({
+    url: '{% url "prestamos_detalles" %}',
+    type: 'GET',
+    data: { 
+      q: pres_folio
+    },
+    success: function(data) {
+      $('#btn-descargar-pdf').on('click', function() {
+        $.ajax({
+          url: '{% url "generar_pdf_modal" %}',
+          data: {'q': pres_folio},
+          success: function() {
+            window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
+          }
+        });
+      });
+      let tabla = $('<table>');
+      let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
+      let tbody = $('<tbody>');
+      //Operación ternaria donde hago la validación, si hay o no más cintas
+    
+      if($('li', data).length === 0){
+        alertMessage('info','Solo hay esa cinta!','Oops!')   
+        $("#modalCintas").modal('hide');     
+      }
+      $('li', data).each(function(index) {
+        let liText  = $(this).text().trim();
+        let liParts = liText.split(' - '); 
+        let codigo  = liParts[0];
+        let fecha   = liParts[1];
+        let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
+        tbody.append(row);
+      });
+      tabla.append(thead).append(tbody);
+      $('#muestraData').html(tabla);
+      tabla.DataTable(); 
+    }
+  })
 })
-*/
+
+//$('#btn-descargar-pdf').on('click', function() {
+//  const pres_folio = $(this).closest('.modal-content').data('folio');
+//
+//  console.log(pres_folio)
+//  $.ajax({
+//    url: '{% url "generar_pdf_modal" %}',
+//    type: 'GET',
+//    data: { 
+//      q: pres_folio
+//    },
+//    success: function(data) {
+//      // La respuesta del servidor debe ser la URL del archivo PDF generado
+//      // Descargar el archivo usando la función de descarga de archivos de JavaScript
+//      const downloadLink = document.createElement('a');
+//      downloadLink.href = data;
+//      downloadLink.download = 'archivo.pdf';
+//      document.body.appendChild(downloadLink);
+//      downloadLink.click();
+//      document.body.removeChild(downloadLink);
+//    },
+//    error: function() {
+//      alert('Error al generar el PDF');
+//    }
+//  });
+//});
+
+  
+
+//  $('#TablePrestamo').on('click', '.ver-detalle', function() {
+//    const detalles = $(this).data('detalles');
+//    const pres_folio = $(this).closest('tr').data('folio');
+//
+//    $.ajax({
+//      url: '{% url "prestamos_detalles" %}',
+//      type: 'GET',
+//      data: { 
+//        q: pres_folio
+//      },
+//      success: function(data) {
+//        let tabla = $('<table>');
+//        let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
+//        let tbody = $('<tbody>');
+//        //Operación ternaria donde hago la validación, si hay o no más cintas
+//     
+//        if($('li', data).length === 0){
+//          alertMessage('info','Solo hay esa cinta!','Oops!')   
+//          $("#modalCintas").modal('hide');     
+//        }
+//        $('li', data).each(function(index) {
+//          let liText  = $(this).text().trim();
+//          let liParts = liText.split(' - '); 
+//          let codigo  = liParts[0];
+//          let fecha   = liParts[1];
+//          let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
+//          tbody.append(row);
+//        });
+//        tabla.append(thead).append(tbody);
+//        $('#muestraData').html(tabla);
+//        tabla.DataTable(); 
+//      }
+//    });
+//  });
+//});
 
 $('#searchBarCodeIn').keyup(function(e){
     if( e.keyCode == 13 ){
@@ -197,7 +388,6 @@ $('#searchFolio').keyup(function(e){
         $("#RowsSearch").hide();
         $("#RowsInicio").show();
         $("#Pages").show();
-            
     }
     else {
         $(this).data('timer', setTimeout(search, 500));
@@ -208,10 +398,10 @@ $("#buttonIn").click(function(){
   setTimeout(function() { $('#searchBarCodeIn').val("").focus() }, 1000);
   
 });
+
 $("#buttonOut").click(function(){
   console.log(":S");
   setTimeout(function() { $('#searchBarCodeOut').val("").focus() }, 1000);
-  
 });
 
 function cleanTableReturn(){
@@ -265,7 +455,7 @@ $("#continuarPrestamo").click(function(){
                   setTimeout(function(){ 
                   cleanForm();
                   location.reload();
-                  }, 3000);      
+                  }, 1000);      
                 })
     }     
   });
@@ -417,7 +607,13 @@ function f_valida_repetido(codigoBarras){
    
       $('#resultTableOut tbody tr').each(function(){
                 if ($(this).find('input.codbarras').val() == codigoBarras){
-                    alert('valor repetido');
+                    {% comment %} alert('valor repetido'); {% endcomment %}
+                    Swal.fire({
+                      icon: 'info',
+                      title: 'Oops...', 
+                      text: 'Valor repetido!',
+                      
+                    })
                    v_valor = 1;
                 }
             });
@@ -469,10 +665,6 @@ function search(force) {
 
 }                
 
-
-
-
-
 $(document).on("click",".eliminar",function(){
             var this_html=$(this);
             var id =this_html.parent().parent().children().eq(0).text();
@@ -486,5 +678,9 @@ $(document).on("click",".eliminar",function(){
 
 
 </script>
-
+<style>
+  .detalle ul{
+    display:none;
+  }
+</style>
 {% endblock %}
