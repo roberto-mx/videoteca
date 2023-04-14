@@ -218,17 +218,17 @@ class GENERATE(FPDF):
         self.cell(180, 10, f'Folio de la cinta ({self.q})', 0, 0, 'C')
         self.ln(20)
         
-    def footer2(self):
+    def footer(self):
 
         self.ln(40)
         self.set_font('Arial', 'B', 8)
-        self.cell(103, 10, 'RECIBE:', 0, 0, 'C')
-        self.cell(200, 10, 'DEVUELVE:', 0, 0, 'C')
+        self.cell(83, 10, 'RECIBE: _______________________________', 0, 0, 'C')
+        self.cell(93, 10, 'DEVUELVE: _______________________________', 0, 0, 'C')
         self.ln()
 
-        self.cell(103, 10, '________________________________________', 0, 0, 'C')
+        # self.cell(103, 10, '_______________________________', 0, 0, 'C')
         # self.ln(8)
-        self.cell(200, 10, '________________________________________', 0, 0, 'C')
+        # self.cell(200, 10, '_______________________________', 0, 0, 'C')
         # self.ln()
 
         # Configuración del pie de página del PDF
@@ -255,19 +255,14 @@ def generar_pdf_modal(request):
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
 
     response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Folio_{q}.pdf"'
     pdf = GENERATE('P', 'mm', (200, 380), q)
-
-    # Abre una nueva página en el documento PDF
     pdf.add_page()
-
-    # Agrega los datos de los préstamos a la página actual
     pdf.generate_Table(queryset)
     
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
-    # return render(request, 'prestamos/prestamos_detalle_list.html', context)
+   
 
 
 # ---------------------------------------------------------------------------------------------------------------------------#

@@ -219,8 +219,6 @@ reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de p
     location.reload();
 });  
 
-
-
 $(document).ready(function() {
   $('#TablePrestamo').DataTable({
     columns: [ 
@@ -253,8 +251,6 @@ $(document).ready(function() {
           console.log({dataVuelta: res})
           // Actualizar los datos de la tabla existente
           $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
-          //$('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
-          //generarPDF(prestamos);
         }
     });
   });
