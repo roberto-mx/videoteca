@@ -31,8 +31,8 @@
 
 <br>
 <form id="search-form">
-  <label for="exampleFormControlInput1" class="form-label"> Barcode </label>
-  <input type="number" min="0" max="9" required=""  class="form-control" placeholder="search  ..." id="busqueda" style="max-width: 300px;">
+  {% comment %} <label for="exampleFormControlInput1" class="form-label"> Buscar: </label> {% endcomment %}
+  <input type="number" min="0" max="9" required=""  class="form-control" placeholder="Buscar....." id="busqueda" style="max-width: 300px;">
 </form>
 <br>
 
@@ -166,7 +166,6 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
 <script>
 
 //PDF para los folios
@@ -200,8 +199,6 @@ $(document).ready(function() {
   });
 });
    
-{% comment %} const {len} = require('../../static/js/LengujeDatatable'); // replace filename with the actual name of your file {% endcomment %}
-
 $(document).ready(function() {
   $('#TablePrestamo').DataTable({
     searching: false,
@@ -222,8 +219,6 @@ $(document).ready(function() {
       createdRow: function(row, data, dataIndex) {
         $(row).data('folio', data.pres_folio);
       }
-      
-    
   });
 
   const tablaOriginal = $('#TablePrestamo').DataTable().data().toArray();
@@ -237,6 +232,27 @@ $(document).ready(function() {
       $.ajax({
         url: '{% url "prestamos_filter" %}',
         data: {'q': vide_codigo},
+        dataType: 'json',
+        success: function(res) {
+          const prestamos = res;
+          // Actualizar los datos de la tabla existente
+          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
+        }
+      });
+    }
+  });
+
+  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
+
+  $('#busqueda').on('keyup', function() {
+    const pres_folio = $(this).val();
+    if(pres_folio == ''){
+      // Mostrar la tabla original si el input está vacío
+      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
+    }else{
+      $.ajax({
+        url: '{% url "prestamos_filter_folio" %}',
+        data: {'q': pres_folio},
         dataType: 'json',
         success: function(res) {
           const prestamos = res;

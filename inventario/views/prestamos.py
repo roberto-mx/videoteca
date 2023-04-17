@@ -44,6 +44,33 @@ def Filtrar_prestamos(request):
     # Retornar los datos de prestamos en formato JSON
     return JsonResponse(prestamos_data, safe=False)
 
+def Filtrar_pres_Folio(request):
+    q = request.GET.get('q')
+
+    # Obtener los pres_folio que coinciden con el vide_codigo
+    pres_folios = DetallePrestamos.objects.filter(pres_folio_id=q).values_list('pres_folio_id', flat=True)
+
+    # Crear una lista para almacenar los datos de prestamos
+    prestamos_data = []
+
+    # Obtener los datos de Prestamos para cada pres_folio encontrado
+    for pres_folio_id in pres_folios:
+        prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
+        if prestamo:
+            # Acceder a los datos de Prestamos
+            prestamo_data = {
+                "pres_folio": prestamo.pres_folio,
+                "usua_clave": prestamo.usua_clave,
+                "pres_fechahora": prestamo.pres_fechahora,  
+                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
+                "pres_estatus": prestamo.pres_estatus
+            }
+            
+            prestamos_data.append(prestamo_data)
+
+    # Retornar los datos de prestamos en formato JSON
+    return JsonResponse(prestamos_data, safe=False)
+
 
 
 
