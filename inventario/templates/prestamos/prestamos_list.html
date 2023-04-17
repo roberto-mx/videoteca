@@ -20,7 +20,7 @@
       
       <button id = "btn-generar-pdf" class="btn btn-primary btn-sm"  type = "button">
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <span>Descargar PDF</span>
+          <span>Exportar Tabla PDF</span>
           <i class="fas fa-file-pdf" style="font-size:18px;"></i>
         </div>
       </button>
@@ -29,24 +29,21 @@
   </nav>
 </div>
 
-<br>
-<form id="search-form">
-  {% comment %} <label for="exampleFormControlInput1" class="form-label"> Buscar: </label> {% endcomment %}
-  <input type="number" min="0" max="9" required=""  class="form-control" placeholder="Buscar....." id="busqueda" style="max-width: 300px;">
-</form>
-<br>
-
-
+<div class="search-container" style="display: flex; justify-content: flex-end;">
+  {% comment %} <a type = "button" class="pdf-icon"><i class="fas fa-file-pdf"></i></a> {% endcomment %}
+  <input type="number" min="0" max="9" required="" class="form-control ms-auto search-input" placeholder="Buscar....." id="busqueda">
+</div>
 
 <table class="table table-bordered " id="TablePrestamo">
   <thead>
     <tr>
-      <th>Acciones</th>
+      <th>Detalles</th>
       <th>Folio Prestamo</th>
       <th>Usuario</th>
       <th>Fecha-Hora-Prestamo</th>
       <th>Devolución</th>
       <th>Estatus</th>
+      <!--<th>Acciones</th> -->
     </tr>
   </thead>
   <tbody>
@@ -58,6 +55,11 @@
           <td>{{ data.pres_fechahora }} </td>
           <td>{{ data.pres_fecha_devolucion }}</td>
           <td>{{ data.pres_estatus }}</td>
+          <!--
+            <td> 
+              <a id = "btn-generar-pdf" type="button"  ><i  class="fas fa-file-pdf"  style='color:#9D2449'></i></a>
+            </td>
+         --> 
       </tr>
       {% empty %}
     {% endfor %}
@@ -207,7 +209,7 @@ $(document).ready(function() {
     {
         "data": "pres_folio",
         "render": function(data, type, row, meta) {
-          return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
+          return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>"   
         }
       },
       {"data": "pres_folio"},
@@ -215,6 +217,7 @@ $(document).ready(function() {
       {"data": "pres_fechahora"},
       {"data": "pres_fecha_devolucion"},
       {"data": "pres_estatus"},
+      //{},
       ],
       createdRow: function(row, data, dataIndex) {
         $(row).data('folio', data.pres_folio);
@@ -253,12 +256,14 @@ $(document).ready(function() {
       $.ajax({
         url: '{% url "prestamos_filter_folio" %}',
         data: {'q': pres_folio},
-        dataType: 'json',
+        //dataType: 'json',
         success: function(res) {
-          const prestamos = res;
-          // Actualizar los datos de la tabla existente
+          const prestamos = res.reduce((unique, item) => {
+            return unique.some(obj => obj.id === item.id) ? unique : [...unique, item];// a esto se le llama if ternario
+          }, []);
           $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
         }
+        
       });
     }
   });

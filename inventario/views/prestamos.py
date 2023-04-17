@@ -71,9 +71,6 @@ def Filtrar_pres_Folio(request):
     # Retornar los datos de prestamos en formato JSON
     return JsonResponse(prestamos_data, safe=False)
 
-
-
-
 @method_decorator(login_required, name='dispatch')
 class PrestamosListView(ListView):
     def get(self, request):

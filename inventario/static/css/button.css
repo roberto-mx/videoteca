@@ -1,4 +1,16 @@
-#btn-pdf {
-  display: block;
-  margin: auto;
+
+
+.search-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.pdf-icon {
+  color: #9D2449;
+  margin-right: 5px; /* Ajusta el espacio entre el icono y el input */
+}
+.search-input {
+  flex: 1; /* Para que el input tome todo el espacio disponible */
+  max-width: 300px;
+  float: right;
 }
