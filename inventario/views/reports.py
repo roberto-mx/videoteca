@@ -1,7 +1,7 @@
 import textwrap, operator, base64, json, datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-# from pyreportjasper import PyReportJasper
+from pyreportjasper import PyReportJasper
 from django.core import serializers
 from fpdf import FPDF
 from io import BytesIO
@@ -10,7 +10,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from ..models import Prestamos, DetallePrestamos, MaestroCintas, DetalleProgramas, Videos
 from django.http.response import HttpResponse, JsonResponse
-
+import os 
 class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
@@ -201,3 +201,63 @@ def generar_pdf_modal(request):
 
 
 # ---------------------------------------------------------------------------------------------------------------------------#
+
+@csrf_exempt      
+def json_to_pdf(request,fechaInicio,fechaFin,folio  ):
+    dateInicio = datetime.datetime.strptime(fechaInicio, "%d-%m-%Y")
+    dateFin = datetime.datetime.strptime(fechaFin, "%d-%m-%Y")
+ 
+    
+    input_file = settings.MEDIA_ROOT+ '/Formatos/Compensacion_v1.jrxml'
+    CreateJson(dateInicio, dateFin, None, folio)
+    output_file = settings.MEDIA_ROOT+ '/Formatos'
+    
+    json_query = 'contacts.person'
+
+    
+    #dictionary = {"contacts": {"person": [ {'Folio':34, 'RFC':61, 'Nombre':82, 'ClaveP':82, 'Categoria':82, 'Codigo':82, 'Compensacion':82, 'CostoHora':82, 'HorasXMes':82, 'Importe':82, 'Fecha':82, 'NoFolio':82}  ] } } 
+    #jsonString = json.dumps(dictionary, indent=4)
+
+    #print(jsonString)
+    conn = {
+      'driver': 'json',
+      'data_file': settings.MEDIA_ROOT+ '/Formatos/data.json',
+      'json_query': 'compensacion'
+   }
+    outputFile= settings.MEDIA_ROOT+ '/Formatos/ReporteCompensacion '+fechaInicio+' al '+fechaFin+'.pdf' 
+    pyreportjasper = PyReportJasper()
+    pyreportjasper.config(
+      input_file,
+      output_file=outputFile,
+      output_formats=["pdf"],
+      db_connection=conn
+   )
+    pyreportjasper.process_report()
+    print('Result is the file below.')
+   # output_file = output_file + '.pdf'
+    if os.path.isfile(outputFile):
+    #    print('Report generated successfully!')
+        with open(outputFile, 'rb') as pdf:
+            response = HttpResponse(pdf.read(),content_type='application/pdf')
+            response['Content-Disposition'] = 'filename=ReporteCompensacion '+fechaInicio+' al '+fechaFin+'.pdf'
+        return response
+
+
+def CreateJsonInReport(row, codes, user):
+    data = {}
+    now = datetime.datetime.now()
+    data['reporte']=[]
+    data['header'].append({'Nombre': row[0][0] + ' '+ row[0][1]+ ' '+ row[0][2],
+                'Direccion':  row[0][5],
+                'Puesto':  row[0][6],
+                'Extension': row[0][3],
+                'Correo':   row[0][4] ,
+                'Matricula':   row[0][7],
+                'FechaDev': now,
+                'Recibe': user,
+                'Logo1': settings.MEDIA_ROOT+ '/Formatos/logo-sep.png', 
+                'Logo2':  settings.MEDIA_ROOT+ '/Formatos/logo-aprendemx.png' })
+                
+    with open(settings.MEDIA_ROOT+ '/Formatos/dataHeader.json', 'w',  encoding='utf8') as file:
+        json.dump(data, file, ensure_ascii=False) 
+   

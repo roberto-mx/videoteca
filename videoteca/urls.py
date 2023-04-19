@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from inventario.views import login, PrestamosListView, PrestamoDetalle,Filtrar_prestamos, Filtrar_pres_Folio, generar_pdf, generar_pdf_modal, GetFolioPrestamo, GetFolioDetail, RegisterInVideoteca, ValidateOutVideoteca, RegisterOutVideoteca
+from inventario.views import login, PrestamosListView, PrestamoDetalle,Filtrar_prestamos, Filtrar_pres_Folio, generar_pdf, generar_pdf_modal, GetFolioPrestamo, GetFolioDetail, RegisterInVideoteca, ValidateOutVideoteca, RegisterOutVideoteca, EndInVideoteca
 from django.contrib.auth import views
 from django.views.generic import TemplateView
 
@@ -36,6 +36,8 @@ urlpatterns = [
     path('register_in/', RegisterInVideoteca,  name="registro_entrada_videoteca"),
     path('validate_out/', ValidateOutVideoteca,  name="validacion_salida_videoteca"),
     path('register_out/', RegisterOutVideoteca,  name="registro_salida_videoteca"),
+    path('end_in/', EndInVideoteca,  name="finalizar_entrada_videoteca"),
+
 
     
     

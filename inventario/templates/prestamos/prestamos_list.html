@@ -415,7 +415,7 @@ $("#endReturn").click(function(){
       console.log(get_data('#resultTableIn tbody tr'));
          $.ajax({
             data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableIn tbody tr'))},
-            url: "{% url 'registro_entrada_videoteca' %}",
+            url: "{% url 'finalizar_entrada_videoteca' %}",
             type: 'POST'
             })
               .done(function(response){
