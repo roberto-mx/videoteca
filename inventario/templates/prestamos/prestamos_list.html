@@ -18,10 +18,9 @@
         </div>
       </a>
       
-      {% comment %} <a type= "submit"  class = "btn btn-primary btn-sm" href="{% url 'generar_pdf' %}"> {% endcomment %}
       <button id = "btn-generar-pdf" class="btn btn-primary btn-sm"  type = "button">
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <span>Descargar PDF</span>
+          <span>Exportar Tabla PDF</span>
           <i class="fas fa-file-pdf" style="font-size:18px;"></i>
         </div>
       </button>
@@ -30,45 +29,37 @@
   </nav>
 </div>
 
-<br>
-<form id="search-form">
-  <label for="exampleFormControlInput1" class="form-label"> Barcode </label>
-  <input type="number" min="0" max="9" required=""  class="form-control" placeholder="search  ..." id="busqueda" style="max-width: 300px;">
-</form>
-<br>
-
-<button id="reload" class="btn btn-secondary btn-sm popover-test" type="button" >
-  <div style="display: flex; flex-direction: column; align-items: center;">
-    <span><strong> Click para recargar </strong></span>
-    <i class="fa-solid fa-rotate"></i>
-  </div>
-</button>
-
-<br><br>
+<div class="search-container" style="display: flex; justify-content: flex-end;">
+  {% comment %} <a type = "button" class="pdf-icon"><i class="fas fa-file-pdf"></i></a> {% endcomment %}
+  <input type="number" min="0" max="9" required="" class="form-control ms-auto search-input" placeholder="Buscar....." id="busqueda">
+</div>
 
 <table class="table table-bordered " id="TablePrestamo">
   <thead>
     <tr>
-      <th>Acciones</th>
+      <th>Detalles</th>
       <th>Folio Prestamo</th>
       <th>Usuario</th>
       <th>Fecha-Hora-Prestamo</th>
       <th>Devolución</th>
       <th>Estatus</th>
+      <!--<th>Acciones</th> -->
     </tr>
   </thead>
   <tbody>
     {% for data in prestamos   %} 
       <tr>
-
-          <td>
-            <a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>
-          </td>
+          <td></td>
           <td>{{ data.pres_folio }} </td>
           <td>{{ data.usua_clave }} </td>
           <td>{{ data.pres_fechahora }} </td>
           <td>{{ data.pres_fecha_devolucion }}</td>
           <td>{{ data.pres_estatus }}</td>
+          <!--
+            <td> 
+              <a id = "btn-generar-pdf" type="button"  ><i  class="fas fa-file-pdf"  style='color:#9D2449'></i></a>
+            </td>
+         --> 
       </tr>
       {% empty %}
     {% endfor %}
@@ -80,24 +71,26 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title mb-3"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i> </h4><!-- uses solid style -->
-        <input type="text" id="inputDetalles" disabled>
-
-      </div>
-      <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
-        <div class="modal-body" id="muestraData" >
-          <table class="table table-bordered" id="muestraDataTable" name="DataTable">
-            <thead>
-              <tr>
-               {% comment %} Esta tabla se pinta en el jquery {% endcomment %}
-              </tr>
-            </thead>
-            <tbody>
-           {% comment %} Aquí no va nada, todo lo puse en mi javascript {% endcomment %}
-            </tbody> 
-          </table>
+      <h4 class="modal-title mb-3">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Lista de Cintas</span>
+          <i class="fa-sharp fa-solid fa-photo-film"></i>
         </div>
-        
+      </h4>
+      <input type="text" id="inputDetalles" disabled>
+    </div>
+    <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
+      <div class="modal-body" id="muestraData" >
+        <table class="table table-bordered" id="muestraDataTable" name="DataTable">
+          <thead>
+            <tr>
+             {% comment %} Esta tabla se pinta en el jquery {% endcomment %}
+            </tr>
+          </thead>
+          <tbody>
+         {% comment %} Aquí no va nada, todo lo puse en mi javascript {% endcomment %}
+          </tbody> 
+        </table>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
@@ -105,8 +98,9 @@
       </div>
     </div>
   </div>
+  </div>
 </div>
-
+  
 {% comment %}  {% endcomment %}
 <div class="modal fade"  id="modalIn">
       <div class="modal-dialog">
@@ -174,15 +168,7 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
 <script>
-
-{% comment %} let boton = document.getElementById('verDetalle');
-let resultado = document.getElementById('resultado');
-
-      boton.onclick = function(e){
-      resultado.value =  this.value;
-} {% endcomment %}
 
 //PDF para los folios
 $(document).ready(function() {
@@ -214,20 +200,16 @@ $(document).ready(function() {
     });
   });
 });
-  
-const reload = document.getElementById('reload');
-
-reload.addEventListener('click', _ => { // el _ es para indicar la ausencia de parametros
-    location.reload();
-});  
-
+   
 $(document).ready(function() {
   $('#TablePrestamo').DataTable({
+    searching: false,
+    ...len,
     columns: [ 
-      {
+    {
         "data": "pres_folio",
         "render": function(data, type, row, meta) {
-        return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a> "   
+          return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>"   
         }
       },
       {"data": "pres_folio"},
@@ -235,37 +217,64 @@ $(document).ready(function() {
       {"data": "pres_fechahora"},
       {"data": "pres_fecha_devolucion"},
       {"data": "pres_estatus"},
-    ],
-    createdRow: function(row, data, dataIndex) {
-      $(row).data('folio', data.pres_folio);
-    }
-    
+      //{},
+      ],
+      createdRow: function(row, data, dataIndex) {
+        $(row).data('folio', data.pres_folio);
+      }
   });
+
+  const tablaOriginal = $('#TablePrestamo').DataTable().data().toArray();
 
   $('#busqueda').on('keyup', function() {
     const vide_codigo = $(this).val();
-    $.ajax({
+    if(vide_codigo == ''){
+      // Mostrar la tabla original si el input está vacío
+      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal).draw();
+    }else{
+      $.ajax({
         url: '{% url "prestamos_filter" %}',
         data: {'q': vide_codigo},
         dataType: 'json',
         success: function(res) {
           const prestamos = res;
-          console.log({dataVuelta: res})
           // Actualizar los datos de la tabla existente
           $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
         }
-    });
+      });
+    }
+  });
+
+  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
+
+  $('#busqueda').on('keyup', function() {
+    const pres_folio = $(this).val();
+    if(pres_folio == ''){
+      // Mostrar la tabla original si el input está vacío
+      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
+    }else{
+      $.ajax({
+        url: '{% url "prestamos_filter_folio" %}',
+        data: {'q': pres_folio},
+        //dataType: 'json',
+        success: function(res) {
+          const prestamos = res.reduce((unique, item) => {
+            return unique.some(obj => obj.id === item.id) ? unique : [...unique, item];// a esto se le llama if ternario
+          }, []);
+          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
+        }
+        
+      });
+    }
   });
 });
 
 $('#TablePrestamo').on('click', '.ver-detalle', function() {
   const detalles = $(this).data('detalles');
   const pres_folio = $(this).closest('tr').data('folio');
-  
   // Asignamos el valor de pres_folio al input
   $('#inputDetalles').val(`No. de Folio - ${pres_folio}`).prop('disabled', true);
-  //console.log(`pinto folio ${$('#inputDetalles').val()}`  );
-
+  
   $.ajax({
     url: '{% url "prestamos_detalles" %}',
     type: 'GET',
@@ -305,70 +314,6 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
     }
   })
 })
-
-//$('#btn-descargar-pdf').on('click', function() {
-//  const pres_folio = $(this).closest('.modal-content').data('folio');
-//
-//  console.log(pres_folio)
-//  $.ajax({
-//    url: '{% url "generar_pdf_modal" %}',
-//    type: 'GET',
-//    data: { 
-//      q: pres_folio
-//    },
-//    success: function(data) {
-//      // La respuesta del servidor debe ser la URL del archivo PDF generado
-//      // Descargar el archivo usando la función de descarga de archivos de JavaScript
-//      const downloadLink = document.createElement('a');
-//      downloadLink.href = data;
-//      downloadLink.download = 'archivo.pdf';
-//      document.body.appendChild(downloadLink);
-//      downloadLink.click();
-//      document.body.removeChild(downloadLink);
-//    },
-//    error: function() {
-//      alert('Error al generar el PDF');
-//    }
-//  });
-//});
-
-  
-
-//  $('#TablePrestamo').on('click', '.ver-detalle', function() {
-//    const detalles = $(this).data('detalles');
-//    const pres_folio = $(this).closest('tr').data('folio');
-//
-//    $.ajax({
-//      url: '{% url "prestamos_detalles" %}',
-//      type: 'GET',
-//      data: { 
-//        q: pres_folio
-//      },
-//      success: function(data) {
-//        let tabla = $('<table>');
-//        let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
-//        let tbody = $('<tbody>');
-//        //Operación ternaria donde hago la validación, si hay o no más cintas
-//     
-//        if($('li', data).length === 0){
-//          alertMessage('info','Solo hay esa cinta!','Oops!')   
-//          $("#modalCintas").modal('hide');     
-//        }
-//        $('li', data).each(function(index) {
-//          let liText  = $(this).text().trim();
-//          let liParts = liText.split(' - '); 
-//          let codigo  = liParts[0];
-//          let fecha   = liParts[1];
-//          let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
-//          tbody.append(row);
-//        });
-//        tabla.append(thead).append(tbody);
-//        $('#muestraData').html(tabla);
-//        tabla.DataTable(); 
-//      }
-//    });
-//  });
-//});
 
 $('#searchBarCodeIn').keyup(function(e){
     if( e.keyCode == 13 ){

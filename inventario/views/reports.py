@@ -1,7 +1,7 @@
 import textwrap, operator, base64, json, datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from pyreportjasper import PyReportJasper
+# from pyreportjasper import PyReportJasper
 from django.core import serializers
 from fpdf import FPDF
 from io import BytesIO
