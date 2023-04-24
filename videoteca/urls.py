@@ -30,6 +30,7 @@ urlpatterns = [
     path('prestamos/detalles/filter', Filtrar_prestamos, name='prestamos_filter' ),
     path('prestamos/detalles/filter/folio', Filtrar_pres_Folio, name='prestamos_filter_folio' ),
     path('prestamos/generate_pdf', generar_pdf, name='generar_pdf'),
+    # path('prestamos/pdfGenera', pdfGenera, name='pdfGenera'),
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),
     path('detail_folio/<int:pk>', GetFolioDetail, name='search_folio_detail'),

@@ -1,7 +1,7 @@
 import textwrap, operator, base64, json, datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from pyreportjasper import PyReportJasper
+# from pyreportjasper import PyReportJasper
 from django.core import serializers
 from fpdf import FPDF
 from io import BytesIO
@@ -11,6 +11,11 @@ from reportlab.lib.units import inch
 from ..models import Prestamos, DetallePrestamos, MaestroCintas, DetalleProgramas, Videos
 from django.http.response import HttpResponse, JsonResponse
 import os 
+import io
+from PyPDF2 import PdfWriter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.pagesizes import letter, landscape
+
 class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
@@ -18,58 +23,62 @@ class PDF(FPDF):
 
     def header(self):
         
-        # Configuración de la cabecera del PDF
-        self.image('images/EducaciónAprende.jpeg', x=10, y=8, w=50)
-        self.image('images/logo-aprendemx.png', x=65, y=5, w=50)
+          # Configuración de la cabecera del PDF
+        self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=65)
+        self.image('media/images/logo-aprendemx.png', x=76, y=5, w=65)
         self.ln()
 
-        self.set_font('Arial', 'B', 8)
-        self.cell(480,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.set_font('Montserrat', 'B', 8)
+        self.cell(485,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
         self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(518,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(525,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
-        self.ln(40)
+        self.ln(10)
 
-        self.set_font('Arial', 'B', 8)
-        self.cell(84, 10,   'NOMBRE:      _______________________________', 0, 0, 'C')
-        # self.ln(7)
-        self.cell(306, 10,  'DIRECCIÓN:   _______________________________', 0, 0, 'C')
-        self.ln(17)
-        self.cell(83, 10,   'PUESTO:      _______________________________', 0, 0, 'C')
+        self.cell(84, 10, 'NOMBRE:', 0, 0, 'L')
+       
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 65, y + 5)  
+        self.ln(7) 
 
-        self.cell(103, 10,  'EXTENSIÓN:   _______________________________', 0, 0, 'C')
-        self.cell(103, 10,  'CORREO:      _______________________________', 0, 0, 'C')
-        self.ln(40)
+        self.cell(84, 10, 'Dirección:', 0, 0, 'L')
         
-        self.set_font('Arial', 'B', 15)
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 65, y + 5) 
+        self.ln(7)
+
+        self.cell(84, 10, 'Correo:', 0, 0, 'L')
+        
+        x = self.get_x()
+        y = self.get_y()
+        
+        self.line(x - 65, y + 5, x + 65, y + 5)  
+        self.ln(7)
+
+        self.cell(84, 10, 'Puesto:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        
+        self.line(x - 65, y + 5, x + 10, y + 5)  
+        self.ln(7)
+
+        self.cell(84, 10, 'Extención:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 10, y + 5)      
+        self.ln(15)
+        
+        self.set_font('Montserrat', 'B', 8)
         self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
-        self.ln(20)
-        
-    def footer(self):
+        self.ln(15)
 
-        self.ln(40)
-        self.set_font('Arial', 'B', 8)
-        self.cell(103, 10, 'RECIBE:', 0, 0, 'C')
-        self.cell(200, 10, 'DEVUELVE:', 0, 0, 'C')
-        self.ln()
-        #self.drawline    
-        self.cell(103, 10, '________________________________________', 0, 0, 'C')
-        # self.ln(8)
-        self.cell(200, 10, '________________________________________', 0, 0, 'C')
-        # self.ln()
-
-        # Configuración del pie de página del PDF
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
-
-    def generate_table(self, data):
-        # Generación del contenido de la tabla en el PDF
         self.set_fill_color(144, 12, 63)
-        self.set_text_color(255, 255, 255) # Establece el color de la letra en blanco
+        self.set_text_color(255, 255, 255) 
         self.cell(40, 10, 'Folio', 1, 0, '', True)
         self.cell(40, 10, 'Usuario', 1, 0, '', True)
         self.cell(80, 10, 'Fecha y Hora Prestamo', 1, 0, '', True)
@@ -77,7 +86,32 @@ class PDF(FPDF):
         self.cell(40, 10, 'Estatus', 1, 0, '', True)
         self.set_text_color(0, 0, 0)
         self.ln()
+        
+    def footer(self):
 
+        self.ln(10)
+        self.set_font('Montserrat', 'B', 8)
+
+        self.cell(84, 10, 'Devuelve:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 10, y + 5)      
+        self.ln(7)
+
+        self.cell(84, 10, 'Recibe:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 10, y + 5)      
+        self.ln()
+        
+
+        # Configuración del pie de página del PDF
+        self.set_y(-15)
+        self.set_font('Montserrat', '', 8)
+        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
+    def generate_table(self, data):
+       
         for row in data:
             self.cell(40, 10, str(row['pres_folio']), 1)
             self.cell(40, 10, str(row['usua_clave']), 1)
@@ -104,10 +138,14 @@ def generar_pdf(request):
             prestamos_data.append(prestamo_data)
 
     response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = PDF('P', 'mm', (300, 350), q)
-    # Abre una nueva página en el documento PDF
+    pdf.add_font('Montserrat','',
+            r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Regular.ttf",
+            uni=True)
+    pdf.add_font('Montserrat','B',
+            r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Bold.ttf",
+            uni=True)
     pdf.add_page()
 
     # Agrega los datos de los préstamos a la página actual
@@ -123,82 +161,113 @@ class GENERATE(FPDF):
 
     def header(self):
         
-        # Configuración de la cabecera del PDF
-        self.image('images/EducaciónAprende.jpeg', x=10, y=8, w=35)
-        self.image('images/logo-aprendemx.png', x=46, y=7, w=35)
+        self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=50)
+        self.image('media/images/logo-aprendemx.png', x=65, y=5, w=50)
         self.ln()
 
-        self.set_font('Arial', 'B', 6)
-        self.cell(323,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.set_font('Montserrat', 'B', 8)
+        self.cell(480,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
-        self.cell(293,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
+        self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(351.5,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(518,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(306.5,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
-        self.ln(40)
+        self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
+        self.ln(10)
 
-        self.set_font('Arial', 'B', 8)
-        self.cell(84, 10,   'NOMBRE:      _______________________________', 0, 0, 'C')
-        # self.ln(7)
-        self.cell(103, 10,  'DIRECCIÓN:   _______________________________', 0, 0, 'C')
-        self.ln(17)
-        self.cell(83, 10,   'PUESTO:      _______________________________', 0, 0, 'C')
+        self.cell(84, 10, 'NOMBRE:', 0, 0, 'L')
+       
+        x = self.get_x()
+        y = self.get_y()
 
-        self.cell(103, 10,  'EXTENSIÓN:   _______________________________', 0, 0, 'C')
-        # self.cell(103, 10,  'CORREO:      _______________________________', 0, 0, 'C')
-        self.ln(40)
+        self.line(x - 65, y + 5, x + 65, y + 5)  
+        self.ln(7) 
+
+        self.cell(84, 10, 'Dirección:', 0, 0, 'L')
+       
+        x = self.get_x()
+        y = self.get_y()
+
+        self.line(x - 65, y + 5, x + 65, y + 5)  
+        self.ln(7)
+
+        self.cell(84, 10, 'Correo:', 0, 0, 'L')
         
-        self.set_font('Arial', 'B', 15)
-        self.cell(180, 10, f'Folio de la cinta ({self.q})', 0, 0, 'C')
+        x = self.get_x()
+        y = self.get_y()
+        
+        self.line(x - 65, y + 5, x + 65, y + 5)  
+        self.ln(7)
+
+        self.cell(84, 10, 'Puesto:', 0, 0, 'L')
+        
+        x = self.get_x()
+        y = self.get_y()
+        
+        self.line(x - 65, y + 5, x + 10, y + 5)  
+        self.ln(7)
+
+        self.cell(84, 10, 'Extención:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 10, y + 5)    
+        self.ln(27)
+   
+        self.set_font('Montserrat', 'B', 8)
+        self.cell(280, 10, f'Prestamos de folio ({self.q})', 0, 0, 'C')
         self.ln(20)
-        
-    def footer(self):
 
-        self.ln(40)
-        self.set_font('Arial', 'B', 8)
-        self.cell(83, 10, 'RECIBE: _______________________________', 0, 0, 'C')
-        self.cell(93, 10, 'DEVUELVE: _______________________________', 0, 0, 'C')
-        self.ln()
-
-        # self.cell(103, 10, '_______________________________', 0, 0, 'C')
-        # self.ln(8)
-        # self.cell(200, 10, '_______________________________', 0, 0, 'C')
-        # self.ln()
-
-        # Configuración del pie de página del PDF
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
-
-    def generate_Table(self, data):
-        # Generación del contenido de la tabla en el PDF
         self.set_fill_color(31, 237, 237)
-        self.set_text_color(6, 28, 28) # Establece el color de la letra en blanco
-        self.cell(90, 10, 'Código de Barras', 1, 0, '', True)
-        self.cell(90, 10, 'Fecha de Devolucón', 1, 0, '', True)
+        self.set_text_color(255, 255, 255) 
+        self.cell(140, 10, 'Código de Barras', 1, 0, '', True)
+        self.cell(140, 10, 'Fecha de Devolucón', 1, 0, '', True)
         self.set_text_color(0, 0, 0)
         self.ln()
+    
+    def footer(self):
 
+        
+        self.ln(10)
+        self.set_font('Montserrat', 'B', 8)
+
+        self.cell(84, 10, 'Devuelve:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 10, y + 5)      
+        self.ln(7)
+
+        self.cell(84, 10, 'Recibe:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 65, y + 5, x + 10, y + 5)      
+        self.ln()
+
+    def generate_Table(self, data):
+       
         for row in data:
-            self.cell(90, 10, str(row['vide_codigo']), 1)
-            self.cell(90, 10, str(row['pres_fecha_devolucion']), 1)
+            self.cell(140, 10, str(row['vide_codigo']), 1)
+            self.cell(140, 10, str(row['pres_fecha_devolucion']), 1)
             self.ln()
-
+            
 def generar_pdf_modal(request):
     q = int(request.GET.get("q"))
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="Videoteca_Folio_{q}.pdf"'
-    pdf = GENERATE('P', 'mm', (200, 380), q)
+    # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'  
+    response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
+    pdf = GENERATE('P', 'mm', (300, 350), q)
+    pdf.add_font('Montserrat','',
+                r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Regular.ttf",
+                uni=True)
+    pdf.add_font('Montserrat','B',
+                r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Bold.ttf",
+                uni=True)
     pdf.add_page()
     pdf.generate_Table(queryset)
     
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
-   
-
 
 # ---------------------------------------------------------------------------------------------------------------------------#
 
