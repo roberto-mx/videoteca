@@ -12,18 +12,87 @@ from ..models import Prestamos, DetallePrestamos, MaestroCintas, DetallePrograma
 from django.http.response import HttpResponse, JsonResponse
 import os 
 import io
+from django.db.models import Q
 from PyPDF2 import PdfWriter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.pagesizes import letter, landscape
+from django.db import connections
+import json
+from django.http import JsonResponse
+from django.db import connections
 
+
+@csrf_exempt
+def ejemplo(request):
+    matricula = request.GET.get('matricula')
+    detalle_matricula = DetallePrestamos.objects.filter(usuario_devuelve=matricula).first()
+    muestraData = []
+
+    if detalle_matricula is not None:
+        matricula_data = {
+            "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
+            "UsuarioRecibe"  : detalle_matricula.usuario_recibe
+        }
+        muestraData.append(matricula_data)
+        if muestraData:
+            usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
+            usuario_recibe = muestraData[0]["UsuarioRecibe"]
+
+    cursor = connections['users'].cursor()
+    cursor.execute("select nombres, apellido1, apellido2, activo from people_person where matricula = %s", [usuario_devuelve])
+    row = cursor.fetchone()
+
+    if row is not None:
+        nombres   = row[0]
+        apellido1 = row[1]
+        apellido2 = row[2]
+        activo    = row[3]
+
+        MatriculaDevuelve = {
+            'Nombres'           : nombres,
+            'ApellidoPaterno'   : apellido1,
+            'ApellidoMaterno'   : apellido2,
+            'EstatusActivo'     : activo,
+            'Matricula'         : usuario_devuelve,
+        }
+
+    cursor.execute("select nombres, apellido1, apellido2, activo from people_person where matricula = %s", [usuario_recibe])
+    row = cursor.fetchone()
+
+    if row is not None:
+        nombres   = row[0]
+        apellido1 = row[1]
+        apellido2 = row[2]
+        activo    = row[3]
+
+        MatriculaRecibe = {
+            'Matricula'         : usuario_recibe,
+            'Nombres'           : nombres   if nombres   else '',
+            'Apellido'          : apellido1 if apellido1 else '',
+            'Apellido2'         : apellido2 if apellido2 else '',
+            'Activo'            : activo    if activo    else '',
+        }   
+        
+        response_data = {
+            'UsuarioDevuelve': MatriculaDevuelve,
+            'UsuarioRecibe'   : MatriculaRecibe
+        }
+        return JsonResponse(response_data, safe=False)
+    
 class PDF(FPDF):
-    def __init__(self, orientation='P', unit='mm', format='A4', q=None):
+    def __init__(self,request, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
         self.q = q
+        self.request = request
+
 
     def header(self):
+        # matricula         = self.request.GET.get('matricula')
+        # response_data     = ejemplo(self.request)
+        # MatriculaDevuelve = response_data['MatriculaDevuelve']
+        # MatriculaRecibe   = response_data['MatriculaRecibe']
         
-          # Configuración de la cabecera del PDF
+        # Configuración de la cabecera del PDF
         self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=65)
         self.image('media/images/logo-aprendemx.png', x=76, y=5, w=65)
         self.ln()
@@ -122,7 +191,7 @@ class PDF(FPDF):
 
 def generar_pdf(request):
     q = request.GET.get('q')
-    detalle_prestamos = DetallePrestamos.objects.filter(vide_codigo=q)
+    detalle_prestamos = DetallePrestamos.objects.filter(Q(vide_codigo=q) | Q(pres_folio__pres_folio=q))
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
     prestamos_data = []
     for pres_folio_id in pres_folios:
@@ -152,7 +221,7 @@ def generar_pdf(request):
     pdf.generate_table(prestamos_data)
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
-# ---------------------------------PDF2----------------------------------------------------------------------------------------
+# ---------------------------------PDF2-----------------------------------#
 # @csrf_exempt    
 class GENERATE(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
@@ -215,7 +284,7 @@ class GENERATE(FPDF):
    
         self.set_font('Montserrat', 'B', 8)
         self.cell(280, 10, f'Prestamos de folio ({self.q})', 0, 0, 'C')
-        self.ln(20)
+        self.ln(15)
 
         self.set_fill_color(31, 237, 237)
         self.set_text_color(255, 255, 255) 
@@ -226,7 +295,6 @@ class GENERATE(FPDF):
     
     def footer(self):
 
-        
         self.ln(10)
         self.set_font('Montserrat', 'B', 8)
 

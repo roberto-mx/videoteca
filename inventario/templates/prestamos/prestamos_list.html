@@ -93,8 +93,8 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
-        <button type="button" class="btn btn-primary" id="btn-descargar-pdf"><i class="fas fa-file-pdf" ></i>Descargar PDF</button>
+        <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
+        <button type="button" class="btn btn-primary btn-sm active" id="btn-descargar-pdf"><i class="fas fa-file-pdf" ></i> Exportar a PDF</button>
       </div>
     </div>
   </div>
@@ -173,27 +173,33 @@
 //PDF para los folios
 $(document).ready(function() {
   $('#btn-generar-pdf').on('click', function() {
-    const vide_codigo = $('#busqueda').val();
-    if (vide_codigo === '') {
-      alertMessage('warning', 'Debes ingresar un código de barras para generar el PDF.', 'Oops!', 'swal-wide');
+    const busquedaVal = $('#busqueda').val();
+    const vide_codigo = busquedaVal;
+    const pres_folio = busquedaVal; // Utiliza el mismo valor para ambos
+
+    console.log({1: vide_codigo, 2 : pres_folio, data:busquedaVal})
+
+    // Verifica si busquedaVal está vacío
+    if (busquedaVal === '') {
+      alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', 'Oops!', 'swal-wide');
       return; 
     }
 
     $.ajax({
       url: '{% url "prestamos_filter" %}',
-      data: {'q': vide_codigo},
+      data: {'q': vide_codigo, 'pres_folio': pres_folio}, // Agrega pres_folio en los datos a enviar
       dataType: 'json',
       success: function(res) {
         if (res.length === 0) {
-          alertMessage('warning', 'El código de barras ingresado no existe.', 'Oops!', 'swal-wide');
+          alertMessage('warning', 'El código de barras o número de folio ingresado no existe.', 'Oops!', 'swal-wide');
           return;
         }
 
         $.ajax({
           url: '{% url "generar_pdf" %}',
-          data: {'q': vide_codigo},
+          data: {'q': vide_codigo, 'pres_folio': pres_folio}, // Agrega pres_folio en los datos a enviar
           success: function() {
-            window.open('{% url "generar_pdf" %}?q=' + vide_codigo);
+            window.open('{% url "generar_pdf" %}?q=' + vide_codigo + '&pres_folio=' + pres_folio); // Agrega pres_folio en la URL
           }
         });
       }
@@ -225,49 +231,82 @@ $(document).ready(function() {
   });
 
   const tablaOriginal = $('#TablePrestamo').DataTable().data().toArray();
+  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
 
   $('#busqueda').on('keyup', function() {
-    const vide_codigo = $(this).val();
-    if(vide_codigo == ''){
-      // Mostrar la tabla original si el input está vacío
+    const valorInput = $(this).val();
+    const vide_codigo = valorInput;
+    const pres_folio = valorInput;
+
+    if ((vide_codigo == '') || (pres_folio == '')) {
+      // Mostrar la tabla original si alguno de los inputs está vacío
       $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal).draw();
-    }else{
+      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw(); // Agregar la tabla original 2
+    } else {
       $.ajax({
         url: '{% url "prestamos_filter" %}',
         data: {'q': vide_codigo},
         dataType: 'json',
         success: function(res) {
+          console.log({res})
           const prestamos = res;
-          // Actualizar los datos de la tabla existente
+          // Actualizar los datos de la tabla existente con los resultados de la primera llamada AJAX
           $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
         }
       });
-    }
-  });
 
-  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
-
-  $('#busqueda').on('keyup', function() {
-    const pres_folio = $(this).val();
-    if(pres_folio == ''){
-      // Mostrar la tabla original si el input está vacío
-      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
-    }else{
+      // Realizar la segunda llamada AJAX para buscar por pres_folio
       $.ajax({
         url: '{% url "prestamos_filter_folio" %}',
         data: {'q': pres_folio},
-        //dataType: 'json',
-        success: function(res) {
-          const prestamos = res.reduce((unique, item) => {
-            return unique.some(obj => obj.id === item.id) ? unique : [...unique, item];// a esto se le llama if ternario
+        success: function(resFolio) {
+          const prestamosFolio = resFolio.reduce((unique, item) => {
+            return unique.some(obj => obj.id === item.id) ? unique : [...unique, item];
           }, []);
-          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
+          // Actualizar los datos de la tabla existente con los resultados de la segunda llamada AJAX
+          $('#TablePrestamo').DataTable().clear().rows.add(prestamosFolio).draw();
         }
-        
       });
     }
   });
+
+//  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
+//
+//  $('#busqueda').on('keyup', function() {
+//    const pres_folio = $(this).val();
+//    if(pres_folio == ''){
+//      // Mostrar la tabla original si el input está vacío
+//      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
+//    }else{
+//      $.ajax({
+//        url: '{% url "prestamos_filter_folio" %}',
+//        data: {'q': pres_folio},
+//        //dataType: 'json',
+//        success: function(res) {
+//          console.log({folio: res})
+//          const prestamos = res.reduce((unique, item) => {
+//            return unique.some(obj => obj.id === item.id) ? unique : [...unique, item];// a esto se le llama if ternario
+//          }, []);
+//          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
+//        }
+//        
+//      });
+//    }
+//  });
 });
+
+//  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
+//
+//  $('#busqueda').on('keyup', function() {
+//    const pres_folio = $(this).val();
+//    if(pres_folio == ''){
+//      // Mostrar la tabla original si el input está vacío
+//      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
+//    }else{
+//      
+//    }
+//  });
+//});
 
 $('#TablePrestamo').on('click', '.ver-detalle', function() {
   const detalles = $(this).data('detalles');
@@ -345,7 +384,7 @@ $("#buttonIn").click(function(){
 });
 
 $("#buttonOut").click(function(){
-  console.log(":S");
+  //console.log(":S");
   setTimeout(function() { $('#searchBarCodeOut').val("").focus() }, 1000);
 });
 
@@ -379,7 +418,7 @@ $("#continuarPrestamo").click(function(){
       $('#searchUsuarioOut').focus();  
   }
   else{
-      console.log(get_data('#resultTableOut tbody tr'));
+      //console.log(get_data('#resultTableOut tbody tr'));
          $.ajax({
             data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableOut tbody tr'))},
             url: "{% url 'registro_salida_videoteca' %}",
@@ -412,7 +451,7 @@ $("#endReturn").click(function(){
       $('#searchUsuarioIn').focus();  
   }
   else{
-      console.log(get_data('#resultTableIn tbody tr'));
+      //console.log(get_data('#resultTableIn tbody tr'));
          $.ajax({
             data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableIn tbody tr'))},
             url: "{% url 'finalizar_entrada_videoteca' %}",
@@ -441,7 +480,7 @@ $("#endReturn").click(function(){
 $(document).on("click",".glyphicon-plus",function(){
             var this_html=$(this);
             var id=this_html.parent().parent().parent().children().first().text();
-            console.log(id);
+           // console.log(id);
             $.ajax({
                 url:"{% url 'registro_entrada_videoteca' %}",
                 type:'POST',
@@ -462,7 +501,7 @@ $(document).on("click",".glyphicon-plus",function(){
                     $("#tablaPrincipal tbody").append(html_data);
                 }
                 else{
-                    console.log(":( ");
+                    //console.log(":( ");
                     $("#ins_success").hide();
                     $("#ins_error").text(response['errorMessage']);
                     $("#ins_error").show();
@@ -485,7 +524,7 @@ $(document).on("click",".glyphicon-plus",function(){
 
 function readCodeBar(){
   codigoBarras= $('#searchBarCodeIn').val();
-  console.log(codigoBarras);
+  //console.log(codigoBarras);
   usuario =  $('#searchUsuarioIn').val();
   if (usuario == ""){
      alert("Ingrese el Gafete del usuario");
@@ -600,7 +639,7 @@ function search(force) {
       $("#Pages").hide();
       $("#RowsSearch").empty();
       $("#RowsSearch").append(response);
-      console.log(response)
+      //console.log(response)
       })
     .fail(function(){
       $("#RowsSearch").hide();
@@ -613,7 +652,7 @@ function search(force) {
 $(document).on("click",".eliminar",function(){
             var this_html=$(this);
             var id =this_html.parent().parent().children().eq(0).text();
-            console.log(this_html.parent().parent().children().eq(0).text());
+            //console.log(this_html.parent().parent().children().eq(0).text());
             this_html.parent().parent().remove();
            /* var opcion = confirm("Se va a dar eliminar la Compensacion registrada al empleado: "+ empleado +". ¿Es correcto?");
             if (opcion == true) {
