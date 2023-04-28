@@ -74,25 +74,18 @@ def ejemplo(request):
         }   
         
         response_data = {
-            'UsuarioDevuelve': MatriculaDevuelve,
-            'UsuarioRecibe'   : MatriculaRecibe
+            'UsuarioDevuelve'   : MatriculaDevuelve,
+            'UsuarioRecibe'     : MatriculaRecibe
         }
         return JsonResponse(response_data, safe=False)
     
 class PDF(FPDF):
-    def __init__(self,request, orientation='P', unit='mm', format='A4', q=None):
+    def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
         self.q = q
-        self.request = request
-
-
-    def header(self):
-        # matricula         = self.request.GET.get('matricula')
-        # response_data     = ejemplo(self.request)
-        # MatriculaDevuelve = response_data['MatriculaDevuelve']
-        # MatriculaRecibe   = response_data['MatriculaRecibe']
         
-        # Configuración de la cabecera del PDF
+    def header(self):
+    
         self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=65)
         self.image('media/images/logo-aprendemx.png', x=76, y=5, w=65)
         self.ln()
@@ -157,27 +150,26 @@ class PDF(FPDF):
         self.ln()
         
     def footer(self):
-
+        
         self.ln(10)
         self.set_font('Montserrat', 'B', 8)
 
         self.cell(84, 10, 'Devuelve:', 0, 0, 'L')
         x = self.get_x()
         y = self.get_y()
-        self.line(x - 65, y + 5, x + 10, y + 5)      
+        self.line(x - 65, y + 5, x + 10, y + 5)        
         self.ln(7)
 
         self.cell(84, 10, 'Recibe:', 0, 0, 'L')
         x = self.get_x()
         y = self.get_y()
-        self.line(x - 65, y + 5, x + 10, y + 5)      
+        self.line(x - 65, y + 5, x + 10, y + 5)        
         self.ln()
-        
 
-        # Configuración del pie de página del PDF
         self.set_y(-15)
         self.set_font('Montserrat', '', 8)
         self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
 
     def generate_table(self, data):
        
@@ -191,36 +183,124 @@ class PDF(FPDF):
 
 def generar_pdf(request):
     q = request.GET.get('q')
-    detalle_prestamos = DetallePrestamos.objects.filter(Q(vide_codigo=q) | Q(pres_folio__pres_folio=q))
+    detalle_prestamos = DetallePrestamos.objects.filter(vide_codigo=q, usuario_devuelve__isnull=False, usuario_recibe__isnull=False)
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
+
+    print(pres_folios)
+
     prestamos_data = []
+
     for pres_folio_id in pres_folios:
         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
         if prestamo:
-            prestamo_data = {
-                "pres_folio": prestamo.pres_folio,
-                "usua_clave": prestamo.usua_clave,
-                "pres_fechahora": prestamo.pres_fechahora,
-                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-                "pres_estatus": prestamo.pres_estatus
-            }
-            prestamos_data.append(prestamo_data)
+            if detalle_prestamos.filter(pres_folio=pres_folio_id).exists():
+                prestamo_data = {
+                    "pres_folio":            prestamo.pres_folio,
+                    "usua_clave":            prestamo.usua_clave,
+                    "pres_fechahora":        prestamo.pres_fechahora,
+                    "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
+                    "pres_estatus":          prestamo.pres_estatus,
+                    "usuario_devuelve":      detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_devuelve,
+                    "usuario_recibe":        detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_recibe,
+                }
+                prestamos_data.append(prestamo_data)
+    
+     # Crear variables para los valores de usuario_devuelve y usuario_recibe
+    usuarioDevuelve = prestamos_data[-1]['usuario_devuelve'] if prestamos_data else ''
+    usuarioRecibe   = prestamos_data[-1]['usuario_recibe'] if   prestamos_data else ''
+
+    detalle_matricula = DetallePrestamos.objects.filter(usuario_devuelve=usuarioDevuelve).first()
+    muestraData = []
+
+    if detalle_matricula is not None:
+        matricula_data = {
+            "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
+            "UsuarioRecibe"  : detalle_matricula.usuario_recibe
+        }
+        muestraData.append(matricula_data)
+        if muestraData:
+            usuarioDevuelve = muestraData[0]["UsuarioDevuelve"]
+            usuarioRecibe = muestraData[0]["UsuarioRecibe"]
+
+    cursor = connections['users'].cursor()
+    cursor.execute("select nombres, apellido1, apellido2, activo, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuarioDevuelve])
+    row = cursor.fetchone()
+
+    if row is not None:
+        nombres                 = row[0]
+        apellido1               = row[1]
+        apellido2               = row[2]
+        activo                  = row[3]
+        puesto                  = row[4]
+        email_institucional     = row[5]
+        extencion_telefonica    = row[6]
+
+        nombre_completo = f"{nombres} {apellido1} {apellido2} {activo} {puesto} {email_institucional} {extencion_telefonica}" if apellido2 else f"{nombres} {apellido1}"
+        MatriculaDevuelve = {
+            'NombreCompleto'    : nombre_completo,
+            'EstatusActivo'     : activo,
+            'Puesto'            : puesto,
+            'Email'             : email_institucional,
+            'Extencion'         : extencion_telefonica, 
+            'Matricula'         : usuarioDevuelve,
+        }
+
+    cursor.execute("select nombres, apellido1, apellido2, activo, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuarioRecibe])
+    row = cursor.fetchone()
+
+    if row is not None:
+        nombres                 = row[0]
+        apellido1               = row[1]
+        apellido2               = row[2]
+        activo                  = row[3]
+        puesto                  = row[4]
+        email_institucional     = row[5]
+        extencion_telefonica    = row[6]
+
+        nombre_completo2 = f"{nombres} {apellido1} {apellido2} {activo} {puesto} {email_institucional} {extencion_telefonica}" if apellido2 is not None else f"{nombres} {apellido1}"
+        MatriculaRecibe = {
+            'NombreCompleto'    : nombre_completo2,
+            'EstatusActivo'     : activo,
+            'Puesto'            : puesto,
+            'Email'             : email_institucional,
+            'Extencion'         : extencion_telefonica, 
+            'Matricula'         : usuarioDevuelve,
+        }   
+        
+    # print(MatriculaRecibe)
+    
+    response_data = {
+        'UsuarioDevuelve'   : MatriculaDevuelve,
+        'UsuarioRecibe'     : MatriculaRecibe
+    }
+
+    print(response_data['UsuarioRecibe'])
+    print(response_data['UsuarioDevuelve'])
+
+    # Crear instancia del objeto PDF
+    pdf = PDF('P', 'mm', (300, 350), q)
 
     response = HttpResponse(content_type='application/pdf')
+
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
+
     pdf = PDF('P', 'mm', (300, 350), q)
+
     pdf.add_font('Montserrat','',
             r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Regular.ttf",
             uni=True)
+    
     pdf.add_font('Montserrat','B',
             r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Bold.ttf",
             uni=True)
+    
     pdf.add_page()
 
-    # Agrega los datos de los préstamos a la página actual
     pdf.generate_table(prestamos_data)
     response.write(pdf.output(dest='S').encode('latin1'))
+
     return response
+
 # ---------------------------------PDF2-----------------------------------#
 # @csrf_exempt    
 class GENERATE(FPDF):
@@ -322,15 +402,18 @@ def generar_pdf_modal(request):
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
 
     response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'  
+     
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = GENERATE('P', 'mm', (300, 350), q)
+
     pdf.add_font('Montserrat','',
                 r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Regular.ttf",
                 uni=True)
+    
     pdf.add_font('Montserrat','B',
                 r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Bold.ttf",
                 uni=True)
+    
     pdf.add_page()
     pdf.generate_Table(queryset)
     
