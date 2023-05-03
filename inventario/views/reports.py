@@ -175,26 +175,20 @@ class PDF(FPDF):
 
         if userRecibe:
     
-            name  = userRecibe['Recibe']
-           
-            
+            name  = userRecibe['Recibe']        
             self.cell(84, 10, 'Recibe:', 0, 0, 'L')
             self.set_xy(27.0, 129.0)
             self.cell(30.0, 6.0, name, 0, 0, 'L')
             self.ln(3.5)
-        #     self.cell(84, 10, 'Devuelve:', 0, 0, 'L')
-        #     x = self.get_x()
-        #     y = self.get_y()
-        #     self.line(x - 65, y + 5, x + 10, y + 5)      
-        #     self.ln(7)
 
-        # self.cell(84, 10, 'Recibe:', 0, 0, 'L')
-        # x = self.get_x()
-        # y = self.get_y()
-        # self.line(x - 65, y + 5, x + 10, y + 5)      
-        # self.ln()
+        if userDevuelve:
+    
+            name  = userDevuelve['Devuelve']        
+            self.cell(84, 10, 'Devuelve:', 0, 0, 'L')
+            self.set_xy(27.0, 135.0)
+            self.cell(30.0, 6.0, name, 0, 0, 'L')
+            self.ln(3.5)
         
-
         # Configuración del pie de página del PDF
         self.set_y(-15)
         self.set_font('Montserrat', '', 8)
