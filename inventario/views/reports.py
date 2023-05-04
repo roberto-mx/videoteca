@@ -10,8 +10,9 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from ..models import Prestamos, DetallePrestamos, MaestroCintas, DetalleProgramas, Videos
 from django.http.response import HttpResponse, JsonResponse
-import os 
+import os
 import io
+from pathlib import Path
 from django.db.models import Q
 from PyPDF2 import PdfWriter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
@@ -21,82 +22,14 @@ import json
 from django.http import JsonResponse
 from django.db import connections
 
-@csrf_exempt
-def ejemplo(request):
-    matricula = request.GET.get('matricula')
-    detalle_matricula = DetallePrestamos.objects.filter(usuario_devuelve=matricula).first()
-    muestraData = []
-
-    if detalle_matricula is not None:
-        matricula_data = {
-            "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
-            "UsuarioRecibe"  : detalle_matricula.usuario_recibe
-        }
-        muestraData.append(matricula_data)
-        if muestraData:
-            usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
-            usuario_recibe = muestraData[0]["UsuarioRecibe"]
-
-    cursor = connections['users'].cursor()
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve])
-    row = cursor.fetchone()
-
-    if row is not None:
-        nombres                 = row[0]
-        apellido1               = row[1]
-        apellido2               = row[2]
-        puesto                  = row[3]
-        email_institucional     = row[4]
-        extension_telefonica    = row[5]
-
-        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
-
-        MatriculaDevuelve = {
-            'NombreCompleto'    : nombre_completo,
-            'Puesto'            : puesto,
-            'Email'             : email_institucional,
-            'Extencion'         : extension_telefonica, 
-            'Matricula'         : usuario_devuelve,
-        }
-
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_recibe])
-    row = cursor.fetchone()
-
-    if row is not None:
-        nombres                 = row[0]
-        apellido1               = row[1]
-        apellido2               = row[2]
-        puesto                  = row[3]
-        email_institucional     = row[4]
-        extension_telefonica    = row[5]
-
-        nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 is not None else f"{nombres} {apellido1}"
-        MatriculaRecibe = {
-            'NombreCompleto'    : nombre_completo2,
-            'Puesto'            : puesto,
-            'Email'             : email_institucional,
-            'Extencion'         : extension_telefonica, 
-            'Matricula'         : usuario_recibe,
-        }   
-
-        response_data = {
-            'UsuarioDevuelve'   : MatriculaDevuelve,
-            'UsuarioRecibe'     : MatriculaRecibe
-        }
-        return JsonResponse(response_data, safe=False)
-
-
 class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
-        # Agregar fuentes
-        self.add_font('Montserrat','',
-             r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Regular.ttf",
-             uni=True)
-        self.add_font('Montserrat','B',
-             r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Bold.ttf",
-             uni=True)
-    
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    
+
+        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
         self.q = q
         
     def header(self):
@@ -118,7 +51,7 @@ class PDF(FPDF):
         if userDevuelve:
         
             email_institucional  = userDevuelve['Email']
-            extension_telefonica = userDevuelve['Extencion']
+            extension_telefonica = userDevuelve['Extension']
             nombre_completo      = userDevuelve['Devuelve']
             puesto               = userDevuelve['Puesto']
            
@@ -134,7 +67,7 @@ class PDF(FPDF):
             self.set_xy(27.0, 47.0)
             self.cell(30.0, 6.0, puesto, 0, 0, 'L')
             self.ln(3.5)
-            self.cell(84, 10, 'Extención:', 0, 0, 'L')
+            self.cell(84, 10, 'Extensión:', 0, 0, 'L')
             self.set_xy(27.0, 47.0)
             self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
             self.ln(15)         
@@ -152,22 +85,6 @@ class PDF(FPDF):
             self.set_text_color(0, 0, 0)
             self.ln()
             
-    # def footer(self, userDevuelve=None, userRecibe=None):
-    #     self.set_y(-15) # Mover el cursor a 15 unidades desde el borde inferior de la página
-    #     self.set_font('Montserrat', '', 8)
-        
-    #     if userDevuelve:
-    #         nombre_devuelve = userDevuelve['Devuelve']
-    #         self.write(5, f"Devuelve: {nombre_devuelve}")
-            
-    #     if userRecibe:
-    #         nombre_recibe = userRecibe['Recibe']
-    #         self.write(5, f"Recibe: {nombre_recibe}")
-            
-    #     self.ln()
-    #     # Mostrar número de página
-    #     self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
-
     def footer(self):
 
         self.ln(10)
@@ -259,7 +176,7 @@ def generar_pdf(request):
             'Devuelve'          : nombre_completo,
             'Puesto'            : puesto,
             'Email'             : email_institucional,
-            'Extencion'         : extension_telefonica, 
+            'Extension'         : extension_telefonica, 
             'Matricula'         : usuario_devuelve,
         }
 
@@ -279,16 +196,13 @@ def generar_pdf(request):
             'Recibe'            : nombre_completo2,
             'Puesto'            : puesto,
             'Email'             : email_institucional,
-            'Extencion'         : extension_telefonica, 
+            'Extension'         : extension_telefonica, 
             'Matricula'         : usuario_recibe,
         }   
     global userDevuelve, userRecibe
     # global 
     userDevuelve = MatriculaDevuelve
     userRecibe = MatriculaRecibe
-
-    print(MatriculaDevuelve)
-    print(MatriculaRecibe)
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
@@ -306,6 +220,12 @@ def generar_pdf(request):
 class GENERATE(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    
+        # print(font_folder)
+
+        self.add_font('Montserrat', '', os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
         self.q = q
 
     def header(self):
@@ -315,111 +235,169 @@ class GENERATE(FPDF):
         self.ln()
 
         self.set_font('Montserrat', 'B', 8)
-        self.cell(480,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.cell(485,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
         self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(518,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(525,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
-        self.ln(10)
+        self.ln(80)
 
-        self.cell(84, 10, 'NOMBRE:', 0, 0, 'L')
-       
-        x = self.get_x()
-        y = self.get_y()
-
-        self.line(x - 65, y + 5, x + 65, y + 5)  
-        self.ln(7) 
-
-        self.cell(84, 10, 'Dirección:', 0, 0, 'L')
-       
-        x = self.get_x()
-        y = self.get_y()
-
-        self.line(x - 65, y + 5, x + 65, y + 5)  
-        self.ln(7)
-
-        self.cell(84, 10, 'Correo:', 0, 0, 'L')
+        if userDevuelve:
         
-        x = self.get_x()
-        y = self.get_y()
-        
-        self.line(x - 65, y + 5, x + 65, y + 5)  
-        self.ln(7)
+            email_institucional  = userDevuelve['Email']
+            extension_telefonica = userDevuelve['Extension']
+            nombre_completo      = userDevuelve['Devuelve']
+            puesto               = userDevuelve['Puesto']
+           
+            self.set_xy(10.0, 33.0)
+            self.cell(180, 10, 'Nombre:', 0, 0, 'L')
+            self.set_xy(27.0, 35.0)
+            self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Correo:', 0, 0, 'L')
+            self.set_xy(27.0, 41.0)
+            self.cell(30.0, 6.0, email_institucional, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 11.5, 'Puesto:', 0, 0, 'L')
+            self.set_xy(27.0, 47.0)
+            self.cell(30.0, 6.0, puesto, 0, 0, 'L')
+            self.ln(5)
+            
+            self.cell(84, 10, 'Extensión:', 0, 0, 'L')
+            self.set_xy(27.0, 47.0)
+            self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
+            self.ln(40)         
+            self.set_font('Montserrat', 'B', 8)
+            self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
+            self.ln(15)
 
-        self.cell(84, 10, 'Puesto:', 0, 0, 'L')
-        
-        x = self.get_x()
-        y = self.get_y()
-        
-        self.line(x - 65, y + 5, x + 10, y + 5)  
-        self.ln(7)
-
-        self.cell(84, 10, 'Extención:', 0, 0, 'L')
-        x = self.get_x()
-        y = self.get_y()
-        self.line(x - 65, y + 5, x + 10, y + 5)    
-        self.ln(27)
-   
-        self.set_font('Montserrat', 'B', 8)
-        self.cell(280, 10, f'Prestamos de folio ({self.q})', 0, 0, 'C')
-        self.ln(15)
-
-        self.set_fill_color(31, 237, 237)
-        self.set_text_color(255, 255, 255) 
-        self.cell(140, 10, 'Código de Barras', 1, 0, '', True)
-        self.cell(140, 10, 'Fecha de Devolucón', 1, 0, '', True)
-        self.set_text_color(0, 0, 0)
-        self.ln()
+            self.set_fill_color(31, 237, 237)
+            self.set_text_color(255, 255, 255) 
+            self.cell(140, 10, 'Código de Barras', 1, 0, '', True)
+            self.cell(140, 10, 'Fecha de Devolucón', 1, 0, '', True)
+            self.set_text_color(0, 0, 0)
+            self.ln(10)
     
     def footer(self):
-
-        self.ln(10)
         self.set_font('Montserrat', 'B', 8)
 
-        self.cell(84, 10, 'Devuelve:', 0, 0, 'L')
-        x = self.get_x()
-        y = self.get_y()
-        self.line(x - 65, y + 5, x + 10, y + 5)      
-        self.ln(7)
+        if userRecibe:
+          
+            name  = userRecibe['Recibe']        
+            self.set_xy(90.0, 33.0)
+            self.cell(180, 10, 'Recibe:', 0, 0, 'L')
+            self.set_xy(108.0, 35.0)
+            self.cell(30.0, 6.0, name, 0, 0, 'L')
 
-        self.cell(84, 10, 'Recibe:', 0, 0, 'L')
-        x = self.get_x()
-        y = self.get_y()
-        self.line(x - 65, y + 5, x + 10, y + 5)      
-        self.ln()
+        if userDevuelve:
+           
+            name  = userDevuelve['Devuelve']          
+            self.set_xy(90.0, 39.0)
+            self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
+            self.set_xy(108.0, 41.0)
+            self.cell(30.0, 6.0, name, 0, 0, 'L')
+            self.set_xy(90.5, 50.0)
+            self.cell(180, 10, 'Firma:', 0, 0, 'L')
+            x = self.get_x()
+            y = self.get_y()
+            self.line(x - 167, y + 6, x - 120, y + 6)
+
+
+            
+        
+
+            self.set_y(-15)
+            self.set_font('Montserrat', '', 8)
+            self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
     def generate_Table(self, data):
        
         for row in data:
             self.cell(140, 10, str(row['vide_codigo']), 1)
             self.cell(140, 10, str(row['pres_fecha_devolucion']), 1)
-            self.ln()
+            self.ln(10)
             
 def generar_pdf_modal(request):
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe')
+    detalle_prestamos = queryset.last() if queryset else None 
+    if detalle_prestamos:
+        usuario_devuelve = detalle_prestamos['usuario_devuelve']
+        usuario_recibe = detalle_prestamos['usuario_recibe']
+        # 
+        detalle_matricula = DetallePrestamos.objects.filter(usuario_devuelve=usuario_devuelve).first()
+        muestraData = []
+
+        if detalle_matricula is not None:
+            matricula_data = {
+                "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
+                "UsuarioRecibe"  : detalle_matricula.usuario_recibe
+            }
+            muestraData.append(matricula_data)
+            if muestraData:
+                usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
+                usuario_recibe   = muestraData[0]["UsuarioRecibe"]
+
+        cursor = connections['users'].cursor()
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve] )
+        # cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica FROM people_person WHERE matricula = %s OR matricula = %s", [usuario_devuelve, usuario_recibe])
+
+        row = cursor.fetchone()
+
+        if row is not None:
+            nombres                 = row[0]
+            apellido1               = row[1]
+            apellido2               = row[2]
+            puesto                  = row[3]
+            email_institucional     = row[4]
+            extension_telefonica    = row[5]
+
+        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+        
+        MatriculaDevuelve = {
+            'Devuelve'              : nombre_completo,
+            'Puesto'                : puesto,
+            'Email'                 : email_institucional,
+            'Extension'             : extension_telefonica, 
+            'Matricula'             : usuario_devuelve,
+        }
+
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_recibe])
+        row = cursor.fetchone()
+
+        if row is not None:
+            nombres                 = row[0]
+            apellido1               = row[1]
+            apellido2               = row[2]
+            puesto                  = row[3]
+            email_institucional     = row[4]
+            extension_telefonica    = row[5]
+            
+            nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+            MatriculaRecibe = {
+                'Recibe'            : nombre_completo2,
+                'Puesto'            : puesto,
+                'Email'             : email_institucional,
+                'Extension'         : extension_telefonica, 
+                'Matricula'         : usuario_recibe,
+            }
+
+        global userDevuelve, userRecibe
+        userDevuelve = MatriculaDevuelve
+        userRecibe = MatriculaRecibe
+
+        print(MatriculaDevuelve)
+        print(MatriculaRecibe)
 
     response = HttpResponse(content_type='application/pdf')
-     
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = GENERATE('P', 'mm', (300, 350), q)
-
-    pdf.add_font('Montserrat','',
-                r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Regular.ttf",
-                uni=True)
-    
-    pdf.add_font('Montserrat','B',
-                r"C:\Users\MIJIMENEZ\Desktop\videoteca\media\static\Montserrat-Bold.ttf",
-                uni=True)
-    
     pdf.add_page()
     pdf.generate_Table(queryset)
-    
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
-
 # ---------------------------------------------------------------------------------------------------------------------------#
 
 @csrf_exempt      
