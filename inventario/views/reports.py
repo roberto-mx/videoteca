@@ -20,6 +20,7 @@ from reportlab.lib.pagesizes import letter, landscape
 from django.db import connections
 import json
 from django.http import JsonResponse
+from datetime import datetime
 from django.db import connections
 
 class PDF(FPDF):
@@ -303,11 +304,6 @@ class GENERATE(FPDF):
             x = self.get_x()
             y = self.get_y()
             self.line(x - 167, y + 6, x - 120, y + 6)
-
-
-            
-        
-
             self.set_y(-15)
             self.set_font('Montserrat', '', 8)
             self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
@@ -316,13 +312,18 @@ class GENERATE(FPDF):
        
         for row in data:
             self.cell(140, 10, str(row['vide_codigo']), 1)
-            self.cell(140, 10, str(row['pres_fecha_devolucion']), 1)
+            fecha_devolucion = row['pres_fecha_devolucion'].strftime('%d-%m-%Y')
+            self.cell(140, 10, fecha_devolucion, 1)
             self.ln(10)
             
 def generar_pdf_modal(request):
+
     q = int(request.GET.get("q"))
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe')
     detalle_prestamos = queryset.last() if queryset else None 
+    # fecha = detalle_prestamos['pres_fecha_devolucion'].strftime('%d-%m-%Y')
+    # print(fecha)
+    
     if detalle_prestamos:
         usuario_devuelve = detalle_prestamos['usuario_devuelve']
         usuario_recibe = detalle_prestamos['usuario_recibe']
