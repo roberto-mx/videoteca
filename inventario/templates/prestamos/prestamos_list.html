@@ -177,8 +177,6 @@ $(document).ready(function() {
     const vide_codigo = busquedaVal;
     const pres_folio = busquedaVal; // Utiliza el mismo valor para ambos
 
-    console.log({1: vide_codigo, 2 : pres_folio, data:busquedaVal})
-
     // Verifica si busquedaVal está vacío
     if (busquedaVal === '') {
       alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', 'Oops!', 'swal-wide');
@@ -206,6 +204,7 @@ $(document).ready(function() {
     });
   });
 });
+
    
 $(document).ready(function() {
   $('#TablePrestamo').DataTable({
@@ -232,81 +231,42 @@ $(document).ready(function() {
 
   const tablaOriginal = $('#TablePrestamo').DataTable().data().toArray();
   const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
-
+  
   $('#busqueda').on('keyup', function() {
     const valorInput = $(this).val();
     const vide_codigo = valorInput;
     const pres_folio = valorInput;
-
-    if ((vide_codigo == '') || (pres_folio == '')) {
-      // Mostrar la tabla original si alguno de los inputs está vacío
+  
+    if (vide_codigo == '' && pres_folio == '') {
+      // Mostrar la tabla original si ambos inputs están vacíos
       $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal).draw();
-      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw(); // Agregar la tabla original 2
+      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
     } else {
       $.ajax({
         url: '{% url "prestamos_filter" %}',
         data: {'q': vide_codigo},
         dataType: 'json',
         success: function(res) {
-          console.log({res})
           const prestamos = res;
-          // Actualizar los datos de la tabla existente con los resultados de la primera llamada AJAX
-          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
-        }
-      });
-
-      // Realizar la segunda llamada AJAX para buscar por pres_folio
-      $.ajax({
-        url: '{% url "prestamos_filter_folio" %}',
-        data: {'q': pres_folio},
-        success: function(resFolio) {
-          const prestamosFolio = resFolio.reduce((unique, item) => {
-            return unique.some(obj => obj.id === item.id) ? unique : [...unique, item];
-          }, []);
-          // Actualizar los datos de la tabla existente con los resultados de la segunda llamada AJAX
-          $('#TablePrestamo').DataTable().clear().rows.add(prestamosFolio).draw();
+          console.log(res);
+          // Filtrar los resultados por pres_folio único
+          const prestamosUnicos = [];
+          const foliosVistos = new Set();
+          for (let i = 0; i < prestamos.length; i++) {
+            const prestamo = prestamos[i];
+            if (!foliosVistos.has(prestamo.pres_folio)) {
+              prestamosUnicos.push(prestamo);
+              foliosVistos.add(prestamo.pres_folio);
+            }
+          }
+          // Actualizar los datos de la tabla existente con los resultados filtrados
+          $('#TablePrestamo').DataTable().clear().rows.add(prestamosUnicos).draw();
         }
       });
     }
   });
-
-//  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
-//
-//  $('#busqueda').on('keyup', function() {
-//    const pres_folio = $(this).val();
-//    if(pres_folio == ''){
-//      // Mostrar la tabla original si el input está vacío
-//      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
-//    }else{
-//      $.ajax({
-//        url: '{% url "prestamos_filter_folio" %}',
-//        data: {'q': pres_folio},
-//        //dataType: 'json',
-//        success: function(res) {
-//          console.log({folio: res})
-//          const prestamos = res.reduce((unique, item) => {
-//            return unique.some(obj => obj.id === item.id) ? unique : [...unique, item];// a esto se le llama if ternario
-//          }, []);
-//          $('#TablePrestamo').DataTable().clear().rows.add(prestamos).draw();
-//        }
-//        
-//      });
-//    }
-//  });
+  
 });
-
-//  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
-//
-//  $('#busqueda').on('keyup', function() {
-//    const pres_folio = $(this).val();
-//    if(pres_folio == ''){
-//      // Mostrar la tabla original si el input está vacío
-//      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
-//    }else{
-//      
-//    }
-//  });
-//});
 
 $('#TablePrestamo').on('click', '.ver-detalle', function() {
   const detalles = $(this).data('detalles');

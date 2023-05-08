@@ -389,9 +389,6 @@ def generar_pdf_modal(request):
         userDevuelve = MatriculaDevuelve
         userRecibe = MatriculaRecibe
 
-        print(MatriculaDevuelve)
-        print(MatriculaRecibe)
-
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = GENERATE('P', 'mm', (300, 350), q)
