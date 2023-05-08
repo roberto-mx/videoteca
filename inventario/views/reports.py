@@ -57,7 +57,7 @@ class PDF(FPDF):
             puesto               = userDevuelve['Puesto']
            
             self.set_xy(10.0, 33.0)
-            self.cell(84, 10, 'NOMBRE:', 0, 0, 'L')
+            self.cell(84, 10, 'Nombre:', 0, 0, 'L')
             self.set_xy(27.0, 35.0)
             self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
             self.ln(3.5)

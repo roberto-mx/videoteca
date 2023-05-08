@@ -206,7 +206,6 @@ def ValidateOutVideoteca(request):
             registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
     return JsonResponse(registro_data,safe=True)
 
-
 @csrf_exempt      
 def RegisterOutVideoteca(request):
     now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
