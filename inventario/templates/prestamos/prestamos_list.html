@@ -175,9 +175,8 @@ $(document).ready(function() {
   $('#btn-generar-pdf').on('click', function() {
     const busquedaVal = $('#busqueda').val();
     const vide_codigo = busquedaVal;
-    const pres_folio = busquedaVal; // Utiliza el mismo valor para ambos
+    const pres_folio = busquedaVal; 
 
-    // Verifica si busquedaVal está vacío
     if (busquedaVal === '') {
       alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', 'Oops!', 'swal-wide');
       return; 
@@ -204,7 +203,6 @@ $(document).ready(function() {
     });
   });
 });
-
    
 $(document).ready(function() {
   $('#TablePrestamo').DataTable({
@@ -248,7 +246,6 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(res) {
           const prestamos = res;
-          console.log(res);
           // Filtrar los resultados por pres_folio único
           const prestamosUnicos = [];
           const foliosVistos = new Set();

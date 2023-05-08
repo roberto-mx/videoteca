@@ -35,8 +35,8 @@ class PDF(FPDF):
         
     def header(self):
     
-        self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=65)
-        self.image('media/images/logo-aprendemx.png', x=76, y=5, w=65)
+        self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=50)
+        self.image('media/images/logo-aprendemx.png', x=65, y=5, w=50)
         self.ln()
 
         self.set_font('Montserrat', 'B', 8)
@@ -47,7 +47,7 @@ class PDF(FPDF):
         self.cell(525,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
-        self.ln(10)
+        self.ln(80)
 
         if userDevuelve:
         
@@ -56,6 +56,7 @@ class PDF(FPDF):
             nombre_completo      = userDevuelve['Devuelve']
             puesto               = userDevuelve['Puesto']
            
+            self.set_xy(10.0, 33.0)
             self.cell(84, 10, 'NOMBRE:', 0, 0, 'L')
             self.set_xy(27.0, 35.0)
             self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
@@ -68,7 +69,7 @@ class PDF(FPDF):
             self.set_xy(27.0, 47.0)
             self.cell(30.0, 6.0, puesto, 0, 0, 'L')
             self.ln(3.5)
-            self.cell(84, 10, 'Extensión:', 0, 0, 'L')
+            self.cell(86, 10, 'Extensión:', 0, 0, 'L')
             self.set_xy(27.0, 47.0)
             self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
             self.ln(15)         
@@ -87,30 +88,32 @@ class PDF(FPDF):
             self.ln()
             
     def footer(self):
-
-        self.ln(10)
         self.set_font('Montserrat', 'B', 8)
 
         if userRecibe:
-    
+          
             name  = userRecibe['Recibe']        
-            self.cell(84, 10, 'Recibe:', 0, 0, 'L')
-            self.set_xy(27.0, 129.0)
+            self.set_xy(90.0, 33.0)
+            self.cell(180, 10, 'Recibe:', 0, 0, 'L')
+            self.set_xy(108.0, 35.0)
             self.cell(30.0, 6.0, name, 0, 0, 'L')
-            self.ln(3.5)
 
         if userDevuelve:
-    
-            name  = userDevuelve['Devuelve']        
-            self.cell(84, 10, 'Devuelve:', 0, 0, 'L')
-            self.set_xy(27.0, 135.0)
+           
+            name  = userDevuelve['Devuelve']          
+            self.set_xy(90.0, 39.0)
+            self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
+            self.set_xy(108.0, 41.0)
             self.cell(30.0, 6.0, name, 0, 0, 'L')
-            self.ln(3.5)
-        
-        # Configuración del pie de página del PDF
-        self.set_y(-15)
-        self.set_font('Montserrat', '', 8)
-        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+            self.set_xy(90.5, 50.0)
+            self.cell(180, 10, 'Firma:', 0, 0, 'L')
+            x = self.get_x()
+            y = self.get_y()
+            self.line(x - 167, y + 6, x - 120, y + 6)
+            self.set_y(-15)
+            self.set_font('Montserrat', '', 8)
+            self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
 
 
     def generate_table(self, data):
@@ -125,7 +128,7 @@ class PDF(FPDF):
 
 def generar_pdf(request):
     q = request.GET.get('q')
-    detalle_prestamos = DetallePrestamos.objects.filter(vide_codigo=q, usuario_devuelve__isnull=False, usuario_recibe__isnull=False)
+    detalle_prestamos = DetallePrestamos.objects.filter(Q(pres_folio=q) | Q(vide_codigo=q), usuario_devuelve__isnull=False, usuario_recibe__isnull=False)
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
 
     prestamos_data = []
@@ -161,7 +164,9 @@ def generar_pdf(request):
             usuario_recibe   = muestraData[0]["UsuarioRecibe"]
 
     cursor = connections['users'].cursor()
+    # cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve])
     cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve])
+
     row = cursor.fetchone()
 
     if row is not None:
@@ -253,7 +258,7 @@ class GENERATE(FPDF):
             puesto               = userDevuelve['Puesto']
            
             self.set_xy(10.0, 33.0)
-            self.cell(180, 10, 'Nombre:', 0, 0, 'L')
+            self.cell(84, 10, 'Nombre:', 0, 0, 'L')
             self.set_xy(27.0, 35.0)
             self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
             self.ln(3.5)
@@ -261,15 +266,14 @@ class GENERATE(FPDF):
             self.set_xy(27.0, 41.0)
             self.cell(30.0, 6.0, email_institucional, 0, 0, 'L')
             self.ln(3.5)
-            self.cell(84, 11.5, 'Puesto:', 0, 0, 'L')
+            self.cell(84, 10, 'Puesto:', 0, 0, 'L')
             self.set_xy(27.0, 47.0)
             self.cell(30.0, 6.0, puesto, 0, 0, 'L')
-            self.ln(5)
-            
+            self.ln(3.5)
             self.cell(84, 10, 'Extensión:', 0, 0, 'L')
             self.set_xy(27.0, 47.0)
             self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
-            self.ln(40)         
+            self.ln(15)         
             self.set_font('Montserrat', 'B', 8)
             self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
             self.ln(15)
