@@ -25,6 +25,7 @@ urlpatterns = [
     path('programas/<int:pk>/', DetalleProgramasDetailView.as_view(), name='programas-detail'),
     path('programas/<str:pk>/editar', DetalleProgramasUpdateView.as_view(), name='programas-update'),
     path('programas/<str:pk>/eliminar', DetalleProgramasDeleteView.as_view(), name='programas-delete'),
+    
 
     # CATALOGOS
     # Formatos Cintas

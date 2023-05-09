@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ajax_datatable',
 
 ]
 
@@ -71,18 +72,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'videoteca.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'videoteca',
+        'NAME': 'videoteca2',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'PASSWORD': '1595',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '5433'
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -93,7 +93,6 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -112,7 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -139,3 +137,5 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGOUT_REDIRECT_URL = "home"
 LOGIN_REDIRECT_URL = "prestamos_list"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

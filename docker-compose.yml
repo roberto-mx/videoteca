@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  recursos:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=recursos_humanos
+    ports:
+      - '5450:5432'
+    volumes:
+      - recursos:/var/lib/postgresql/data
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+volumes:
+  recursos:
+    driver: local
+ 

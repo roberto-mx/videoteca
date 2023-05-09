@@ -1,0 +1,12 @@
+<ul>
+  {% for detalle in detalles %} 
+      <li> {{detalle.vide_codigo}} - {{detalle.pres_fecha_devolucion}} </li>
+  {% endfor %}
+
+</ul>
+{% comment %} <ul>
+  {% for detalle in busqueda %} 
+      <li> {{detalle.pres_folio_id}} </li>
+  {% endfor %}
+
+</ul> {% endcomment %}
