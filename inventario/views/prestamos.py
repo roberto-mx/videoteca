@@ -214,17 +214,16 @@ def RegisterOutVideoteca(request):
     if request.method == 'POST':
         usuario = request.POST['usuario']
         data = json.loads(request.POST['codigos'])
+        #Este te crea el Folio que usamos en -> detPrestamos.pres_folio 
+        prestamo = Prestamos()
+        prestamo.usua_clave = usuario
+        prestamo.pres_fechahora = now
+        prestamo.pres_fecha_prestamo = now
+        prestamo.pres_fecha_devolucion = now
+        prestamo.pres_estatus = 'X'
+        prestamo.save()
         for codigo in data:
             maestroCinta = MaestroCintas.objects.get(pk = codigo)
-
-            prestamo = Prestamos()
-            prestamo.usua_clave = usuario
-            prestamo.pres_fechahora = now
-            prestamo.pres_fecha_prestamo = now
-            prestamo.pres_fecha_devolucion = now
-            prestamo.pres_estatus = 'X'
-            prestamo.save()
-
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
             # detPrestamos.vide_clave = videos
