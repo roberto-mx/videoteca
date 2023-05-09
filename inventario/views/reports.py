@@ -201,62 +201,83 @@ def generar_pdf_modal(request):
 
 
 # ---------------------------------------------------------------------------------------------------------------------------#
+def xml_to_pdf():
+   RESOURCES_DIR = os.path.abspath(settings.MEDIA_ROOT)
+   REPORTS_DIR = os.path.abspath(os.path.dirname(__file__))
+   input_file = settings.MEDIA_ROOT+ '/reports/main.jrxml'
+   output_file = settings.MEDIA_ROOT+ '/reports/report'
+   data_file = settings.MEDIA_ROOT+ '/reports/contacts.xml'
+   pyreportjasper = PyReportJasper()
+   pyreportjasper.config(
+      input_file,
+      output_file,
+      output_formats=["pdf"],
+      db_connection={
+          'driver': 'xml',
+          'data_file': data_file,
+          'xml_xpath': '/',
+      }, 
+      resource="C:/Users/Cmalvaez/Documents/"
+   )
+   pyreportjasper.process_report()
+   print('Result is the file below.')
+   print(output_file + '.pdf')
+
+
+
 
 @csrf_exempt      
-def json_to_pdf(request,fechaInicio,fechaFin,folio  ):
-    dateInicio = datetime.datetime.strptime(fechaInicio, "%d-%m-%Y")
-    dateFin = datetime.datetime.strptime(fechaFin, "%d-%m-%Y")
- 
-    
-    input_file = settings.MEDIA_ROOT+ '/Formatos/Compensacion_v1.jrxml'
-    CreateJson(dateInicio, dateFin, None, folio)
+def json_to_pdf(request, row, codes, user ):
+    RESOURCES_DIR = settings.MEDIA_ROOT+ '/Formatos/montserrat.jar'
+    input_file = settings.MEDIA_ROOT+ '/Formatos/ReporteDevolucion.jrxml'
+    CreateJsonInReport(row, codes, user)
     output_file = settings.MEDIA_ROOT+ '/Formatos'
-    
-    json_query = 'contacts.person'
-
-    
-    #dictionary = {"contacts": {"person": [ {'Folio':34, 'RFC':61, 'Nombre':82, 'ClaveP':82, 'Categoria':82, 'Codigo':82, 'Compensacion':82, 'CostoHora':82, 'HorasXMes':82, 'Importe':82, 'Fecha':82, 'NoFolio':82}  ] } } 
-    #jsonString = json.dumps(dictionary, indent=4)
-
-    #print(jsonString)
     conn = {
       'driver': 'json',
-      'data_file': settings.MEDIA_ROOT+ '/Formatos/data.json',
-      'json_query': 'compensacion'
+      'data_file': settings.MEDIA_ROOT+ '/Formatos/dataHeader.json',
+      'json_query': 'reporte'
    }
-    outputFile= settings.MEDIA_ROOT+ '/Formatos/ReporteCompensacion '+fechaInicio+' al '+fechaFin+'.pdf' 
+    outputFile= settings.MEDIA_ROOT+ '/Formatos/ReporteDevolucion.pdf' 
     pyreportjasper = PyReportJasper()
     pyreportjasper.config(
       input_file,
       output_file=outputFile,
       output_formats=["pdf"],
-      db_connection=conn
+      db_connection=conn,
+      resource=RESOURCES_DIR
    )
     pyreportjasper.process_report()
     print('Result is the file below.')
-   # output_file = output_file + '.pdf'
+     # output_file = output_file + '.pdf'
     if os.path.isfile(outputFile):
     #    print('Report generated successfully!')
         with open(outputFile, 'rb') as pdf:
             response = HttpResponse(pdf.read(),content_type='application/pdf')
-            response['Content-Disposition'] = 'filename=ReporteCompensacion '+fechaInicio+' al '+fechaFin+'.pdf'
+            response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
         return response
-
+  
 
 def CreateJsonInReport(row, codes, user):
     data = {}
+    i = 0
     now = datetime.datetime.now()
     data['reporte']=[]
-    data['header'].append({'Nombre': row[0][0] + ' '+ row[0][1]+ ' '+ row[0][2],
+    codeJson = json.loads(codes)
+    for code in enumerate(codeJson):
+        if code[1] != None :
+            i+=1
+            data['reporte'].append({'Nombre': row[0][0] + ' '+ row[0][1]+ ' '+ row[0][2],
                 'Direccion':  row[0][5],
                 'Puesto':  row[0][6],
                 'Extension': row[0][3],
                 'Correo':   row[0][4] ,
                 'Matricula':   row[0][7],
-                'FechaDev': now,
+                'FechaDev': now.strftime("%d-%m-%Y"),
                 'Recibe': user,
                 'Logo1': settings.MEDIA_ROOT+ '/Formatos/logo-sep.png', 
-                'Logo2':  settings.MEDIA_ROOT+ '/Formatos/logo-aprendemx.png' })
+                'Logo2':  settings.MEDIA_ROOT+ '/Formatos/logo-aprendemx.png', 
+                'Codigo': code[1], 
+                'Consecutivo': i })
                 
     with open(settings.MEDIA_ROOT+ '/Formatos/dataHeader.json', 'w',  encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False) 
