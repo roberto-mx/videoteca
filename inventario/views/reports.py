@@ -1,7 +1,7 @@
 import textwrap, operator, base64, json, datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from pyreportjasper import PyReportJasper
+# from pyreportjasper import PyReportJasper
 from django.core import serializers
 from fpdf import FPDF
 from io import BytesIO
@@ -10,74 +10,114 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from ..models import Prestamos, DetallePrestamos, MaestroCintas, DetalleProgramas, Videos
 from django.http.response import HttpResponse, JsonResponse
-import os 
+import os
+import io
+from pathlib import Path
+from django.db.models import Q
+from PyPDF2 import PdfWriter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.pagesizes import letter, landscape
+from django.db import connections
+import json
+from django.http import JsonResponse
+from datetime import datetime
+from django.db import connections
+
 class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
-        self.q = q
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    
 
-    def header(self):
+        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
+        self.q = q
         
-        # Configuración de la cabecera del PDF
-        self.image('images/EducaciónAprende.jpeg', x=10, y=8, w=50)
-        self.image('images/logo-aprendemx.png', x=65, y=5, w=50)
+    def header(self):
+    
+        self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=50)
+        self.image('media/images/logo-aprendemx.png', x=65, y=5, w=50)
         self.ln()
 
-        self.set_font('Arial', 'B', 8)
-        self.cell(480,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.set_font('Montserrat', 'B', 8)
+        self.cell(485,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
         self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(518,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(525,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
-        self.ln(40)
+        self.ln(80)
 
-        self.set_font('Arial', 'B', 8)
-        self.cell(84, 10,   'NOMBRE:      _______________________________', 0, 0, 'C')
-        # self.ln(7)
-        self.cell(306, 10,  'DIRECCIÓN:   _______________________________', 0, 0, 'C')
-        self.ln(17)
-        self.cell(83, 10,   'PUESTO:      _______________________________', 0, 0, 'C')
+        if userDevuelve:
+        
+            email_institucional  = userDevuelve['Email']
+            extension_telefonica = userDevuelve['Extension']
+            nombre_completo      = userDevuelve['Devuelve']
+            puesto               = userDevuelve['Puesto']
+           
+            self.set_xy(10.0, 33.0)
+            self.cell(84, 10, 'Nombre:', 0, 0, 'L')
+            self.set_xy(27.0, 35.0)
+            self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Correo:', 0, 0, 'L')
+            self.set_xy(27.0, 41.0)
+            self.cell(30.0, 6.0, email_institucional, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Puesto:', 0, 0, 'L')
+            self.set_xy(27.0, 47.0)
+            self.cell(30.0, 6.0, puesto, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(86, 10, 'Extensión:', 0, 0, 'L')
+            self.set_xy(27.0, 47.0)
+            self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
+            self.ln(15)         
+            self.set_font('Montserrat', 'B', 8)
+            self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
+            self.ln(15)
 
-        self.cell(103, 10,  'EXTENSIÓN:   _______________________________', 0, 0, 'C')
-        self.cell(103, 10,  'CORREO:      _______________________________', 0, 0, 'C')
-        self.ln(40)
-        
-        self.set_font('Arial', 'B', 15)
-        self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
-        self.ln(20)
-        
+            self.set_fill_color(144, 12, 63)
+            self.set_text_color(255, 255, 255) 
+            self.cell(40, 10, 'Folio', 1, 0, '', True)
+            self.cell(40, 10, 'Usuario', 1, 0, '', True)
+            self.cell(80, 10, 'Fecha y Hora Prestamo', 1, 0, '', True)
+            self.cell(80, 10, 'Fecha de devolución', 1, 0, '', True)
+            self.cell(40, 10, 'Estatus', 1, 0, '', True)
+            self.set_text_color(0, 0, 0)
+            self.ln()
+            
     def footer(self):
+        self.set_font('Montserrat', 'B', 8)
 
-        self.ln(40)
-        self.set_font('Arial', 'B', 8)
-        self.cell(103, 10, 'RECIBE:', 0, 0, 'C')
-        self.cell(200, 10, 'DEVUELVE:', 0, 0, 'C')
-        self.ln()
-        #self.drawline    
-        self.cell(103, 10, '________________________________________', 0, 0, 'C')
-        # self.ln(8)
-        self.cell(200, 10, '________________________________________', 0, 0, 'C')
-        # self.ln()
+        if userRecibe:
+          
+            name  = userRecibe['Recibe']        
+            self.set_xy(90.0, 33.0)
+            self.cell(180, 10, 'Recibe:', 0, 0, 'L')
+            self.set_xy(108.0, 35.0)
+            self.cell(30.0, 6.0, name, 0, 0, 'L')
 
-        # Configuración del pie de página del PDF
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+        if userDevuelve:
+           
+            name  = userDevuelve['Devuelve']          
+            self.set_xy(90.0, 39.0)
+            self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
+            self.set_xy(108.0, 41.0)
+            self.cell(30.0, 6.0, name, 0, 0, 'L')
+            self.set_xy(90.5, 50.0)
+            self.cell(180, 10, 'Firma:', 0, 0, 'L')
+            x = self.get_x()
+            y = self.get_y()
+            self.line(x - 167, y + 6, x - 120, y + 6)
+            self.set_y(-15)
+            self.set_font('Montserrat', '', 8)
+            self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
+
 
     def generate_table(self, data):
-        # Generación del contenido de la tabla en el PDF
-        self.set_fill_color(144, 12, 63)
-        self.set_text_color(255, 255, 255) # Establece el color de la letra en blanco
-        self.cell(40, 10, 'Folio', 1, 0, '', True)
-        self.cell(40, 10, 'Usuario', 1, 0, '', True)
-        self.cell(80, 10, 'Fecha y Hora Prestamo', 1, 0, '', True)
-        self.cell(80, 10, 'Fecha de devolución', 1, 0, '', True)
-        self.cell(40, 10, 'Estatus', 1, 0, '', True)
-        self.set_text_color(0, 0, 0)
-        self.ln()
-
+       
         for row in data:
             self.cell(40, 10, str(row['pres_folio']), 1)
             self.cell(40, 10, str(row['usua_clave']), 1)
@@ -88,118 +128,278 @@ class PDF(FPDF):
 
 def generar_pdf(request):
     q = request.GET.get('q')
-    detalle_prestamos = DetallePrestamos.objects.filter(vide_codigo=q)
+    detalle_prestamos = DetallePrestamos.objects.filter(Q(pres_folio=q) | Q(vide_codigo=q), usuario_devuelve__isnull=False, usuario_recibe__isnull=False)
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
+
     prestamos_data = []
+
     for pres_folio_id in pres_folios:
         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
         if prestamo:
-            prestamo_data = {
-                "pres_folio": prestamo.pres_folio,
-                "usua_clave": prestamo.usua_clave,
-                "pres_fechahora": prestamo.pres_fechahora,
-                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-                "pres_estatus": prestamo.pres_estatus
-            }
-            prestamos_data.append(prestamo_data)
+            if detalle_prestamos.filter(pres_folio=pres_folio_id).exists():
+                prestamo_data = {
+                    "pres_folio":            prestamo.pres_folio,
+                    "usua_clave":            prestamo.usua_clave,
+                    "pres_fechahora":        prestamo.pres_fechahora,
+                    "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
+                    "pres_estatus":          prestamo.pres_estatus,
+                    "usuario_devuelve":      detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_devuelve,
+                    "usuario_recibe":        detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_recibe,
+                }
+                prestamos_data.append(prestamo_data)
+    usuarioDevuelve = prestamos_data[-1]['usuario_devuelve'] if   prestamos_data else ''
+    usuarioRecibe   = prestamos_data[-1]['usuario_recibe']   if   prestamos_data else ''
+
+    detalle_matricula = DetallePrestamos.objects.filter(usuario_devuelve=usuarioDevuelve).first()
+    muestraData = []
+
+    if detalle_matricula is not None:
+        matricula_data = {
+            "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
+            "UsuarioRecibe"  : detalle_matricula.usuario_recibe
+        }
+        muestraData.append(matricula_data)
+        if muestraData:
+            usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
+            usuario_recibe   = muestraData[0]["UsuarioRecibe"]
+
+    cursor = connections['users'].cursor()
+    # cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve])
+    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve])
+
+    row = cursor.fetchone()
+
+    if row is not None:
+        nombres                 = row[0]
+        apellido1               = row[1]
+        apellido2               = row[2]
+        puesto                  = row[3]
+        email_institucional     = row[4]
+        extension_telefonica    = row[5]
+
+        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+        MatriculaDevuelve = {
+            'Devuelve'          : nombre_completo,
+            'Puesto'            : puesto,
+            'Email'             : email_institucional,
+            'Extension'         : extension_telefonica, 
+            'Matricula'         : usuario_devuelve,
+        }
+
+    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_recibe])
+    row = cursor.fetchone()
+
+    if row is not None:
+        nombres                 = row[0]
+        apellido1               = row[1]
+        apellido2               = row[2]
+        puesto                  = row[3]
+        email_institucional     = row[4]
+        extension_telefonica    = row[5]
+
+        nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 is not None else f"{nombres} {apellido1}"
+        MatriculaRecibe = {
+            'Recibe'            : nombre_completo2,
+            'Puesto'            : puesto,
+            'Email'             : email_institucional,
+            'Extension'         : extension_telefonica, 
+            'Matricula'         : usuario_recibe,
+        }   
+    global userDevuelve, userRecibe
+    # global 
+    userDevuelve = MatriculaDevuelve
+    userRecibe = MatriculaRecibe
 
     response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename="Videoteca.pdf"'
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = PDF('P', 'mm', (300, 350), q)
-    # Abre una nueva página en el documento PDF
     pdf.add_page()
+    # pdf.footer(userDevuelve=userDevuelve, userRecibe=userRecibe)
 
-    # Agrega los datos de los préstamos a la página actual
+
     pdf.generate_table(prestamos_data)
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
-# ---------------------------------PDF2----------------------------------------------------------------------------------------
+
+# ---------------------------------PDF2-----------------------------------#
 # @csrf_exempt    
 class GENERATE(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    
+        # print(font_folder)
+
+        self.add_font('Montserrat', '', os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
         self.q = q
 
     def header(self):
         
-        # Configuración de la cabecera del PDF
-        self.image('images/EducaciónAprende.jpeg', x=10, y=8, w=35)
-        self.image('images/logo-aprendemx.png', x=46, y=7, w=35)
+        self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=50)
+        self.image('media/images/logo-aprendemx.png', x=65, y=5, w=50)
         self.ln()
 
-        self.set_font('Arial', 'B', 6)
-        self.cell(323,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.set_font('Montserrat', 'B', 8)
+        self.cell(485,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
-        self.cell(293,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
+        self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(351.5,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(525,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(306.5,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
-        self.ln(40)
+        self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
+        self.ln(80)
 
-        self.set_font('Arial', 'B', 8)
-        self.cell(84, 10,   'NOMBRE:      _______________________________', 0, 0, 'C')
-        # self.ln(7)
-        self.cell(103, 10,  'DIRECCIÓN:   _______________________________', 0, 0, 'C')
-        self.ln(17)
-        self.cell(83, 10,   'PUESTO:      _______________________________', 0, 0, 'C')
+        if userDevuelve:
+        
+            email_institucional  = userDevuelve['Email']
+            extension_telefonica = userDevuelve['Extension']
+            nombre_completo      = userDevuelve['Devuelve']
+            puesto               = userDevuelve['Puesto']
+           
+            self.set_xy(10.0, 33.0)
+            self.cell(84, 10, 'Nombre:', 0, 0, 'L')
+            self.set_xy(27.0, 35.0)
+            self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Correo:', 0, 0, 'L')
+            self.set_xy(27.0, 41.0)
+            self.cell(30.0, 6.0, email_institucional, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Puesto:', 0, 0, 'L')
+            self.set_xy(27.0, 47.0)
+            self.cell(30.0, 6.0, puesto, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Extensión:', 0, 0, 'L')
+            self.set_xy(27.0, 47.0)
+            self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
+            self.ln(15)         
+            self.set_font('Montserrat', 'B', 8)
+            self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
+            self.ln(15)
 
-        self.cell(103, 10,  'EXTENSIÓN:   _______________________________', 0, 0, 'C')
-        # self.cell(103, 10,  'CORREO:      _______________________________', 0, 0, 'C')
-        self.ln(40)
-        
-        self.set_font('Arial', 'B', 15)
-        self.cell(180, 10, f'Folio de la cinta ({self.q})', 0, 0, 'C')
-        self.ln(20)
-        
+            self.set_fill_color(31, 237, 237)
+            self.set_text_color(255, 255, 255) 
+            self.cell(140, 10, 'Código de Barras', 1, 0, '', True)
+            self.cell(140, 10, 'Fecha de Devolucón', 1, 0, '', True)
+            self.set_text_color(0, 0, 0)
+            self.ln(10)
+    
     def footer(self):
+        self.set_font('Montserrat', 'B', 8)
 
-        self.ln(40)
-        self.set_font('Arial', 'B', 8)
-        self.cell(83, 10, 'RECIBE: _______________________________', 0, 0, 'C')
-        self.cell(93, 10, 'DEVUELVE: _______________________________', 0, 0, 'C')
-        self.ln()
+        if userRecibe:
+          
+            name  = userRecibe['Recibe']        
+            self.set_xy(90.0, 33.0)
+            self.cell(180, 10, 'Recibe:', 0, 0, 'L')
+            self.set_xy(108.0, 35.0)
+            self.cell(30.0, 6.0, name, 0, 0, 'L')
 
-        # self.cell(103, 10, '_______________________________', 0, 0, 'C')
-        # self.ln(8)
-        # self.cell(200, 10, '_______________________________', 0, 0, 'C')
-        # self.ln()
-
-        # Configuración del pie de página del PDF
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+        if userDevuelve:
+           
+            name  = userDevuelve['Devuelve']          
+            self.set_xy(90.0, 39.0)
+            self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
+            self.set_xy(108.0, 41.0)
+            self.cell(30.0, 6.0, name, 0, 0, 'L')
+            self.set_xy(90.5, 50.0)
+            self.cell(180, 10, 'Firma:', 0, 0, 'L')
+            x = self.get_x()
+            y = self.get_y()
+            self.line(x - 167, y + 6, x - 120, y + 6)
+            self.set_y(-15)
+            self.set_font('Montserrat', '', 8)
+            self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
     def generate_Table(self, data):
-        # Generación del contenido de la tabla en el PDF
-        self.set_fill_color(31, 237, 237)
-        self.set_text_color(6, 28, 28) # Establece el color de la letra en blanco
-        self.cell(90, 10, 'Código de Barras', 1, 0, '', True)
-        self.cell(90, 10, 'Fecha de Devolucón', 1, 0, '', True)
-        self.set_text_color(0, 0, 0)
-        self.ln()
-
+       
         for row in data:
-            self.cell(90, 10, str(row['vide_codigo']), 1)
-            self.cell(90, 10, str(row['pres_fecha_devolucion']), 1)
-            self.ln()
-
+            self.cell(140, 10, str(row['vide_codigo']), 1)
+            fecha_devolucion = row['pres_fecha_devolucion'].strftime('%d-%m-%Y')
+            self.cell(140, 10, fecha_devolucion, 1)
+            self.ln(10)
+            
 def generar_pdf_modal(request):
+
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe')
+    detalle_prestamos = queryset.last() if queryset else None 
+    # fecha = detalle_prestamos['pres_fecha_devolucion'].strftime('%d-%m-%Y')
+    # print(fecha)
+    
+    if detalle_prestamos:
+        usuario_devuelve = detalle_prestamos['usuario_devuelve']
+        usuario_recibe = detalle_prestamos['usuario_recibe']
+        # 
+        detalle_matricula = DetallePrestamos.objects.filter(usuario_devuelve=usuario_devuelve).first()
+        muestraData = []
+
+        if detalle_matricula is not None:
+            matricula_data = {
+                "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
+                "UsuarioRecibe"  : detalle_matricula.usuario_recibe
+            }
+            muestraData.append(matricula_data)
+            if muestraData:
+                usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
+                usuario_recibe   = muestraData[0]["UsuarioRecibe"]
+
+        cursor = connections['users'].cursor()
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve] )
+        # cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica FROM people_person WHERE matricula = %s OR matricula = %s", [usuario_devuelve, usuario_recibe])
+
+        row = cursor.fetchone()
+
+        if row is not None:
+            nombres                 = row[0]
+            apellido1               = row[1]
+            apellido2               = row[2]
+            puesto                  = row[3]
+            email_institucional     = row[4]
+            extension_telefonica    = row[5]
+
+        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+        
+        MatriculaDevuelve = {
+            'Devuelve'              : nombre_completo,
+            'Puesto'                : puesto,
+            'Email'                 : email_institucional,
+            'Extension'             : extension_telefonica, 
+            'Matricula'             : usuario_devuelve,
+        }
+
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_recibe])
+        row = cursor.fetchone()
+
+        if row is not None:
+            nombres                 = row[0]
+            apellido1               = row[1]
+            apellido2               = row[2]
+            puesto                  = row[3]
+            email_institucional     = row[4]
+            extension_telefonica    = row[5]
+            
+            nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+            MatriculaRecibe = {
+                'Recibe'            : nombre_completo2,
+                'Puesto'            : puesto,
+                'Email'             : email_institucional,
+                'Extension'         : extension_telefonica, 
+                'Matricula'         : usuario_recibe,
+            }
+
+        global userDevuelve, userRecibe
+        userDevuelve = MatriculaDevuelve
+        userRecibe = MatriculaRecibe
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="Videoteca_Folio_{q}.pdf"'
-    pdf = GENERATE('P', 'mm', (200, 380), q)
+    response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
+    pdf = GENERATE('P', 'mm', (300, 350), q)
     pdf.add_page()
     pdf.generate_Table(queryset)
-    
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
-   
-
-
 # ---------------------------------------------------------------------------------------------------------------------------#
 def xml_to_pdf():
    RESOURCES_DIR = os.path.abspath(settings.MEDIA_ROOT)

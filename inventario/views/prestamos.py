@@ -18,59 +18,56 @@ import tempfile
     # ---------------------------
     # Prestamos
     # ---------------------------
+
+
 def Filtrar_prestamos(request):
     q = request.GET.get('q')
 
-    # Obtener los pres_folio que coinciden con el vide_codigo
-    pres_folios = DetallePrestamos.objects.filter(vide_codigo_id=q).values_list('pres_folio_id', flat=True)
-
-    # Crear una lista para almacenar los datos de prestamos
     prestamos_data = []
 
-    # Obtener los datos de Prestamos para cada pres_folio encontrado
-    for pres_folio_id in pres_folios:
-        prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
-        if prestamo:
-            # Acceder a los datos de Prestamos
+    if q:
+        prestamos = DetallePrestamos.objects.filter(
+            Q(pres_folio=q) | Q(vide_codigo=q)
+        )
+
+        for prestamo in prestamos:
             prestamo_data = {
-                "pres_folio": prestamo.pres_folio,
-                "usua_clave": prestamo.usua_clave,
-                "pres_fechahora": prestamo.pres_fechahora,  
-                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-                "pres_estatus": prestamo.pres_estatus
+                "pres_folio": prestamo.pres_folio.pres_folio,
+                "usua_clave": prestamo.pres_folio.usua_clave,
+                "pres_fechahora": prestamo.pres_folio.pres_fechahora,
+                "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
+                "pres_estatus": prestamo.pres_folio.pres_estatus
             }
-            
             prestamos_data.append(prestamo_data)
 
-    # Retornar los datos de prestamos en formato JSON
     return JsonResponse(prestamos_data, safe=False)
 
-def Filtrar_pres_Folio(request):
-    q = request.GET.get('q')
+# def Filtrar_pres_Folio(request):
+#     q = request.GET.get('q')
 
-    # Obtener los pres_folio que coinciden con el vide_codigo
-    pres_folios = DetallePrestamos.objects.filter(pres_folio_id=q).values_list('pres_folio_id', flat=True)
+#     # Obtener los pres_folio que coinciden con el vide_codigo
+#     pres_folios = DetallePrestamos.objects.filter(pres_folio_id=q).values_list('pres_folio_id', flat=True)
 
-    # Crear una lista para almacenar los datos de prestamos
-    prestamos_data = []
+#     # Crear una lista para almacenar los datos de prestamos
+#     prestamos_data = []
 
-    # Obtener los datos de Prestamos para cada pres_folio encontrado
-    for pres_folio_id in pres_folios:
-        prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
-        if prestamo:
-            # Acceder a los datos de Prestamos
-            prestamo_data = {
-                "pres_folio": prestamo.pres_folio,
-                "usua_clave": prestamo.usua_clave,
-                "pres_fechahora": prestamo.pres_fechahora,  
-                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-                "pres_estatus": prestamo.pres_estatus
-            }
+#     # Obtener los datos de Prestamos para cada pres_folio encontrado
+#     for pres_folio_id in pres_folios:
+#         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
+#         if prestamo:
+#             # Acceder a los datos de Prestamos
+#             prestamo_data = {
+#                 "pres_folio": prestamo.pres_folio,
+#                 "usua_clave": prestamo.usua_clave,
+#                 "pres_fechahora": prestamo.pres_fechahora,  
+#                 "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
+#                 "pres_estatus": prestamo.pres_estatus
+#             }
             
-            prestamos_data.append(prestamo_data)
+#             prestamos_data.append(prestamo_data)
 
-    # Retornar los datos de prestamos en formato JSON
-    return JsonResponse(prestamos_data, safe=False)
+#     # Retornar los datos de prestamos en formato JSON
+#     return JsonResponse(prestamos_data, safe=False)
 
 @method_decorator(login_required, name='dispatch')
 class PrestamosListView(ListView):
@@ -209,7 +206,6 @@ def ValidateOutVideoteca(request):
         except Exception as e:
             registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
     return JsonResponse(registro_data,safe=True)
-
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
