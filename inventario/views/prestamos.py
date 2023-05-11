@@ -14,12 +14,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 import tempfile
-
     # ---------------------------
     # Prestamos
     # ---------------------------
-
-
 def Filtrar_prestamos(request):
     q = request.GET.get('q')
 
@@ -209,7 +206,7 @@ def ValidateOutVideoteca(request):
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
-    now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
+    now = datetime.datetime.now()
     #datetime.datetime.now()
     if request.method == 'POST':
         usuario = request.POST['usuario']
@@ -221,7 +218,7 @@ def RegisterOutVideoteca(request):
         prestamo.pres_fecha_prestamo = now
         prestamo.pres_fecha_devolucion = now
         prestamo.pres_estatus = 'X'
-        prestamo.save()
+        # prestamo.save()
         for codigo in data:
             maestroCinta = MaestroCintas.objects.get(pk = codigo)
             detPrestamos = DetallePrestamos()
@@ -229,10 +226,8 @@ def RegisterOutVideoteca(request):
             # detPrestamos.vide_clave = videos
             detPrestamos.depr_estatus = 'X'
             detPrestamos.save()
-
             maestroCinta.video_estatus = 'X'
             maestroCinta.save()
-
         registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
     return JsonResponse(registro_data,safe=True)
 
