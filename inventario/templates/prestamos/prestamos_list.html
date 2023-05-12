@@ -366,44 +366,42 @@ $("#closeModalOut").click(function(){
    cleanTableOut(); 
 });
 
-$("#continuarPrestamo").click(function(){
-  usuario = $('#searchUsuarioOut').val();
-  codigoBarras = $('#searchBarCodeOut').val();
-  
-  if (usuario == "") {
-     alertMessage('info', 'Ingrese un valor para el usuario.', 'Oops!');
-     $('#searchUsuarioOut').focus();
-  } 
-  else if (codigoBarras == "") {
-     alertMessage('info', 'Ingrese un código de barras.', 'Oops!');
-     $('#searchBarCodeOut').focus();
-  } 
-  else{
-      //console.log(get_data('#resultTableOut tbody tr'));
+//$("#element").hide();  // hide
+//$("#element").show();  // show
+
+$("#continuarPrestamo").hide(); 
+
+//Tengo que ocultar este button
+$("#continuarPrestamo").click(function() {
+  let usuario = $('#searchUsuarioOut').val();
+  let codigoBarras = $('#searchBarCodeOut').val();
+
   $.ajax({
-      data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableOut tbody tr'))},
-      url: "{% url 'registro_salida_videoteca' %}",
-      type: 'POST'
-    })
-    .done(function(response){
-      if(response['error']==true){
-        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
-      }
-      else{
-          $('#resultTableIn').append('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
-          //console.log(`Aquí entro la data: ${response}`)
-      }
-        $('#searchBarCodeIn').val("").focus()
-      })
-      .fail(function(){
-          $('#alertWarning').show('slow');
-          $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
-          setTimeout(function(){ 
-          cleanForm();
-          location.reload();
-        }, 1000);      
-      })
-    }     
+    data: {'usuario': usuario, 'codigos': JSON.stringify(get_data('#resultTableOut tbody tr'))},
+    url: "{% url 'registro_salida_videoteca' %}",
+    type: 'POST'
+  })
+  .done(function(response) {
+    if (response.error) {
+      $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
+      console.log('A');
+    } else {
+      $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
+      console.log('B');
+    }
+    $('#searchBarCodeIn').val("").focus();
+    console.log('C');
+  })
+  .fail(function() {
+    $('#alertWarning').show('slow');
+    $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+    setTimeout(function() { 
+      cleanForm();
+      location.reload();
+    }, 1000);
+  });
+
+  $(this).hide(); // Oculta el botón #continuarPrestamo después de hacer click
 });
 
 $("#endReturn").click(function(){
@@ -481,80 +479,106 @@ $(document).on("click",".glyphicon-plus",function(){
         
     });
 
-
-
-
-function readCodeBar(){
-  codigoBarras= $('#searchBarCodeIn').val();
-  //console.log(codigoBarras);
-  usuario =  $('#searchUsuarioIn').val();
-  if (usuario == ""){
-     alert("Ingrese el Gafete del usuario");
-      $('#searchUsuarioIn').focus();  
-  }
-  else{
-    $.ajax({
-    data: {'codigoBarras': codigoBarras, 'matricula' : usuario},
-    url: "{% url 'registro_entrada_videoteca' %}",
-    type: 'POST'
-    })
-      .done(function(response){
-        if(response['error']==true){
-              $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none" > <input type="text" class="codbarrasError" value="'+codigoBarras + '"></input></td><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
-            }
-            else{
-                $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"> <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
-            }
-            $('#searchBarCodeIn').val("").focus()
+    function readCodeBar() {
+      let codigoBarras = $('#searchBarCodeIn').val();
+      let usuario = $('#searchUsuarioIn').val();
+    
+      if (usuario === "") {
+        alert("Ingrese el Gafete del usuario");
+        $('#searchUsuarioIn').focus();  
+      } else {
+        $.ajax({
+          data: {'codigoBarras': codigoBarras, 'matricula': usuario},
+          url: "{% url 'registro_entrada_videoteca' %}",
+          type: 'POST'
         })
-        .fail(function(){
+        .done(function(response) {
+          if (response.error) {
+            $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
+          } else {
+            $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
+          }
+          $('#searchBarCodeIn').val("").focus();
+          addAboveTableButton(); // Llama a la función para agregar el botón encima de la tabla
+        })
+        .fail(function() {
           $('#ins_error').show('slow');
           $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
-          setTimeout(function(){  $('#ins_error').hide(); }, 1000);      
-        })
-  }
-}
+          setTimeout(function() { $('#ins_error').hide(); }, 1000);      
+        });
+      }
+    }
+    
+    function addAboveTableButton() {
+      $('#resultTableIn').before('<button id="aboveTableButton" class="btn btn-primary">Botón Encima de la Tabla</button>');
+    
+      $('#aboveTableButton').click(function() {
+        // Código a ejecutar cuando se haga clic en el botón encima de la tabla
+        console.log("Se hizo clic en el botón encima de la tabla");
+      });
+    }
+    
+    $(document).ready(function() {
+      $('#searchBarCodeIn').keypress(function(event) {
+        if (event.which === 13) { // Verifica si se presionó la tecla "Enter"
+          readCodeBar(); // Llama a la función para leer el código de barras
+        }
+      });
+    });
+    pre
+function addItemOut() {
 
+  const codigoBarras = $('#searchBarCodeOut').val();
+  const usuario = $('#searchUsuarioOut').val();
 
-function addItemOut(){
-  codigoBarras= $('#searchBarCodeOut').val();
-  usuario= $('#searchUsuarioOut').val();
-   $.ajax({
-  data: {
-    'usuario':usuario,
-    'codigoBarras': codigoBarras,
-    'funcion' : 'registerIn'},
+  if( codigoBarras === ''){
+    alertMessage('info','Debes ingrsar un código de barras.')
+    }else if( usuario === ''){
+    alertMessage('info','Debes ingrsar un usuario.')
+    }
+
+  $.ajax({
+    data: {
+      'usuario': usuario,
+      'codigoBarras': codigoBarras,
+      'funcion': 'registerIn'
+    },
     url: "{% url 'validacion_salida_videoteca' %}",
     type: 'POST'
   })
-    .done(function(response){
-        if(f_valida_repetido(codigoBarras)== 1){
-            $("#out_error").text("Registro duplicado");
-            $("#out_error").show();
-            setTimeout(function() {  $("#out_error").hide() }, 1000);
-            $('#searchBarCodeOut').val("").focus()
-        }
-        else{
-            if(response['error']==true){
-              $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none" > <input type="text" class="codbarrasError" value="'+codigoBarras + '"></input></td><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
-            }
-            else{
-                $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"> <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td>  <td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
-            }
-            $('#searchBarCodeOut').val("").focus()
-        }  
-    })
-  .fail(function(){
+  .done(function(response) {
+    if (f_valida_repetido(codigoBarras) == 1) {
+      $("#out_error").text("Registro duplicado");
+      $("#out_error").show();
+      setTimeout(function() {  
+        $("#out_error").hide();
+      }, 1000);
+      $('#searchBarCodeOut').val("").focus();
+    } else {
+      if (response.error) {
+        $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+      } else {
+        $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+        $("#continuarPrestamo").show();  // show
+      }
+      $('#searchBarCodeOut').val("").focus();
+    }
+  })
+  .fail(function() {
     $('#out_error').show('slow');
     $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
-    setTimeout(function(){ $("#out_error").hide() }, 1000);      
-  })
+    setTimeout(function() { 
+      $("#out_error").hide();
+    }, 1000);
+  });
 }
 
-{% comment %} $(document).on('click', '#continuarPrestamo', function() {
+
+
+$(document).on('click', '#continuarPrestamo', function() {
   alertMessageContent('Estas seguro de que quieres continuar?', "No podrás revertir esto!", 'warning', true, '#3085d6', '#d33');
   
-}); {% endcomment %}
+});
 
 function f_valida_repetido(codigoBarras){
   var v_valor = 0;
