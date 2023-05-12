@@ -15,7 +15,7 @@ const alertMessageContent = (title, text, icon, showCancelButton, confirmButtonC
     showCancelButton: showCancelButton,
     confirmButtonColor: confirmButtonColor,
     cancelButtonColor: cancelButtonColor,
-    confirmButtonText: 'Si, exportar!'
+    confirmButtonText: 'Si, continuar!'
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire(

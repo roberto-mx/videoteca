@@ -6,7 +6,7 @@
     <form class="container-fluid justify-content-start">
       <a type="button" class="btn btn-default btn-sm" id="buttonOut" data-toggle="modal" data-target="#modalOut">
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <span>Prestamo con Código de Barras</span>
+          <span>Préstamo con Código de Barras</span>
           <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
         </div>
       </a>
@@ -38,9 +38,9 @@
   <thead>
     <tr>
       <th>Detalles</th>
-      <th>Folio Prestamo</th>
+      <th>Folio Préstamo</th>
       <th>Usuario</th>
-      <th>Fecha-Hora-Prestamo</th>
+      <th>Fecha-Hora-Préstamo</th>
       <th>Devolución</th>
       <th>Estatus</th>
     </tr>
@@ -133,7 +133,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title">Prestamo por Código de Barras</h4>
+            <h4 class="modal-title">Préstamo por Código de Barras</h4>
           </div>
           <div class="modal-body">
             <div id="buscarUsuario">
@@ -145,8 +145,8 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModalOut"><i class="fa fa-reply-all"></i> Salir </button>
-              <button type="button" class="btn btn-danger btn-sm active"id="cleanTableOut"><i class='fas fa-eraser'></i> Limpiar </button>
-              <button type="button" class="btn btn-success btn-sm active" id="continuarPrestamo"> Continuar <i class='fas fa-arrow-circle-right'></i></button> 
+              <button type="button" class="btn btn-danger btn-sm active"  id="cleanTableOut"><i class='fas fa-eraser'></i> Limpiar </button>
+              <button type="button" class="btn btn-primary btn-sm active" id="continuarPrestamo"> Continuar <i class='fas fa-arrow-circle-right'></i></button> 
 
             <table id="resultTableOut" class="modal-footer">
             </table>
@@ -367,38 +367,44 @@ $("#closeModalOut").click(function(){
 });
 
 $("#continuarPrestamo").click(function(){
-  usuario =  $('#searchUsuarioOut').val();
-  if (usuario == ""){
-     alert("Ingrese un valor para el usuario");
-      $('#searchUsuarioOut').focus();  
-  }
+  usuario = $('#searchUsuarioOut').val();
+  codigoBarras = $('#searchBarCodeOut').val();
+  
+  if (usuario == "") {
+     alertMessage('info', 'Ingrese un valor para el usuario.', 'Oops!');
+     $('#searchUsuarioOut').focus();
+  } 
+  else if (codigoBarras == "") {
+     alertMessage('info', 'Ingrese un código de barras.', 'Oops!');
+     $('#searchBarCodeOut').focus();
+  } 
   else{
       //console.log(get_data('#resultTableOut tbody tr'));
-         $.ajax({
-            data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableOut tbody tr'))},
-            url: "{% url 'registro_salida_videoteca' %}",
-            type: 'POST'
-            })
-              .done(function(response){
-                if(response['error']==true){
-                  $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
-                }
-                else{
-                    $('#resultTableIn').append('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
-                    //console.log(`Aquí entro la data: ${response}`)
-                }
-                $('#searchBarCodeIn').val("").focus()
-                })
-                .fail(function(){
-                  $('#alertWarning').show('slow');
-                  $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
-                  setTimeout(function(){ 
-                  cleanForm();
-                  location.reload();
-                  }, 1000);      
-                })
+  $.ajax({
+      data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableOut tbody tr'))},
+      url: "{% url 'registro_salida_videoteca' %}",
+      type: 'POST'
+    })
+    .done(function(response){
+      if(response['error']==true){
+        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+      }
+      else{
+          $('#resultTableIn').append('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+          //console.log(`Aquí entro la data: ${response}`)
+      }
+        $('#searchBarCodeIn').val("").focus()
+      })
+      .fail(function(){
+          $('#alertWarning').show('slow');
+          $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+          setTimeout(function(){ 
+          cleanForm();
+          location.reload();
+        }, 1000);      
+      })
     }     
-  });
+});
 
 $("#endReturn").click(function(){
   usuario =  $('#searchUsuarioIn').val();
@@ -510,47 +516,45 @@ function readCodeBar(){
 }
 
 
-function addItemOut() {
-  codigoBarras = $('#searchBarCodeOut').val();
-  $.ajax({
-    data: { 'codigoBarras': codigoBarras, 'funcion': 'registerIn' },
+function addItemOut(){
+  codigoBarras= $('#searchBarCodeOut').val();
+  usuario= $('#searchUsuarioOut').val();
+   $.ajax({
+  data: {
+    'usuario':usuario,
+    'codigoBarras': codigoBarras,
+    'funcion' : 'registerIn'},
     url: "{% url 'validacion_salida_videoteca' %}",
     type: 'POST'
   })
-    .done(function (response) {
-      if (f_valida_repetido(codigoBarras) == 1) {
-        $("#out_error").text("Registro duplicado");
-        $("#out_error").show();
-        setTimeout(function () { $("#out_error").hide() }, 1000);
-        $('#searchBarCodeOut').val("").focus()
-      } else {
-        if (response['error'] == true) {
-          $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response['errorMessage'] + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Eliminar</button></td></tr>');
-        } else {
-          $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response['errorMessage'] + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Eliminar</button></td></tr>');
-          console.log(`Entra aquí`);
+    .done(function(response){
+        if(f_valida_repetido(codigoBarras)== 1){
+            $("#out_error").text("Registro duplicado");
+            $("#out_error").show();
+            setTimeout(function() {  $("#out_error").hide() }, 1000);
+            $('#searchBarCodeOut').val("").focus()
         }
-        $('#searchBarCodeOut').val("").focus();
-      }
-
-      $('#resultTableOut').prev('#botonTabla').remove();
-
-      // Agregar el botón encima de la tabla
-      const boton = '<button class="btn btn-primary btn-sm active" id="botonTabla"><i class="fas fa-file-pdf" ></i> Exportar PDF</button>';
-      $('#resultTableOut').before(boton);
+        else{
+            if(response['error']==true){
+              $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none" > <input type="text" class="codbarrasError" value="'+codigoBarras + '"></input></td><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
+            }
+            else{
+                $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"> <input type="text" class="codbarras" value="'+codigoBarras + '"></input></td>  <td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td>  <td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar  </button></td></tr>');
+            }
+            $('#searchBarCodeOut').val("").focus()
+        }  
     })
-    .fail(function () {
-      $('#out_error').show('slow');
-      $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
-      setTimeout(function () { $("#out_error").hide() }, 1000);
-    });
+  .fail(function(){
+    $('#out_error').show('slow');
+    $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
+    setTimeout(function(){ $("#out_error").hide() }, 1000);      
+  })
 }
 
-$(document).on('click', '#botonTabla', function() {
-  alertMessageContent('Deseas exportar a PDF?', "No podrás revertir esto!", 'warning', true, '#3085d6', '#d33');
+{% comment %} $(document).on('click', '#continuarPrestamo', function() {
+  alertMessageContent('Estas seguro de que quieres continuar?', "No podrás revertir esto!", 'warning', true, '#3085d6', '#d33');
   
-});
-
+}); {% endcomment %}
 
 function f_valida_repetido(codigoBarras){
   var v_valor = 0;

@@ -192,22 +192,46 @@ def RegisterInVideoteca(request):
 @csrf_exempt  
 def ValidateOutVideoteca(request):
     if request.method == 'POST':
-        print(request.POST['codigoBarras'])
-        codigoBarras = request.POST['codigoBarras']
-        try:
-            maestroCinta = MaestroCintas.objects.get(pk = codigoBarras)
-            if maestroCinta.video_estatus =='En Videoteca':
-                registro_data={"error":False,"errorMessage":"Listo para prestamo"}
-            else:
-                registro_data={"error":True,"errorMessage":"El material solicitado se encuentra registrado con estatus: " + maestroCinta.video_estatus}
-        except Exception as e:
-            registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
-    return JsonResponse(registro_data,safe=True)
+        codigoBarras = request.POST.get('codigoBarras', '')
+        usuario = request.POST.get('usuario', '')
+
+        if not usuario or not codigoBarras:
+            registro_data = {
+                "error": True,
+                "errorMessage": "Debes ingresar un usuario y un código de barras"
+            }
+        else:
+            try:
+                maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
+                if maestroCinta.video_estatus == 'En Videoteca':
+                    registro_data = {
+                        "error": False,
+                        "errorMessage": "Listo para préstamo"
+                    }
+                    # Guardar el registro en la base de datos aquí
+                else:
+                    registro_data = {
+                        "error": True,
+                        "errorMessage": "El código de barras no está disponible"
+                    }
+            except MaestroCintas.DoesNotExist:
+                registro_data = {
+                    "error": True,
+                    "errorMessage": "No se encontró el código de barras"
+                }
+    else:
+        registro_data = {
+            "error": True,
+            "errorMessage": "Solicitud inválida"
+        }
+
+    return JsonResponse(registro_data)
+
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
     now = datetime.datetime.now()
-    #datetime.datetime.now()
+
     if request.method == 'POST':
         usuario = request.POST['usuario']
         data = json.loads(request.POST['codigos'])
@@ -218,7 +242,10 @@ def RegisterOutVideoteca(request):
         prestamo.pres_fecha_prestamo = now
         prestamo.pres_fecha_devolucion = now
         prestamo.pres_estatus = 'X'
-        # prestamo.save()
+        prestamo.save()
+
+        # print(prestamo.save())
+
         for codigo in data:
             maestroCinta = MaestroCintas.objects.get(pk = codigo)
             detPrestamos = DetallePrestamos()
@@ -228,6 +255,7 @@ def RegisterOutVideoteca(request):
             detPrestamos.save()
             maestroCinta.video_estatus = 'X'
             maestroCinta.save()
+            print(maestroCinta.save())
         registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
     return JsonResponse(registro_data,safe=True)
 
