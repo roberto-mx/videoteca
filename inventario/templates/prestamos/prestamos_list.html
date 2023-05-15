@@ -369,40 +369,63 @@ $("#closeModalOut").click(function(){
 //$("#element").hide();  // hide
 //$("#element").show();  // show
 
+//$(document).on('click', '#continuarPrestamo', function() {
+//  alertMessageContent('Estas seguro de que quieres continuar?', "No podrás revertir esto!", 'warning', true, '#3085d6', '#d33');
+//  
+//});
+
 $("#continuarPrestamo").hide(); 
 
-//Tengo que ocultar este button
 $("#continuarPrestamo").click(function() {
   let usuario = $('#searchUsuarioOut').val();
   let codigoBarras = $('#searchBarCodeOut').val();
+  let $button = $(this); // Guardamos una referencia al botón actual
 
+  Swal.fire({
+    title: 'Estás seguro de que quieres continuar?',
+    text: "No podrás revertir esto!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Si, continuar!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      guardarRegistro(usuario, codigoBarras);
+      $button.hide(); // Oculta el botón utilizando la referencia guardada
+    }
+  });
+});
+
+function guardarRegistro(usuario, codigoBarras) {
   $.ajax({
     data: {'usuario': usuario, 'codigos': JSON.stringify(get_data('#resultTableOut tbody tr'))},
     url: "{% url 'registro_salida_videoteca' %}",
-    type: 'POST'
-  })
-  .done(function(response) {
-    if (response.error) {
-      $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
-      console.log('A');
-    } else {
-      $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
-      console.log('B');
+    type: 'POST',
+    success: function(response) {
+      if (response.error) {
+        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
+        console.log('A');
+      } else {
+        $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
+        console.log('B');
+      }
+      $('#searchBarCodeIn').val("").focus();
+      console.log('C');
+    },
+    error: function() {
+      $('#alertWarning').show('slow');
+      $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function() { 
+        //cleanForm();
+        location.reload();
+      }, 1000);
     }
-    $('#searchBarCodeIn').val("").focus();
-    console.log('C');
-  })
-  .fail(function() {
-    $('#alertWarning').show('slow');
-    $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
-    setTimeout(function() { 
-      cleanForm();
-      location.reload();
-    }, 1000);
   });
+}
 
-  $(this).hide(); // Oculta el botón #continuarPrestamo después de hacer click
-});
+
+
 
 $("#endReturn").click(function(){
   usuario =  $('#searchUsuarioIn').val();
@@ -525,7 +548,7 @@ $(document).on("click",".glyphicon-plus",function(){
         }
       });
     });
-    pre
+
 function addItemOut() {
 
   const codigoBarras = $('#searchBarCodeOut').val();
@@ -575,10 +598,7 @@ function addItemOut() {
 
 
 
-$(document).on('click', '#continuarPrestamo', function() {
-  alertMessageContent('Estas seguro de que quieres continuar?', "No podrás revertir esto!", 'warning', true, '#3085d6', '#d33');
-  
-});
+
 
 function f_valida_repetido(codigoBarras){
   var v_valor = 0;

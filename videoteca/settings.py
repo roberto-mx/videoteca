@@ -86,11 +86,11 @@ DATABASES = {
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'RecursosHumanos',
+        'NAME': 'recursos_humanos',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '5450'
     }
 }
 
@@ -117,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 
