@@ -366,13 +366,6 @@ $("#closeModalOut").click(function(){
    cleanTableOut(); 
 });
 
-//$("#element").hide();  // hide
-//$("#element").show();  // show
-
-//$(document).on('click', '#continuarPrestamo', function() {
-//  alertMessageContent('Estas seguro de que quieres continuar?', "No podrás revertir esto!", 'warning', true, '#3085d6', '#d33');
-//  
-//});
 
 $("#continuarPrestamo").hide(); 
 
@@ -403,29 +396,41 @@ function guardarRegistro(usuario, codigoBarras) {
     url: "{% url 'registro_salida_videoteca' %}",
     type: 'POST',
     success: function(data) {
-      //console.log('Respuesta del data:');
-      console.log(`Muestro aquí el pres_folio ${data.Folio}`);
-      
+      // Verificar si existe el error
       if (data.error) {
         $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
         $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       }
       $('#searchBarCodeIn').val("").focus();
-     
+
+      const muestraFolio = data.Folio;
+
+      if (muestraFolio !== undefined) {
+        $.ajax({
+          url: '{% url "generate_pdf_resgister_folio" %}',
+          data: {'q': muestraFolio},
+          success: function() {
+            window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
+          }
+        });
+      }
+
+      Swal.fire(
+        'Exportado!',
+        `Su archivo ha sido exportado con el folio ${muestraFolio}.`,
+        'success'
+      );
     },
     error: function() {
       $('#alertWarning').show('slow');
       $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
       setTimeout(function() { 
-        //cleanForm();
         location.reload();
       }, 1000);
     }
   });
 }
-
-
 
 
 
@@ -458,7 +463,7 @@ $("#endReturn").click(function(){
                   cleanForm();
                   location.reload();
                   }, 3000);      
-                })
+                 })
     }     
   });
 
