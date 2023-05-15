@@ -235,7 +235,6 @@ def RegisterOutVideoteca(request):
     if request.method == 'POST':
         usuario = request.POST['usuario']
         data = json.loads(request.POST['codigos'])
-        #Este te crea el Folio que usamos en -> detPrestamos.pres_folio 
         prestamo = Prestamos()
         prestamo.usua_clave = usuario
         prestamo.pres_fechahora = now
@@ -244,20 +243,32 @@ def RegisterOutVideoteca(request):
         prestamo.pres_estatus = 'X'
         prestamo.save()
 
-        # print(prestamo.save())
+        
+        pintaFolio = prestamo.pres_folio
+        print(pintaFolio)
 
         for codigo in data:
-            maestroCinta = MaestroCintas.objects.get(pk = codigo)
+            try:
+                maestroCinta = MaestroCintas.objects.get(pk=codigo)
+            except MaestroCintas.DoesNotExist:
+                return JsonResponse({'error': True, 'errorMessage': 'No se encontró el código de barras'}, safe=True)
+
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
-            # detPrestamos.vide_clave = videos
             detPrestamos.depr_estatus = 'X'
             detPrestamos.save()
+
             maestroCinta.video_estatus = 'X'
             maestroCinta.save()
-            print(maestroCinta.save())
-        registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
-    return JsonResponse(registro_data,safe=True)
+
+        registro_data = {"error": False, "errorMessage": "Listo para préstamo", 'Folio': pintaFolio}
+        return JsonResponse(registro_data, safe=True)
+
+    return JsonResponse({}, safe=True)
+
+
+ 
+
 
 @csrf_exempt   
 def EndInVideoteca(request):

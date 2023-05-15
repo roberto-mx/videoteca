@@ -402,16 +402,17 @@ function guardarRegistro(usuario, codigoBarras) {
     data: {'usuario': usuario, 'codigos': JSON.stringify(get_data('#resultTableOut tbody tr'))},
     url: "{% url 'registro_salida_videoteca' %}",
     type: 'POST',
-    success: function(response) {
-      if (response.error) {
-        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
-        console.log('A');
+    success: function(data) {
+      //console.log('Respuesta del data:');
+      console.log(`Muestro aquí el pres_folio ${data.Folio}`);
+      
+      if (data.error) {
+        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
-        $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td></tr>');
-        console.log('B');
+        $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       }
       $('#searchBarCodeIn').val("").focus();
-      console.log('C');
+     
     },
     error: function() {
       $('#alertWarning').show('slow');
@@ -423,6 +424,7 @@ function guardarRegistro(usuario, codigoBarras) {
     }
   });
 }
+
 
 
 
