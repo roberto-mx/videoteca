@@ -1,7 +1,7 @@
 import textwrap, operator, base64, json, datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-# from pyreportjasper import PyReportJasper
+from pyreportjasper import PyReportJasper
 from django.core import serializers
 from fpdf import FPDF
 from io import BytesIO
@@ -594,20 +594,26 @@ def json_to_pdf(request, row, codes, user ):
       resource=RESOURCES_DIR
    )
     pyreportjasper.process_report()
-    print('Result is the file below.')
-     # output_file = output_file + '.pdf'
-    if os.path.isfile(outputFile):
-    #    print('Report generated successfully!')
-        with open(outputFile, 'rb') as pdf:
+    return outputFile 
+   
+  
+def GetFilePdf(request):
+    file = request.GET.get('q')
+    if os.path.isfile(file):
+        print('Report generated successfully!')
+        with open(file, 'rb') as pdf:
             response = HttpResponse(pdf.read(),content_type='application/pdf')
             response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
         return response
+  
+    else:
+        print('Report not generated!')
   
 
 def CreateJsonInReport(row, codes, user):
     data = {}
     i = 0
-    now = datetime.datetime.now()
+    now = datetime.now()
     data['reporte']=[]
     codeJson = json.loads(codes)
     for code in enumerate(codeJson):

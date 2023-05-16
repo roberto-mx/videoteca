@@ -280,6 +280,9 @@ def EndInVideoteca(request):
     cursor.execute("select a.nombres, a.apellido1, a.apellido2, a.extension_telefonica, a.email_institucional, b.nombre as Area, c.nombre as contratacion, a.activo from people_person as a join people_areaorganigrama as b  on a.cat_area_org_id = b.id  join people_contratacion as c on a.cat_contratacion_id = c.id where a.matricula = '"+ usuario + "'")
     row = cursor.fetchall()
     print(row[0][3])   
-    json_to_pdf(request, row, data, usuario)
-    #print_jasper()
-         
+    file = json_to_pdf(request, row, data, usuario)
+    if file:
+        registro_data={"error":False,"file":file}  
+    else:
+        registro_data={"error":True,"errorMessage":"Error al generar archivo de devolución"}    
+    return JsonResponse(registro_data,safe=True)
