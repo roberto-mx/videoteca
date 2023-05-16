@@ -91,13 +91,15 @@ class PDF(FPDF):
         self.set_font('Montserrat', 'B', 8)
 
         if userRecibe:
+          
             name  = userRecibe['Recibe']        
             self.set_xy(90.0, 33.0)
             self.cell(180, 10, 'Recibe:', 0, 0, 'L')
             self.set_xy(108.0, 35.0)
             self.cell(30.0, 6.0, name, 0, 0, 'L')
 
-        if userDevuelve:           
+        if userDevuelve:
+           
             name  = userDevuelve['Devuelve']          
             self.set_xy(90.0, 39.0)
             self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
@@ -111,6 +113,8 @@ class PDF(FPDF):
             self.set_y(-15)
             self.set_font('Montserrat', '', 8)
             self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
+
 
     def generate_table(self, data):
        
@@ -201,17 +205,10 @@ def generar_pdf(request):
             'Extension'         : extension_telefonica, 
             'Matricula'         : usuario_recibe,
         }   
-
     global userDevuelve, userRecibe
-
+    # global 
     userDevuelve = MatriculaDevuelve
     userRecibe = MatriculaRecibe
-
-    # global userDevuelve, userRecibe
-    # if 'usuario_devuelve' in locals() and usuario_devuelve:
-    #     userDevuelve = MatriculaDevuelve
-    # if 'usuario_recibe' in locals() and usuario_recibe:
-    #     userRecibe = MatriculaRecibe
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
@@ -431,60 +428,47 @@ class PDF_FOLIO(FPDF):
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(80)
 
-        # if userDevuelve:
+        if userobjPrestamo:
         
-            # email_institucional  = userDevuelve['Email']
-            # extension_telefonica = userDevuelve['Extension']
-            # nombre_completo      = userDevuelve['Devuelve']
-            # puesto               = userDevuelve['Puesto']
-        
-        self.set_xy(10.0, 33.0)
-        self.cell(84, 10, 'Nombre:', 0, 0, 'L')
-        self.set_xy(27.0, 35.0)
-        # self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
-        self.ln(3.5)
-        self.cell(84, 10, 'Correo:', 0, 0, 'L')
-        self.set_xy(27.0, 41.0)
-        # self.cell(30.0, 6.0, email_institucional, 0, 0, 'L')
-        self.ln(3.5)
-        self.cell(84, 10, 'Puesto:', 0, 0, 'L')
-        self.set_xy(27.0, 47.0)
-        # self.cell(30.0, 6.0, puesto, 0, 0, 'L')
-        self.ln(3.5)
-        self.cell(86, 10, 'Extensión:', 0, 0, 'L')
-        self.set_xy(27.0, 47.0)
-        # self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
-        self.ln(15)         
-        self.set_font('Montserrat', 'B', 8)
-        self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
-        self.ln(15)
+            email_institucional  = userobjPrestamo['Email']
+            extension_telefonica = userobjPrestamo['Extension']
+            nombre_completo      = userobjPrestamo['Obtiene']
+            puesto               = userobjPrestamo['Puesto']
+           
+            self.set_xy(10.0, 33.0)
+            self.cell(84, 10, 'Nombre:', 0, 0, 'L')
+            self.set_xy(27.0, 35.0)
+            self.cell(30.0, 6.0, nombre_completo, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Correo:', 0, 0, 'L')
+            self.set_xy(27.0, 41.0)
+            self.cell(30.0, 6.0, email_institucional, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(84, 10, 'Puesto:', 0, 0, 'L')
+            self.set_xy(27.0, 47.0)
+            self.cell(30.0, 6.0, puesto, 0, 0, 'L')
+            self.ln(3.5)
+            self.cell(86, 10, 'Extensión:', 0, 0, 'L')
+            self.set_xy(27.0, 53.0)
+            self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
+            self.ln(15)         
+            self.set_font('Montserrat', 'B', 8)
+            self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
+            self.ln(15)
 
-        self.set_fill_color(144, 12, 63)
-        self.set_text_color(255, 255, 255) 
-        self.cell(40, 10, 'Folio', 1, 0, '', True)
-        self.cell(40, 10, 'Usuario', 1, 0, '', True)
-        self.cell(80, 10, 'Fecha y Hora Prestamo', 1, 0, '', True)
-        self.cell(80, 10, 'Fecha de devolución', 1, 0, '', True)
-        self.cell(40, 10, 'Estatus', 1, 0, '', True)
-        self.set_text_color(0, 0, 0)
-        self.ln()
+            self.set_fill_color(144, 12, 63)
+            self.set_text_color(255, 255, 255) 
+            self.cell(40, 10, 'Folio', 1, 0, '', True)
+            self.cell(40, 10, 'Usuario', 1, 0, '', True)
+            self.cell(80, 10, 'Fecha y Hora Prestamo', 1, 0, '', True)
+            self.cell(80, 10, 'Fecha de devolución', 1, 0, '', True)
+            self.cell(40, 10, 'Estatus', 1, 0, '', True)
+            self.set_text_color(0, 0, 0)
+            self.ln()
             
     def footer(self):
+
         self.set_font('Montserrat', 'B', 8)
-
-        # if userRecibe:
-        #     name  = userRecibe['Recibe']        
-        #     self.set_xy(90.0, 33.0)
-        #     self.cell(180, 10, 'Recibe:', 0, 0, 'L')
-        #     self.set_xy(108.0, 35.0)
-        #     self.cell(30.0, 6.0, name, 0, 0, 'L')
-
-        # if userDevuelve:           
-            # name  = userDevuelve['Devuelve']          
-        self.set_xy(90.0, 39.0)
-        self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
-        self.set_xy(108.0, 41.0)
-        # self.cell(30.0, 6.0, name, 0, 0, 'L')
         self.set_xy(90.5, 50.0)
         self.cell(180, 10, 'Firma:', 0, 0, 'L')
         x = self.get_x()
@@ -521,25 +505,47 @@ def generate_pdf_resgister_folio(request):
                     "pres_fechahora":        prestamo.pres_fechahora,
                     "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
                     "pres_estatus":          prestamo.pres_estatus,
-                    "usuario_devuelve":      detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_devuelve,
-                    "usuario_recibe":        detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_recibe,
                 }
                 prestamos_data.append(prestamo_data)
+
+    cursor = connections['users'].cursor()
+    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", ['H220690'])
+
+    row = cursor.fetchone()
+
+    MatriculaObPrestamo = {}  # Declarar la variable MatriculaObPrestamo antes de asignarle un valor
+
+    if row is not None:
+        nombres                 = row[0]
+        apellido1               = row[1]
+        apellido2               = row[2]
+        puesto                  = row[3]
+        email_institucional     = row[4]
+        extension_telefonica    = row[5]
+
+        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+        MatriculaObPrestamo = {
+            'Obtiene'          : nombre_completo,
+            'Puesto'            : puesto,
+            'Email'             : email_institucional,
+            'Extension'         : extension_telefonica, 
+            'Matricula'         : 'H220690',
+        }
+
+    global userobjPrestamo
+    userobjPrestamo = MatriculaObPrestamo
+
+    print(userobjPrestamo)
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = PDF_FOLIO('P', 'mm', (300, 350), q)
     pdf.add_page()
-    # pdf.footer(userDevuelve=userDevuelve, userRecibe=userRecibe)
+    # pdf.footer(userobjPrestamo=userobjPrestamo)
 
     pdf.generate_table(prestamos_data)
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
-
-
-
-
-
 
 # ---------------------------------------------------------------------------------------------------------------------------#
 

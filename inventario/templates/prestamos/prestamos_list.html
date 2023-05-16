@@ -284,8 +284,6 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
       let tabla = $('<table>');
       let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
       let tbody = $('<tbody>');
-      //Operación ternaria donde hago la validación, si hay o no más cintas
-      //console.log($('li', data).length == 0)
     
       if($('li', data).length == 0){
         //$("#modalCintas").modal('hide');     
@@ -339,7 +337,7 @@ $("#buttonIn").click(function(){
 });
 
 $("#buttonOut").click(function(){
-  //console.log(":S");
+ 
   setTimeout(function() { $('#searchBarCodeOut').val("").focus() }, 1000);
 });
 
@@ -539,14 +537,14 @@ $(document).on("click",".glyphicon-plus",function(){
       }
     }
     
-    function addAboveTableButton() {
-      $('#resultTableIn').before('<button id="aboveTableButton" class="btn btn-primary">Botón Encima de la Tabla</button>');
-    
-      $('#aboveTableButton').click(function() {
-        // Código a ejecutar cuando se haga clic en el botón encima de la tabla
-        console.log("Se hizo clic en el botón encima de la tabla");
-      });
-    }
+    //function addAboveTableButton() {
+    //  $('#resultTableIn').before('<button id="aboveTableButton" class="btn btn-primary">Botón Encima de la Tabla</button>');
+    //
+    //  $('#aboveTableButton').click(function() {
+    //    // Código a ejecutar cuando se haga clic en el botón encima de la tabla
+    //    //console.log("Se hizo clic en el botón encima de la tabla");
+    //  });
+    //}
     
     $(document).ready(function() {
       $('#searchBarCodeIn').keypress(function(event) {

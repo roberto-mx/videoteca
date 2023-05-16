@@ -245,8 +245,7 @@ def RegisterOutVideoteca(request):
 
         
         pintaFolio = prestamo.pres_folio
-        print(pintaFolio)
-
+        
         for codigo in data:
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigo)
