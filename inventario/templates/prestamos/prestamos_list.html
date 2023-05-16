@@ -450,7 +450,7 @@ $("#endReturn").click(function(){
                   $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
                 }
                 else{
-                    $('#resultTableIn').append('<tr class="alert alert-success"><td>Código:  '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
+                  window.open('{% url "get_pdf" %}?q=' + response['file']); // Agrega pres_folio en la URL
                 }
                 $('#searchBarCodeIn').val("").focus()
                 })
