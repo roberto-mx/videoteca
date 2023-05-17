@@ -478,6 +478,7 @@ class PDF_FOLIO(FPDF):
         self.set_font('Montserrat', '', 8)
         self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
+
     def generate_table(self, data):
        
         for row in data:
@@ -507,9 +508,10 @@ def generate_pdf_resgister_folio(request):
                     "pres_estatus":          prestamo.pres_estatus,
                 }
                 prestamos_data.append(prestamo_data)
+                matri = prestamo.usua_clave
 
     cursor = connections['users'].cursor()
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", ['H220690'])
+    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [matri])
 
     row = cursor.fetchone()
 
@@ -529,7 +531,7 @@ def generate_pdf_resgister_folio(request):
             'Puesto'            : puesto,
             'Email'             : email_institucional,
             'Extension'         : extension_telefonica, 
-            'Matricula'         : 'H220690',
+            'Matricula'         : matri,
         }
 
     global userobjPrestamo
@@ -546,6 +548,8 @@ def generate_pdf_resgister_folio(request):
     pdf.generate_table(prestamos_data)
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
+
+
 
 # ---------------------------------------------------------------------------------------------------------------------------#
 

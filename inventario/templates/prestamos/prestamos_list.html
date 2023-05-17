@@ -111,9 +111,27 @@
             </div>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-danger"  id="cleanTableReturn">Limpiar </button>
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModalReturn">Cerrar</button>
-              <button type="button" class="btn btn-primary" id="endReturn">Finalizar Entrega</button> 
+              <button type="button" class="btn btn-danger btn-sm active"  id="cleanTableReturn">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span>Limpiar</span>
+                  <i class="fas fa-eraser"></i>
+                </div>
+              </button>
+
+              <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModalReturn">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span>Cerrar</span>
+                  <i class="fa fa-reply-all"></i>
+                </div>
+              </button>
+
+              <button type="button" class="btn btn-primary btn-sm active" id="endReturn">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span>Finalizar Entrega</span>
+                  <i class='fas fa-hand-holding'></i>
+                </div>
+              </button>
+              {% comment %} <button type="button" class="btn btn-primary" id="endReturn">Finalizar Entrega <i class="fa-sharp fa-regular fa-hand-holding-box"></i></button>  {% endcomment %}
 
             <table id="resultTableIn" class="modal-footer">
             </table>
@@ -144,10 +162,27 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModalOut"><i class="fa fa-reply-all"></i> Salir </button>
-              <button type="button" class="btn btn-danger btn-sm active"  id="cleanTableOut"><i class='fas fa-eraser'></i> Limpiar </button>
-              <button type="button" class="btn btn-primary btn-sm active" id="continuarPrestamo"> Continuar <i class='fas fa-arrow-circle-right'></i></button> 
+            <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModalOut"> 
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span>Salir</span>
+                <i class="fa fa-reply-all"></i>  
+              </div>
+            </button>
 
+            <button type="button" class="btn btn-danger btn-sm active"  id="cleanTableOut">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span>Limpiar</span>
+                <i class='fas fa-eraser'></i> 
+              </div>
+            </button>
+            
+            <button type="button" class="btn btn-primary btn-sm active" id="continuarPrestamo">  
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span>Continuar</span>
+                <i class='fas fa-arrow-circle-right'></i>
+              </div>
+            </button> 
+            
             <table id="resultTableOut" class="modal-footer">
             </table>
           </div>
@@ -307,11 +342,11 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
   })
 })
 
-$('#searchBarCodeIn').keyup(function(e){
-    if( e.keyCode == 13 ){
-        readCodeBar();
-    }
-});
+//$('#searchBarCodeIn').keyup(function(e){
+//    if( e.keyCode == 13 ){
+//        readCodeBar();
+//    }
+//});
 
 $('#searchBarCodeOut').keyup(function(e){
     if( e.keyCode == 13 ){
@@ -365,7 +400,7 @@ $("#closeModalOut").click(function(){
 });
 
 
-$("#continuarPrestamo").hide(); 
+$("#continuarPrestamo").hide();
 
 $("#continuarPrestamo").click(function() {
   let usuario = $('#searchUsuarioOut').val();
@@ -373,13 +408,13 @@ $("#continuarPrestamo").click(function() {
   let $button = $(this); // Guardamos una referencia al botón actual
 
   Swal.fire({
-    title: 'Estás seguro de que quieres continuar?',
-    text: "No podrás revertir esto!",
+    title: '¿Estás seguro de que quieres continuar?',
+    text: "¡No podrás revertir esto!",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Si, continuar!'
+    confirmButtonText: 'Sí, continuar'
   }).then((result) => {
     if (result.isConfirmed) {
       guardarRegistro(usuario, codigoBarras);
@@ -415,7 +450,7 @@ function guardarRegistro(usuario, codigoBarras) {
       }
 
       Swal.fire(
-        'Exportado!',
+        '¡Exportado!',
         `Su archivo ha sido exportado con el folio ${muestraFolio}.`,
         'success'
       );
@@ -432,38 +467,57 @@ function guardarRegistro(usuario, codigoBarras) {
 
 
 
-$("#endReturn").click(function(){
-  usuario =  $('#searchUsuarioIn').val();
-  if (usuario == ""){
-     alert("Ingrese un valor para el usuario");
-      $('#searchUsuarioIn').focus();  
-  }
-  else{
-      //console.log(get_data('#resultTableIn tbody tr'));
-         $.ajax({
-            data: {'usuario': usuario, 'codigos' : JSON.stringify(get_data('#resultTableIn tbody tr'))},
-            url: "{% url 'finalizar_entrada_videoteca' %}",
-            type: 'POST'
-            })
-              .done(function(response){
-                if(response['error']==true){
-                  $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: '+ codigoBarras+'</td><td>  Resultado: '+response['errorMessage']+'</td></tr>');
-                }
-                else{
-                  window.open('{% url "get_pdf" %}?q=' + response['file']); // Agrega pres_folio en la URL
-                }
-                $('#searchBarCodeIn').val("").focus()
-                })
-                .fail(function(){
-                  $('#alertWarning').show('slow');
-                  $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
-                  setTimeout(function(){ 
-                  cleanForm();
-                  location.reload();
-                  }, 3000);      
-                 })
-    }     
+
+$("#endReturn").click(function() {
+  let usuario = $('#searchUsuarioIn').val();
+  let codigoBarras = $('#searchBarCodeIn').val();
+  let $button = $(this);
+
+  Swal.fire({
+    title: 'Estás seguro de que quieres continuar?',
+    text: "No podrás revertir esto!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Si, continuar!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $button.hide(); // Oculta el botón utilizando la referencia guardada
+
+      if (usuario === "") {
+        alert("Ingrese un valor para el usuario");
+        $('#searchUsuarioIn').focus();
+      } else {
+        $.ajax({
+          data: {
+            'usuario': usuario,
+            'codigos': JSON.stringify(get_data('#resultTableIn tbody tr'))
+          },
+          url: "{% url 'finalizar_entrada_videoteca' %}",
+          type: 'POST',
+          success: function(data) {
+            if (data.error) {
+              $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+            } else {
+              window.open('{% url "get_pdf" %}?q=' + data.file); // Agrega pres_folio en la URL
+            }
+            $('#searchBarCodeIn').val("").focus();
+          },
+          error: function() {
+            $('#alertWarning').show('slow');
+            $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+            setTimeout(function() {
+              cleanForm();
+              location.reload();
+            }, 3000);
+          }
+        });
+      }
+    }
   });
+});
+
 
 $(document).on("click",".glyphicon-plus",function(){
             var this_html=$(this);
@@ -507,45 +561,40 @@ $(document).on("click",".glyphicon-plus",function(){
         
     });
 
-    function readCodeBar() {
-      let codigoBarras = $('#searchBarCodeIn').val();
-      let usuario = $('#searchUsuarioIn').val();
+function readCodeBar() {
+  let codigoBarras = $('#searchBarCodeIn').val();
+  let usuario = $('#searchUsuarioIn').val();
+
+  if( codigoBarras === ''){
+    alertMessage('info','Debes ingrsar un código de barras.','Hey!');
+    }else if( usuario === ''){
+    alertMessage('info','Ingresa un gafete de usuario.','Hey!')
     
-      if (usuario === "") {
-        alert("Ingrese el Gafete del usuario");
-        $('#searchUsuarioIn').focus();  
+  } else {
+    $.ajax({
+      data: {'codigoBarras': codigoBarras, 'matricula': usuario},
+      url: "{% url 'registro_entrada_videoteca' %}",
+      type: 'POST'
+    })
+    .done(function(response) {
+      if (response.error) {
+        $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
       } else {
-        $.ajax({
-          data: {'codigoBarras': codigoBarras, 'matricula': usuario},
-          url: "{% url 'registro_entrada_videoteca' %}",
-          type: 'POST'
-        })
-        .done(function(response) {
-          if (response.error) {
-            $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
-          } else {
-            $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
-          }
-          $('#searchBarCodeIn').val("").focus();
-          addAboveTableButton(); // Llama a la función para agregar el botón encima de la tabla
-        })
-        .fail(function() {
-          $('#ins_error').show('slow');
-          $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
-          setTimeout(function() { $('#ins_error').hide(); }, 1000);      
-        });
+        $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
       }
-    }
+      $('#searchBarCodeIn').val("").focus();
+      // addAboveTableButton(); // Llama a la función para agregar el botón encima de la tabla
+    })
+    .fail(function() {
+      $('#ins_error').show('slow');
+      alertMessage('error','Error al procesar, porfavor intente nuevamente!','Error 404')
+      $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function() { $('#ins_error').hide(); }, 1000);      
+    });
+  }
+}
     
-    //function addAboveTableButton() {
-    //  $('#resultTableIn').before('<button id="aboveTableButton" class="btn btn-primary">Botón Encima de la Tabla</button>');
-    //
-    //  $('#aboveTableButton').click(function() {
-    //    // Código a ejecutar cuando se haga clic en el botón encima de la tabla
-    //    //console.log("Se hizo clic en el botón encima de la tabla");
-    //  });
-    //}
-    
+
     $(document).ready(function() {
       $('#searchBarCodeIn').keypress(function(event) {
         if (event.which === 13) { // Verifica si se presionó la tecla "Enter"
@@ -554,16 +603,18 @@ $(document).on("click",".glyphicon-plus",function(){
       });
     });
 
+
+//Validación de prestamos
 function addItemOut() {
 
   const codigoBarras = $('#searchBarCodeOut').val();
   const usuario = $('#searchUsuarioOut').val();
 
   if( codigoBarras === ''){
-    alertMessage('info','Debes ingrsar un código de barras.')
-    }else if( usuario === ''){
-    alertMessage('info','Debes ingrsar un usuario.')
-    }
+    alertMessage('info','Debes ingrsar un código de barras.','Hey!')
+  }else if( usuario === ''){
+    alertMessage('info','Debes ingrsar un usuario.','Het!')
+  }
 
   $.ajax({
     data: {
@@ -591,7 +642,7 @@ function addItemOut() {
       }
       $('#searchBarCodeOut').val("").focus();
     }
-  })
+  })//success
   .fail(function() {
     $('#out_error').show('slow');
     $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
@@ -600,7 +651,7 @@ function addItemOut() {
     }, 1000);
   });
 }
-
+//Acaba validacion
 
 
 

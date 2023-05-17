@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 import tempfile
+import os
     # ---------------------------
     # Prestamos
     # ---------------------------
@@ -188,6 +189,64 @@ def RegisterInVideoteca(request):
             registro_data={"error":True,"errorMessage":" No se dio de alta correctamente el reingreso: "+ error}
            
     return JsonResponse(registro_data,safe=True)
+# def RegisterInVideoteca(request):
+#     usuario = request.POST['matricula']
+#     admin = request.user
+#     from django.db import connections
+#     cursor = connections['users'].cursor()
+#     cursor.execute("SELECT nombres, apellido1, apellido2, activo FROM people_person WHERE matricula = '"+ usuario + "'")
+#     row = cursor.fetchall()
+#     if row and len(row[0]) > 3:
+#         print(row[0][3])    
+#     if request.method == 'POST':
+#         print(request.POST['codigoBarras'])
+#         now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
+#         #datetime.datetime.now()
+#         codigoBarras = request.POST['codigoBarras']
+#         try:
+#             error = "Código no encontrado"
+#             maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
+#             error = "Búsqueda en Maestro Cintas"
+           
+#             error = "Búsqueda en Videos"
+#             detallesPrestamo = DetallePrestamos.objects.filter(Q(vide_clave=maestroCinta.video_id))
+#             detallesPrestamoMaster = DetallePrestamos.objects.filter(Q(vide_codigo=codigoBarras))
+#             error = "No se encontró en Prestamos"
+#             if detallesPrestamo.count() > 0:
+#                 detallePrestamo = detallesPrestamo.latest('pres_folio')
+#             elif detallesPrestamoMaster.count() > 0:
+#                 detallePrestamo = detallesPrestamoMaster.latest('pres_folio')
+#             else:
+#                 print("Hay que revisar los registros de este código de barras")
+#                 registro_data = {"error": True, "errorMessage": "Hay que revisar los registros de este código de barras"}
+#                 return JsonResponse(registro_data, safe=True)
+            
+#             # Validar si ya ha sido devuelto
+#             if detallePrestamo.depr_estatus == 'I':
+#                 registro_data = {"error": True, "errorMessage": "El código de barras ya ha sido devuelto"}
+#                 return JsonResponse(registro_data, safe=True)
+
+#             prestamo = Prestamos.objects.get(pres_folio=detallePrestamo.pres_folio_id)
+
+#             detallePrestamo.depr_estatus = 'I'
+#             detallePrestamo.pres_fecha_devolucion = now
+#             detallePrestamo.usuario_devuelve = usuario
+#             detallePrestamo.usuario_recibe = admin.username
+#             detallePrestamo.save()
+#             maestroCinta.video_estatus = 'En Videoteca'
+#             maestroCinta.save()
+
+#             prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id=prestamo.pk) & Q(depr_estatus='A'))
+#             if prestamosActivos.count == 0:
+#                 # VALIDAR SI AUN HAY PRESTAMOS ACTIVOS 
+#                 prestamo.pres_estatus = 'I'
+#                 prestamo.pres_fecha_devolucion = now
+#                 prestamo.save()
+
+#             registro_data = {"error": False, "errorMessage": "Registro Exitoso!"}
+#         except Exception as e:
+#             registro_data = {"error": True, "errorMessage": "No se dio de alta correctamente el reingreso: " + error}
+           
 
 @csrf_exempt  
 def ValidateOutVideoteca(request):
@@ -245,7 +304,8 @@ def RegisterOutVideoteca(request):
 
         
         pintaFolio = prestamo.pres_folio
-        
+        print(pintaFolio)
+
         for codigo in data:
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigo)
@@ -266,22 +326,44 @@ def RegisterOutVideoteca(request):
     return JsonResponse({}, safe=True)
 
 
- 
-
-
 @csrf_exempt   
 def EndInVideoteca(request):
-    usuario = request.POST['usuario']
-    #json.loads
-    data = (request.POST['codigos'])
+    usuario = request.POST.get('usuario')
+    data = request.POST.get('codigos')
+
     from django.db import connections
     cursor = connections['users'].cursor()
-    cursor.execute("select a.nombres, a.apellido1, a.apellido2, a.extension_telefonica, a.email_institucional, b.nombre as Area, c.nombre as contratacion, a.activo from people_person as a join people_areaorganigrama as b  on a.cat_area_org_id = b.id  join people_contratacion as c on a.cat_contratacion_id = c.id where a.matricula = '"+ usuario + "'")
+    cursor.execute("select a.nombres, a.apellido1, a.apellido2, a.extension_telefonica, a.email_institucional, b.nombre as Area, c.nombre as contratacion, a.activo from people_person as a join people_areaorganigrama as b  on a.cat_area_org_id = b.id  join people_contratacion as c on a.cat_contratacion_id = c.id where a.matricula = %s", [usuario])
+
     row = cursor.fetchall()
-    print(row[0][3])   
-    file = json_to_pdf(request, row, data, usuario)
-    if file:
-        registro_data={"error":False,"file":file}  
+    if row:
+        file = json_to_pdf(request, row, data, usuario)
+        if file:
+            registro_data = {"error": False, "file": file}
+        else:
+            registro_data = {"error": True, "errorMessage": "Error al generar archivo de devolución"}
     else:
-        registro_data={"error":True,"errorMessage":"Error al generar archivo de devolución"}    
-    return JsonResponse(registro_data,safe=True)
+        registro_data = {"error": True, "errorMessage": "No se encontraron registros para el usuario"}
+
+    return JsonResponse(registro_data, safe=True)
+
+# def EndInVideoteca(request):
+#     usuario = request.POST.get('usuario')
+#     data = request.POST.get('codigos')
+    
+#     from django.db import connections
+#     cursor = connections['users'].cursor()
+#     cursor.execute("select a.nombres, a.apellido1, a.apellido2, a.extension_telefonica, a.email_institucional, b.nombre as Area, c.nombre as contratacion, a.activo from people_person as a join people_areaorganigrama as b  on a.cat_area_org_id = b.id  join people_contratacion as c on a.cat_contratacion_id = c.id where a.matricula = %s", [usuario])
+    
+#     row = cursor.fetchall()
+#     if row:
+#         print(row[0][3])
+#         file = json_to_pdf(request, row, data, usuario)
+#         if file:
+#             registro_data = {"error": False, "file": file}
+#         else:
+#             registro_data = {"error": True, "errorMessage": "Error al generar archivo de devolución"}
+#     else:
+#         registro_data = {"error": True, "errorMessage": "No se encontraron registros para el usuario"}
+    
+#     return JsonResponse(registro_data, safe=True)
