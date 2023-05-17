@@ -439,7 +439,6 @@ function guardarRegistro(usuario, codigoBarras) {
 
       const muestraFolio = data.Folio;
 
-      if (muestraFolio !== undefined) {
         $.ajax({
           url: '{% url "generate_pdf_resgister_folio" %}',
           data: {'q': muestraFolio},
@@ -447,7 +446,7 @@ function guardarRegistro(usuario, codigoBarras) {
             window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
           }
         });
-      }
+
 
       Swal.fire(
         '¡Exportado!',
@@ -471,12 +470,12 @@ function guardarRegistro(usuario, codigoBarras) {
 $("#endReturn").click(function() {
   let usuario = $('#searchUsuarioIn').val();
   let codigoBarras = $('#searchBarCodeIn').val();
-  let $button = $(this);
+
 
 
 
   if (usuario === "") {
-    alert("Ingrese un valor para el usuario");
+    alert("Ingrese un valor para el usuario 2");
     $('#searchUsuarioIn').focus();
     } else {
       $.ajax({
@@ -552,46 +551,45 @@ $(document).on("click",".glyphicon-plus",function(){
     });
 
 function readCodeBar() {
-  let codigoBarras = $('#searchBarCodeIn').val();
   let usuario = $('#searchUsuarioIn').val();
+  let codigoBarras = $('#searchBarCodeIn').val();
 
-  if( codigoBarras === ''){
-    alertMessage('info','Debes ingrsar un código de barras.','Hey!');
-    }else if( usuario === ''){
-    alertMessage('info','Ingresa un gafete de usuario.','Hey!')
-    
+  // Validación de devolución
+  if (usuario === '') {
+    alertMessage('info', 'Ingresa un gafete de usuario.', '¡Hey!');
+  } else if (codigoBarras === '') {
+    alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
   } else {
     $.ajax({
-      data: {'codigoBarras': codigoBarras, 'matricula': usuario},
+      data: { 'codigoBarras': codigoBarras, 'matricula': usuario },
       url: "{% url 'registro_entrada_videoteca' %}",
-      type: 'POST'
+      type: 'POST',
     })
     .done(function(response) {
       if (response.error) {
-        $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
+        $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
       } else {
-        $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="'+codigoBarras+'"></input></td><td>Código: '+codigoBarras+'</td><td>Resultado: '+response.errorMessage+'</td></tr>');
+        $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
       }
       $('#searchBarCodeIn').val("").focus();
-      
     })
     .fail(function() {
       $('#ins_error').show('slow');
-      alertMessage('error','Error al procesar, porfavor intente nuevamente!','Error 404')
+      alertMessage('error', 'Error al procesar, por favor intente nuevamente.', 'Error 404');
       $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
-      setTimeout(function() { $('#ins_error').hide(); }, 1000);      
+      setTimeout(function() { $('#ins_error').hide(); }, 1000);
     });
   }
 }
     
-
-    $(document).ready(function() {
-      $('#searchBarCodeIn').keypress(function(event) {
-        if (event.which === 13) { // Verifica si se presionó la tecla "Enter"
-          readCodeBar(); // Llama a la función para leer el código de barras
-        }
-      });
-    });
+    
+$(document).ready(function() {
+  $('#searchBarCodeIn').keypress(function(event) {
+    if (event.which === 13) { // Verifica si se presionó la tecla "Enter"
+      readCodeBar(); // Llama a la función para leer el código de barras
+    }
+  });
+});
 
 
 //Validación de prestamos

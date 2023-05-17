@@ -491,10 +491,11 @@ class PDF_FOLIO(FPDF):
 
 def generate_pdf_resgister_folio(request):
     q = request.GET.get('q')
-    detalle_prestamos = DetallePrestamos.objects.filter(pres_folio=q) 
+    detalle_prestamos = DetallePrestamos.objects.filter(pres_folio=q)
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
 
     prestamos_data = []
+    matri = None  # Inicializar la variable matri con None
 
     for pres_folio_id in pres_folios:
         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
@@ -508,46 +509,51 @@ def generate_pdf_resgister_folio(request):
                     "pres_estatus":          prestamo.pres_estatus,
                 }
                 prestamos_data.append(prestamo_data)
-                matri = prestamo.usua_clave
 
-    cursor = connections['users'].cursor()
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [matri])
+                matri = prestamo.usua_clave  # Asignar el valor de matri dentro del bucle
 
-    row = cursor.fetchone()
+    if matri is not None:
+        cursor = connections['users'].cursor()
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [matri])
 
-    MatriculaObPrestamo = {}  # Declarar la variable MatriculaObPrestamo antes de asignarle un valor
+        row = cursor.fetchone()
 
-    if row is not None:
-        nombres                 = row[0]
-        apellido1               = row[1]
-        apellido2               = row[2]
-        puesto                  = row[3]
-        email_institucional     = row[4]
-        extension_telefonica    = row[5]
+        MatriculaObPrestamo = {}
 
-        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
-        MatriculaObPrestamo = {
-            'Obtiene'          : nombre_completo,
-            'Puesto'            : puesto,
-            'Email'             : email_institucional,
-            'Extension'         : extension_telefonica, 
-            'Matricula'         : matri,
-        }
+        if row is not None:
+            nombres                 = row[0]
+            apellido1               = row[1]
+            apellido2               = row[2]
+            puesto                  = row[3]
+            email_institucional     = row[4]
+            extension_telefonica    = row[5]
 
-    global userobjPrestamo
-    userobjPrestamo = MatriculaObPrestamo
+            nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+            MatriculaObPrestamo = {
+                'Obtiene'           : nombre_completo,
+                'Puesto'            : puesto,
+                'Email'             : email_institucional,
+                'Extension'         : extension_telefonica, 
+                'Matricula'         : matri,
+            }
 
-    print(userobjPrestamo)
+        global userobjPrestamo
+        userobjPrestamo = MatriculaObPrestamo
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
-    pdf = PDF_FOLIO('P', 'mm', (300, 350), q)
-    pdf.add_page()
-    # pdf.footer(userobjPrestamo=userobjPrestamo)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
+        pdf = PDF_FOLIO('P', 'mm', (300, 350), q)
+        pdf.add_page()
 
-    pdf.generate_table(prestamos_data)
-    response.write(pdf.output(dest='S').encode('latin1'))
-    return response
+        pdf.generate_table(prestamos_data)
+        response.write(pdf.output(dest='S').encode('latin1'))
+        return response
+
+    # Agregar una respuesta HttpResponse adicional para manejar el caso en que matri sea None
+    return HttpResponse("No se encontró la matrícula correspondiente.")
+
+ 
+
 
 
 
