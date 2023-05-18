@@ -315,6 +315,8 @@ def RegisterOutVideoteca(request):
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
             detPrestamos.depr_estatus = 'X'
+            detPrestamos.vide_codigo = maestroCinta
+    
             detPrestamos.save()
 
             maestroCinta.video_estatus = 'X'

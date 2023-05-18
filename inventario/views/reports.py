@@ -26,8 +26,7 @@ from django.db import connections
 class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
-        BASE_DIR = Path(__file__).resolve().parent.parent
-        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    
+        MEDIA_ROOT = settings.MEDIA_ROOT
 
         self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
         self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
@@ -226,8 +225,7 @@ def generar_pdf(request):
 class GENERATE(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
-        BASE_DIR = Path(__file__).resolve().parent.parent
-        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    
+        MEDIA_ROOT = settings.MEDIA_ROOT
         # print(font_folder)
 
         self.add_font('Montserrat', '', os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
@@ -405,8 +403,8 @@ def generar_pdf_modal(request):
 class PDF_FOLIO(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
-        BASE_DIR = Path(__file__).resolve().parent.parent
-        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    
+      
+        MEDIA_ROOT = settings.MEDIA_ROOT
 
         self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
         self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
