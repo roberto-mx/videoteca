@@ -27,9 +27,10 @@ class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
         MEDIA_ROOT = settings.MEDIA_ROOT
+        # print('Este entra a inventario',MEDIA_ROOT)
+        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'static','Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static','Montserrat-Bold.ttf'), uni=True)
 
-        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
-        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
         self.q = q
         
     def header(self):
@@ -226,10 +227,10 @@ class GENERATE(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
         MEDIA_ROOT = settings.MEDIA_ROOT
-        # print(font_folder)
+        # print('Este entra a inventario',MEDIA_ROOT)
+        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'static','Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static','Montserrat-Bold.ttf'), uni=True)
 
-        self.add_font('Montserrat', '', os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
-        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
         self.q = q
 
     def header(self):
@@ -403,11 +404,13 @@ def generar_pdf_modal(request):
 class PDF_FOLIO(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
-      
         MEDIA_ROOT = settings.MEDIA_ROOT
+        # print('Este entra a inventario',MEDIA_ROOT)
+        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'static','Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static','Montserrat-Bold.ttf'), uni=True)
 
-        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'Montserrat-Regular.ttf'), uni=True)
-        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'Montserrat-Bold.ttf'), uni=True)
+       
+
         self.q = q
         
     def header(self):
