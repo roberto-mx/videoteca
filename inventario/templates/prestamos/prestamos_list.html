@@ -471,41 +471,109 @@ $("#endReturn").click(function() {
   let usuario = $('#searchUsuarioIn').val();
   let codigoBarras = $('#searchBarCodeIn').val();
 
+  Swal.fire({
+    title: '¿Estás seguro de que quieres continuar?',
+    text: "¡No podrás revertir esto!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, continuar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      finalizarEntrada(usuario, codigoBarras);
+    }
+  });
+});
 
-
-
-  if (usuario === "") {
-    alert("Ingrese un valor para el usuario 2");
-    $('#searchUsuarioIn').focus();
-    } else {
-      $.ajax({
-        data: {
-          'usuario': usuario,
-          'codigos': JSON.stringify(get_data('#resultTableIn tbody tr'))
-        },
-        url: "{% url 'finalizar_entrada_videoteca' %}",
-        type: 'POST',
-        success: function(data) {
-          if (data.error) {
-            $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
-          } else {
+function finalizarEntrada(usuario, codigoBarras) {
+  $.ajax({
+    data: {
+      'usuario': usuario,
+      'codigos': JSON.stringify(get_data('#resultTableIn tbody tr'))
+    },
+    url: "{% url 'finalizar_entrada_videoteca' %}",
+    type: 'POST',
+    success: function(data) {
+      if (data.error) {
+        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+      } else {
+        Swal.fire({
+          title: '¡Exportado!',
+          text: 'Su archivo ha sido exportado.',
+          icon: 'success',
+         
+         
+        }).then((result) => {
+          if (result.isConfirmed) {
             window.open('{% url "get_pdf" %}?q=' + data.file); // Agrega pres_folio en la URL
           }
-          $('#searchBarCodeIn').val("").focus();
-        },
-        error: function() {
-          $('#alertWarning').show('slow');
-          $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
-          setTimeout(function() {
-            cleanForm();
-            location.reload();
-          }, 3000);
-        }
-      });
+        });
+      }
+      $('#searchBarCodeIn').val("").focus();
+      $("#endReturn").hide();
+    },
+    error: function() {
+      $('#alertWarning').show('slow');
+      $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function() {
+        cleanForm();
+        location.reload();
+      }, 3000);
     }
-    
+  });
+}
 
+
+$("#endReturn").hide();
+let codigoBarrasList = []; // Arreglo para almacenar los códigos de barras ingresados
+
+function readCodeBar() {
+  let usuario = $('#searchUsuarioIn').val();
+  let codigoBarras = $('#searchBarCodeIn').val();
+
+  // Validación de devolución
+  if (usuario === '') {
+    alertMessage('info', 'Ingresa la matricula del usuario.', '¡Hey!');
+  } else if (codigoBarras === '') {
+    alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
+  } else if (codigoBarrasList.includes(codigoBarras)) {
+    alertMessage('warning', 'El código de barras ya ha sido agregado.', '¡Atención!');
+  } else {
+    codigoBarrasList.push(codigoBarras); // Agregar el código de barras al arreglo
+    $("#endReturn").show();
+    $.ajax({
+      data: { 'codigoBarras': codigoBarras, 'matricula': usuario },
+      url: "{% url 'registro_entrada_videoteca' %}",
+      type: 'POST',
+    })
+    .done(function(response) {
+      if (response.error) {
+        $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
+      } else {
+        $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
+      }
+      $('#searchBarCodeIn').val("").focus();
+    })
+    .fail(function() {
+      $('#ins_error').show('slow');
+      alertMessage('error', 'Error al procesar, por favor intente nuevamente.', 'Error 404');
+      $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function() { $('#ins_error').hide(); }, 1000);
+    });
+  }
+}
+
+    
+    
+$(document).ready(function() {
+  $('#searchBarCodeIn').keypress(function(event) {
+    if (event.which === 13) { // Verifica si se presionó la tecla "Enter"
+      readCodeBar(); // Llama a la función para leer el código de barras
+    }
+  });
 });
+
 
 
 $(document).on("click",".glyphicon-plus",function(){
@@ -550,46 +618,6 @@ $(document).on("click",".glyphicon-plus",function(){
         
     });
 
-function readCodeBar() {
-  let usuario = $('#searchUsuarioIn').val();
-  let codigoBarras = $('#searchBarCodeIn').val();
-
-  // Validación de devolución
-  if (usuario === '') {
-    alertMessage('info', 'Ingresa un gafete de usuario.', '¡Hey!');
-  } else if (codigoBarras === '') {
-    alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
-  } else {
-    $.ajax({
-      data: { 'codigoBarras': codigoBarras, 'matricula': usuario },
-      url: "{% url 'registro_entrada_videoteca' %}",
-      type: 'POST',
-    })
-    .done(function(response) {
-      if (response.error) {
-        $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
-      } else {
-        $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
-      }
-      $('#searchBarCodeIn').val("").focus();
-    })
-    .fail(function() {
-      $('#ins_error').show('slow');
-      alertMessage('error', 'Error al procesar, por favor intente nuevamente.', 'Error 404');
-      $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
-      setTimeout(function() { $('#ins_error').hide(); }, 1000);
-    });
-  }
-}
-    
-    
-$(document).ready(function() {
-  $('#searchBarCodeIn').keypress(function(event) {
-    if (event.which === 13) { // Verifica si se presionó la tecla "Enter"
-      readCodeBar(); // Llama a la función para leer el código de barras
-    }
-  });
-});
 
 
 //Validación de prestamos
