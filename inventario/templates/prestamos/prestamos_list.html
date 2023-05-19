@@ -453,6 +453,7 @@ function guardarRegistro(usuario, codigoBarras) {
         `Su archivo ha sido exportado con el folio ${muestraFolio}.`,
         'success'
       );
+      cleanTableOut();
     },
     error: function() {
       $('#alertWarning').show('slow');
