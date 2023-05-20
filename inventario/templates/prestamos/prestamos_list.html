@@ -447,7 +447,6 @@ function guardarRegistro(usuario, codigoBarras) {
           }
         });
 
-
       Swal.fire(
         '¡Exportado!',
         `Su archivo ha sido exportado con el folio ${muestraFolio}.`,
@@ -504,7 +503,6 @@ function finalizarEntrada(usuario, codigoBarras) {
           text: 'Su archivo ha sido exportado.',
           icon: 'success',
          
-         
         }).then((result) => {
           if (result.isConfirmed) {
             window.open('{% url "get_pdf" %}?q=' + data.file); // Agrega pres_folio en la URL
@@ -535,9 +533,9 @@ function readCodeBar() {
   let codigoBarras = $('#searchBarCodeIn').val();
 
   // Validación de devolución
-  if (usuario === '') {
+  if (usuario == '') {
     alertMessage('info', 'Ingresa la matricula del usuario.', '¡Hey!');
-  } else if (codigoBarras === '') {
+  } else if (codigoBarras == '') {
     alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
   } else if (codigoBarrasList.includes(codigoBarras)) {
     alertMessage('warning', 'El código de barras ya ha sido agregado.', '¡Atención!');
@@ -644,22 +642,28 @@ function addItemOut() {
     type: 'POST'
   })
   .done(function(response) {
-    if (f_valida_repetido(codigoBarras) == 1) {
-      $("#out_error").text("Registro duplicado");
-      $("#out_error").show();
-      setTimeout(function() {  
-        $("#out_error").hide();
-      }, 1000);
+    //if (f_valida_repetido(codigoBarras) == 1) {
+    //  $("#out_error").text("Registro duplicado");
+    //  $("#out_error").show();
+    //  setTimeout(function() {  
+    //    $("#out_error").hide();
+    //  }, 1000);
+    //  $('#searchBarCodeOut').val("").focus();
+    //} else {
+     if (response.error) {
+      console.log(response)
+       $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+       //alertMessage('error', 'La cinta  ya está en préstamos.' + '<strong>' +response.codigoBarras + ''<strong>'', '¡Alto!');
+
+        
+       alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
+       cleanTableOut();
+     } else {
+       $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+       $("#continuarPrestamo").show();  // show
+     }
       $('#searchBarCodeOut').val("").focus();
-    } else {
-      if (response.error) {
-        $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
-      } else {
-        $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
-        $("#continuarPrestamo").show();  // show
-      }
-      $('#searchBarCodeOut').val("").focus();
-    }
+   // }
   })//success
   .fail(function() {
     $('#out_error').show('slow');

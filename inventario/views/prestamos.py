@@ -271,7 +271,8 @@ def ValidateOutVideoteca(request):
                 else:
                     registro_data = {
                         "error": True,
-                        "errorMessage": "El código de barras no está disponible"
+                        "errorMessage": "El código de barras no está disponible",
+                        'codigoBarras': codigoBarras
                     }
             except MaestroCintas.DoesNotExist:
                 registro_data = {
