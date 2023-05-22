@@ -548,10 +548,12 @@ function readCodeBar() {
       type: 'POST',
     })
     .done(function(response) {
+      //cleanTableReturn()
       if (response.error) {
         $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
       } else {
         $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
+        console.log(`aqui entra la falla de la tabla`)
       }
       $('#searchBarCodeIn').val("").focus();
     })
@@ -642,28 +644,24 @@ function addItemOut() {
     type: 'POST'
   })
   .done(function(response) {
-    //if (f_valida_repetido(codigoBarras) == 1) {
-    //  $("#out_error").text("Registro duplicado");
-    //  $("#out_error").show();
-    //  setTimeout(function() {  
-    //    $("#out_error").hide();
-    //  }, 1000);
-    //  $('#searchBarCodeOut').val("").focus();
-    //} else {
+    if (f_valida_repetido(codigoBarras) == 1) {
+      $("#out_error").text("Registro duplicado");
+      $("#out_error").show();
+      setTimeout(function() {  
+        $("#out_error").hide();
+      }, 1000);
+      $('#searchBarCodeOut').val("").focus();
+    } else {
      if (response.error) {
-      console.log(response)
-       $('#resultTableOut').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
-       //alertMessage('error', 'La cinta  ya está en préstamos.' + '<strong>' +response.codigoBarras + ''<strong>'', '¡Alto!');
-
-        
+      
        alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
-       cleanTableOut();
+       //cleanTableOut();
      } else {
        $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
        $("#continuarPrestamo").show();  // show
      }
       $('#searchBarCodeOut').val("").focus();
-   // }
+   }
   })//success
   .fail(function() {
     $('#out_error').show('slow');
