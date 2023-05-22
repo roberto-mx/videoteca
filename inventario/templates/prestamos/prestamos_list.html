@@ -131,8 +131,6 @@
                   <i class='fas fa-hand-holding'></i>
                 </div>
               </button>
-              {% comment %} <button type="button" class="btn btn-primary" id="endReturn">Finalizar Entrega <i class="fa-sharp fa-regular fa-hand-holding-box"></i></button>  {% endcomment %}
-
             <table id="resultTableIn" class="modal-footer">
             </table>
           </div>
@@ -434,6 +432,7 @@ function guardarRegistro(usuario, codigoBarras) {
         $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
         $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+        $("#resultTableIn tr").remove(); 
       }
       $('#searchBarCodeIn').val("").focus();
 
@@ -463,7 +462,6 @@ function guardarRegistro(usuario, codigoBarras) {
     }
   });
 }
-
 
 //Boton de entrega
 
@@ -579,48 +577,45 @@ $(document).ready(function() {
 
 
 $(document).on("click",".glyphicon-plus",function(){
-            var this_html=$(this);
-            var id=this_html.parent().parent().parent().children().first().text();
-           // console.log(id);
-            $.ajax({
-                url:"{% url 'registro_entrada_videoteca' %}",
-                type:'POST',
-                data:{grupo:$("#idGrupo").val(), alumno: id, diplomado:$("#idDiplomado").val()}
-            })
-            .done(function(response){
-                if(response['error']==false){
-                    $("#ins_error").hide();
-                    $("#ins_success").text(response['errorMessage']);
-                    $("#ins_success").show();
-                    $("#noData").hide();
-                    var html_data="<tr><td style='display:none'>"+response['id']+"</td><td>"+response["alumno_matricula"]+"</td><td><a href=/alumno/edit/"+ response['id_alumno']+"?redirect_page=>" + response["alumno_nombres"]+" </a></td> ";
-                      for (var i = 0; i < response["length"]; i++) {
-                          html_data += "<td> 0,0 </td><td>0,0</td>";
-                      }
-                    
-                    html_data +="<td> <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span> Consulta </button> </td> <td>  <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button> Eliminar del Grupo </td></tr>";
-                    $("#tablaPrincipal tbody").append(html_data);
-                }
-                else{
-                    //console.log(":( ");
-                    $("#ins_success").hide();
-                    $("#ins_error").text(response['errorMessage']);
-                    $("#ins_error").show();
-                }
-            })
-            .fail(function(){
-                 $("#ins_success").hide();
-                 $("#ins_error").text("Something Went Wrong!");
-                 $("#ins_error").show();
-            })
-            .always(function(){
-                $(".btn-insert-data").removeAttr("disabled");
-                $(".btn-insert-data").text("INSERT STUDENT");
-            })
-        
-    });
+  var this_html=$(this);
+  var id=this_html.parent().parent().parent().children().first().text();
 
-
+  $.ajax({
+      url:"{% url 'registro_entrada_videoteca' %}",
+      type:'POST',
+      data:{grupo:$("#idGrupo").val(), alumno: id, diplomado:$("#idDiplomado").val()}
+  })
+  .done(function(response){
+      if(response['error']==false){
+          $("#ins_error").hide();
+          $("#ins_success").text(response['errorMessage']);
+          $("#ins_success").show();
+          $("#noData").hide();
+          var html_data="<tr><td style='display:none'>"+response['id']+"</td><td>"+response["alumno_matricula"]+"</td><td><a href=/alumno/edit/"+ response['id_alumno']+"?redirect_page=>" + response["alumno_nombres"]+" </a></td> ";
+            for (var i = 0; i < response["length"]; i++) {
+                html_data += "<td> 0,0 </td><td>0,0</td>";
+            }
+          
+          html_data +="<td> <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span> Consulta </button> </td> <td>  <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button> Eliminar del Grupo </td></tr>";
+          $("#tablaPrincipal tbody").append(html_data);
+      }
+      else{
+          //console.log(":( ");
+          $("#ins_success").hide();
+          $("#ins_error").text(response['errorMessage']);
+          $("#ins_error").show();
+      }
+  })
+  .fail(function(){
+        $("#ins_success").hide();
+        $("#ins_error").text("Something Went Wrong!");
+        $("#ins_error").show();
+  })
+  .always(function(){
+      $(".btn-insert-data").removeAttr("disabled");
+      $(".btn-insert-data").text("INSERT STUDENT");
+  })
+});
 
 //Validación de prestamos
 function addItemOut() {
@@ -658,11 +653,11 @@ function addItemOut() {
        //cleanTableOut();
      } else {
        $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
-       $("#continuarPrestamo").show();  // show
+       $("#continuarPrestamo").show();  
      }
-      $('#searchBarCodeOut').val("").focus();
-   }
-  })//success
+     $('#searchBarCodeOut').val("").focus();
+    }
+  })
   .fail(function() {
     $('#out_error').show('slow');
     $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
@@ -670,11 +665,9 @@ function addItemOut() {
       $("#out_error").hide();
     }, 1000);
   });
+     
 }
 //Acaba validacion
-
-
-
 
 function f_valida_repetido(codigoBarras){
   var v_valor = 0;
@@ -693,23 +686,17 @@ function get_data(table){
   var data = [];
   //'#resultTableOut tbody tr'
   if ($(table).length > 0){
-   
-      $(table).each(function(){
-                data.push($(this).find('input.codbarras').val());
-              });
-        }           
-      return data;      
+    $(table).each(function(){
+              data.push($(this).find('input.codbarras').val());
+    });
+  }           
+  return data;      
 }  
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('input[type=text]').forEach( node => node.addEventListener('keypress', e => {
-        
-      }))
-    });
-   
-     
+  document.querySelectorAll('input[type=text]').forEach( node => node.addEventListener('keypress', e => {
+  }))
+});
 
 function search(force) {
   var existingString = $("#searchFolio").val();
@@ -717,33 +704,31 @@ function search(force) {
   $.ajax({
       type:'GET',
       data:{q:$("#searchFolio").val()}
-            })
-    .done(function(response){
-      $("#RowsSearch").show();
-      $("#RowsInicio").hide();
-      $("#Pages").hide();
-      $("#RowsSearch").empty();
-      $("#RowsSearch").append(response);
-      //console.log(response)
-      })
-    .fail(function(){
-      $("#RowsSearch").hide();
-      $("#RowsInicio").show();
-      $("#Pages").show();
-      })  
-
+  })
+  .done(function(response){
+    $("#RowsSearch").show();
+    $("#RowsInicio").hide();
+    $("#Pages").hide();
+    $("#RowsSearch").empty();
+    $("#RowsSearch").append(response);
+     
+  })
+  .fail(function(){
+    $("#RowsSearch").hide();
+    $("#RowsInicio").show();
+    $("#Pages").show();
+  })  
 }                
 
 $(document).on("click",".eliminar",function(){
-            var this_html=$(this);
-            var id =this_html.parent().parent().children().eq(0).text();
-            //console.log(this_html.parent().parent().children().eq(0).text());
-            this_html.parent().parent().remove();
-           /* var opcion = confirm("Se va a dar eliminar la Compensacion registrada al empleado: "+ empleado +". ¿Es correcto?");
-            if (opcion == true) {
-            }*/
-           
-        });    
+    var this_html=$(this);
+    var id =this_html.parent().parent().children().eq(0).text();
+    //console.log(this_html.parent().parent().children().eq(0).text());
+    this_html.parent().parent().remove();
+    /* var opcion = confirm("Se va a dar eliminar la Compensacion registrada al empleado: "+ empleado +". ¿Es correcto?");
+    if (opcion == true) {
+    }*/
+});    
 
 
 </script>
