@@ -208,10 +208,10 @@ def RegisterOutVideoteca(request):
         usuario = request.POST['usuario']
         admin = request.user
         data = json.loads(request.POST['codigos'])
+
         prestamo = Prestamos()
         prestamo.usua_clave = usuario
         prestamo.usvi_clave =  admin 
-        
         prestamo.pres_fechahora = now
         prestamo.pres_fecha_prestamo = now
         prestamo.pres_fecha_devolucion = now
@@ -230,6 +230,9 @@ def RegisterOutVideoteca(request):
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
             detPrestamos.depr_estatus = 'X'
+            detPrestamos.pres_fecha_devolucion = now
+            detPrestamos.usuario_devuelve = usuario
+            detPrestamos.usuario_recibe = admin.username
             detPrestamos.vide_codigo = maestroCinta
     
             detPrestamos.save()

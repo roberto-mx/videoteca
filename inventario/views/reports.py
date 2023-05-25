@@ -288,6 +288,7 @@ def generar_pdf_modal(request):
                 usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
                 usuario_recibe   = muestraData[0]["UsuarioRecibe"]
 
+        print(usuario_devuelve,usuario_recibe)
         cursor = connections['users'].cursor()
         cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve] )
         # cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica FROM people_person WHERE matricula = %s OR matricula = %s", [usuario_devuelve, usuario_recibe])
@@ -352,9 +353,6 @@ class PDF_FOLIO(FPDF):
         # print('Este entra a inventario',MEDIA_ROOT)
         self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'static','Montserrat-Regular.ttf'), uni=True)
         self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static','Montserrat-Bold.ttf'), uni=True)
-
-       
-
         self.q = q
         
     def header(self):
@@ -497,17 +495,7 @@ def generate_pdf_resgister_folio(request):
     # Agregar una respuesta HttpResponse adicional para manejar el caso en que matri sea None
     return HttpResponse("No se encontró la matrícula correspondiente.")
 
- 
-
-
-
-
-# ---------------------------------------------------------------------------------------------------------------------------#
-
-
-
-
-
+ # ---------------------------------------------------------------------------------------------------------------------------#
 
 def xml_to_pdf():
    RESOURCES_DIR = os.path.abspath(settings.MEDIA_ROOT)

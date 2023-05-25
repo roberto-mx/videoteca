@@ -13,6 +13,7 @@
 
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/button.css' %}" rel="stylesheet">
+    <link href="{% static 'css/modoOscuro.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/miestilodetabla.css' %}">
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
@@ -72,12 +73,15 @@
                   <ul class="list-unstyled">
                          {% if user.is_authenticated %}
                           <li>
-                          {% comment %} <span>{{ user.first_name }} {{ user.last_name }} </span>
-                          <a type="button" class="btn btn-link pull-right" href="{% url 'logout' %}">Salir</a> {% endcomment %}
+                         
                           <a type="submit"  class="btn btn-default btn-block " href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> <strong> Logout </strong> </a> 
-                          {% comment %} <a type="submit" href="{% url 'logout' %}" class="btn btn-primary btn-lg"> <i class="fa-solid fa-turn-down-left"></i>Salir </a><i class="fa-solid fa-arrow-turn-down-left"></i> {% endcomment %}
+                          
+
+                         
                           </li>
                         {% else %}
+
+                        
 
                           <a href="{% url 'login' %}" class="header__login d-flex flex-column align-items-center justify-content-center h-100 text-gray-light">
                             <img src="{% static 'src/img/candado-cerrado.svg' %}" alt="Inicia sesión" class="mb-2 svg svg-currentcolor">
@@ -91,6 +95,7 @@
             </div>
             <br /><br />
             {% block content %}{% endblock %}
+            
         </div>
     </main>
 
