@@ -25,6 +25,26 @@
         </div>
       </button>
 
+       {% comment %} <button id="darkModeButton" class="btn btn-default btn-sm active" type="button">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Modo Oscuro</span>
+          <i class="fas fa-moon" style="font-size: 18px;"></i>
+        </div>
+      </button> {% endcomment %}
+  <body>
+      <div class="switch-button">
+        <!-- Checkbox -->
+        <input type="checkbox"  id="darkModeButton" class="btn btn-default btn-sm active">
+        <label for="checkbox" class="checkbox-label"></label>
+        <i class='bx bxs-moon'></i>
+        <i class='bx bxs-sun'></i>
+        <span class="ball"></span>
+      </div>
+    </body>
+
+      
+      
+
     </form>
   </nav>
 </div>
@@ -196,6 +216,48 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 <script>
+
+
+//Modo oscuro
+
+ 
+function enableDarkMode() {
+  document.body.classList.add('dark-mode');
+
+  // Cambia el color de fondo del DataTable
+  $('#TablePrestamo').css('background-color', '#333');
+
+  // Cambia el color de la letra del DataTable
+  $('#TablePrestamo').css('color', '#fff');
+
+  // Otros estilos en modo oscuro
+}
+
+function disableDarkMode() {
+  document.body.classList.remove('dark-mode');
+
+  // Restaura el color de fondo original del DataTable
+  $('#TablePrestamo').css('background-color', '');
+
+  // Restaura el color de la letra original del DataTable
+  $('#TablePrestamo').css('color', '');
+
+  // Otros estilos en modo normal
+}
+
+const darkModeButton = document.getElementById('darkModeButton');
+
+darkModeButton.addEventListener('click', function() {
+  if (document.body.classList.contains('dark-mode')) {
+    disableDarkMode(); // Desactiva el modo oscuro
+  } else {
+    enableDarkMode(); // Activa el modo oscuro
+  }
+});
+
+
+
+
 
 //PDF para los folios
 $(document).ready(function() {
@@ -647,7 +709,7 @@ function addItemOut() {
         } else {
           if (response.error) {
             if (response.errorMessage === "No se encontró el código de barras") {
-              alertMessage('error', `No existe esa cinta.`, '¡Alto!');
+              alertMessage('error', `No existe la cinta.`, '¡Oye!');
             } else {
               alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
             }

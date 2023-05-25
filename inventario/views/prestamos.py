@@ -40,33 +40,6 @@ def Filtrar_prestamos(request):
 
     return JsonResponse(prestamos_data, safe=False)
 
-# def Filtrar_pres_Folio(request):
-#     q = request.GET.get('q')
-
-#     # Obtener los pres_folio que coinciden con el vide_codigo
-#     pres_folios = DetallePrestamos.objects.filter(pres_folio_id=q).values_list('pres_folio_id', flat=True)
-
-#     # Crear una lista para almacenar los datos de prestamos
-#     prestamos_data = []
-
-#     # Obtener los datos de Prestamos para cada pres_folio encontrado
-#     for pres_folio_id in pres_folios:
-#         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
-#         if prestamo:
-#             # Acceder a los datos de Prestamos
-#             prestamo_data = {
-#                 "pres_folio": prestamo.pres_folio,
-#                 "usua_clave": prestamo.usua_clave,
-#                 "pres_fechahora": prestamo.pres_fechahora,  
-#                 "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-#                 "pres_estatus": prestamo.pres_estatus
-#             }
-            
-#             prestamos_data.append(prestamo_data)
-
-#     # Retornar los datos de prestamos en formato JSON
-#     return JsonResponse(prestamos_data, safe=False)
-
 @method_decorator(login_required, name='dispatch')
 class PrestamosListView(ListView):
     def get(self, request):
@@ -136,13 +109,9 @@ def GetFolioDetail(request):
 
 @csrf_exempt      
 def RegisterInVideoteca(request):
-    # usuario = request.POST['matricula']
-    # admin = request.user
-    # from django.db import connections
-    # cursor = connections['users'].cursor()
-    # cursor.execute("select nombres, apellido1, apellido2, activo from people_person where matricula = '"+ usuario + "'")
-    # row = cursor.fetchall()
-    # print(row[0][3])    
+    usuario = request.POST['matricula']
+    admin = request.user
+ 
     if request.method == 'POST':
         print(request.POST['codigoBarras'])
         now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
@@ -171,8 +140,8 @@ def RegisterInVideoteca(request):
 
             detallePrestamo.depr_estatus='I'
             detallePrestamo.pres_fecha_devolucion = now
-            # detallePrestamo.usuario_devuelve = usuario
-            detallePrestamo.usuario_recibe = 'M090077'
+            detallePrestamo.usuario_devuelve = usuario
+            detallePrestamo.usuario_recibe = admin.username
             detallePrestamo.save()
             maestroCinta.video_estatus='En Videoteca'
             maestroCinta.save()
@@ -189,64 +158,7 @@ def RegisterInVideoteca(request):
             registro_data={"error":True,"errorMessage":" No se dio de alta correctamente el reingreso: "+ error}
            
     return JsonResponse(registro_data,safe=True)
-# def RegisterInVideoteca(request):
-#     usuario = request.POST['matricula']
-#     admin = request.user
-#     from django.db import connections
-#     cursor = connections['users'].cursor()
-#     cursor.execute("SELECT nombres, apellido1, apellido2, activo FROM people_person WHERE matricula = '"+ usuario + "'")
-#     row = cursor.fetchall()
-#     if row and len(row[0]) > 3:
-#         print(row[0][3])    
-#     if request.method == 'POST':
-#         print(request.POST['codigoBarras'])
-#         now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
-#         #datetime.datetime.now()
-#         codigoBarras = request.POST['codigoBarras']
-#         try:
-#             error = "Código no encontrado"
-#             maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
-#             error = "Búsqueda en Maestro Cintas"
-           
-#             error = "Búsqueda en Videos"
-#             detallesPrestamo = DetallePrestamos.objects.filter(Q(vide_clave=maestroCinta.video_id))
-#             detallesPrestamoMaster = DetallePrestamos.objects.filter(Q(vide_codigo=codigoBarras))
-#             error = "No se encontró en Prestamos"
-#             if detallesPrestamo.count() > 0:
-#                 detallePrestamo = detallesPrestamo.latest('pres_folio')
-#             elif detallesPrestamoMaster.count() > 0:
-#                 detallePrestamo = detallesPrestamoMaster.latest('pres_folio')
-#             else:
-#                 print("Hay que revisar los registros de este código de barras")
-#                 registro_data = {"error": True, "errorMessage": "Hay que revisar los registros de este código de barras"}
-#                 return JsonResponse(registro_data, safe=True)
-            
-#             # Validar si ya ha sido devuelto
-#             if detallePrestamo.depr_estatus == 'I':
-#                 registro_data = {"error": True, "errorMessage": "El código de barras ya ha sido devuelto"}
-#                 return JsonResponse(registro_data, safe=True)
-
-#             prestamo = Prestamos.objects.get(pres_folio=detallePrestamo.pres_folio_id)
-
-#             detallePrestamo.depr_estatus = 'I'
-#             detallePrestamo.pres_fecha_devolucion = now
-#             detallePrestamo.usuario_devuelve = usuario
-#             detallePrestamo.usuario_recibe = admin.username
-#             detallePrestamo.save()
-#             maestroCinta.video_estatus = 'En Videoteca'
-#             maestroCinta.save()
-
-#             prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id=prestamo.pk) & Q(depr_estatus='A'))
-#             if prestamosActivos.count == 0:
-#                 # VALIDAR SI AUN HAY PRESTAMOS ACTIVOS 
-#                 prestamo.pres_estatus = 'I'
-#                 prestamo.pres_fecha_devolucion = now
-#                 prestamo.save()
-
-#             registro_data = {"error": False, "errorMessage": "Registro Exitoso!"}
-#         except Exception as e:
-#             registro_data = {"error": True, "errorMessage": "No se dio de alta correctamente el reingreso: " + error}
-           
+     
 
 @csrf_exempt  
 def ValidateOutVideoteca(request):
@@ -294,16 +206,18 @@ def RegisterOutVideoteca(request):
 
     if request.method == 'POST':
         usuario = request.POST['usuario']
+        admin = request.user
         data = json.loads(request.POST['codigos'])
         prestamo = Prestamos()
         prestamo.usua_clave = usuario
+        prestamo.usvi_clave =  admin 
+        
         prestamo.pres_fechahora = now
         prestamo.pres_fecha_prestamo = now
         prestamo.pres_fecha_devolucion = now
         prestamo.pres_estatus = 'X'
         prestamo.save()
 
-        
         pintaFolio = prestamo.pres_folio
         print(pintaFolio)
 

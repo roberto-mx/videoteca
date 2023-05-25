@@ -27,35 +27,32 @@ class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
         MEDIA_ROOT = settings.MEDIA_ROOT
-        # print('Este entra a inventario',MEDIA_ROOT)
-        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'static','Montserrat-Regular.ttf'), uni=True)
-        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static','Montserrat-Bold.ttf'), uni=True)
-
+        self.add_font('Montserrat', '', os.path.join(MEDIA_ROOT, 'static', 'Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static', 'Montserrat-Bold.ttf'), uni=True)
         self.q = q
         
     def header(self):
-    
         self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=50)
         self.image('media/images/logo-aprendemx.png', x=65, y=5, w=50)
         self.ln()
 
         self.set_font('Montserrat', 'B', 8)
-        self.cell(485,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.cell(485, 1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
-        self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
+        self.cell(440, 1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(525,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(525, 1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
+        self.cell(458, 1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(80)
 
-        if userDevuelve:
-        
-            email_institucional  = userDevuelve['Email']
-            extension_telefonica = userDevuelve['Extension']
-            nombre_completo      = userDevuelve['Devuelve']
-            puesto               = userDevuelve['Puesto']
-           
+        if devolucion:
+    
+            email_institucional  = devolucion['Email']
+            extension_telefonica = devolucion['Extension']
+            nombre_completo      = devolucion['Obtiene']
+            puesto               = devolucion['Puesto']
+            
             self.set_xy(10.0, 33.0)
             self.cell(84, 10, 'Nombre:', 0, 0, 'L')
             self.set_xy(27.0, 35.0)
@@ -70,7 +67,7 @@ class PDF(FPDF):
             self.cell(30.0, 6.0, puesto, 0, 0, 'L')
             self.ln(3.5)
             self.cell(86, 10, 'Extensión:', 0, 0, 'L')
-            self.set_xy(27.0, 47.0)
+            self.set_xy(27.0, 53.0)
             self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
             self.ln(15)         
             self.set_font('Montserrat', 'B', 8)
@@ -88,36 +85,18 @@ class PDF(FPDF):
             self.ln()
             
     def footer(self):
+
         self.set_font('Montserrat', 'B', 8)
-
-        if userRecibe:
-          
-            name  = userRecibe['Recibe']        
-            self.set_xy(90.0, 33.0)
-            self.cell(180, 10, 'Recibe:', 0, 0, 'L')
-            self.set_xy(108.0, 35.0)
-            self.cell(30.0, 6.0, name, 0, 0, 'L')
-
-        if userDevuelve:
-           
-            name  = userDevuelve['Devuelve']          
-            self.set_xy(90.0, 39.0)
-            self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
-            self.set_xy(108.0, 41.0)
-            self.cell(30.0, 6.0, name, 0, 0, 'L')
-            self.set_xy(90.5, 50.0)
-            self.cell(180, 10, 'Firma:', 0, 0, 'L')
-            x = self.get_x()
-            y = self.get_y()
-            self.line(x - 167, y + 6, x - 120, y + 6)
-            self.set_y(-15)
-            self.set_font('Montserrat', '', 8)
-            self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
-
-
+        self.set_xy(90.5, 50.0)
+        self.cell(180, 10, 'Firma:', 0, 0, 'L')
+        x = self.get_x()
+        y = self.get_y()
+        self.line(x - 167, y + 6, x - 120, y + 6)
+        self.set_y(-15)
+        self.set_font('Montserrat', '', 8)
+        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
     def generate_table(self, data):
-       
         for row in data:
             self.cell(40, 10, str(row['pres_folio']), 1)
             self.cell(40, 10, str(row['usua_clave']), 1)
@@ -126,9 +105,10 @@ class PDF(FPDF):
             self.cell(40, 10, str(row['pres_estatus']), 1)
             self.ln()
 
+
 def generar_pdf(request):
     q = request.GET.get('q')
-    detalle_prestamos = DetallePrestamos.objects.filter(Q(pres_folio=q) | Q(vide_codigo=q), usuario_devuelve__isnull=False, usuario_recibe__isnull=False)
+    detalle_prestamos = DetallePrestamos.objects.filter(Q(pres_folio=q) | Q(vide_codigo=q))
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
 
     prestamos_data = []
@@ -138,85 +118,49 @@ def generar_pdf(request):
         if prestamo:
             if detalle_prestamos.filter(pres_folio=pres_folio_id).exists():
                 prestamo_data = {
-                    "pres_folio":            prestamo.pres_folio,
-                    "usua_clave":            prestamo.usua_clave,
-                    "pres_fechahora":        prestamo.pres_fechahora,
+                    "pres_folio": prestamo.pres_folio,
+                    "usua_clave": prestamo.usua_clave,
+                    "pres_fechahora": prestamo.pres_fechahora,
                     "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-                    "pres_estatus":          prestamo.pres_estatus,
-                    "usuario_devuelve":      detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_devuelve,
-                    "usuario_recibe":        detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_recibe,
+                    "pres_estatus": prestamo.pres_estatus,
+                    # "usuario_devuelve": detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_devuelve,
+                    # "usuario_recibe": detalle_prestamos.filter(pres_folio=pres_folio_id).last().usuario_recibe,
                 }
                 prestamos_data.append(prestamo_data)
-    usuarioDevuelve = prestamos_data[-1]['usuario_devuelve'] if   prestamos_data else ''
-    usuarioRecibe   = prestamos_data[-1]['usuario_recibe']   if   prestamos_data else ''
+                # print(prestamo.usua_clave)
+                usuarioRecibio = prestamo.usua_clave
+    if usuarioRecibio is not None:
+        cursor = connections['users'].cursor()
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuarioRecibio])
 
-    detalle_matricula = DetallePrestamos.objects.filter(usuario_devuelve=usuarioDevuelve).first()
-    muestraData = []
+        row = cursor.fetchone()
 
-    if detalle_matricula is not None:
-        matricula_data = {
-            "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
-            "UsuarioRecibe"  : detalle_matricula.usuario_recibe
-        }
-        muestraData.append(matricula_data)
-        if muestraData:
-            usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
-            usuario_recibe   = muestraData[0]["UsuarioRecibe"]
+        MatriculaObPrestamo = {}
 
-    cursor = connections['users'].cursor()
-    # cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve])
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve])
+        if row is not None:
+            nombres                 = row[0]
+            apellido1               = row[1]
+            apellido2               = row[2]
+            puesto                  = row[3]
+            email_institucional     = row[4]
+            extension_telefonica    = row[5]
 
-    row = cursor.fetchone()
+            nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+            MatriculaObPrestamo = {
+                'Obtiene'           : nombre_completo,
+                'Puesto'            : puesto,
+                'Email'             : email_institucional,
+                'Extension'         : extension_telefonica, 
+                'Matricula'         : usuarioRecibio,
+            }
 
-    if row is not None:
-        nombres                 = row[0]
-        apellido1               = row[1]
-        apellido2               = row[2]
-        puesto                  = row[3]
-        email_institucional     = row[4]
-        extension_telefonica    = row[5]
-
-        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
-        MatriculaDevuelve = {
-            'Devuelve'          : nombre_completo,
-            'Puesto'            : puesto,
-            'Email'             : email_institucional,
-            'Extension'         : extension_telefonica, 
-            'Matricula'         : usuario_devuelve,
-        }
-
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_recibe])
-    row = cursor.fetchone()
-
-    if row is not None:
-        nombres                 = row[0]
-        apellido1               = row[1]
-        apellido2               = row[2]
-        puesto                  = row[3]
-        email_institucional     = row[4]
-        extension_telefonica    = row[5]
-
-        nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 is not None else f"{nombres} {apellido1}"
-        MatriculaRecibe = {
-            'Recibe'            : nombre_completo2,
-            'Puesto'            : puesto,
-            'Email'             : email_institucional,
-            'Extension'         : extension_telefonica, 
-            'Matricula'         : usuario_recibe,
-        }   
-    global userDevuelve, userRecibe
-    # global 
-    userDevuelve = MatriculaDevuelve
-    userRecibe = MatriculaRecibe
-
+    global devolucion
+    devolucion = MatriculaObPrestamo
+    
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
     pdf = PDF('P', 'mm', (300, 350), q)
     pdf.add_page()
-    # pdf.footer(userDevuelve=userDevuelve, userRecibe=userRecibe)
-
-
     pdf.generate_table(prestamos_data)
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
@@ -249,12 +193,12 @@ class GENERATE(FPDF):
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(80)
 
-        if userDevuelve:
+        if devolucion:
         
-            email_institucional  = userDevuelve['Email']
-            extension_telefonica = userDevuelve['Extension']
-            nombre_completo      = userDevuelve['Devuelve']
-            puesto               = userDevuelve['Puesto']
+            email_institucional  = devolucion['Email']
+            extension_telefonica = devolucion['Extension']
+            nombre_completo      = devolucion['Devuelve']
+            puesto               = devolucion['Puesto']
            
             self.set_xy(10.0, 33.0)
             self.cell(84, 10, 'Nombre:', 0, 0, 'L')
@@ -295,9 +239,9 @@ class GENERATE(FPDF):
             self.set_xy(108.0, 35.0)
             self.cell(30.0, 6.0, name, 0, 0, 'L')
 
-        if userDevuelve:
+        if devolucion:
            
-            name  = userDevuelve['Devuelve']          
+            name  = devolucion['Devuelve']          
             self.set_xy(90.0, 39.0)
             self.cell(180, 10, 'Devuelve:', 0, 0, 'L')
             self.set_xy(108.0, 41.0)
@@ -388,8 +332,8 @@ def generar_pdf_modal(request):
                 'Matricula'         : usuario_recibe,
             }
 
-        global userDevuelve, userRecibe
-        userDevuelve = MatriculaDevuelve
+        global devolucion, userRecibe
+        devolucion = MatriculaDevuelve
         userRecibe = MatriculaRecibe
 
     response = HttpResponse(content_type='application/pdf')
