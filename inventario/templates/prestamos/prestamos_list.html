@@ -584,6 +584,15 @@ function finalizarEntrada(usuario, codigoBarras) {
   });
 }
 
+//else {
+//  if (response.error) {
+//    if (response.errorMessage === "No se encontró el código de barras") {
+//      alertMessage('error', `No existe la cinta.`, '¡Oye!');
+//    } else {
+//      alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
+//    }
+//    //cleanTableOut();
+//  }
 
 $("#endReturn").hide();
 let codigoBarrasList = []; // Arreglo para almacenar los códigos de barras ingresados
@@ -598,7 +607,9 @@ function readCodeBar() {
   } else if (codigoBarras == '') {
     alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
   } else if (codigoBarrasList.includes(codigoBarras)) {
-    alertMessage('warning', 'El código de barras ya ha sido agregado.', '¡Atención!');
+    alertMessage('warning', `El código ${codigoBarras} ya ha sido agregado.`, '¡Atención!');
+    $('#searchBarCodeIn').val("").focus();
+
   } else {
     codigoBarrasList.push(codigoBarras); // Agregar el código de barras al arreglo
     $("#endReturn").show();
@@ -619,7 +630,7 @@ function readCodeBar() {
     })
     .fail(function() {
       $('#ins_error').show('slow');
-      alertMessage('error', 'Error al procesar, por favor intente nuevamente.', 'Error 404');
+      alertMessage('error', 'Favor de comunicarse con el administrador.', 'Error 500');
       $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
       setTimeout(function() { $('#ins_error').hide(); }, 1000);
     });
@@ -739,7 +750,7 @@ function f_valida_repetido(codigoBarras){
    
       $('#resultTableOut tbody tr').each(function(){
         if ($(this).find('input.codbarras').val() == codigoBarras) {
-          alertMessage('info', 'Ya se a registrado este código..', 'Oops!');
+          alertMessage('info', `Ya se a registrado ${codigoBarras}.`, 'Oops!');
           v_valor = 1;
         }
       });
