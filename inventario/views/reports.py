@@ -329,8 +329,6 @@ def generar_pdf_modal(request):
             'Matricula'         : usuario_recibe,
         }
 
-        print(MatriculaRecibe)
-
         global devolucion, userRecibe
         devolucion = MatriculaDevuelve
         userRecibe = MatriculaRecibe
