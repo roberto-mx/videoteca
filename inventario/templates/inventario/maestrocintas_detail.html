@@ -27,11 +27,11 @@
       <div class="panel panel-default">
         <div class="panel-heading "  style="background-color:#18463b;">
           <h4 class="panel-title">
-            <a data-parent="#accordion" data-toggle="collapse" href="#panel-dg" aria-expanded="true" aria-controls="panel-dg" style="color: white;">
+            <a data-parent="#accordion" data-toggle="collapse"  href="#panel-dg" aria-expanded="true" aria-controls="panel-dg" style="color: white;">
               Datos generales
             </a>
           </h4>
-          <button type="button" class="collpase-button collapsed" data-parent="#accordion" data-toggle="collapse" href="#panel-dg"></button>
+          <button type="button" class="collpase-button collapsed" style="background-color:#FFFFFF;" data-parent="#accordion" data-toggle="collapse" href="#panel-dg"></button>
         </div>
         <div class="panel-collapse collapse in" id="panel-dg">
           <div class="panel-body">
@@ -67,10 +67,10 @@
         <div class="panel-heading" style="background-color:#18463b;">
           <h4 class="panel-title">
             <a data-parent="#accordion" data-toggle="collapse" href="#panel-inv" aria-expanded="true" aria-controls="panel-inv" style="color: white;">
-            Inventario
+             Inventario
             </a>
           </h4>
-          <button type="button" class="collpase-button collapsed" data-parent="#accordion" data-toggle="collapse" href="#panel-inv"></button>
+          <button type="button" class="collpase-button collapsed"  style="background-color:#FFFFFF;" data-parent="#accordion" data-toggle="collapse" href="#panel-inv"></button>
         </div>
         <div class="panel-collapse collapse in" id="panel-inv">
           <div class="panel-body">
@@ -123,8 +123,8 @@
             <h3>No hay programas registrados en esta cinta</h3>
           {% endif %}
           <div class="pull-right">
-            <a class="btn btn-default active" href="/inventario">Regresar</a>
-            <a class="btn btn-primary active" href="/inventario/cintas/{{cinta.video_cbarras}}/editar">Editar</a>
+            <a class="btn btn-default active" href="/inventario"><i class="fa fa-reply-all"></i> Regresar</a>
+            <a class="btn btn-primary active" href="/inventario/cintas/{{cinta.video_cbarras}}/editar"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
           </div>
     </div>
 </div>
