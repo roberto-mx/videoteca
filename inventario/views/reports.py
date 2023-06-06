@@ -268,9 +268,7 @@ def generar_pdf_modal(request):
     q = int(request.GET.get("q"))
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe')
     detalle_prestamos = queryset.last() if queryset else None 
-    # fecha = detalle_prestamos['pres_fecha_devolucion'].strftime('%d-%m-%Y')
-    # print(fecha)
-    
+  
     if detalle_prestamos:
         usuario_devuelve = detalle_prestamos['usuario_devuelve']
         usuario_recibe = detalle_prestamos['usuario_recibe']
@@ -291,10 +289,8 @@ def generar_pdf_modal(request):
         print(usuario_devuelve,usuario_recibe)
         cursor = connections['users'].cursor()
         cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve] )
-        # cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica FROM people_person WHERE matricula = %s OR matricula = %s", [usuario_devuelve, usuario_recibe])
-
-        row = cursor.fetchone()
-
+        row = cursor.fetchone() 
+     
         if row is not None:
             nombres                 = row[0]
             apellido1               = row[1]
@@ -324,14 +320,16 @@ def generar_pdf_modal(request):
             email_institucional     = row[4]
             extension_telefonica    = row[5]
             
-            nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
-            MatriculaRecibe = {
-                'Recibe'            : nombre_completo2,
-                'Puesto'            : puesto,
-                'Email'             : email_institucional,
-                'Extension'         : extension_telefonica, 
-                'Matricula'         : usuario_recibe,
-            }
+        nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+        MatriculaRecibe = {
+            'Recibe'            : nombre_completo2,
+            'Puesto'            : puesto,
+            'Email'             : email_institucional,
+            'Extension'         : extension_telefonica, 
+            'Matricula'         : usuario_recibe,
+        }
+
+        print(MatriculaRecibe)
 
         global devolucion, userRecibe
         devolucion = MatriculaDevuelve
