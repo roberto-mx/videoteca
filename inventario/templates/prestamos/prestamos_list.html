@@ -255,10 +255,6 @@ darkModeButton.addEventListener('click', function() {
   }
 });
 
-
-
-
-
 //PDF para los folios
 $(document).ready(function() {
   $('#btn-generar-pdf').on('click', function() {
@@ -401,12 +397,6 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
     }
   })
 })
-
-//$('#searchBarCodeIn').keyup(function(e){
-//    if( e.keyCode == 13 ){
-//        readCodeBar();
-//    }
-//});
 
 $('#searchBarCodeOut').keyup(function(e){
     if( e.keyCode == 13 ){
@@ -583,16 +573,6 @@ function finalizarEntrada(usuario, codigoBarras) {
     }
   });
 }
-
-//else {
-//  if (response.error) {
-//    if (response.errorMessage === "No se encontró el código de barras") {
-//      alertMessage('error', `No existe la cinta.`, '¡Oye!');
-//    } else {
-//      alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
-//    }
-//    //cleanTableOut();
-//  }
 
 $("#endReturn").hide();
 let codigoBarrasList = []; // Arreglo para almacenar los códigos de barras ingresados

@@ -15,6 +15,7 @@
     </div>
 
     <form class="form-horizontal" role="form" method="post">
+        <link href="{% static 'css/colorPanel.css' %}" rel="stylesheet">
 
         <div class="card-body">
             {% csrf_token %}
@@ -40,13 +41,12 @@
             </div>
 
         </div><!-- card-body -->
-
-        <div class="panel-group ficha-collapse" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
+        <div class="panel-group ficha-collapse"  >
+            <div class="panel panel-default" >
+              <div class="card-header" style="background-color: #FF0000;">
+                <h4 class="panel-title" >
                   <a data-parent="#accordion" data-toggle="collapse" href="#panel-dg" aria-expanded="true" aria-controls="panel-dg">
-                  Datos generales
+                    Datos generale
                   </a>
                 </h4>
                 <button type="button" class="collpase-button collapsed" data-parent="#accordion" data-toggle="collapse" href="#panel-dg"></button>

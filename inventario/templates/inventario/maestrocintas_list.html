@@ -8,7 +8,7 @@
 
 {% block content %}
             <p style="text-align: right;">
-              <a class="btn btn-secundary btn-sm" href="/inventario/cintas/registrar">
+              <a class="btn btn-danger btn-sm active" href="/inventario/cintas/registrar">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 <span>Agregar cinta</span>
               </a>
@@ -59,6 +59,9 @@
                       <label for="status">Estatus<span class="form-text"></span>:</label>
                       <input type="text" id="status" class="form-control" placeholder="Estatus">
                     </div>-->
+
+                    {% comment %} <i class="fa-solid fa-magnifying-glass"></i> {% endcomment %}
+
                     <select class="form-control" name="status">
                       <option value="">-- Estatus --</option>
                       <option value="1" {%if status_filter == '1' %} selected="selected"{%endif%}>En Videoteca</option>
@@ -75,7 +78,7 @@
                   </div>
                   <div class="col-md-2">
                     <button class="btn btn-primary btn-sm active" type="submit">
-                      <span>Buscar</span>
+                      <span>Buscar </span>
                     </button>
                     <a class="btn btn-default btn-sm active" href="/inventario">
                       <span>Limpiar</span>
@@ -85,10 +88,10 @@
               </form>
             </div>
 
-            <table class="table table-striped" style="margin-bottom: 0px;">
+            <table class="table table-bordered" id="tableInventario" name="tableInventario">
               <thead>
                 <tr>
-                  <th>C&oacute;digo de barras</th>
+                  <th>Código de barras</th>
                   <th>Formato de la cinta</th>
                   <th>Tipo de video</th>
                   <th>Estatus</th>
@@ -106,9 +109,9 @@
                   <td>{{ cinta.video_estatus|default:"" }}</td>
                   <td>{{ cinta.video_fingreso|default_if_none:"" }}</td>
                   <td>
-                    <a href="cintas/{{cinta.video_cbarras}}/editar">Editar</a>
+                    <a class = "btn btn-warning btn-sm active" href="cintas/{{cinta.video_cbarras}}/editar"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
                     <span> | </span>
-                    <a href="cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+                    <a class = "btn btn-primary btn-sm active" href="cintas/{{cinta.video_cbarras}}/eliminar"><i class="fa-sharp fa-solid fa-trash"></i> Eliminar </a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -129,7 +132,20 @@
               {% endif %}
             </table>
 
-            {% if is_paginated %}
+            <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script>
+
+$(document).ready(function() {
+  $('#tableInventario').DataTable({
+    searching: false,
+    ...len,
+  });
+});
+  
+</script>
+
+            {% comment %} {% if is_paginated %}
               {% include "__pagination.html" %}
-            {% endif %}
+            {% endif %} {% endcomment %}
 {% endblock %}
