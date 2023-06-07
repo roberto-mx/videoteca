@@ -15,6 +15,8 @@ from django.db.models import F
 from django.shortcuts import get_object_or_404
 import tempfile
 import os
+from datetime import datetime, timedelta
+
     # ---------------------------
     # Prestamos
     # ---------------------------
@@ -49,10 +51,20 @@ class PrestamosListView(ListView):
         }
         return render(request, 'prestamos/prestamos_list.html', context)
     
+#vista detalle    
 @csrf_exempt
 def DetallesListView(request):
-    template_detalle = 'prestamos/detalles_list.html'
-    return render(request, template_detalle)
+    fecha_actual = datetime.now()  # Fecha y hora actual del servidor
+    hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
+
+    queryset = Prestamos.objects.filter(pres_fecha_prestamo__year='2022').order_by('-pres_fechahora')
+    template_detalle = {
+        'prestamos': queryset,
+        'fecha_actual': fecha_actual,
+        'hace_siete_dias': hace_siete_dias,
+    }
+
+    return render(request, 'prestamos/detalles_list.html', template_detalle)
 
 
 @csrf_exempt
@@ -61,13 +73,6 @@ def PrestamoDetalle(request):
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
     context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
-
-    # q = int(request.GET.get("q"))
-    # queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
-    # prestamo = list(queryset)  # convertimos el queryset en una lista
-    # return JsonResponse({'prestamo': prestamo})
-
-
 
 @csrf_exempt
 def GetFolioPrestamo(request):
@@ -80,11 +85,6 @@ def GetFolioPrestamo(request):
         else:
             query = (Q(pres_folio__usua_clave__icontains=q) ) 
         queryset = queryset.filter(query)    
-
-    #list = []  
-    #for comp in querysetComp:
-        #consulta=Compensaciones.objects.filter(Q(compensacion = comp))
-       # list.append(CompToShow(comp.nombre + " (" + str(comp.numero -consulta.count()) +")", comp.pk ))    
 
     t = get_template('prestamos/folio_search.html')
     content = t.render(
@@ -99,8 +99,7 @@ def GetFolioPrestamo(request):
 def GetFolioDetail(request):
     id=request.POST.get("id").strip()
     detailPrestamo =DetallePrestamos.objects.get(pres_folio = id)
-    #videoDetail = MaestroCintas.objects.get(video_id =detailPrestamo.vide_clave )
-    # programaDetail = DetalleProgramas.objects.filter(video_cbarras=videoDetail.video_cbarras)
+
     t = get_template('prestamos/detalle_prestamos.html')
     content = t.render(
     {
