@@ -5,14 +5,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{% static 'favicon.ico' %}" rel="shortcut icon">
+    {% comment %} <link href="{% static 'favicon.ico' %}" rel="shortcut icon"> {% endcomment %}
     <title>Videoteca - Dirección General de Televisi&oacute;n Educativa</title>
 
     <!-- CSS -->
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/button.css' %}" rel="stylesheet">
-    <link href="{% static 'css/modoOscuro.css' %}" rel="stylesheet">
+
    
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -60,7 +60,7 @@
               <div class="collapse navbar-collapse" id="subenlaces">
                 <ul class="nav navbar-nav navbar-right">
                   <li><a href="/inventario">Inventario</a></li>
-                  <li><a href="{% url 'prestamos_list' %}">Pr&eacute;stamo</a></li>
+                  <li><a href="{% url 'prestamos_list' %}">Préstamo</a></li>
                   <li><a href="#">Usuarios</a></li>
                   <li><a href="#">Reportes</a></li>
                 </ul>

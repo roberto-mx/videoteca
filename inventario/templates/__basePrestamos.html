@@ -4,15 +4,10 @@
   
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{% static 'favicon.ico' %}" rel="shortcut icon">
-    <title>Videoteca - Dirección General de Televisi&oacute;n Educativa</title>
-
     <!-- CSS -->
-
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/button.css' %}" rel="stylesheet">
+    <link href="{% static 'css/stylesNav.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/miestilodetabla.css' %}">
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
@@ -29,10 +24,8 @@
     <script src = "https://cdn.datatables.net/1.13.3/js/dataTables.bootstrap5.min.js" ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
-
 </head>
 <body>
-
     <!-- Contenido -->
     <main class="page">
         <nav class="navbar navbar-inverse sub-navbar navbar-fixed-top">
@@ -44,12 +37,14 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Dirección General de Televisi&oacute;n Educativa - Videoteca</a>
+                <a class="navbar-brand" href="/">Dirección General de Televisión Educativa-Videoteca</a>
               </div>
+              {% comment %} <ul class="nav navbar-nav navbar-start"><li><a href="/inventario">Inventario</a></li><li><a href="https://www.gob.mx/gobierno">Gobierno</a></li><li><a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="icon-search"></i></a></li></ul> {% endcomment %}
               <div class="collapse navbar-collapse" id="subenlaces">
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-start">
                   <li><a href="/inventario">Inventario</a></li>
-                  <li><a href="{% url 'prestamos_list' %}">Pr&eacute;stamo</a></li>
+                  <li><a href="{% url 'prestamos_list' %}">Préstamos</a></li>
+                  <li><a href="{% url 'detalles_list' %}">Detalles</a></li>
                   <li><a href="#">Reportes</a></li>
                 </ul>
               </div>
@@ -68,20 +63,13 @@
                 </ol>
               </div>
               <div class="col-sm-4">
-                <div class="user-credencials">
+                {% comment %} <div class="user-credencials">
                   <ul class="list-unstyled">
                          {% if user.is_authenticated %}
                           <li>
-                         
-                          <a type="submit"  class="btn btn-default btn-block " href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> <strong> Logout </strong> </a> 
-                          
-
-                         
+                            <a type="submit"  class="btn btn-default btn-block " href="{% url 'logout' %}"><strong> Logout <i class="fas fa-sign-out-alt"></i> </strong> </a> 
                           </li>
                         {% else %}
-
-                        
-
                           <a href="{% url 'login' %}" class="header__login d-flex flex-column align-items-center justify-content-center h-100 text-gray-light">
                             <img src="{% static 'src/img/candado-cerrado.svg' %}" alt="Inicia sesión" class="mb-2 svg svg-currentcolor">
                             <p class="font-weight-bold text-sm text-uppercase m-0">Ingresar</p>
@@ -89,7 +77,7 @@
                         {% endif %}
                     <li>{{ user.get_username }}</li>
                   </ul>
-                </div>
+                </div> {% endcomment %}
               </div>
             </div>
             <br /><br />

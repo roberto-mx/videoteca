@@ -49,6 +49,11 @@ class PrestamosListView(ListView):
         }
         return render(request, 'prestamos/prestamos_list.html', context)
     
+@csrf_exempt
+def DetallesListView(request):
+    template_detalle = 'prestamos/detalles_list.html'
+    return render(request, template_detalle)
+
 
 @csrf_exempt
 def PrestamoDetalle(request):

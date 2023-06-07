@@ -1,0 +1,51 @@
+{% extends '__basePrestamos.html' %}
+{% block content %}
+
+<table  class="table table-striped" id="detalleTabla"  style="display: none;">
+    <thead>
+      <tr>
+       
+        <th>Folio Préstamo</th>
+        <th>Usuario</th>
+        <th>Fecha-Hora-Préstamo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for data in prestamos   %} 
+        <tr>
+            <td></td>
+            <td>{{ data.pres_folio }} </td>
+            <td>{{ data.usua_clave }} </td>
+            <td>{{ data.pres_fechahora }} </td> 
+            <td> Ver Deatlle</td>
+        </tr>
+        {% empty %}
+      {% endfor %}
+    </tbody> 
+  </table>
+
+<br>
+<br>
+
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.11.2/datatables.min.js"></script> {% endcomment %}
+<script>
+$(document).ready(function() {
+   $('#detalleTabla').show().DataTable({
+       ...len
+   });
+
+    
+        
+});
+
+      
+</script>
+
+<style>
+    .detalle ul {
+        display: none;
+    }
+</style>
+{% endblock %}
