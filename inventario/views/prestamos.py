@@ -16,6 +16,7 @@ from django.shortcuts import get_object_or_404
 import tempfile
 import os
 from datetime import datetime, timedelta
+from django.db import connections
 
     # ---------------------------
     # Prestamos
@@ -66,6 +67,35 @@ def DetallesListView(request):
 
     return render(request, 'prestamos/detalles_list.html', template_detalle)
 
+
+@csrf_exempt
+def obtenerPeoplePerson(request):
+    
+    cursor = connections['users'].cursor()
+    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuarioRecibio])
+
+    row = cursor.fetchone()
+
+    MatriculaObPrestamo = {}
+
+    if row is not None:
+        nombres                 = row[0]
+        apellido1               = row[1]
+        apellido2               = row[2]
+        puesto                  = row[3]
+        email_institucional     = row[4]
+        extension_telefonica    = row[5]
+
+        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+        MatriculaObPrestamo = {
+            'Obtiene'           : nombre_completo,
+            'Puesto'            : puesto,
+            'Email'             : email_institucional,
+            'Extension'         : extension_telefonica, 
+            'Matricula'         : usuarioRecibio,
+        }
+
+    return JsonResponse(MatriculaObPrestamo, safe=False)
 
 @csrf_exempt
 def PrestamoDetalle(request):
