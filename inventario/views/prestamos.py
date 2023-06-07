@@ -70,9 +70,12 @@ def DetallesListView(request):
 
 @csrf_exempt
 def obtenerPeoplePerson(request):
-    
+    q = request.GET.get('q')
+    prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave','pres_fecha_prestamo')
+    print(prestamo)
+
     cursor = connections['users'].cursor()
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuarioRecibio])
+    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", ['H210405'])
 
     row = cursor.fetchone()
 
@@ -92,7 +95,7 @@ def obtenerPeoplePerson(request):
             'Puesto'            : puesto,
             'Email'             : email_institucional,
             'Extension'         : extension_telefonica, 
-            'Matricula'         : usuarioRecibio,
+            # 'Matricula'         : usuarioRecibio,
         }
 
     return JsonResponse(MatriculaObPrestamo, safe=False)
