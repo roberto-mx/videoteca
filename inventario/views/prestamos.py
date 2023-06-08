@@ -71,34 +71,40 @@ def DetallesListView(request):
 @csrf_exempt
 def obtenerPeoplePerson(request):
     q = request.GET.get('q')
-    prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave','pres_fecha_prestamo')
-    print(prestamo)
+    prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave','pres_fecha_prestamo').first()
 
-    cursor = connections['users'].cursor()
-    cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", ['H210405'])
+    matri = None
+    if prestamo is not None:
+        matri = prestamo['usua_clave']
+        print(prestamo)
 
-    row = cursor.fetchone()
+    if matri is not None:
+        cursor = connections['users'].cursor()
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [matri])
 
-    MatriculaObPrestamo = {}
+        row = cursor.fetchone()
 
-    if row is not None:
-        nombres                 = row[0]
-        apellido1               = row[1]
-        apellido2               = row[2]
-        puesto                  = row[3]
-        email_institucional     = row[4]
-        extension_telefonica    = row[5]
+        MatriculaObPrestamo = {}
 
-        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
-        MatriculaObPrestamo = {
-            'Obtiene'           : nombre_completo,
-            'Puesto'            : puesto,
-            'Email'             : email_institucional,
-            'Extension'         : extension_telefonica, 
-            # 'Matricula'         : usuarioRecibio,
-        }
+        if row is not None:
+            nombres                 = row[0]
+            apellido1               = row[1]
+            apellido2               = row[2]
+            puesto                  = row[3]
+            email_institucional     = row[4]
+            extension_telefonica    = row[5]
+
+            nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+            MatriculaObPrestamo = {
+                'Obtiene'           : nombre_completo,
+                'Puesto'            : puesto,
+                'Email'             : email_institucional,
+                'Extension'         : extension_telefonica, 
+                'Matricula'         : matri,
+            }
 
     return JsonResponse(MatriculaObPrestamo, safe=False)
+
 
 @csrf_exempt
 def PrestamoDetalle(request):
@@ -141,8 +147,6 @@ def GetFolioDetail(request):
           
     })
     return HttpResponse(content)
-
-
 
 @csrf_exempt      
 def RegisterInVideoteca(request):
@@ -195,7 +199,6 @@ def RegisterInVideoteca(request):
             registro_data={"error":True,"errorMessage":" No se dio de alta correctamente el reingreso: "+ error}
            
     return JsonResponse(registro_data,safe=True)
-     
 
 @csrf_exempt  
 def ValidateOutVideoteca(request):
