@@ -44,9 +44,17 @@ def Filtrar_prestamos(request):
     return JsonResponse(prestamos_data, safe=False)
 
 @method_decorator(login_required, name='dispatch')
+# class PrestamosListView(ListView):
+#     def get(self, request):
+#         queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year='2022')).order_by('-pres_fechahora')
+#         context = {
+#             'prestamos': queryset,
+#         }
+#         return render(request, 'prestamos/prestamos_list.html', context)
 class PrestamosListView(ListView):
     def get(self, request):
-        queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year='2022')).order_by('-pres_fechahora')
+        current_year = datetime.now().year
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year).order_by('-pres_fechahora')
         context = {
             'prestamos': queryset,
         }
@@ -54,11 +62,25 @@ class PrestamosListView(ListView):
     
 #vista detalle    
 @csrf_exempt
+# def DetallesListView(request):
+#     fecha_actual = datetime.now()  # Fecha y hora actual del servidor
+#     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
+
+#     queryset = Prestamos.objects.filter(pres_fecha_prestamo__year='2022').order_by('-pres_fechahora')
+#     template_detalle = {
+#         'prestamos': queryset,
+#         'fecha_actual': fecha_actual,
+#         'hace_siete_dias': hace_siete_dias,
+#     }
+
+#     return render(request, 'prestamos/detalles_list.html', template_detalle)
 def DetallesListView(request):
     fecha_actual = datetime.now()  # Fecha y hora actual del servidor
     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
 
-    queryset = Prestamos.objects.filter(pres_fecha_prestamo__year='2022').order_by('-pres_fechahora')
+    current_year = datetime.now().year
+    queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=2022, pres_fecha_prestamo__year__lte=current_year).order_by('-pres_fechahora')
+
     template_detalle = {
         'prestamos': queryset,
         'fecha_actual': fecha_actual,
