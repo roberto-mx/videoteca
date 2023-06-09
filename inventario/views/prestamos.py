@@ -6,7 +6,7 @@ from django.shortcuts import render
 from functools import reduce
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-import textwrap, operator, base64, json, datetime
+import textwrap, operator, base64, json
 from django.template.loader import get_template
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
@@ -17,6 +17,7 @@ import tempfile
 import os
 from datetime import datetime, timedelta
 from django.db import connections
+
 
     # ---------------------------
     # Prestamos
@@ -92,13 +93,20 @@ def DetallesListView(request):
 
 @csrf_exempt
 def obtenerPeoplePerson(request):
+    fecha_actual = datetime.now().date()  # Fecha y hora actual del servidor
+    fecha_actual_formato = fecha_actual.strftime('%d-%m-%Y')
+    hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
+
+    print(fecha_actual)
+
     q = request.GET.get('q')
     prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave','pres_fecha_prestamo').first()
 
     matri = None
     if prestamo is not None:
         matri = prestamo['usua_clave']
-        print(prestamo)
+        fechaPrestamo = prestamo['pres_fecha_prestamo'].strftime('%d-%m-%Y')
+        # print(fechaPrestamo)
 
     if matri is not None:
         cursor = connections['users'].cursor()
@@ -123,10 +131,12 @@ def obtenerPeoplePerson(request):
                 'Email'             : email_institucional,
                 'Extension'         : extension_telefonica, 
                 'Matricula'         : matri,
+                'PrestamoFecha'     : fechaPrestamo,
+                'fechaActual'       : fecha_actual_formato,
+                'tiempoDevolucion'  : hace_siete_dias,
             }
-
+            
     return JsonResponse(MatriculaObPrestamo, safe=False)
-
 
 @csrf_exempt
 def PrestamoDetalle(request):
@@ -264,7 +274,7 @@ def ValidateOutVideoteca(request):
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
-    now = datetime.datetime.now()
+    now = datetime.now()
 
     if request.method == 'POST':
         usuario = request.POST['usuario']
@@ -273,7 +283,7 @@ def RegisterOutVideoteca(request):
 
         prestamo = Prestamos()
         prestamo.usua_clave = usuario
-        prestamo.usvi_clave =  admin 
+        prestamo.usvi_clave = admin 
         prestamo.pres_fechahora = now
         prestamo.pres_fecha_prestamo = now
         prestamo.pres_fecha_devolucion = now
@@ -306,6 +316,7 @@ def RegisterOutVideoteca(request):
         return JsonResponse(registro_data, safe=True)
 
     return JsonResponse({}, safe=True)
+
 
 
 @csrf_exempt   
