@@ -89,7 +89,7 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label"></label>
                         <div class="col-md-3 mb-3">
-                            <input type="text" class="form-control" id="estadoPrestamo" readonly>
+                            <input type="text" disabled id="estadoPrestamo" readonly>
                         </div>
                     </div>
                 </form>
@@ -135,7 +135,6 @@ $(document).ready(function() {
     $(document).on('click', '.ver-detalle', function() {
         let folio = $(this).data('folio');
         $('#inputDetalles').val(`No. de Folio: ${folio}`);
-
         $.ajax({
             url: '{% url "obtenerPeoplePerson" %}',
             data: {
@@ -151,22 +150,27 @@ $(document).ready(function() {
                 $('#email').val(data.Email);
                 $('#fechaPrestamo').val(data.PrestamoFecha);
                 $('#fechaActual').val(`Fecha Actual: ${data.fechaActual}`);
-
+              
                 let actual = new Date(data.fechaActual).getTime();
                 let tiempoDevolucion = new Date(data.tiempoDevolucion).getTime();
                 let fechaPrestamo = new Date(data.PrestamoFecha).getTime();
-
+              
+                // Eliminar todas las clases de color
+                $('#estadoPrestamo').removeClass('alert alert-danger alert-success');
+              
                 if (fechaPrestamo > tiempoDevolucion) {
-                    $('#estadoPrestamo').val('Vigente');
-                    $('#estadoPrestamo').addClass('alert alert-success center-text ');                     
-                }else {
-                    $('#estadoPrestamo').val('Vencido');
-                    $('#estadoPrestamo').addClass('alert alert-danger center-text');
+                  $('#estadoPrestamo').val('Vigente');
+                  $('#estadoPrestamo').addClass('alert alert-success center-text');
+                  // Añadir ícono de éxito
+                  $('#estadoPrestamo').append('<span class="icon-success"><i class="fas fa-check"></i></span>');
+                } else {
+                  $('#estadoPrestamo').val('Vencido');
+                  $('#estadoPrestamo').addClass('alert alert-danger center-text');
+                  // Añadir ícono de peligro
+                  $('#estadoPrestamo').append('<span class="icon-danger"><i class="fas fa-exclamation-triangle"></i></span>');
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
+              }
+              
         });
     });
 });
