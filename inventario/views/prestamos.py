@@ -187,7 +187,7 @@ def RegisterInVideoteca(request):
  
     if request.method == 'POST':
         print(request.POST['codigoBarras'])
-        now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
+        now = datetime.now() 
         #datetime.datetime.now()
         codigoBarras = request.POST['codigoBarras']
         try:
@@ -302,7 +302,7 @@ def RegisterOutVideoteca(request):
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
             detPrestamos.depr_estatus = 'X'
-            detPrestamos.pres_fecha_devolucion = now
+            detPrestamos.pres_fecha_devolucion = ''  # Campo de devolución vacío
             detPrestamos.usuario_devuelve = usuario
             detPrestamos.usuario_recibe = admin.username
             detPrestamos.vide_codigo = maestroCinta
@@ -337,6 +337,7 @@ def EndInVideoteca(request):
         registro_data = {"error": True, "errorMessage": "No se encontraron registros para el usuario"}
 
     return JsonResponse(registro_data, safe=True)
+
 
 # def EndInVideoteca(request):
 #     usuario = request.POST.get('usuario')
