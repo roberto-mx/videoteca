@@ -317,8 +317,6 @@ def RegisterOutVideoteca(request):
 
     return JsonResponse({}, safe=True)
 
-
-
 @csrf_exempt   
 def EndInVideoteca(request):
     usuario = request.POST.get('usuario')
