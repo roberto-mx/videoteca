@@ -286,7 +286,7 @@ def RegisterOutVideoteca(request):
         prestamo.usvi_clave = admin 
         prestamo.pres_fechahora = now
         prestamo.pres_fecha_prestamo = now
-        prestamo.pres_fecha_devolucion = now
+        prestamo.pres_fecha_devolucion = now + timedelta(days=7)
         prestamo.pres_estatus = 'X'
         prestamo.save()
 
@@ -302,7 +302,7 @@ def RegisterOutVideoteca(request):
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
             detPrestamos.depr_estatus = 'X'
-            detPrestamos.pres_fecha_devolucion = ''  # Campo de devolución vacío
+            detPrestamos.pres_fecha_devolucion = now
             detPrestamos.usuario_devuelve = usuario
             detPrestamos.usuario_recibe = admin.username
             detPrestamos.vide_codigo = maestroCinta
