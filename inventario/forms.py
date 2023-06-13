@@ -35,61 +35,28 @@ class MaestroCintasFilter(forms.Form):
 class MaestrosCintasForm(forms.ModelForm):
     class Meta:
         model = MaestroCintas
-        fields = ['video_id', 'video_cbarras', 'form_clave', 'video_codificacion', 
-            'video_codificacion', 'video_tipo', 'video_fingreso', 'video_inventario',
-            'video_estatus', 'video_rack', 'video_nivel', 'video_anoproduccion',
-            'video_idproductor', 'video_productor', 'video_idcoordinador', 
-            'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
-            'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id']
+        fields = ['video_id', 'video_cbarras', 'form_clave', 'video_codificacion',
+                  'video_tipo', 'video_fingreso', 'video_inventario', 'video_estatus',
+                  'video_rack', 'video_nivel', 'video_anoproduccion', 'video_productor',
+                  'video_coordinador', 'video_observaciones', 'usua_clave',
+                  'video_fchcal', 'video_target', 'tipo_id', 'origen_id']
         widgets = {
             'video_id': forms.HiddenInput(),
-            'video_fechamov': forms.TextInput(attrs={'value':datetime.datetime.now()}),
+            'video_fechamov': forms.TextInput(),
             'video_cbarras': forms.TextInput(attrs={'placeholder': 'Código de barras'}),
             'video_observaciones': forms.Textarea(),
-            #'video_usmov': forms.TypedChoiceField(coerce=lambda x: x == 1, 
-            #                       choices=((0, 'No'), (1, 'Yes')))
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['video_fechamov'].widget.attrs['value'] = datetime.datetime.now()
 
     video_usmov = forms.TypedChoiceField(
         coerce=lambda x: x == 1,
         choices=((0, 'No'), (1, 'Yes')),
-        disabled=True
+        widget=forms.Select(attrs={'readonly': True})
     )
-    """
-    video_id = forms.CharField(widget=forms.HiddenInput())
-    video_cbarras = forms.CharField(
-        label="Código de barras",
-        max_length=12,
-        widget=forms.TextInput(attrs={'placeholder': 'Código de barras'})
-    )
-    form_clave = forms.ChoiceField(label="Formato de la cinta")
-    idproduccion = forms.IntegerField(label="Id producción")
-    video_codificacion = forms.CharField(label="Formato de la cinta", max_length=20)
-    video_tipo = forms.ChoiceField(label='Tipo de video')
-    fingreso = forms.DateField(label="Fecha ingreso")
-    inventario = forms.CharField(label="Inventario", max_length=4)
-    estatus = forms.CharField(label="Estatus de la cinta", max_length=20)
-    rack = forms.CharField(label="Rack", max_length=4)
-    nivel = forms.CharField(label="Nivel", max_length=4)
-    anoproduccion = forms.IntegerField(label="Año de producción")
-    idproductor = forms.IntegerField(label="Id de productor")
-    productor = forms.CharField(label="Productor", max_length=100)
-    idcoordinador = forms.IntegerField(label="Id de coordinador")
-    coordinador = forms.CharField(label="Coordinador", max_length=80)
-    usmov = forms.IntegerField(label="usmov")
-    fechamov = forms.DateTimeField(label="Fecha de movimiento")
-    observaciones = forms.CharField(label="Observaciones", max_length=300, widget=forms.Textarea)
-    usua_clave = forms.CharField(label="Clave", max_length=12)
-    fchcal = forms.DateField(label="Fecha de calificación")
-    target = forms.CharField(label="Target", max_length=45)
-    tipo_id = forms.ChoiceField(label="Tipo de Serie")
-    origen_id = forms.ChoiceField(label="Origen de serie")
-    """
 
-    def __init__(self, *args, **kwargs):
-        super(MaestrosCintasForm, self).__init__(*args, **kwargs)
-        for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control'
 
 
 class DetalleProgramasForm(forms.ModelForm):
@@ -126,7 +93,6 @@ class PrestamoForm(forms.ModelForm):
         model = DetallePrestamos
         fields = '__all__'
         
-
 PrestamoInlineFormset = inlineformset_factory(
     Prestamos,
     DetallePrestamos,
