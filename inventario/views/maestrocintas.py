@@ -13,7 +13,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-
+from django.utils import timezone
 import datetime
 import re
 
@@ -165,18 +165,36 @@ class MaestroCintasListView(ListView):
 
         return context
 
+#Prueba
+# class MaestroCintasCreateView(CreateView):
+#     model = MaestroCintas
+#     template_name = 'inventario/maestrocintas_create.html'
+#     form_class = MaestrosCintasForm
+#     success_url = reverse_lazy('inventario:cintas-list')
+
+
 
 class MaestroCintasCreateView(CreateView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_create.html'
-    #fields = ('video_id', 'video_cbarras', 'form_clave', 'video_codificacion', 
-    #    'video_codificacion', 'video_tipo', 'video_fingreso', 'video_inventario',
-    #    'video_estatus', 'video_rack', 'video_nivel', 'video_anoproduccion',
-    #    'video_idproductor', 'video_productor', 'video_idcoordinador', 
-    #    'video_coordinador', 'video_usmov', 'video_fechamov', 'video_observaciones',
-    #    'usua_clave', 'video_fchcal', 'video_target', 'tipo_id', 'origen_id')
     form_class = MaestrosCintasForm
     success_url = reverse_lazy('inventario:cintas-list')
+
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     kwargs['initial'] = {'video_fechamov': timezone.now()}
+    #     return kwargs
+    
+
+
+
+def MaestroCintasCreateForm(CreateView):
+    # model = MaestroCintas
+
+    return render(CreateView, 'inventario/maestroCintaCreateForm.html')
+
+
+
 
 
 #@method_decorator(login_required, name='dispatch')
