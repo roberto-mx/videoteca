@@ -18,7 +18,6 @@ class FormatosCintasForm(forms.Form):
     def send_email(self):
         pass
 
-
 class MaestroCintasFilter(forms.Form):
     cbarras = forms.CharField(label="Código de barras", max_length=12)
     formato = forms.ChoiceField(label="Formato")
@@ -56,8 +55,6 @@ class MaestrosCintasForm(forms.ModelForm):
         choices=((0, 'No'), (1, 'Yes')),
         widget=forms.Select(attrs={'readonly': True})
     )
-
-
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

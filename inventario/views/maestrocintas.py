@@ -193,10 +193,6 @@ def MaestroCintasCreateForm(CreateView):
 
     return render(CreateView, 'inventario/maestroCintaCreateForm.html')
 
-
-
-
-
 #@method_decorator(login_required, name='dispatch')
 class MaestroCintasDetailView(DetailView):
     model = MaestroCintas

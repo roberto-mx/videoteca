@@ -477,7 +477,7 @@ class Prestamos(models.Model):
     usua_clave = models.CharField(max_length=10)
     pres_fechahora = models.DateTimeField()
     pres_fecha_prestamo = models.DateTimeField()
-    pres_fecha_devolucion = models.DateTimeField()
+    pres_fecha_devolucion = models.DateTimeField(null=True)
     pres_estatus = models.CharField(max_length=1)
 
     class Meta:

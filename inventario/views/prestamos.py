@@ -16,6 +16,7 @@ from django.shortcuts import get_object_or_404
 import tempfile
 import os
 from datetime import datetime, timedelta
+import pandas as pd
 from django.db import connections
 
 
@@ -45,13 +46,7 @@ def Filtrar_prestamos(request):
     return JsonResponse(prestamos_data, safe=False)
 
 @method_decorator(login_required, name='dispatch')
-# class PrestamosListView(ListView):
-#     def get(self, request):
-#         queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year='2022')).order_by('-pres_fechahora')
-#         context = {
-#             'prestamos': queryset,
-#         }
-#         return render(request, 'prestamos/prestamos_list.html', context)
+
 class PrestamosListView(ListView):
     def get(self, request):
         current_year = datetime.now().year
@@ -63,33 +58,20 @@ class PrestamosListView(ListView):
     
 #vista detalle    
 @csrf_exempt
-# def DetallesListView(request):
-#     fecha_actual = datetime.now()  # Fecha y hora actual del servidor
-#     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
-
-#     queryset = Prestamos.objects.filter(pres_fecha_prestamo__year='2022').order_by('-pres_fechahora')
-#     template_detalle = {
-#         'prestamos': queryset,
-#         'fecha_actual': fecha_actual,
-#         'hace_siete_dias': hace_siete_dias,
-#     }
-
-#     return render(request, 'prestamos/detalles_list.html', template_detalle)
 def DetallesListView(request):
+    q = request.GET.get('q')
     fecha_actual = datetime.now()  # Fecha y hora actual del servidor
     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
 
-    current_year = datetime.now().year
-    queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=2022, pres_fecha_prestamo__year__lte=current_year).order_by('-pres_fechahora')
-
+    queryset = Prestamos.objects.filter(usua_pres_fecha_prestamo__year='2022', usua_clave=q).order_by('-pres_fechahora')
     template_detalle = {
         'prestamos': queryset,
         'fecha_actual': fecha_actual,
         'hace_siete_dias': hace_siete_dias,
     }
 
+    # print(template_detalle)
     return render(request, 'prestamos/detalles_list.html', template_detalle)
-
 
 @csrf_exempt
 def obtenerPeoplePerson(request):
@@ -97,7 +79,7 @@ def obtenerPeoplePerson(request):
     fecha_actual_formato = fecha_actual.strftime('%d-%m-%Y')
     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
 
-    print(fecha_actual)
+    # print(fecha_actual)
 
     q = request.GET.get('q')
     prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave','pres_fecha_prestamo').first()
@@ -274,6 +256,27 @@ def ValidateOutVideoteca(request):
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
+    # Obtener la fecha y hora actual del sistema
+    fecha_actual = datetime.now().date()
+
+    # Inicializar el contador de días hábiles
+    dias_habiles_encontrados = 0
+
+    # Inicializar el desplazamiento en 1 día
+    desplazamiento = timedelta(days=1)
+
+    # Iterar hasta encontrar el séptimo día hábil
+    while dias_habiles_encontrados < 7:
+        fecha_actual -= desplazamiento
+
+        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
+        if fecha_actual.weekday() < 5:
+            dias_habiles_encontrados += 1
+
+    # Obtener el día correspondiente como string
+    dia_hoy_siete_dias_habiles_atras_str = fecha_actual.strftime('%Y-%m-%d')
+
+    print("El día hace siete días hábiles a partir de la fecha y hora actual es:", dia_hoy_siete_dias_habiles_atras_str)
     now = datetime.now()
 
     if request.method == 'POST':
@@ -286,12 +289,13 @@ def RegisterOutVideoteca(request):
         prestamo.usvi_clave = admin 
         prestamo.pres_fechahora = now
         prestamo.pres_fecha_prestamo = now
-        prestamo.pres_fecha_devolucion = now + timedelta(days=7)
+        prestamo.pres_fecha_devolucion = None
+        # prestamo.pres_fecha_devolucion = now + timedelta(days=7)
         prestamo.pres_estatus = 'X'
         prestamo.save()
 
         pintaFolio = prestamo.pres_folio
-        print(pintaFolio)
+        
 
         for codigo in data:
             try:
@@ -302,12 +306,12 @@ def RegisterOutVideoteca(request):
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
             detPrestamos.depr_estatus = 'X'
-            detPrestamos.pres_fecha_devolucion = now
-            detPrestamos.usuario_devuelve = usuario
-            detPrestamos.usuario_recibe = admin.username
+            detPrestamos.pres_fecha_devolucion = None
+            detPrestamos.usuario_devuelve = None
+            detPrestamos.usuario_recibe = None
             detPrestamos.vide_codigo = maestroCinta
-    
             detPrestamos.save()
+    
 
             maestroCinta.video_estatus = 'X'
             maestroCinta.save()
