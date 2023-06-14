@@ -229,11 +229,40 @@ def ValidateOutVideoteca(request):
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
                 if maestroCinta.video_estatus == 'En Videoteca':
-                    registro_data = {
-                        "error": False,
-                        "errorMessage": "Listo para préstamo"
-                    }
-                    # Guardar el registro en la base de datos aquí
+                    # Obtener la fecha actual
+                    fecha_actual = datetime.now().date()
+
+                    # Inicializar el contador de días hábiles
+                    dias_habiles_encontrados = 0
+
+                    # Inicializar el desplazamiento en 1 día
+                    desplazamiento = timedelta(days=1)
+
+                    # Iterar hasta encontrar el séptimo día hábil
+                    while dias_habiles_encontrados < 7:
+                        fecha_actual -= desplazamiento
+
+                        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
+                        if fecha_actual.weekday() < 5:
+                            dias_habiles_encontrados += 1
+
+                    # Obtener el día correspondiente como string
+                    fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
+
+                    print-(fecha_vencimiento)
+
+                    # Verificar si el usuario tiene préstamos vencidos
+                    if Prestamos.objects.filter(usua_clave=usuario, pres_fecha_prestamo__lt=fecha_vencimiento).exists():
+                        registro_data = {
+                            "error": True,
+                            "errorMessage": "El usuario tiene cintas vencidas"
+                        }
+                    else:
+                        registro_data = {
+                            "error": False,
+                            "errorMessage": "Listo para préstamo"
+                        }
+                        # Guardar el registro en la base de datos aquí
                 else:
                     registro_data = {
                         "error": True,
@@ -253,30 +282,9 @@ def ValidateOutVideoteca(request):
 
     return JsonResponse(registro_data)
 
-
 @csrf_exempt      
 def RegisterOutVideoteca(request):
-    # Obtener la fecha y hora actual del sistema
-    fecha_actual = datetime.now().date()
 
-    # Inicializar el contador de días hábiles
-    dias_habiles_encontrados = 0
-
-    # Inicializar el desplazamiento en 1 día
-    desplazamiento = timedelta(days=1)
-
-    # Iterar hasta encontrar el séptimo día hábil
-    while dias_habiles_encontrados < 7:
-        fecha_actual -= desplazamiento
-
-        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
-        if fecha_actual.weekday() < 5:
-            dias_habiles_encontrados += 1
-
-    # Obtener el día correspondiente como string
-    dia_hoy_siete_dias_habiles_atras_str = fecha_actual.strftime('%Y-%m-%d')
-
-    print("El día hace siete días hábiles a partir de la fecha y hora actual es:", dia_hoy_siete_dias_habiles_atras_str)
     now = datetime.now()
 
     if request.method == 'POST':
@@ -295,6 +303,7 @@ def RegisterOutVideoteca(request):
         prestamo.save()
 
         pintaFolio = prestamo.pres_folio
+        
         
 
         for codigo in data:

@@ -101,6 +101,7 @@
           <div class="modal-header">
             <h4 class="modal-title">Ingresar Devolución por Código de Barras</h4>
           </div>
+          
           <div class="modal-body">
              <div id="inputUsuario">
             <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Gafete de Usuario que devuelve" id="searchUsuarioIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
@@ -545,7 +546,7 @@ function readCodeBar() {
         $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
       } else {
         $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
-        console.log(`aqui entra la falla de la tabla`)
+       
       }
       $('#searchBarCodeIn').val("").focus();
     })
@@ -626,36 +627,44 @@ function addItemOut() {
       url: "{% url 'validacion_salida_videoteca' %}",
       type: 'POST'
     })
-      .done(function (response) {
-        if (f_valida_repetido(codigoBarras) == 1) {
-          $("#out_error").text("Registro duplicado");
-          $("#out_error").show();
-          setTimeout(function () {
-            $("#out_error").hide();
-          }, 1000);
-          $('#searchBarCodeOut').val("").focus();
-        } else {
-          if (response.error) {
-            if (response.errorMessage === "No se encontró el código de barras") {
-              alertMessage('error', `No existe la cinta.`, '¡Oye!');
-            } else {
-              alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
-            }
-            //cleanTableOut();
-          } else {
-            $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
-            $("#continuarPrestamo").show();
-          }
-          $('#searchBarCodeOut').val("").focus();
-        }
-      })
-      .fail(function () {
-        $('#out_error').show('slow');
-        $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
+    .done(function (response) {
+      if (f_valida_repetido(codigoBarras) == 1) {
+        // Registro duplicado
+        $("#out_error").text("Registro duplicado");
+        $("#out_error").show();
         setTimeout(function () {
           $("#out_error").hide();
         }, 1000);
-      });
+        $('#searchBarCodeOut').val("").focus();
+      } else {
+        if (response.error) {
+          if (response.errorMessage === "No se encontró el código de barras") {
+            // No existe la cinta
+            alertMessage('error', `No existe la cinta.`, '¡Oye!');
+          } else if (response.errorMessage === "El usuario tiene cintas vencidas") {
+            // El usuario tiene cintas vencidas
+            alertMessage('error', `El usuario tiene cintas vencidas.`, '¡Alto!');
+          } else {
+            // Otro error
+            alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
+          }
+          //cleanTableOut();
+        } else {
+          // Registro exitoso
+          $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+          $("#continuarPrestamo").show();
+        }
+        $('#searchBarCodeOut').val("").focus();
+      }
+    })
+    .fail(function () {
+      // Error en la solicitud AJAX
+      $('#out_error').show('slow');
+      $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function () {
+        $("#out_error").hide();
+      }, 1000);
+    });
   }
 }
 
