@@ -16,6 +16,7 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 import datetime
 import re
+from django.http import JsonResponse
 
 from ..forms import Login, MaestrosCintasForm
 from ..forms import MaestroCintasFilter, FormatosCintasForm, DetalleProgramasForm
@@ -174,20 +175,30 @@ class MaestroCintasListView(ListView):
 
 
 
+
+
 class MaestroCintasCreateView(CreateView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_create.html'
     form_class = MaestrosCintasForm
     success_url = reverse_lazy('inventario:cintas-list')
 
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     kwargs['initial'] = {'video_fechamov': timezone.now()}
-    #     return kwargs
+    def form_valid(self, form):
+        self.object = form.save()
+        
+        # Construir la respuesta JSON
+        response_data = {
+            'status': 'success',
+            'message': 'Los datos han sido guardados correctamente.',
+            'data': {
+                'id': self.object.id,
+                'video_cbarras': self.object.video_cbarras,
+                
+            }
+        }
+        
+        return JsonResponse(response_data)
     
-
-
-
 def MaestroCintasCreateForm(CreateView):
     # model = MaestroCintas
 
@@ -236,7 +247,6 @@ class MaestroCintasFormView(FormView):
     template_name = 'maestrocintas_form.html'
     form_class = MaestrosCintasForm
     success_url = '/'
-
 
 # -------------------
 # Detalle programas

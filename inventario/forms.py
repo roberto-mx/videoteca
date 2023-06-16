@@ -18,6 +18,7 @@ class FormatosCintasForm(forms.Form):
     def send_email(self):
         pass
 
+
 class MaestroCintasFilter(forms.Form):
     cbarras = forms.CharField(label="Código de barras", max_length=12)
     formato = forms.ChoiceField(label="Formato")
@@ -37,7 +38,7 @@ class MaestrosCintasForm(forms.ModelForm):
         fields = ['video_id', 'video_cbarras', 'form_clave', 'video_codificacion',
                   'video_tipo', 'video_fingreso', 'video_inventario', 'video_estatus',
                   'video_rack', 'video_nivel', 'video_anoproduccion', 'video_productor',
-                  'video_coordinador', 'video_observaciones', 'usua_clave',
+                  'video_coordinador', 'video_fechamov','video_observaciones', 'usua_clave',
                   'video_fchcal', 'video_target', 'tipo_id', 'origen_id']
         widgets = {
             'video_id': forms.HiddenInput(),
@@ -55,6 +56,8 @@ class MaestrosCintasForm(forms.ModelForm):
         choices=((0, 'No'), (1, 'Yes')),
         widget=forms.Select(attrs={'readonly': True})
     )
+
+
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

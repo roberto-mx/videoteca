@@ -468,7 +468,7 @@ class PorIngresar(models.Model):
     fch_captura = models.DateTimeField()
 
     class Meta:
-        db_table = 'por_ingresar'
+        db_table = 'por_ingresar'   
 
 
 class Prestamos(models.Model):

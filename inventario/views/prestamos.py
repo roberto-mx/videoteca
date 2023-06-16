@@ -16,6 +16,8 @@ from django.shortcuts import get_object_or_404
 import tempfile
 import os
 from datetime import datetime, timedelta
+from django.db import transaction
+
 import pandas as pd
 from django.db import connections
 
@@ -166,17 +168,16 @@ def GetFolioDetail(request):
 def RegisterInVideoteca(request):
     usuario = request.POST['matricula']
     admin = request.user
- 
+
     if request.method == 'POST':
         print(request.POST['codigoBarras'])
         now = datetime.now() 
-        #datetime.datetime.now()
         codigoBarras = request.POST['codigoBarras']
         try:
             error="Código no encontrado"
             maestroCinta = MaestroCintas.objects.get(pk = codigoBarras)
             error= "Busqueda en Maestro Cintas"
-           
+        
             error= "Busqueda en Videos"
             detallesPrestamo = DetallePrestamos.objects.filter( Q(vide_clave = maestroCinta.video_id) )
             detallesPrestamoMaster = DetallePrestamos.objects.filter(Q(vide_codigo = codigoBarras ))
@@ -211,7 +212,7 @@ def RegisterInVideoteca(request):
             registro_data={"error":False,"errorMessage":" Registro Exitoso!"}
         except Exception as e:
             registro_data={"error":True,"errorMessage":" No se dio de alta correctamente el reingreso: "+ error}
-           
+        
     return JsonResponse(registro_data,safe=True)
 
 @csrf_exempt  
@@ -249,13 +250,25 @@ def ValidateOutVideoteca(request):
                     # Obtener el día correspondiente como string
                     fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
 
-                    print-(fecha_vencimiento)
+                    # Verificar si el usuario tiene préstamos activos
+                    prestamos_activos = Prestamos.objects.filter(
+                        usua_clave=usuario,
+                        pres_estatus='A'
+                    )
 
-                    # Verificar si el usuario tiene préstamos vencidos
-                    if Prestamos.objects.filter(usua_clave=usuario, pres_fecha_prestamo__lt=fecha_vencimiento).exists():
+                    # Verificar si el usuario tiene préstamos vencidos y ya devueltos
+                    prestamos_vencidos_devueltos = Prestamos.objects.filter(
+                        usua_clave=usuario,
+                        pres_fecha_prestamo__lt=fecha_vencimiento
+                    ).exclude(
+                        Q(detalleprestamos__vide_codigo=codigoBarras) &
+                        (Q(detalleprestamos__depr_estatus='I') | Q(detalleprestamos__depr_estatus='E'))
+                    )
+
+                    if prestamos_activos.exists() or prestamos_vencidos_devueltos.exists():
                         registro_data = {
                             "error": True,
-                            "errorMessage": "El usuario tiene cintas vencidas"
+                            "errorMessage": "El usuario tiene cintas pendientes de devolución o vencidas"
                         }
                     else:
                         registro_data = {
@@ -304,8 +317,6 @@ def RegisterOutVideoteca(request):
 
         pintaFolio = prestamo.pres_folio
         
-        
-
         for codigo in data:
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigo)
