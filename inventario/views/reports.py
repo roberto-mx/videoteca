@@ -88,7 +88,7 @@ class PDF(FPDF):
 
         self.set_font('Montserrat', 'B', 8)
         self.set_xy(90.5, 50.0)
-        self.cell(180, 10, 'Firma:', 0, 0, 'L')
+        self.cell(180, 10, 'Firma:', 0, 0, 'L')     
         x = self.get_x()
         y = self.get_y()
         self.line(x - 167, y + 6, x - 120, y + 6)
@@ -519,27 +519,26 @@ def xml_to_pdf():
 
 
 @csrf_exempt      
-def json_to_pdf(request, row, codes, user ):
-    RESOURCES_DIR = settings.MEDIA_ROOT+ '/Formatos/montserrat.jar'
-    input_file = settings.MEDIA_ROOT+ '/Formatos/ReporteDevolucion.jrxml'
+def json_to_pdf(request, row, codes, user):
+    RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
+    input_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.jrxml'
     CreateJsonInReport(row, codes, user)
-    output_file = settings.MEDIA_ROOT+ '/Formatos'
+    output_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.pdf'  # Specific file path
     conn = {
-      'driver': 'json',
-      'data_file': settings.MEDIA_ROOT+ '/Formatos/dataHeader.json',
-      'json_query': 'reporte'
-   }
-    outputFile= settings.MEDIA_ROOT+ '/Formatos/ReporteDevolucion.pdf' 
+        'driver': 'json',
+        'data_file': settings.MEDIA_ROOT + '/Formatos/dataHeader.json',
+        'json_query': 'reporte'
+    }
     pyreportjasper = PyReportJasper()
     pyreportjasper.config(
-      input_file,
-      output_file=outputFile,
-      output_formats=["pdf"],
-      db_connection=conn,
-      resource=RESOURCES_DIR
-   )
+        input_file,
+        output_file=output_file,
+        output_formats=["pdf"],
+        db_connection=conn,
+        resource=RESOURCES_DIR
+    )
     pyreportjasper.process_report()
-    return outputFile 
+    return output_file  # Return the file path
    
   
 def GetFilePdf(request):

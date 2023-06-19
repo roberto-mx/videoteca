@@ -16,6 +16,9 @@ from django.shortcuts import get_object_or_404
 import tempfile
 import os
 from datetime import datetime, timedelta
+from django.db import transaction
+
+import pandas as pd
 from django.db import connections
 
 
@@ -45,13 +48,7 @@ def Filtrar_prestamos(request):
     return JsonResponse(prestamos_data, safe=False)
 
 @method_decorator(login_required, name='dispatch')
-# class PrestamosListView(ListView):
-#     def get(self, request):
-#         queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year='2022')).order_by('-pres_fechahora')
-#         context = {
-#             'prestamos': queryset,
-#         }
-#         return render(request, 'prestamos/prestamos_list.html', context)
+
 class PrestamosListView(ListView):
     def get(self, request):
         current_year = datetime.now().year
@@ -63,33 +60,20 @@ class PrestamosListView(ListView):
     
 #vista detalle    
 @csrf_exempt
-# def DetallesListView(request):
-#     fecha_actual = datetime.now()  # Fecha y hora actual del servidor
-#     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
-
-#     queryset = Prestamos.objects.filter(pres_fecha_prestamo__year='2022').order_by('-pres_fechahora')
-#     template_detalle = {
-#         'prestamos': queryset,
-#         'fecha_actual': fecha_actual,
-#         'hace_siete_dias': hace_siete_dias,
-#     }
-
-#     return render(request, 'prestamos/detalles_list.html', template_detalle)
 def DetallesListView(request):
+    q = request.GET.get('q')
     fecha_actual = datetime.now()  # Fecha y hora actual del servidor
     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
 
-    current_year = datetime.now().year
-    queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=2022, pres_fecha_prestamo__year__lte=current_year).order_by('-pres_fechahora')
-
+    queryset = Prestamos.objects.filter(usua_pres_fecha_prestamo__year='2022', usua_clave=q).order_by('-pres_fechahora')
     template_detalle = {
         'prestamos': queryset,
         'fecha_actual': fecha_actual,
         'hace_siete_dias': hace_siete_dias,
     }
 
+    # print(template_detalle)
     return render(request, 'prestamos/detalles_list.html', template_detalle)
-
 
 @csrf_exempt
 def obtenerPeoplePerson(request):
@@ -97,7 +81,7 @@ def obtenerPeoplePerson(request):
     fecha_actual_formato = fecha_actual.strftime('%d-%m-%Y')
     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
 
-    print(fecha_actual)
+    # print(fecha_actual)
 
     q = request.GET.get('q')
     prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave','pres_fecha_prestamo').first()
@@ -141,7 +125,7 @@ def obtenerPeoplePerson(request):
 @csrf_exempt
 def PrestamoDetalle(request):
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion','usuario_devuelve','usuario_recibe')
     context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
 
@@ -184,32 +168,33 @@ def GetFolioDetail(request):
 def RegisterInVideoteca(request):
     usuario = request.POST['matricula']
     admin = request.user
- 
+
     if request.method == 'POST':
         print(request.POST['codigoBarras'])
+        
         now = datetime.now() 
-        #datetime.datetime.now()
         codigoBarras = request.POST['codigoBarras']
         try:
             error="Código no encontrado"
             maestroCinta = MaestroCintas.objects.get(pk = codigoBarras)
             error= "Busqueda en Maestro Cintas"
-           
+        
             error= "Busqueda en Videos"
             detallesPrestamo = DetallePrestamos.objects.filter( Q(vide_clave = maestroCinta.video_id) )
             detallesPrestamoMaster = DetallePrestamos.objects.filter(Q(vide_codigo = codigoBarras ))
             #& Q(depr_estatus ='A')
             error= "No se encontro en Prestamos"
             if detallesPrestamo.count() > 0:
-                detallePrestamo = detallesPrestamo.latest('pres_folio')
-            elif detallesPrestamoMaster.count() > 0:
                 detallePrestamo = detallesPrestamoMaster.latest('pres_folio')
+                #FILTRAR TAMBIEN POR FECHA DE DEVOLUCÓN QUE SEA NULA
+            elif detallesPrestamoMaster.count() > 0:
+                detallePrestamo = detallesPrestamo.latest('pres_folio')#1
             else:
                 print("Hay que revisar los registros de esté codigo de barras")
                 registro_data={"error": True, "errorMessage":"Hay que revisar los registros de esté codigo de barras"}
                 return JsonResponse(registro_data,safe=True)
             
-            prestamo = Prestamos.objects.get(pres_folio= detallePrestamo.pres_folio_id)
+            prestamo = Prestamos.objects.get(pres_folio= detallePrestamo.pres_folio_id)#2
 
             detallePrestamo.depr_estatus='I'
             detallePrestamo.pres_fecha_devolucion = now
@@ -228,8 +213,12 @@ def RegisterInVideoteca(request):
 
             registro_data={"error":False,"errorMessage":" Registro Exitoso!"}
         except Exception as e:
-            registro_data={"error":True,"errorMessage":" No se dio de alta correctamente el reingreso: "+ error}
-           
+            print("Error:", str(e))
+            registro_data = {
+                "error": True,
+                "errorMessage": "Ocurrió un error inesperado: " + str(e)
+            }
+        
     return JsonResponse(registro_data,safe=True)
 
 @csrf_exempt  
@@ -247,11 +236,138 @@ def ValidateOutVideoteca(request):
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
                 if maestroCinta.video_estatus == 'En Videoteca':
+                    # Obtener la fecha actual
+                    fecha_actual = datetime.now().date()
+
+                    # Inicializar el contador de días hábiles
+                    dias_habiles_encontrados = 0
+
+                    # Inicializar el desplazamiento en 1 día
+                    desplazamiento = timedelta(days=1)
+
+                    # Iterar hasta encontrar el séptimo día hábil
+                    while dias_habiles_encontrados < 7:
+                        fecha_actual -= desplazamiento
+
+                        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
+                        if fecha_actual.weekday() < 5:
+                            dias_habiles_encontrados += 1
+
+                    # Obtener el día correspondiente como string
+                    fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
+
+                    # Verificar si el usuario tiene préstamos activos
+                    prestamos_activos = Prestamos.objects.filter(
+                        usua_clave=usuario,
+                        pres_estatus='A'
+                    )
+
+                    # Verificar si el usuario tiene préstamos vencidos y ya devueltos
+                    prestamos_vencidos_devueltos = Prestamos.objects.filter(
+                        usua_clave=usuario,
+                        pres_fecha_prestamo__lt=fecha_vencimiento,
+                        detalleprestamos__depr_estatus='I'
+                    ).exclude(
+                        detalleprestamos__vide_codigo=codigoBarras
+                    )
+
+                    if prestamos_activos.exists() or prestamos_vencidos_devueltos.exists():
+                        registro_data = {
+                            "error": True,
+                            "errorMessage": "El usuario tiene cintas pendientes de devolución o vencidas"
+                        }
+                    else:
+                        registro_data = {
+                            "error": False,
+                            "errorMessage": "Listo para préstamo"
+                        }
+                        # Guardar el registro en la base de datos aquí
+                else:
                     registro_data = {
-                        "error": False,
-                        "errorMessage": "Listo para préstamo"
+                        "error": True,
+                        "errorMessage": "El código de barras no está disponible",
+                        'codigoBarras': codigoBarras
                     }
-                    # Guardar el registro en la base de datos aquí
+            except MaestroCintas.DoesNotExist:
+                registro_data = {
+                    "error": True,
+                    "errorMessage": "No se encontró el código de barras"
+                }
+            except Exception as e:
+                registro_data = {
+                    "error": True,
+                    "errorMessage": "Ocurrió un error inesperado: " + str(e)
+                }
+    else:
+        registro_data = {
+            "error": True,
+            "errorMessage": "Solicitud inválida"
+        }
+
+    return JsonResponse(registro_data)
+
+
+@csrf_exempt  
+def ValidateOutVideoteca(request):
+    if request.method == 'POST':
+        codigoBarras = request.POST.get('codigoBarras', '')
+        usuario = request.POST.get('usuario', '')
+
+        if not usuario or not codigoBarras:
+            registro_data = {
+                "error": True,
+                "errorMessage": "Debes ingresar un usuario y un código de barras"
+            }
+        else:
+            try:
+                maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
+                if maestroCinta.video_estatus == 'En Videoteca':
+                    # Obtener la fecha actual
+                    fecha_actual = datetime.now().date()
+
+                    # Inicializar el contador de días hábiles
+                    dias_habiles_encontrados = 0
+
+                    # Inicializar el desplazamiento en 1 día
+                    desplazamiento = timedelta(days=1)
+
+                    # Iterar hasta encontrar el séptimo día hábil
+                    while dias_habiles_encontrados < 7:
+                        fecha_actual -= desplazamiento
+
+                        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
+                        if fecha_actual.weekday() < 5:
+                            dias_habiles_encontrados += 1
+
+                    # Obtener el día correspondiente como string
+                    fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
+
+                    # Verificar si el usuario tiene préstamos activos
+                    prestamos_activos = Prestamos.objects.filter(
+                        usua_clave=usuario,
+                        pres_estatus='A'
+                    )
+
+                    # Verificar si el usuario tiene préstamos vencidos y ya devueltos
+                    prestamos_vencidos_devueltos = Prestamos.objects.filter(
+                        usua_clave=usuario,
+                        pres_fecha_prestamo__lt=fecha_vencimiento
+                    ).exclude(
+                        Q(detalleprestamos__vide_codigo=codigoBarras) &
+                        (Q(detalleprestamos__depr_estatus='I') | Q(detalleprestamos__depr_estatus='E'))
+                    )
+
+                    if prestamos_activos.exists() or prestamos_vencidos_devueltos.exists():
+                        registro_data = {
+                            "error": True,
+                            "errorMessage": "El usuario tiene cintas pendientes de devolución o vencidas"
+                        }
+                    else:
+                        registro_data = {
+                            "error": False,
+                            "errorMessage": "Listo para préstamo"
+                        }
+                        # Guardar el registro en la base de datos aquí
                 else:
                     registro_data = {
                         "error": True,
@@ -271,9 +387,9 @@ def ValidateOutVideoteca(request):
 
     return JsonResponse(registro_data)
 
-
 @csrf_exempt      
 def RegisterOutVideoteca(request):
+
     now = datetime.now()
 
     if request.method == 'POST':
@@ -286,13 +402,13 @@ def RegisterOutVideoteca(request):
         prestamo.usvi_clave = admin 
         prestamo.pres_fechahora = now
         prestamo.pres_fecha_prestamo = now
-        prestamo.pres_fecha_devolucion = now + timedelta(days=7)
+        prestamo.pres_fecha_devolucion = None
+        # prestamo.pres_fecha_devolucion = now + timedelta(days=7)
         prestamo.pres_estatus = 'X'
         prestamo.save()
 
         pintaFolio = prestamo.pres_folio
-        print(pintaFolio)
-
+        
         for codigo in data:
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigo)
@@ -302,12 +418,12 @@ def RegisterOutVideoteca(request):
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
             detPrestamos.depr_estatus = 'X'
-            detPrestamos.pres_fecha_devolucion = now
-            detPrestamos.usuario_devuelve = usuario
-            detPrestamos.usuario_recibe = admin.username
+            detPrestamos.pres_fecha_devolucion = None
+            detPrestamos.usuario_devuelve = None
+            detPrestamos.usuario_recibe = None
             detPrestamos.vide_codigo = maestroCinta
-    
             detPrestamos.save()
+    
 
             maestroCinta.video_estatus = 'X'
             maestroCinta.save()
