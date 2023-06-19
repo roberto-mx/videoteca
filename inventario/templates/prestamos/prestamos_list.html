@@ -315,7 +315,7 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
         });
       });
       let tabla = $('<table>');
-      let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th></tr>');
+      let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th><th>Usuario Devuelve</th><th>Usuario Recibe</th></tr>');
       let tbody = $('<tbody>');
     
       if($('li', data).length == 0){
@@ -324,11 +324,13 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
         $("#modalCintas").modal('hide');
       }
       $('li', data).each(function(index) {
-        let liText  = $(this).text().trim();
-        let liParts = liText.split(' - '); 
-        let codigo  = liParts[0];
-        let fecha   = liParts[1];
-        let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>');
+        let liText    = $(this).text().trim();
+        let liParts   = liText.split(' - '); 
+        let codigo    = liParts[0];
+        let fecha     = liParts[1];
+        let devuelve  = liParts[2];
+        let recibe    = liParts[3];
+        let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>' + '<td>' + devuelve + '</td><td>' + recibe +'</td>');
         tbody.append(row);
       });
       tabla.append(thead).append(tbody);
@@ -490,6 +492,7 @@ function finalizarEntrada(usuario, codigoBarras) {
       if (data.error) {
         $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
+        
         Swal.fire({
           title: '¡Exportado!',
           text: 'Su archivo ha sido exportado.',
@@ -591,7 +594,6 @@ $(document).on("click",".glyphicon-plus",function(){
           $("#tablaPrincipal tbody").append(html_data);
       }
       else{
-          //console.log(":( ");
           $("#ins_success").hide();
           $("#ins_error").text(response['errorMessage']);
           $("#ins_error").show();
@@ -638,15 +640,16 @@ function addItemOut() {
         $('#searchBarCodeOut').val("").focus();
       } else {
         if (response.error) {
-          if (response.errorMessage === "No se encontró el código de barras") {
+          if (response.errorMessage == "El código de barras no está disponible") {
             // No existe la cinta
-            alertMessage('error', `No existe la cinta.`, '¡Oye!');
-          } else if (response.errorMessage === "El usuario tiene cintas vencidas") {
+            alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
+            
+          } else if (response.errorMessage === "El usuario tiene cintas pendientes de devolución o vencidas ") {
             // El usuario tiene cintas vencidas
-            alertMessage('error', `El usuario tiene cintas vencidas.`, '¡Alto!');
+            alertMessage('error', `El usuario tiene cintas vencidas en el folio.`, '¡Alto!');
           } else {
             // Otro error
-            alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
+            alertMessage('error', `No existe la cinta.`, '¡Oye!');
           }
           //cleanTableOut();
         } else {
