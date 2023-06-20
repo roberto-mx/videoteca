@@ -170,48 +170,53 @@ def RegisterInVideoteca(request):
     admin = request.user
 
     if request.method == 'POST':
-        print(request.POST['codigoBarras'])
-        
-        now = datetime.now() 
         codigoBarras = request.POST['codigoBarras']
-        try:
-            error="Código no encontrado"
-            maestroCinta = MaestroCintas.objects.get(pk = codigoBarras)
-            error= "Busqueda en Maestro Cintas"
-        
-            error= "Busqueda en Videos"
-            detallesPrestamo = DetallePrestamos.objects.filter( Q(vide_clave = maestroCinta.video_id) )
-            detallesPrestamoMaster = DetallePrestamos.objects.filter(Q(vide_codigo = codigoBarras ))
-            #& Q(depr_estatus ='A')
-            error= "No se encontro en Prestamos"
-            if detallesPrestamo.count() > 0:
-                detallePrestamo = detallesPrestamoMaster.latest('pres_folio')
-                #FILTRAR TAMBIEN POR FECHA DE DEVOLUCÓN QUE SEA NULA
-            elif detallesPrestamoMaster.count() > 0:
-                detallePrestamo = detallesPrestamo.latest('pres_folio')#1
-            else:
-                print("Hay que revisar los registros de esté codigo de barras")
-                registro_data={"error": True, "errorMessage":"Hay que revisar los registros de esté codigo de barras"}
-                return JsonResponse(registro_data,safe=True)
-            
-            prestamo = Prestamos.objects.get(pres_folio= detallePrestamo.pres_folio_id)#2
+        now = datetime.now()
 
-            detallePrestamo.depr_estatus='I'
+        try:
+            maestroCinta = MaestroCintas.objects.get(video_cbarras=codigoBarras)
+
+            detallesPrestamo = DetallePrestamos.objects.filter(
+                Q(vide_clave=maestroCinta.video_id) | Q(vide_codigo=codigoBarras)
+            )
+
+            if detallesPrestamo.exists():
+                detallePrestamo = detallesPrestamo.latest('pres_folio')
+            else:
+                print("Hay que revisar los registros de este código de barras")
+                registro_data = {
+                    "error": True,
+                    "errorMessage": "Hay que revisar los registros de este código de barras"
+                }
+                return JsonResponse(registro_data, safe=True)
+
+            prestamo = Prestamos.objects.get(pres_folio=detallePrestamo.pres_folio_id)
+
+            detallePrestamo.depr_estatus = 'I'
             detallePrestamo.pres_fecha_devolucion = now
             detallePrestamo.usuario_devuelve = usuario
             detallePrestamo.usuario_recibe = admin.username
             detallePrestamo.save()
-            maestroCinta.video_estatus='En Videoteca'
+
+            maestroCinta.video_estatus = 'En Videoteca'
             maestroCinta.save()
 
-            prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id = prestamo.pk) & Q(depr_estatus ='A'))
-            if prestamosActivos.count == 0:
-                #VALIDAR SI AUN HAY PRESTAMOS ACTIVOS 
-                prestamo.pres_estatus ='I'
+            prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id=prestamo.pk) & Q(depr_estatus='A'))
+            if prestamosActivos.count() == 0:
+                prestamo.pres_estatus = 'I'
                 prestamo.pres_fecha_devolucion = now
                 prestamo.save()
 
-            registro_data={"error":False,"errorMessage":" Registro Exitoso!"}
+            registro_data = {
+                "error": False,
+                "errorMessage": "Registro Exitoso!"
+            }
+        except MaestroCintas.DoesNotExist:
+            print("El código de barras no existe en Maestro Cintas")
+            registro_data = {
+                "error": True,
+                "errorMessage": "El código de barras no existe en Maestro Cintas"
+            }
         except Exception as e:
             print("Error:", str(e))
             registro_data = {
@@ -219,93 +224,93 @@ def RegisterInVideoteca(request):
                 "errorMessage": "Ocurrió un error inesperado: " + str(e)
             }
         
-    return JsonResponse(registro_data,safe=True)
+    return JsonResponse(registro_data, safe=True)
 
-@csrf_exempt  
-def ValidateOutVideoteca(request):
-    if request.method == 'POST':
-        codigoBarras = request.POST.get('codigoBarras', '')
-        usuario = request.POST.get('usuario', '')
 
-        if not usuario or not codigoBarras:
-            registro_data = {
-                "error": True,
-                "errorMessage": "Debes ingresar un usuario y un código de barras"
-            }
-        else:
-            try:
-                maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
-                if maestroCinta.video_estatus == 'En Videoteca':
-                    # Obtener la fecha actual
-                    fecha_actual = datetime.now().date()
+# @csrf_exempt  
+# def ValidateOutVideoteca(request):
+#     if request.method == 'POST':
+#         codigoBarras = request.POST.get('codigoBarras', '')
+#         usuario = request.POST.get('usuario', '')
 
-                    # Inicializar el contador de días hábiles
-                    dias_habiles_encontrados = 0
+#         if not usuario or not codigoBarras:
+#             registro_data = {
+#                 "error": True,
+#                 "errorMessage": "Debes ingresar un usuario y un código de barras"
+#             }
+#         else:
+#             try:
+#                 maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
+#                 if maestroCinta.video_estatus == 'En Videoteca':
+#                     # Obtener la fecha actual
+#                     fecha_actual = datetime.now().date()
 
-                    # Inicializar el desplazamiento en 1 día
-                    desplazamiento = timedelta(days=1)
+#                     # Inicializar el contador de días hábiles
+#                     dias_habiles_encontrados = 0
 
-                    # Iterar hasta encontrar el séptimo día hábil
-                    while dias_habiles_encontrados < 7:
-                        fecha_actual -= desplazamiento
+#                     # Inicializar el desplazamiento en 1 día
+#                     desplazamiento = timedelta(days=1)
 
-                        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
-                        if fecha_actual.weekday() < 5:
-                            dias_habiles_encontrados += 1
+#                     # Iterar hasta encontrar el séptimo día hábil
+#                     while dias_habiles_encontrados < 7:
+#                         fecha_actual -= desplazamiento
 
-                    # Obtener el día correspondiente como string
-                    fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
+#                         # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
+#                         if fecha_actual.weekday() < 5:
+#                             dias_habiles_encontrados += 1
 
-                    # Verificar si el usuario tiene préstamos activos
-                    prestamos_activos = Prestamos.objects.filter(
-                        usua_clave=usuario,
-                        pres_estatus='A'
-                    )
+#                     # Obtener el día correspondiente como string
+#                     fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
 
-                    # Verificar si el usuario tiene préstamos vencidos y ya devueltos
-                    prestamos_vencidos_devueltos = Prestamos.objects.filter(
-                        usua_clave=usuario,
-                        pres_fecha_prestamo__lt=fecha_vencimiento,
-                        detalleprestamos__depr_estatus='I'
-                    ).exclude(
-                        detalleprestamos__vide_codigo=codigoBarras
-                    )
+#                     # Verificar si el usuario tiene préstamos activos
+#                     prestamos_activos = Prestamos.objects.filter(
+#                         usua_clave=usuario,
+#                         pres_estatus='A'
+#                     )
 
-                    if prestamos_activos.exists() or prestamos_vencidos_devueltos.exists():
-                        registro_data = {
-                            "error": True,
-                            "errorMessage": "El usuario tiene cintas pendientes de devolución o vencidas"
-                        }
-                    else:
-                        registro_data = {
-                            "error": False,
-                            "errorMessage": "Listo para préstamo"
-                        }
-                        # Guardar el registro en la base de datos aquí
-                else:
-                    registro_data = {
-                        "error": True,
-                        "errorMessage": "El código de barras no está disponible",
-                        'codigoBarras': codigoBarras
-                    }
-            except MaestroCintas.DoesNotExist:
-                registro_data = {
-                    "error": True,
-                    "errorMessage": "No se encontró el código de barras"
-                }
-            except Exception as e:
-                registro_data = {
-                    "error": True,
-                    "errorMessage": "Ocurrió un error inesperado: " + str(e)
-                }
-    else:
-        registro_data = {
-            "error": True,
-            "errorMessage": "Solicitud inválida"
-        }
+#                     # Verificar si el usuario tiene préstamos vencidos y ya devueltos
+#                     prestamos_vencidos_devueltos = Prestamos.objects.filter(
+#                         usua_clave=usuario,
+#                         pres_fecha_prestamo__lt=fecha_vencimiento,
+#                         detalleprestamos__depr_estatus='I'
+#                     ).exclude(
+#                         detalleprestamos__vide_codigo=codigoBarras
+#                     )
 
-    return JsonResponse(registro_data)
+#                     if prestamos_activos.exists() or prestamos_vencidos_devueltos.exists():
+#                         registro_data = {
+#                             "error": True,
+#                             "errorMessage": "El usuario tiene cintas pendientes de devolución o vencidas"
+#                         }
+#                     else:
+#                         registro_data = {
+#                             "error": False,
+#                             "errorMessage": "Listo para préstamo"
+#                         }
+#                         # Guardar el registro en la base de datos aquí
+#                 else:
+#                     registro_data = {
+#                         "error": True,
+#                         "errorMessage": "El código de barras no está disponible",
+#                         'codigoBarras': codigoBarras
+#                     }
+#             except MaestroCintas.DoesNotExist:
+#                 registro_data = {
+#                     "error": True,
+#                     "errorMessage": "No se encontró el código de barras"
+#                 }
+#             except Exception as e:
+#                 registro_data = {
+#                     "error": True,
+#                     "errorMessage": "Ocurrió un error inesperado: " + str(e)
+#                 }
+#     else:
+#         registro_data = {
+#             "error": True,
+#             "errorMessage": "Solicitud inválida"
+#         }
 
+#     return JsonResponse(registro_data)
 
 @csrf_exempt  
 def ValidateOutVideoteca(request):
