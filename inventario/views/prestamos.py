@@ -15,9 +15,11 @@ from django.db.models import F
 from django.shortcuts import get_object_or_404
 import tempfile
 import os
-from datetime import datetime, timedelta
-from django.db import transaction
 
+from django.db import transaction
+from django.utils import timezone
+from datetime import datetime, timedelta
+from django.utils import timezone
 import pandas as pd
 from django.db import connections
 
@@ -241,42 +243,71 @@ def ValidateOutVideoteca(request):
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
                 if maestroCinta.video_estatus == 'En Videoteca':
+                    # Obtener la fecha actual
                     fecha_actual = datetime.now().date()
+
+                    # Inicializar el contador de días hábiles
                     dias_habiles_encontrados = 0
+
+                    # Inicializar el desplazamiento en 1 día
                     desplazamiento = timedelta(days=1)
+
+                    # Iterar hasta encontrar el séptimo día hábil
                     while dias_habiles_encontrados < 7:
                         fecha_actual -= desplazamiento
+
+                        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
                         if fecha_actual.weekday() < 5:
                             dias_habiles_encontrados += 1
 
+                    # Obtener el día correspondiente como string
                     fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
 
+                    # Verificar si el usuario tiene préstamos activos
                     prestamos_activos = Prestamos.objects.filter(
                         usua_clave=usuario,
                         pres_estatus='A'
                     )
 
-                    # Check if the user has loans that are both expired and returned
+                    # Verificar si el usuario tiene préstamos vencidos y ya devueltos
                     prestamos_vencidos_devueltos = Prestamos.objects.filter(
                         usua_clave=usuario,
                         pres_fecha_prestamo__lt=fecha_vencimiento,
-                        pres_fecha_devolucion__isnull=False  # Only consider loans with a return date
+                        detalleprestamos__depr_estatus__in=['I', 'E']
                     ).exclude(
-                        Q(detalleprestamos__vide_codigo=codigoBarras) &
-                        (Q(detalleprestamos__depr_estatus='I') | Q(detalleprestamos__depr_estatus='X'))
+                        detalleprestamos__vide_codigo=codigoBarras
                     )
 
                     if prestamos_activos.exists() or prestamos_vencidos_devueltos.exists():
+                        # Verificar si el usuario ha devuelto todas las cintas correspondientes a folios vencidos
+                        prestamos_vencidos_sin_devolver = Prestamos.objects.filter(
+                            usua_clave=usuario,
+                            pres_fecha_prestamo__lt=fecha_vencimiento,
+                            pres_fecha_devolucion__isnull=True
+                        ).exclude(
+                            detalleprestamos__vide_codigo=codigoBarras,
+                            detalleprestamos__depr_estatus__in=['I', 'E']
+                        )
+
+                        if prestamos_vencidos_sin_devolver.exists():
+                            registro_data = {
+                                "error": True,
+                                "errorMessage": "El usuario debe devolver las cintas vencidas antes de solicitar nuevas"
+                            }
+                        else:
+                            # Cambiar el estado de las cintas vencidas y devueltas a "I" (disponible)
+                            prestamos_vencidos_devueltos.update(pres_estatus='I')
+
+                            registro_data = {
+                                "error": False,
+                                "errorMessage": "Listo para préstamo"
+                            }
+                            # Guardar el registro en la base de datos aquí
+                    else:
                         registro_data = {
                             "error": True,
                             "errorMessage": "El usuario tiene cintas pendientes de devolución o vencidas"
                         }
-                    else:
-                        registro_data = {
-                            "error": False,
-                            "errorMessage": "Listo para préstamo"
-                        }
-                        # Save the record in the database here
                 else:
                     registro_data = {
                         "error": True,

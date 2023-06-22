@@ -646,7 +646,7 @@ function addItemOut() {
 
           } else if (response.errorMessage === "El usuario tiene cintas pendientes de devolución o vencidas") {
             // El usuario tiene cintas vencidas
-            alertMessage('error', `El usuario tiene cintas pendientes de devolución o vencidas.`, '¡Alto!');
+            alertMessage('error', `El usuario debe devolver las cintas vencidas antes de solicitar nuevas.`, '¡Alto!');
 
           }else if(response.errorMessage === "El código de barras no está disponible"){
             alertMessage('error', `El código de barras no está disponible .`, '¡Alto!');
