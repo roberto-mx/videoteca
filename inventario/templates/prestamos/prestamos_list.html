@@ -492,7 +492,6 @@ function finalizarEntrada(usuario, codigoBarras) {
       if (data.error) {
         $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
-        
         Swal.fire({
           title: '¡Exportado!',
           text: 'Su archivo ha sido exportado.',
@@ -594,6 +593,7 @@ $(document).on("click",".glyphicon-plus",function(){
           $("#tablaPrincipal tbody").append(html_data);
       }
       else{
+          //console.log(":( ");
           $("#ins_success").hide();
           $("#ins_error").text(response['errorMessage']);
           $("#ins_error").show();
@@ -640,16 +640,20 @@ function addItemOut() {
         $('#searchBarCodeOut').val("").focus();
       } else {
         if (response.error) {
-          if (response.errorMessage == "El código de barras no está disponible") {
+          if (response.errorMessage === "No se encontró el código de barras") {
             // No existe la cinta
-            alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
-            
-          } else if (response.errorMessage === "El usuario tiene cintas pendientes de devolución o vencidas ") {
+            alertMessage('error', `No existe la cinta.`, '¡Oye!');
+
+          } else if (response.errorMessage === "El usuario tiene cintas pendientes de devolución o vencidas") {
             // El usuario tiene cintas vencidas
-            alertMessage('error', `El usuario tiene cintas vencidas en el folio.`, '¡Alto!');
+            alertMessage('error', `El usuario debe devolver las cintas vencidas antes de solicitar nuevas.`, '¡Alto!');
+
+          }else if(response.errorMessage === "El código de barras no está disponible"){
+            alertMessage('error', `El código de barras no está disponible .`, '¡Alto!');
+
           } else {
             // Otro error
-            alertMessage('error', `No existe la cinta.`, '¡Oye!');
+            alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
           }
           //cleanTableOut();
         } else {
