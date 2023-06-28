@@ -166,7 +166,7 @@ def GetFolioDetail(request):
     })
     return HttpResponse(content)
 
-@csrf_exempt      
+@csrf_exempt
 def RegisterInVideoteca(request):
     usuario = request.POST['matricula']
     admin = request.user
@@ -174,6 +174,11 @@ def RegisterInVideoteca(request):
     if request.method == 'POST':
         codigoBarras = request.POST['codigoBarras']
         now = datetime.now()
+
+        # Llamar a la función ValidateOutVideoteca para comprobar si hay cintas faltantes
+        validate_result = ValidateOutVideoteca(request)
+        if validate_result.get('error', False):
+            return JsonResponse(validate_result, safe=True)
 
         try:
             maestroCinta = MaestroCintas.objects.get(video_cbarras=codigoBarras)
@@ -203,7 +208,7 @@ def RegisterInVideoteca(request):
             maestroCinta.video_estatus = 'En Videoteca'
             maestroCinta.save()
 
-            prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id=prestamo.pk) & Q(depr_estatus='A'))
+            prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id=prestamo.pk) & Q(depr_estatus='X'))
             if prestamosActivos.count() == 0:
                 prestamo.pres_estatus = 'I'
                 prestamo.pres_fecha_devolucion = now
@@ -243,71 +248,64 @@ def ValidateOutVideoteca(request):
             try:
                 maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
                 if maestroCinta.video_estatus == 'En Videoteca':
-                    # Obtener la fecha actual
                     fecha_actual = datetime.now().date()
-
-                    # Inicializar el contador de días hábiles
                     dias_habiles_encontrados = 0
-
-                    # Inicializar el desplazamiento en 1 día
                     desplazamiento = timedelta(days=1)
 
-                    # Iterar hasta encontrar el séptimo día hábil
+                    # Itero la fecha de los días hábiles tomando en cuenta los 7 días de la semana.
                     while dias_habiles_encontrados < 7:
                         fecha_actual -= desplazamiento
-
-                        # Si el día no es sábado ni domingo, incrementar el contador de días hábiles
+                        # Hago el desplazamiento de los días para no tomar en cuenta los fines de semana. 
                         if fecha_actual.weekday() < 5:
                             dias_habiles_encontrados += 1
 
-                    # Obtener el día correspondiente como string
+                    # Convierto la fecha en formato legible.
                     fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
 
-                    # Verificar si el usuario tiene préstamos activos
-                    prestamos_activos = Prestamos.objects.filter(
-                        usua_clave=usuario,
-                        pres_estatus='A'
-                    )
-
-                    # Verificar si el usuario tiene préstamos vencidos y ya devueltos
-                    prestamos_vencidos_devueltos = Prestamos.objects.filter(
+                    # Hago la consulta para validar los folios vencidos, haciendo
+                    # la comparación de pres_fecha_prestamo__lt a la fecha límite del préstamo.
+                    folios_vencidos = Prestamos.objects.filter(
                         usua_clave=usuario,
                         pres_fecha_prestamo__lt=fecha_vencimiento,
-                        detalleprestamos__depr_estatus__in=['I', 'E']
-                    ).exclude(
-                        detalleprestamos__vide_codigo=codigoBarras
-                    )
+                        # pres_fecha_devolucion__isnull=True
+                    ).values('pres_folio').distinct()  # Obtengo el valor del Folio a través del modelo
 
-                    if prestamos_activos.exists() or prestamos_vencidos_devueltos.exists():
-                        # Verificar si el usuario ha devuelto todas las cintas correspondientes a folios vencidos
-                        prestamos_vencidos_sin_devolver = Prestamos.objects.filter(
-                            usua_clave=usuario,
-                            pres_fecha_prestamo__lt=fecha_vencimiento,
-                            pres_fecha_devolucion__isnull=True
-                        ).exclude(
-                            detalleprestamos__vide_codigo=codigoBarras,
-                            detalleprestamos__depr_estatus__in=['I', 'E']
-                        )
+                    for folio in folios_vencidos:
+                        cintas_pendientes = DetallePrestamos.objects.filter(
+                            pres_folio_id=folio['pres_folio'],
+                            depr_estatus='X'
+                        ).values_list('vide_codigo_id', flat=True)
 
-                        if prestamos_vencidos_sin_devolver.exists():
+                        cintas_faltantes = list(set(cintas_pendientes) - set([codigoBarras]))
+                        print(cintas_faltantes)
+
+                        if cintas_faltantes:
                             registro_data = {
                                 "error": True,
-                                "errorMessage": "El usuario debe devolver las cintas vencidas antes de solicitar nuevas"
+                                "errorMessage": "El usuario debe devolver las cintas faltantes antes de solicitar nuevos préstamos",
+                                "cintasFaltantes": cintas_faltantes
+                            }
+                            break
+                    else:
+                        # Verificar cintas pendientes por devolver
+                        cintas_pendientes = DetallePrestamos.objects.filter(
+                            depr_estatus='X',
+                            pres_fecha_devolucion__isnull=True,
+                            pres_folio__usua_clave=usuario
+                        ).values_list('vide_codigo__pk', flat=True)
+
+                        if codigoBarras in cintas_pendientes:
+                            registro_data = {
+                                "error": True,
+                                "errorMessage": "El usuario debe devolver todas las cintas pendientes antes de solicitar un nuevo préstamo",
+                                "cintasPendientes": list(cintas_pendientes)
                             }
                         else:
-                            # Cambiar el estado de las cintas vencidas y devueltas a "I" (disponible)
-                            prestamos_vencidos_devueltos.update(pres_estatus='I')
-
                             registro_data = {
                                 "error": False,
-                                "errorMessage": "Listo para préstamo"
+                                "successMessage": "Listo para préstamo"
                             }
-                            # Guardar el registro en la base de datos aquí
-                    else:
-                        registro_data = {
-                            "error": True,
-                            "errorMessage": "El usuario tiene cintas pendientes de devolución o vencidas"
-                        }
+
                 else:
                     registro_data = {
                         "error": True,
@@ -326,6 +324,9 @@ def ValidateOutVideoteca(request):
         }
 
     return JsonResponse(registro_data)
+
+
+
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
@@ -376,7 +377,7 @@ def RegisterOutVideoteca(request):
 @csrf_exempt   
 def EndInVideoteca(request):
     usuario = request.POST.get('usuario')
-    data = request.POST.get('codigos')
+    data = request.POST.get('codigos') 
 
     from django.db import connections
     cursor = connections['users'].cursor()

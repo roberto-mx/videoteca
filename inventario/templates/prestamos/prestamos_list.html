@@ -615,62 +615,59 @@ function addItemOut() {
   const codigoBarras = $('#searchBarCodeOut').val();
   const usuario = $('#searchUsuarioOut').val();
 
-  if (codigoBarras === '') {
-    alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
-  } else if (usuario === '') {
-    alertMessage('info', 'Debes ingresar un usuario.', '¡Hey!');
+  if (codigoBarras == '') {
+    alertMessage('info', 'Debes ingresar un código de barras.', '¡Aguas!');
+  } else if (usuario == '') {
+    alertMessage('info', 'Debes ingresar un usuario.', '¡Aguas!');
   } else {
     $.ajax({
       data: {
         'usuario': usuario,
-        'codigoBarras': codigoBarras,
-        'funcion': 'registerIn'
+        'codigoBarras': codigoBarras,   
       },
       url: "{% url 'validacion_salida_videoteca' %}",
-      type: 'POST'
-    })
-    .done(function (response) {
-      if (f_valida_repetido(codigoBarras) == 1) {
-        // Registro duplicado
-        $("#out_error").text("Registro duplicado");
-        $("#out_error").show();
+      type: 'POST',
+      success: function (response) {
+        if (f_valida_repetido(codigoBarras) == 1) {
+          $("#out_error").text("Registro duplicado");
+          $("#out_error").hide();
+          setTimeout(function () {
+            $("#out_error").hide();
+          }, 1000);
+          $('#searchBarCodeOut').val("").focus();
+        } else {
+          if (response.error) {
+            if (response.errorMessage === "No se encontró el código de barras") {
+              alertMessage('error', `No se encontró el código de barras.`, '¡Oops!');
+            } else if (response.errorMessage === "El usuario debe devolver las cintas faltantes antes de solicitar nuevos préstamos") {
+              // El usuario tiene cintas vencidas
+              alertMessage('warning', `El usuario debe devolver las cintas faltantes ${response.cintasFaltantes} antes de solicitar nuevos préstamos.`, '¡Alto!');
+            } else {
+              alertMessage('warning', `La cinta con código "${response.codigoBarras}" ya está registrada y no ha sido devuelta.`, '¡Alto!');
+            }
+            cleanTableOut();
+          } else {
+            // Registro exitoso
+            if (response.successMessage) {
+              $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.successMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+              $("#continuarPrestamo").show();
+            } else {
+              alertMessage('success', 'Mensaje de éxito no proporcionado en la respuesta.', '¡Alto!');
+              
+            }
+          }
+          $('#searchBarCodeOut').val("").focus();
+        }
+      },
+      
+      error: function () {
+        // Error en la solicitud AJAX
+        $('#out_error').show('slow');
+        $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
         setTimeout(function () {
           $("#out_error").hide();
         }, 1000);
-        $('#searchBarCodeOut').val("").focus();
-      } else {
-        if (response.error) {
-          if (response.errorMessage === "No se encontró el código de barras") {
-            // No existe la cinta
-            alertMessage('error', `No existe la cinta.`, '¡Oye!');
-
-          } else if (response.errorMessage === "El usuario tiene cintas pendientes de devolución o vencidas") {
-            // El usuario tiene cintas vencidas
-            alertMessage('error', `El usuario debe devolver las cintas vencidas antes de solicitar nuevas.`, '¡Alto!');
-
-          }else if(response.errorMessage === "El código de barras no está disponible"){
-            alertMessage('error', `El código de barras no está disponible .`, '¡Alto!');
-
-          } else {
-            // Otro error
-            alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
-          }
-          //cleanTableOut();
-        } else {
-          // Registro exitoso
-          $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
-          $("#continuarPrestamo").show();
-        }
-        $('#searchBarCodeOut').val("").focus();
       }
-    })
-    .fail(function () {
-      // Error en la solicitud AJAX
-      $('#out_error').show('slow');
-      $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
-      setTimeout(function () {
-        $("#out_error").hide();
-      }, 1000);
     });
   }
 }
