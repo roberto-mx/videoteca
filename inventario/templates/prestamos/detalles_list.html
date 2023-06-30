@@ -31,79 +31,6 @@
     </tbody>
 </table>
 
-<!-- Modal Listar Cintas -->
-<div class="modal fade" id="modalCintas">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title mb-3">
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        <span>Usuario Préstamo</span>
-                        <i class='fas fa-handshake'></i>
-                    </div>
-                </h4>
-                <input type="text" id="inputDetalles" disabled>
-                <input type="text" id="fechaActual"  style="width: 290px;" disabled>
-            </div>
-            <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
-                <form>
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label">Nombre</label>
-                        <div class="col-md-7 mb-1">
-                            <input type="text" disabled autocomplete="off" class="form-control" id="nombre">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label">Email</label>
-                        <div class="col-md-7 mb-1">
-                            <input type="email" disabled autocomplete="off" class="form-control" id="email">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label">Matricula</label>
-                        <div class="col-md-3 mb-1">
-                            <input type="text" disabled autocomplete="off" class="form-control" id="matricula">
-                        </div>
-                        <label class="col-md-1 col-form-label text-md-end">Ext.</label>
-                        <div class="col-md-3 mb-1">
-                            <input type="text" disabled autocomplete="off" class="form-control" id="extension">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label">Puesto</label>
-                        <div class="col-md-7 mb-1">
-                            <input type="text" disabled autocomplete="off" class="form-control form-control-sm" id="puesto">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label">Fecha Prestamo</label>
-                        <div class="col-md-7 mb-1">
-                            <input type="text" disabled autocomplete="off" class="form-control form-control-sm" id="fechaPrestamo">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label"></label>
-                        <div class="col-md-3 mb-3">
-                            <input type="text" disabled id="estadoPrestamo" readonly>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<br>
-<br>
-
 <script>
 $(document).ready(function() {
     $('#detalleTabla').DataTable({
@@ -130,48 +57,6 @@ $(document).ready(function() {
         createdRow: function(row, data, dataIndex) {
             $(row).data('folio', data.pres_folio);
         }
-    });
-
-    $(document).on('click', '.ver-detalle', function() {
-        let folio = $(this).data('folio');
-        $('#inputDetalles').val(`No. de Folio: ${folio}`);
-        $.ajax({
-            url: '{% url "obtenerPeoplePerson" %}',
-            data: {
-                q: folio
-            },
-            dataType: 'json',
-            success: function(data) {
-                // Actualizar los valores de matrícula y puesto en los campos de entrada
-                $('#matricula').val(data.Matricula);
-                $('#puesto').val(data.Puesto);
-                $('#nombre').val(data.Obtiene);
-                $('#extension').val(data.Extension);
-                $('#email').val(data.Email);
-                $('#fechaPrestamo').val(data.PrestamoFecha);
-                $('#fechaActual').val(`Fecha Actual: ${data.fechaActual}`);
-              
-                let actual = new Date(data.fechaActual).getTime();
-                let tiempoDevolucion = new Date(data.tiempoDevolucion).getTime();
-                let fechaPrestamo = new Date(data.PrestamoFecha).getTime();
-              
-                // Eliminar todas las clases de color
-                $('#estadoPrestamo').removeClass('alert alert-danger alert-success');
-              
-                if (fechaPrestamo > tiempoDevolucion) {
-                  $('#estadoPrestamo').val('Vigente');
-                  $('#estadoPrestamo').addClass('alert alert-success center-text');
-                  // Añadir ícono de éxito
-                  $('#estadoPrestamo').append('<span class="icon-success"><i class="fas fa-check"></i></span>');
-                } else {
-                  $('#estadoPrestamo').val('Vencido');
-                  $('#estadoPrestamo').addClass('alert alert-danger center-text');
-                  // Añadir ícono de peligro
-                  $('#estadoPrestamo').append('<span class="icon-danger"><i class="fas fa-exclamation-triangle"></i></span>');
-                }
-              }
-              
-        });
     });
 });
     

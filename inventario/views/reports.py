@@ -210,21 +210,23 @@ class GENERATE(FPDF):
             self.cell(30.0, 6.0, email_institucional, 0, 0, 'L')
             self.ln(3.5)
             self.cell(84, 10, 'Puesto:', 0, 0, 'L')
-            self.set_xy(27.0, 47.0)
-            self.cell(30.0, 6.0, puesto, 0, 0, 'L')
+            self.set_xy(28.0, 54.0)
+            self.cell(30.0, 17.0, puesto, 0, 0, 'L')
             self.ln(3.5)
             self.cell(84, 10, 'Extensión:', 0, 0, 'L')
-            self.set_xy(27.0, 47.0)
+            self.set_xy(27.0, 52.0)
             self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
             self.ln(15)         
             self.set_font('Montserrat', 'B', 8)
             self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
             self.ln(15)
 
-            self.set_fill_color(31, 237, 237)
+            self.set_fill_color(144, 12, 63)
             self.set_text_color(255, 255, 255) 
-            self.cell(140, 10, 'Código de Barras', 1, 0, '', True)
-            self.cell(140, 10, 'Fecha de Devolucón', 1, 0, '', True)
+            self.cell(60, 10, 'Código de Barras', 1, 0, '', True)
+            self.cell(60, 10, 'Usuario Devuelve', 1, 0, '', True)
+            self.cell(60, 10, 'Fecha de Devolucón', 1, 0, '', True)
+            self.cell(60, 10, 'Usuario Recibe', 1, 0, '', True)
             self.set_text_color(0, 0, 0)
             self.ln(10)
     
@@ -256,17 +258,18 @@ class GENERATE(FPDF):
             self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
     def generate_Table(self, data):
-       
         for row in data:
-            self.cell(140, 10, str(row['vide_codigo']), 1)
+            self.cell(60, 10, str(row['vide_codigo_id']), 1)
             fecha_devolucion = row['pres_fecha_devolucion'].strftime('%d-%m-%Y')
-            self.cell(140, 10, fecha_devolucion, 1)
+            self.cell(60, 10, str(row['usuario_devuelve']), 1)
+            self.cell(60, 10, fecha_devolucion, 1)
+            self.cell(60, 10, str(row['usuario_recibe']), 1)
             self.ln(10)
             
 def generar_pdf_modal(request):
 
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo_id', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe')
     detalle_prestamos = queryset.last() if queryset else None 
   
     if detalle_prestamos:

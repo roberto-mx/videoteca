@@ -23,7 +23,6 @@ from django.utils import timezone
 import pandas as pd
 from django.db import connections
 
-
     # ---------------------------
     # Prestamos
     # ---------------------------
@@ -63,36 +62,35 @@ class PrestamosListView(ListView):
 #vista detalle    
 @csrf_exempt
 def DetallesListView(request):
-    q = request.GET.get('q')
+    # q = request.GET.get('q')
     fecha_actual = datetime.now()  # Fecha y hora actual del servidor
     hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
+    
+    current_year = fecha_actual.year  # Año actual
 
-    queryset = Prestamos.objects.filter(usua_pres_fecha_prestamo__year='2022', usua_clave=q).order_by('-pres_fechahora')
+    queryset = Prestamos.objects.filter().order_by('-pres_fechahora')
     template_detalle = {
         'prestamos': queryset,
         'fecha_actual': fecha_actual,
         'hace_siete_dias': hace_siete_dias,
     }
 
-    # print(template_detalle)
-    return render(request, 'prestamos/detalles_list.html', template_detalle)
+    return render(request, 'prestamos/detallePrestamos.html', template_detalle)
+
 
 @csrf_exempt
 def obtenerPeoplePerson(request):
-    fecha_actual = datetime.now().date()  # Fecha y hora actual del servidor
+    fecha_actual = datetime.now().date()
     fecha_actual_formato = fecha_actual.strftime('%d-%m-%Y')
-    hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
-
-    # print(fecha_actual)
+    hace_siete_dias = fecha_actual - timedelta(days=7)
 
     q = request.GET.get('q')
-    prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave','pres_fecha_prestamo').first()
+    prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave', 'pres_fecha_prestamo').first()
 
     matri = None
     if prestamo is not None:
         matri = prestamo['usua_clave']
         fechaPrestamo = prestamo['pres_fecha_prestamo'].strftime('%d-%m-%Y')
-        # print(fechaPrestamo)
 
     if matri is not None:
         cursor = connections['users'].cursor()
@@ -103,31 +101,32 @@ def obtenerPeoplePerson(request):
         MatriculaObPrestamo = {}
 
         if row is not None:
-            nombres                 = row[0]
-            apellido1               = row[1]
-            apellido2               = row[2]
-            puesto                  = row[3]
-            email_institucional     = row[4]
-            extension_telefonica    = row[5]
+            nombres = row[0]
+            apellido1 = row[1]
+            apellido2 = row[2]
+            puesto = row[3]
+            email_institucional = row[4]
+            extension_telefonica = row[5]
 
             nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
             MatriculaObPrestamo = {
-                'Obtiene'           : nombre_completo,
-                'Puesto'            : puesto,
-                'Email'             : email_institucional,
-                'Extension'         : extension_telefonica, 
-                'Matricula'         : matri,
-                'PrestamoFecha'     : fechaPrestamo,
-                'fechaActual'       : fecha_actual_formato,
-                'tiempoDevolucion'  : hace_siete_dias,
+                'Obtiene': nombre_completo,
+                'Puesto': puesto,
+                'Email': email_institucional,
+                'Extension': extension_telefonica,
+                'Matricula': matri,
+                'PrestamoFecha': fechaPrestamo,
+                'fechaActual': fecha_actual_formato,
+                'tiempoDevolucion': hace_siete_dias,
             }
-            
+
+    # Respuesta JSON movida al final de la vista
     return JsonResponse(MatriculaObPrestamo, safe=False)
 
 @csrf_exempt
 def PrestamoDetalle(request):
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion','usuario_devuelve','usuario_recibe')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo_id', 'pres_fecha_devolucion','usuario_devuelve','usuario_recibe','depr_estatus')
     context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
 
@@ -277,8 +276,7 @@ def ValidateOutVideoteca(request):
                         ).values_list('vide_codigo_id', flat=True)
 
                         cintas_faltantes = list(set(cintas_pendientes) - set([codigoBarras]))
-                        print(cintas_faltantes)
-
+                
                         if cintas_faltantes:
                             registro_data = {
                                 "error": True,
@@ -324,9 +322,6 @@ def ValidateOutVideoteca(request):
         }
 
     return JsonResponse(registro_data)
-
-
-
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
