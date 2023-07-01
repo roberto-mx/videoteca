@@ -20,4 +20,18 @@ table {
     padding: 0;
 
   }
-  
+
+  td {
+    padding: 0;
+    border: none;
+  }
+
+  .estatus-alert {
+    margin: 2;
+    padding: 10px;
+  }
+
+
+  th, td {
+    border-right: 1px solid #dddddd;
+  }

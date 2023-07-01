@@ -29,7 +29,6 @@
 </div>
 
 <div class="search-container" style="display: flex; justify-content: flex-end;">
-  {% comment %} <a type = "button" class="pdf-icon"><i class="fas fa-file-pdf"></i></a> {% endcomment %}
   <input type="number" min="0" max="9" required="" class="form-control ms-auto search-input" placeholder="Buscar....." id="busqueda">
 </div>
 
@@ -51,13 +50,20 @@
           <td>{{ data.pres_folio }} </td>
           <td>{{ data.usua_clave }} </td>
           <td>{{ data.pres_fechahora }} </td>
-          <td>{{ data.pres_fecha_devolucion }}</td>
+          <td>
+            {% if data.pres_fecha_devolucion %}
+              {{ data.pres_fecha_devolucion }}
+            {% else %}
+              No ha habido devolución
+            {% endif %}
+          </td>
           <td>{{ data.pres_estatus }}</td>
       </tr>
       {% empty %}
     {% endfor %}
   </tbody> 
 </table>
+
 {% comment %} Modal Listar Cintas {% endcomment %}
 
 <div class="modal fade" id="modalCintas">
@@ -70,30 +76,40 @@
             <i class="fa-sharp fa-solid fa-photo-film"></i>
           </div>
         </h4>
-        <input type="text" id="inputDetalles" disabled>
-    </div>
-    <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
-      <div class="modal-body" id="muestraData" >
-        <table class="table table-bordered" id="muestraDataTable" name="DataTable">
-          <thead>
-            <tr>
-             {% comment %} Esta tabla se pinta en el jquery {% endcomment %}
-            </tr>
-          </thead>
-          <tbody>
-            {% comment %} Aquí no va nada, todo lo puse en mi javascript {% endcomment %}
-          </tbody> 
-        </table>
+        <div class="d-flex align-items-center justify-content-between mt-5">
+          <div class="d-flex justify-content-end">
+            <input type="text" id="inputDetalles" disabled>
+            <input type="text" id="input1" disabled placeholder="Input 1" class="mr-2">
+            <input type="text" id="input2" disabled placeholder="Input 2">
+          </div>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModal"><i class="fa fa-reply-all"></i> Salir </button>
-        <button type="button" class="btn btn-primary btn-sm active" id="btn-descargar-pdf"><i class="fas fa-file-pdf" ></i> Exportar a PDF</button>
+      <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
+        <div class="modal-body" id="muestraData">
+          <table class="table table-bordered" id="muestraDataTable" name="DataTable">
+            <thead>
+              <tr>
+                {% comment %} Esta tabla se pinta en el jQuery {% endcomment %}
+              </tr>
+            </thead>
+            <tbody>
+              {% comment %} Aquí no va nada, todo lo puse en mi JavaScript {% endcomment %}
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModal">
+            <i class="fa fa-reply-all"></i> Salir
+          </button>
+          <button type="button" class="btn btn-primary btn-sm active" id="btn-descargar-pdf">
+            <i class="fas fa-file-pdf"></i> Exportar a PDF
+          </button>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </div>
-  
+
 {% comment %}  {% endcomment %}
 <div class="modal fade"  id="modalIn">
       <div class="modal-dialog">
@@ -258,7 +274,7 @@ $(document).ready(function() {
   const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
   
   $('#busqueda').on('keyup', function() {
-    const valorInput = $(this).val();
+    const valorInput  = $(this).val();
     const vide_codigo = valorInput;
     const pres_folio = valorInput;
   
@@ -288,8 +304,7 @@ $(document).ready(function() {
         }
       });
     }
-  });
-  
+  }); 
 });
 
 $('#TablePrestamo').on('click', '.ver-detalle', function() {
@@ -315,7 +330,14 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
         });
       });
       let tabla = $('<table>');
-      let thead = $('<thead>').append('<tr><th>Código de barras</th><th>Fecha devolución</th><th>Usuario Devuelve</th><th>Usuario Recibe</th></tr>');
+        let thead = $('<thead>').append(
+            '<tr><th>Código de Barras</th>' +
+            '<th>Fecha de Devolución</th>' +
+            '<th>Usuario Devuelve</th>' +
+            '<th>Usuario Recibe</th>' +
+            '<th>Estatus</th>' +
+            '</tr>'
+        );
       let tbody = $('<tbody>');
     
       if($('li', data).length == 0){
@@ -324,15 +346,25 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
         $("#modalCintas").modal('hide');
       }
       $('li', data).each(function(index) {
-        let liText    = $(this).text().trim();
-        let liParts   = liText.split(' - '); 
-        let codigo    = liParts[0];
-        let fecha     = liParts[1];
-        let devuelve  = liParts[2];
-        let recibe    = liParts[3];
-        let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha +'</td>' + '<td>' + devuelve + '</td><td>' + recibe +'</td>');
+        let liText = $(this).text().trim();
+        let liParts = liText.split(' - ');
+        let codigo = liParts[0];
+        let fecha = liParts[1];
+        let devuelve = liParts[2];
+        let recibe = liParts[3];
+        let estatus = liParts[4];
+      
+        let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha + '</td><td>' + devuelve + '</td><td>' + recibe + '</td>');
+      
+        if (estatus == 'X') {
+          row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>');
+        } else if (estatus == 'I') {
+          row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>');
+        }
+      
         tbody.append(row);
       });
+      
       tabla.append(thead).append(tbody);
       $('#muestraData').html(tabla);
       tabla.DataTable({
@@ -615,62 +647,59 @@ function addItemOut() {
   const codigoBarras = $('#searchBarCodeOut').val();
   const usuario = $('#searchUsuarioOut').val();
 
-  if (codigoBarras === '') {
-    alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
-  } else if (usuario === '') {
-    alertMessage('info', 'Debes ingresar un usuario.', '¡Hey!');
+  if (codigoBarras == '') {
+    alertMessage('info', 'Debes ingresar un código de barras.', '¡Aguas!');
+  } else if (usuario == '') {
+    alertMessage('info', 'Debes ingresar un usuario.', '¡Aguas!');
   } else {
     $.ajax({
       data: {
         'usuario': usuario,
-        'codigoBarras': codigoBarras,
-        'funcion': 'registerIn'
+        'codigoBarras': codigoBarras,   
       },
       url: "{% url 'validacion_salida_videoteca' %}",
-      type: 'POST'
-    })
-    .done(function (response) {
-      if (f_valida_repetido(codigoBarras) == 1) {
-        // Registro duplicado
-        $("#out_error").text("Registro duplicado");
-        $("#out_error").show();
+      type: 'POST',
+      success: function (response) {
+        if (f_valida_repetido(codigoBarras) == 1) {
+          $("#out_error").text("Registro duplicado");
+          $("#out_error").hide();
+          setTimeout(function () {
+            $("#out_error").hide();
+          }, 1000);
+          $('#searchBarCodeOut').val("").focus();
+        } else {
+          if (response.error) {
+            if (response.errorMessage === "No se encontró el código de barras") {
+              alertMessage('error', `No se encontró el código de barras.`, '¡Oops!');
+            } else if (response.errorMessage === "El usuario debe devolver las cintas faltantes antes de solicitar nuevos préstamos") {
+              // El usuario tiene cintas vencida
+              alertMessage('warning', `El usuario debe devolver las siguientes cintas antes de solicitar nuevos préstamos: ${response.cintasFaltantes.join(', ')}`, '¡Alto!');
+            } else {
+              alertMessage('warning', `La cinta con código ${response.codigoBarras} ya está registrada y no ha sido devuelta.`, '¡Oops!');
+            }
+            cleanTableOut();
+          } else {
+            // Registro exitoso
+            if (response.successMessage) {
+              $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.successMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+              $("#continuarPrestamo").show();
+            } else {
+              alertMessage('success', 'Mensaje de éxito no proporcionado en la respuesta.', '¡Alto!');
+              
+            }
+          }
+          $('#searchBarCodeOut').val("").focus();
+        }
+      },
+      
+      error: function () {
+        // Error en la solicitud AJAX
+        $('#out_error').show('slow');
+        $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
         setTimeout(function () {
           $("#out_error").hide();
         }, 1000);
-        $('#searchBarCodeOut').val("").focus();
-      } else {
-        if (response.error) {
-          if (response.errorMessage === "No se encontró el código de barras") {
-            // No existe la cinta
-            alertMessage('error', `No existe la cinta.`, '¡Oye!');
-
-          } else if (response.errorMessage === "El usuario tiene cintas pendientes de devolución o vencidas") {
-            // El usuario tiene cintas vencidas
-            alertMessage('error', `El usuario debe devolver las cintas vencidas antes de solicitar nuevas.`, '¡Alto!');
-
-          }else if(response.errorMessage === "El código de barras no está disponible"){
-            alertMessage('error', `El código de barras no está disponible .`, '¡Alto!');
-
-          } else {
-            // Otro error
-            alertMessage('error', `La cinta ${response.codigoBarras} ya está en préstamos.`, '¡Alto!');
-          }
-          //cleanTableOut();
-        } else {
-          // Registro exitoso
-          $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.errorMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
-          $("#continuarPrestamo").show();
-        }
-        $('#searchBarCodeOut').val("").focus();
       }
-    })
-    .fail(function () {
-      // Error en la solicitud AJAX
-      $('#out_error').show('slow');
-      $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
-      setTimeout(function () {
-        $("#out_error").hide();
-      }, 1000);
     });
   }
 }

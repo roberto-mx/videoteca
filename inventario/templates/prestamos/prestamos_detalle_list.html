@@ -1,6 +1,6 @@
 <ul>
   {% for detalle in detalles %} 
-      <li> {{detalle.vide_codigo}} - {{detalle.pres_fecha_devolucion}} </li>
+      <li> {{detalle.vide_codigo_id}} - {{detalle.pres_fecha_devolucion}} - {{detalle.usuario_devuelve}} - {{detalle.usuario_recibe}} - {{detalle.depr_estatus}} </li>
   {% endfor %}
 
 </ul>
@@ -9,4 +9,4 @@
       <li> {{detalle.pres_folio_id}} </li>
   {% endfor %}
 
-</ul> {% endcomment %}
+</ul> {% endcomment %}  
