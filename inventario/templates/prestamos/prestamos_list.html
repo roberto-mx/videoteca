@@ -29,7 +29,7 @@
 </div>
 
 <div class="search-container" style="display: flex; justify-content: flex-end;">
-  <input type="number" min="0" max="9" required="" class="form-control ms-auto search-input" placeholder="Buscar....." id="busqueda">
+  <input type="text" min="0" max="9" required="" class="form-control ms-auto search-input" placeholder="Buscar....." id="busqueda">
 </div>
 
 <table  class="table table-striped" id="TablePrestamo">
@@ -70,20 +70,25 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title mb-3">
+        <h4 class="modal-title mb-3" style="margin-bottom: 0;">
           <div style="display: flex; flex-direction: column; align-items: center;">
             <span>Lista de Cintas</span>
-            <i class="fa-sharp fa-solid fa-photo-film"></i>
+            <div style="margin-top: 10px;">
+              <i class="fa-sharp fa-solid fa-photo-film"></i>
+            </div>
           </div>
         </h4>
-        <div class="d-flex align-items-center justify-content-between mt-5">
+        <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex justify-content-end">
             <input type="text" id="inputDetalles" disabled>
-            <input type="text" id="input1" disabled placeholder="Input 1" class="mr-2">
-            <input type="text" id="input2" disabled placeholder="Input 2">
+            <input type="text" id="inputVencimiento"  size="40" disabled >
           </div>
+          {% comment %} <div class="d-flex justify-content-end">
+            <input type="text" id="inputEstatus"  size="10" disabled >
+          </div> {% endcomment %}
         </div>
       </div>
+      
       <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
         <div class="modal-body" id="muestraData">
           <table class="table table-bordered" id="muestraDataTable" name="DataTable">
@@ -274,21 +279,29 @@ $(document).ready(function() {
   const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
   
   $('#busqueda').on('keyup', function() {
-    const valorInput  = $(this).val();
+    const valorInput = $(this).val();
     const vide_codigo = valorInput;
     const pres_folio = valorInput;
+    const usua_clave = valorInput;
   
-    if (vide_codigo == '' && pres_folio == '') {
-      // Mostrar la tabla original si ambos inputs están vacíos
+    if (vide_codigo == '' && pres_folio == '' && usua_clave == '') {
+      // Mostrar la tabla original si todos los inputs están vacíos
       $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal).draw();
       $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
     } else {
       $.ajax({
         url: '{% url "prestamos_filter" %}',
-        data: {'q': vide_codigo},
+        data: {
+          'q': valorInput,
+          'vide_codigo': vide_codigo,
+          'pres_folio': pres_folio,
+          'usua_clave': usua_clave
+        },
         dataType: 'json',
         success: function(res) {
           const prestamos = res;
+          console.log('Data:', this.data); // Imprimir el valor de 'data'
+          console.log('Prestamos:', prestamos); // Imprimir el valor de 'prestamos'
           // Filtrar los resultados por pres_folio único
           const prestamosUnicos = [];
           const foliosVistos = new Set();
@@ -304,75 +317,96 @@ $(document).ready(function() {
         }
       });
     }
-  }); 
+  });
+  
 });
 
 $('#TablePrestamo').on('click', '.ver-detalle', function() {
-  const detalles = $(this).data('detalles');
-  const pres_folio = $(this).closest('tr').data('folio');
-  // Asignamos el valor de pres_folio al input
-  $('#inputDetalles').val(`No. de Folio - ${pres_folio}`).prop('disabled', true);
-  
-  $.ajax({
-    url: '{% url "prestamos_detalles" %}',
-    type: 'GET',
-    data: { 
-      q: pres_folio
-    },
-    success: function(data) {
-      $('#btn-descargar-pdf').on('click', function() {
-        $.ajax({
-          url: '{% url "generar_pdf_modal" %}',
-          data: {'q': pres_folio},
-          success: function() {
-            window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
-          }
-        });
-      });
-      let tabla = $('<table>');
-        let thead = $('<thead>').append(
-            '<tr><th>Código de Barras</th>' +
-            '<th>Fecha de Devolución</th>' +
-            '<th>Usuario Devuelve</th>' +
-            '<th>Usuario Recibe</th>' +
-            '<th>Estatus</th>' +
-            '</tr>'
-        );
-      let tbody = $('<tbody>');
+    const detalles = $(this).data('detalles');
+    const pres_folio = $(this).closest('tr').data('folio');
     
-      if($('li', data).length == 0){
-        //$("#modalCintas").modal('hide');     
-        alertMessage('info','Solo hay esa cinta!','Oops!')   
-        $("#modalCintas").modal('hide');
-      }
-      $('li', data).each(function(index) {
-        let liText = $(this).text().trim();
-        let liParts = liText.split(' - ');
-        let codigo = liParts[0];
-        let fecha = liParts[1];
-        let devuelve = liParts[2];
-        let recibe = liParts[3];
-        let estatus = liParts[4];
+    // Asignamos el valor de pres_folio al input
+    $('#inputDetalles').val(`No. de Folio - ${pres_folio}`).prop('disabled', true);
+
+    $.ajax({
+      url: '{% url "prestamos_detalles" %}',
+      type: 'GET',
+      data: { 
+        q: pres_folio
+      },
+      success: function(data) {
+        $.ajax({
+          url: '{% url "detalles_list" %}',
+          type: 'GET',
+          data:{
+            a:pres_folio
+          },
+          
+          success: function(response) {
+
+          $('#inputVencimiento').val(`Entrega estimada - ${response.vencioElDia}`).attr('disabled', true);
+
+            //(response.estatusPrestamo === "I")
+            //  ? $('#inputEstatus').val(`Devuelto`).attr('disabled', true)
+            //  : $('#inputEstatus').val(`En prestamo aun`).attr('disabled', true);
+       
+            // Resto del código AJAX y manipulación de datos
+            $('#btn-descargar-pdf').on('click', function() {
+              $.ajax({
+                url: '{% url "generar_pdf_modal" %}',
+                data: { 'q': pres_folio },
+                success: function() {
+                  window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
+                }
+              });
+            });
       
-        let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha + '</td><td>' + devuelve + '</td><td>' + recibe + '</td>');
-      
-        if (estatus == 'X') {
-          row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>');
-        } else if (estatus == 'I') {
-          row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>');
-        }
-      
-        tbody.append(row);
+            let tabla = $('<table>');
+            let thead = $('<thead>').append(
+              '<tr><th>Código de Barras</th>' +
+              '<th>Fecha de Devolución</th>' +
+              '<th>Usuario Devuelve</th>' +
+              '<th>Usuario Recibe</th>' +
+              '<th>Estatus</th>' +
+              '</tr>'
+            );
+            let tbody = $('<tbody>');
+
+            if ($('li', data).length == 0) {
+              alertMessage('info', 'Solo hay esa cinta!', 'Oops!');
+              $("#modalCintas").modal('hide');
+            }
+
+            $('li', data).each(function(index) {
+              let liText   = $(this).text().trim();
+              let liParts  = liText.split(' - ');
+              let codigo   = liParts[0];
+              let fecha    = liParts[1];
+              let devuelve = liParts[2];
+              let recibe   = liParts[3];
+              let estatus  = liParts[4];
+
+              let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha + '</td><td>' + devuelve + '</td><td>' + recibe + '</td>');
+
+              if (estatus == 'X') {
+                row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>');
+              } else if (estatus == 'I') {
+                row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>');
+              }
+
+              tbody.append(row);
+            });
+
+            tabla.append(thead).append(tbody);
+            $('#muestraData').html(tabla);
+            tabla.DataTable({
+              ...len
+            });
+          },
       });
-      
-      tabla.append(thead).append(tbody);
-      $('#muestraData').html(tabla);
-      tabla.DataTable({
-        ...len
-      }); 
-    }
-  })
-})
+    },
+  });
+});
 
 $('#searchBarCodeOut').keyup(function(e){
     if( e.keyCode == 13 ){

@@ -15,6 +15,7 @@ from django.db.models import F
 from django.shortcuts import get_object_or_404
 import tempfile
 import os
+# from businesstimedelta import Businesstimedelta
 
 from django.db import transaction
 from django.utils import timezone
@@ -32,21 +33,55 @@ def Filtrar_prestamos(request):
     prestamos_data = []
 
     if q:
-        prestamos = DetallePrestamos.objects.filter(
-            Q(pres_folio=q) | Q(vide_codigo=q)
-        )
+        try:
+            q = str(q)  # Convertir a número entero
+            prestamos = DetallePrestamos.objects.filter(
+                # Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
+                Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
 
-        for prestamo in prestamos:
-            prestamo_data = {
-                "pres_folio": prestamo.pres_folio.pres_folio,
-                "usua_clave": prestamo.pres_folio.usua_clave,
-                "pres_fechahora": prestamo.pres_folio.pres_fechahora,
-                "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
-                "pres_estatus": prestamo.pres_folio.pres_estatus
-            }
-            prestamos_data.append(prestamo_data)
+            )
+
+            for prestamo in prestamos:
+                prestamo_data = {
+                    "pres_folio": prestamo.pres_folio.pres_folio,
+                    "usua_clave": prestamo.pres_folio.usua_clave,
+                    "pres_fechahora": prestamo.pres_folio.pres_fechahora,
+                    "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
+                    "pres_estatus": prestamo.pres_folio.pres_estatus
+                }
+                prestamos_data.append(prestamo_data)
+
+            print(prestamos_data)  # Corregido: imprimir prestamos_data en lugar de prestamo_data
+        except ValueError:
+            pass
 
     return JsonResponse(prestamos_data, safe=False)
+
+
+    # q = request.GET.get('q')
+
+    # prestamos_data = []
+
+    # if q:
+    #     prestamos = DetallePrestamos.objects.filter(
+    #         # Q(pres_folio=q) | Q(vide_codigo=q)
+    #         Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
+    #             # Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
+
+    #     )
+
+    #     for prestamo in prestamos:
+    #         prestamo_data = {
+    #             "pres_folio": prestamo.pres_folio.pres_folio,
+    #             "usua_clave": prestamo.pres_folio.usua_clave,
+    #             "pres_fechahora": prestamo.pres_folio.pres_fechahora,
+    #             "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
+    #             "pres_estatus": prestamo.pres_folio.pres_estatus
+    #         }
+    #         prestamos_data.append(prestamo_data)
+
+    #     print(prestamo_data)
+    # return JsonResponse(prestamos_data, safe=False)
 
 @method_decorator(login_required, name='dispatch')
 
@@ -62,20 +97,34 @@ class PrestamosListView(ListView):
 #vista detalle    
 @csrf_exempt
 def DetallesListView(request):
-    # q = request.GET.get('q')
-    fecha_actual = datetime.now()  # Fecha y hora actual del servidor
-    hace_siete_dias = fecha_actual - timedelta(days=7)  # Fecha y hora hace 7 días
-    
-    current_year = fecha_actual.year  # Año actual
+    a = request.GET.get('a')
 
-    queryset = Prestamos.objects.filter().order_by('-pres_fechahora')
+    prestamo = Prestamos.objects.filter(pres_folio=a).values('pres_fecha_prestamo','pres_estatus').first()
+    # print(prestamo['pres_estatus'])
+    fecha_prestamo = prestamo['pres_fecha_prestamo'].date()
+    estatusPrestamo = prestamo['pres_estatus']
+
+    print(estatusPrestamo,'estatus')
+
+    dias_habiles_encontrados = 0
+    desplazamiento = timedelta(days=1)
+
+    while dias_habiles_encontrados < 7:
+        fecha_prestamo -= desplazamiento
+        # Hago el desplazamiento de los días para no tomar en cuenta los fines de semana. 
+        if fecha_prestamo.weekday() < 5:
+            dias_habiles_encontrados += 1
+    
+    fecha_vencimiento = fecha_prestamo
+
     template_detalle = {
-        'prestamos': queryset,
-        'fecha_actual': fecha_actual,
-        'hace_siete_dias': hace_siete_dias,
+        'vencioElDia': fecha_vencimiento.strftime('%d-%m-%Y'),
+        'estatusPrestamo': estatusPrestamo
     }
 
-    return render(request, 'prestamos/detallePrestamos.html', template_detalle)
+    print(template_detalle)
+
+    return JsonResponse(template_detalle, safe=False)
 
 
 @csrf_exempt
@@ -266,7 +315,7 @@ def ValidateOutVideoteca(request):
                     folios_vencidos = Prestamos.objects.filter(
                         usua_clave=usuario,
                         pres_fecha_prestamo__lt=fecha_vencimiento,
-                        # pres_fecha_devolucion__isnull=True
+                         
                     ).values('pres_folio').distinct()  # Obtengo el valor del Folio a través del modelo
 
                     for folio in folios_vencidos:
@@ -301,7 +350,8 @@ def ValidateOutVideoteca(request):
                         else:
                             registro_data = {
                                 "error": False,
-                                "successMessage": "Listo para préstamo"
+                                "successMessage": "Listo para préstamo",
+                                "fechaVencimiento": fecha_vencimiento
                             }
 
                 else:
@@ -325,7 +375,6 @@ def ValidateOutVideoteca(request):
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
-
     now = datetime.now()
 
     if request.method == 'POST':
