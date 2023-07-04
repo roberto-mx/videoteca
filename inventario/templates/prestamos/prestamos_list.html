@@ -81,8 +81,8 @@
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex justify-content-end">
             <input type="text" id="inputDetalles" disabled>
-            <input type="text" id="inputEstatus"  size="25" disabled >
-            <input type="text" id="inputVencimiento"  size="25" disabled >
+            <input type="text" id="inputEstatus"  size="15" disabled >
+            <input type="text" id="inputVencimiento"  size="28" disabled >
              
           </div>
           <div class="d-flex justify-content-end">
@@ -350,7 +350,6 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
         let fechaHoy = `${day}-${month}-${year}`;
 
         $('#inputEstatus').val(`Hoy: ${fechaHoy}`).attr('disabled', true);
-          // Resto del código AJAX y manipulación de datos
           $('#btn-descargar-pdf').on('click', function() {
             $.ajax({
               url: '{% url "generar_pdf_modal" %}',
