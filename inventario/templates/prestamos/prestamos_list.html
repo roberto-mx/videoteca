@@ -29,7 +29,7 @@
 </div>
 
 <div class="search-container" style="display: flex; justify-content: flex-end;">
-  <input type="text" min="0" max="9" required="" class="form-control ms-auto search-input" placeholder="Buscar....." id="busqueda">
+  <input type="text" required="" class="form-control ms-auto search-input" placeholder="Buscar" id="busqueda">
 </div>
 
 <table  class="table table-striped" id="TablePrestamo">
@@ -82,10 +82,11 @@
           <div class="d-flex justify-content-end">
             <input type="text" id="inputDetalles" disabled>
             <input type="text" id="inputVencimiento"  size="40" disabled >
+             
           </div>
-          {% comment %} <div class="d-flex justify-content-end">
+          <div class="d-flex justify-content-end">
             <input type="text" id="inputEstatus"  size="10" disabled >
-          </div> {% endcomment %}
+          </div> 
         </div>
       </div>
       
@@ -300,8 +301,6 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(res) {
           const prestamos = res;
-          console.log('Data:', this.data); // Imprimir el valor de 'data'
-          console.log('Prestamos:', prestamos); // Imprimir el valor de 'prestamos'
           // Filtrar los resultados por pres_folio único
           const prestamosUnicos = [];
           const foliosVistos = new Set();
@@ -346,10 +345,19 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
 
           $('#inputVencimiento').val(`Entrega estimada - ${response.vencioElDia}`).attr('disabled', true);
 
-            //(response.estatusPrestamo === "I")
-            //  ? $('#inputEstatus').val(`Devuelto`).attr('disabled', true)
-            //  : $('#inputEstatus').val(`En prestamo aun`).attr('disabled', true);
-       
+          let today = new Date();
+          let now = today.getTime();
+          let vencio = new Date(response.vencioElDia).getTime();
+          console.log({ Hoy: now, Vencio: vencio });
+          
+          if (now >= vencio) {
+              $('#inputEstatus').val('Entregar con urgencia').attr('disabled', true);
+          } else {
+              $('#inputEstatus').val('En tiempo').attr('disabled', true);
+          }
+          
+          
+          
             // Resto del código AJAX y manipulación de datos
             $('#btn-descargar-pdf').on('click', function() {
               $.ajax({

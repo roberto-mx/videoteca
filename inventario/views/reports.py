@@ -227,6 +227,7 @@ class GENERATE(FPDF):
             self.cell(60, 10, 'Usuario Devuelve', 1, 0, '', True)
             self.cell(60, 10, 'Fecha de Devolucón', 1, 0, '', True)
             self.cell(60, 10, 'Usuario Recibe', 1, 0, '', True)
+            self.cell(25, 10, 'Estatus', 1, 0, '', True)
             self.set_text_color(0, 0, 0)
             self.ln(10)
     
@@ -264,12 +265,17 @@ class GENERATE(FPDF):
             self.cell(60, 10, str(row['usuario_devuelve']), 1)
             self.cell(60, 10, fecha_devolucion, 1)
             self.cell(60, 10, str(row['usuario_recibe']), 1)
+            if row['depr_estatus'] == 'I':
+                self.cell(25, 10, "Entregado", 1)
+            else:
+                self.cell(25, 10, "En prestamo", 1)
+
             self.ln(10)
             
 def generar_pdf_modal(request):
 
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo_id', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo_id', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe','depr_estatus')
     detalle_prestamos = queryset.last() if queryset else None 
   
     if detalle_prestamos:
@@ -289,7 +295,7 @@ def generar_pdf_modal(request):
                 usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
                 usuario_recibe   = muestraData[0]["UsuarioRecibe"]
 
-        print(usuario_devuelve,usuario_recibe)
+        # print(usuario_devuelve,usuario_recibe)
         cursor = connections['users'].cursor()
         cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve] )
         row = cursor.fetchone() 
@@ -298,11 +304,11 @@ def generar_pdf_modal(request):
             nombres                 = row[0]
             apellido1               = row[1]
             apellido2               = row[2]
-            puesto                  = row[3]
+            puesto                  = row[3] 
             email_institucional     = row[4]
             extension_telefonica    = row[5]
 
-        nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+        nombre_completo = f"{nombres} {apellido1} {apellido2}"  
         
         MatriculaDevuelve = {
             'Devuelve'              : nombre_completo,

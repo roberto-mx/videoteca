@@ -18,9 +18,9 @@ import os
 # from businesstimedelta import Businesstimedelta
 
 from django.db import transaction
-from django.utils import timezone
-from datetime import datetime, timedelta
-from django.utils import timezone
+# from django.utils import timezone
+from datetime import datetime, timedelta, date
+# from django.utils import timezone
 import pandas as pd
 from django.db import connections
 
@@ -38,7 +38,6 @@ def Filtrar_prestamos(request):
             prestamos = DetallePrestamos.objects.filter(
                 # Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
                 Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
-
             )
 
             for prestamo in prestamos:
@@ -51,37 +50,11 @@ def Filtrar_prestamos(request):
                 }
                 prestamos_data.append(prestamo_data)
 
-            print(prestamos_data)  # Corregido: imprimir prestamos_data en lugar de prestamo_data
+           # Corregido: imprimir prestamos_data en lugar de prestamo_data
         except ValueError:
             pass
 
     return JsonResponse(prestamos_data, safe=False)
-
-
-    # q = request.GET.get('q')
-
-    # prestamos_data = []
-
-    # if q:
-    #     prestamos = DetallePrestamos.objects.filter(
-    #         # Q(pres_folio=q) | Q(vide_codigo=q)
-    #         Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
-    #             # Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
-
-    #     )
-
-    #     for prestamo in prestamos:
-    #         prestamo_data = {
-    #             "pres_folio": prestamo.pres_folio.pres_folio,
-    #             "usua_clave": prestamo.pres_folio.usua_clave,
-    #             "pres_fechahora": prestamo.pres_folio.pres_fechahora,
-    #             "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
-    #             "pres_estatus": prestamo.pres_folio.pres_estatus
-    #         }
-    #         prestamos_data.append(prestamo_data)
-
-    #     print(prestamo_data)
-    # return JsonResponse(prestamos_data, safe=False)
 
 @method_decorator(login_required, name='dispatch')
 
@@ -99,33 +72,32 @@ class PrestamosListView(ListView):
 def DetallesListView(request):
     a = request.GET.get('a')
 
-    prestamo = Prestamos.objects.filter(pres_folio=a).values('pres_fecha_prestamo','pres_estatus').first()
-    # print(prestamo['pres_estatus'])
+    # Obtener la información del préstamo
+    prestamo = Prestamos.objects.filter(pres_folio=a).values('pres_fecha_prestamo', 'pres_estatus').first()
     fecha_prestamo = prestamo['pres_fecha_prestamo'].date()
     estatusPrestamo = prestamo['pres_estatus']
-
-    print(estatusPrestamo,'estatus')
 
     dias_habiles_encontrados = 0
     desplazamiento = timedelta(days=1)
 
+    fecha_actual = fecha_prestamo
+
     while dias_habiles_encontrados < 7:
-        fecha_prestamo -= desplazamiento
-        # Hago el desplazamiento de los días para no tomar en cuenta los fines de semana. 
-        if fecha_prestamo.weekday() < 5:
+        # Calcular la fecha de vencimiento sumando 1 día a la vez
+        fecha_actual += desplazamiento
+        
+        # Verificar si la fecha actual es un día hábil (de lunes a viernes)
+        if fecha_actual.weekday() < 5:
             dias_habiles_encontrados += 1
-    
-    fecha_vencimiento = fecha_prestamo
+
+    fecha_vencimiento = fecha_actual
 
     template_detalle = {
         'vencioElDia': fecha_vencimiento.strftime('%d-%m-%Y'),
         'estatusPrestamo': estatusPrestamo
     }
 
-    print(template_detalle)
-
     return JsonResponse(template_detalle, safe=False)
-
 
 @csrf_exempt
 def obtenerPeoplePerson(request):
@@ -318,6 +290,7 @@ def ValidateOutVideoteca(request):
                          
                     ).values('pres_folio').distinct()  # Obtengo el valor del Folio a través del modelo
 
+
                     for folio in folios_vencidos:
                         cintas_pendientes = DetallePrestamos.objects.filter(
                             pres_folio_id=folio['pres_folio'],
@@ -409,7 +382,6 @@ def RegisterOutVideoteca(request):
             detPrestamos.vide_codigo = maestroCinta
             detPrestamos.save()
     
-
             maestroCinta.video_estatus = 'X'
             maestroCinta.save()
 
