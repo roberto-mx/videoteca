@@ -81,11 +81,11 @@
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex justify-content-end">
             <input type="text" id="inputDetalles" disabled>
-            <input type="text" id="inputVencimiento"  size="40" disabled >
+            <input type="text" id="inputEstatus"  size="25" disabled >
+            <input type="text" id="inputVencimiento"  size="25" disabled >
              
           </div>
           <div class="d-flex justify-content-end">
-            <input type="text" id="inputEstatus"  size="10" disabled >
           </div> 
         </div>
       </div>
@@ -341,76 +341,58 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
             a:pres_folio
           },
           
-          success: function(response) {
-
-          $('#inputVencimiento').val(`Entrega estimada - ${response.vencioElDia}`).attr('disabled', true);
-
-          let today = new Date();
-          let now = today.getTime();
-          let vencio = new Date(response.vencioElDia).getTime();
-          console.log({ Hoy: now, Vencio: vencio });
-          
-          if (now >= vencio) {
-              $('#inputEstatus').val('Entregar con urgencia').attr('disabled', true);
-          } else {
-              $('#inputEstatus').val('En tiempo').attr('disabled', true);
-          }
-          
-          
-          
-            // Resto del código AJAX y manipulación de datos
-            $('#btn-descargar-pdf').on('click', function() {
-              $.ajax({
-                url: '{% url "generar_pdf_modal" %}',
-                data: { 'q': pres_folio },
-                success: function() {
-                  window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
-                }
-              });
-            });
-      
-            let tabla = $('<table>');
-            let thead = $('<thead>').append(
-              '<tr><th>Código de Barras</th>' +
-              '<th>Fecha de Devolución</th>' +
-              '<th>Usuario Devuelve</th>' +
-              '<th>Usuario Recibe</th>' +
-              '<th>Estatus</th>' +
-              '</tr>'
-            );
-            let tbody = $('<tbody>');
-
-            if ($('li', data).length == 0) {
-              alertMessage('info', 'Solo hay esa cinta!', 'Oops!');
-              $("#modalCintas").modal('hide');
-            }
-
-            $('li', data).each(function(index) {
-              let liText   = $(this).text().trim();
-              let liParts  = liText.split(' - ');
-              let codigo   = liParts[0];
-              let fecha    = liParts[1];
-              let devuelve = liParts[2];
-              let recibe   = liParts[3];
-              let estatus  = liParts[4];
-
-              let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha + '</td><td>' + devuelve + '</td><td>' + recibe + '</td>');
-
-              if (estatus == 'X') {
-                row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>');
-              } else if (estatus == 'I') {
-                row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>');
+        success: function(response) {
+        $('#inputVencimiento').val(`Entrega estimada - ${response.vencioElDia}`).attr('disabled', true);
+        let today = new Date();
+        $('#inputEstatus').val(`Hoy: ${today}`).attr('disabled', true);
+          // Resto del código AJAX y manipulación de datos
+          $('#btn-descargar-pdf').on('click', function() {
+            $.ajax({
+              url: '{% url "generar_pdf_modal" %}',
+              data: { 'q': pres_folio },
+              success: function() {
+                window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
               }
-
-              tbody.append(row);
             });
+          });
+    
+          let tabla = $('<table>');
+          let thead = $('<thead>').append(
+            '<tr><th>Código de Barras</th>' +
+            '<th>Fecha de Devolución</th>' +
+            '<th>Usuario Devuelve</th>' +
+            '<th>Usuario Recibe</th>' +
+            '<th>Estatus</th>' +
+            '</tr>'
+          );
+          let tbody = $('<tbody>');
 
-            tabla.append(thead).append(tbody);
-            $('#muestraData').html(tabla);
-            tabla.DataTable({
-              ...len
-            });
-          },
+          if ($('li', data).length == 0) {
+            alertMessage('info', 'Solo hay esa cinta!', 'Oops!');
+            $("#modalCintas").modal('hide');
+          }
+
+          $('li', data).each(function(index) {
+            let liText   = $(this).text().trim();
+            let liParts  = liText.split(' - ');
+            let codigo   = liParts[0];
+            let fecha    = liParts[1];
+            let devuelve = liParts[2];
+            let recibe   = liParts[3];
+            let estatus  = liParts[4];
+            let row = $('<tr>').append('<td>' + codigo + '</td><td>' + fecha + '</td><td>' + devuelve + '</td><td>' + recibe + '</td>');
+
+            (estatus == 'X')
+              ? row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>')
+              : row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>')
+            tbody.append(row);
+          });
+          tabla.append(thead).append(tbody);
+          $('#muestraData').html(tabla);
+          tabla.DataTable({
+            ...len
+          });
+        },
       });
     },
   });
