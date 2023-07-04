@@ -343,8 +343,13 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
           
         success: function(response) {
         $('#inputVencimiento').val(`Entrega estimada - ${response.vencioElDia}`).attr('disabled', true);
-        let today = new Date();
-        $('#inputEstatus').val(`Hoy: ${today}`).attr('disabled', true);
+        let hoy = new Date();
+        let day = hoy.getDate();
+        let month = hoy.getMonth() + 1;
+        let year = hoy.getFullYear();
+        let fechaHoy = `${day}-${month}-${year}`;
+
+        $('#inputEstatus').val(`Hoy: ${fechaHoy}`).attr('disabled', true);
           // Resto del código AJAX y manipulación de datos
           $('#btn-descargar-pdf').on('click', function() {
             $.ajax({
