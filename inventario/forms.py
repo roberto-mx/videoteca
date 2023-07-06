@@ -1,5 +1,5 @@
 from django import forms
-from .models import MaestroCintas, DetalleProgramas, UsuariosVid, DetallePrestamos, Prestamos
+from .models import MaestroCintas, DetalleProgramas, UsuariosVid, DetallePrestamos, Prestamos, RegistroCalificacion
 from django.forms.models import inlineformset_factory
 
 import datetime
@@ -57,7 +57,10 @@ class MaestrosCintasForm(forms.ModelForm):
         widget=forms.Select(attrs={'readonly': True})
     )
 
-
+class Calificacion(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = '__all__'
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:
