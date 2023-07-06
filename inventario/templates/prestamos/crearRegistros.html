@@ -1,0 +1,22 @@
+{% extends 'templateBase.html' %}
+
+{% block titulo %} Calificación {% endblock %}
+
+{% block Contenido %}
+
+    <div class="card mt-3">
+        <div class="card-header">
+            Campos Norma Méxicana de calificación
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">*** Campos obligatorios u operativos(según la Norma)***</h4>
+
+            {% include 'calificacion/formulario.html' %}
+        
+        </div>
+        <div class="card-footer text-muted">
+            Footer
+        </div>
+    </div>
+
+{% endblock %}
