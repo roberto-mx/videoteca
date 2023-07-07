@@ -60,7 +60,19 @@ class MaestrosCintasForm(forms.ModelForm):
 class Calificacion(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
-        fields = '__all__'
+        fields = ['serie','subtitulo_programa']
+        # fields = '__all__'
+
+
+class Identificacion(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['institucion_productora','codigo_original','codigo_orig1','codigo_submaster1','derecho_patrimonial']
+
+class Mencion(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['institucion_productora','participantes']
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,22 @@
+{% extends 'templateBase.html' %}
+
+{% block titulo %} Calificación {% endblock %}
+
+{% block Contenido %}
+
+    <div class="card mt-3" >
+        <div class="card-header" >
+            Área de Identificación
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">*** Área de Identificación ***</h4>
+
+            {% include 'calificacionForm/formulario.html' %}
+        
+        </div>
+        <div class="card-footer text-muted">
+            Footer
+        </div>
+    </div>
+
+{% endblock %}

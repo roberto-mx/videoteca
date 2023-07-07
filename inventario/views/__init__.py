@@ -26,8 +26,10 @@ from .maestrocintas import (
     
 )
 
-from .formsCalif import (
-    crearRegistros
+from .viewCalificacion import (
+    crearRegistros,
+    crearIdentificacion,
+    crearMencion
 )
 
 

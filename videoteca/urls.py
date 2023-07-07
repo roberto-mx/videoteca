@@ -33,7 +33,9 @@ from inventario.views import (
     RegisterOutVideoteca,
     EndInVideoteca,
     GetFilePdf,
-    crearRegistros
+    crearRegistros,
+    crearIdentificacion,
+    crearMencion
 )
 from django.contrib.auth import(
     views
@@ -54,7 +56,10 @@ urlpatterns = [
     path('prestamos/generate_pdf', generar_pdf, name='generar_pdf'),
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
     path('prestamos/person_people', obtenerPeoplePerson, name='obtenerPeoplePerson'),
+
     path('prestamos/crearRegistros', crearRegistros, name='crearRegistros'),
+    path('prestamos/crearIdentificacion', crearIdentificacion, name='crearIdentificacion'),
+    path('prestamos/crearMencion', crearMencion, name='crearMencion'),
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),
