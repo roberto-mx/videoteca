@@ -26,10 +26,16 @@ from .maestrocintas import (
     
 )
 
+
 from .viewCalificacion import (
-    crearRegistros,
+    areaTitulos,
     crearIdentificacion,
-    crearMencion
+    crearMencion,
+    areaContenido,
+    areaVersiones,
+    areaDescripcionTecnica,
+    areaDisponibilidad,
+    areaObservaciones
 )
 
 
