@@ -33,9 +33,14 @@ from inventario.views import (
     RegisterOutVideoteca,
     EndInVideoteca,
     GetFilePdf,
-    crearRegistros,
+    areaTitulos,
     crearIdentificacion,
-    crearMencion
+    crearMencion,
+    areaContenido,
+    areaVersiones,
+    areaDescripcionTecnica,
+    areaDisponibilidad,
+    areaObservaciones,
 )
 from django.contrib.auth import(
     views
@@ -57,9 +62,15 @@ urlpatterns = [
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
     path('prestamos/person_people', obtenerPeoplePerson, name='obtenerPeoplePerson'),
 
-    path('prestamos/crearRegistros', crearRegistros, name='crearRegistros'),
-    path('prestamos/crearIdentificacion', crearIdentificacion, name='crearIdentificacion'),
-    path('prestamos/crearMencion', crearMencion, name='crearMencion'),
+    path('calificaciones/areaTitulos', areaTitulos, name='areaTitulos'),
+    path('calificaciones/crearIdentificacion', crearIdentificacion, name='crearIdentificacion'),
+    path('calificaciones/crearMencion', crearMencion, name='crearMencion'),
+    path('calificaciones/areaContenido', areaContenido, name='areaContenido'),
+    path('calificaciones/areaVersiones', areaVersiones, name='areaVersiones'),
+    path('calificaciones/areaDescripcionTecnica', areaDescripcionTecnica, name='areaDescripcionTecnica'),
+    path('calificaciones/areaDisponibilidad', areaDisponibilidad, name='areaDisponibilidad'),
+    path('calificaciones/areaObservaciones', areaObservaciones, name='areaObservaciones'),
+
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),

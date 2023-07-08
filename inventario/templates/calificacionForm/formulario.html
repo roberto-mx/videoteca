@@ -1,0 +1,40 @@
+<form enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+
+  {% for campo in formulario %}
+    <div class="mb-3">
+      <label for="" class="form-label">{{campo.label}}</label>
+      
+      <input 
+      type="{{ campo.field.widget.input_type }}"
+      class="form-control"
+      name="{{ campo.name}}"
+      id=""
+      aria-describedby="helpId"
+      placeholder="{{campo.label}}">
+     </div>
+  {% endfor %}
+  
+    <input name="" id="siguiente-btn" class="btn btn-success" type="submit" value="Siguiente">
+
+    <a name="" id="" class="btn btn-danger" href="#" role="button">Cancelar</a> 
+
+</form>
+
+<script>
+  // Selecciona el botón "Siguiente" por su ID
+  const siguienteBtn = document.getElementById('siguiente-btn');
+
+  // Agrega un evento click al botón
+  siguienteBtn.addEventListener('click', function() {
+    // Redirige a la URL correspondiente a cada template
+    window.location.href = '{% url "crearRegistros" %}';
+    window.location.href = '{% url "crearIdentificacion" %}'; 
+    window.location.href = '{% url "crearMencion" %}'; 
+    setTimeout( function() { window.location.href = '{% url "crearRegistros" %}' }, 5000 );
+
+    
+  });
+
+  //console.log(`entra a ${siguienteBtn}`)
+</script>

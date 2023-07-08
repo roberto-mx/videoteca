@@ -74,6 +74,33 @@ class Mencion(forms.ModelForm):
         model = RegistroCalificacion
         fields = ['institucion_productora','participantes']
 
+class Contenido(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['institucion_productora','participantes']
+
+class Versiones(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['institucion_productora','participantes']
+
+class DescripcionTecnica(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['institucion_productora','participantes']
+
+class AreaDisponibilidad(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['institucion_productora','participantes']
+
+class AreaObservaciones(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['institucion_productora','participantes']
+
+        
+
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:
         model = DetalleProgramas
