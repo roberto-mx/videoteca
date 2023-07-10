@@ -9,9 +9,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Bootstrap CSS v5.2.1 -->
-  <link href="{% static 'css/navar.css' %}" rel="stylesheet">
+   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 
 </head>
 
@@ -19,42 +21,40 @@
   <nav class="navbar navbar-expand" style="background-color:#13322B;">
     <div class="nav navbar-nav">
 
-      {% comment %} <a class="navbar-brand" href="https://www.gob.mx/"><img src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="128" height="48" alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico"></a> {% endcomment %}
-
       <div class="d-flex align-items-end">
         <a class="navbar-brand" href="https://www.gob.mx/"><img src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="128" height="48" alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico"></a>
       </div>
 
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="{% url 'crearRegistros' %}" style="color: #ffffff;"> Área de Títulos </a>
+        <a class="nav-item nav-link active" href="{% url 'areaTitulos' %}" style="color: #ffffff;"> Área de Títulos </a>
       </li> 
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="{% url 'crearIdentificacion' %}" style="color: #ffffff;"> Área de Identificación </a>
+        <a class="nav-item nav-link active" href="{% url 'areaDeIdentificación' %}" style="color: #ffffff;"> Área de Identificación </a>
       </li>  
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href=" {% url 'crearMencion' %} " style="color: #ffffff;"> Área de Mención de Responsabilidad </a>
+        <a class="nav-item nav-link active" href=" {% url 'areaMencion' %} " style="color: #ffffff;"> Área de Mención de Responsabilidad </a>
       </li>  
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="#" style="color: #ffffff;"> Área de Contenido </a>
+        <a class="nav-item nav-link active" href="{% url 'areaContenido' %}" style="color: #ffffff;"> Área de Contenido </a>
       </li> 
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="#" style="color: #ffffff;"> Área de Versiones </a>
+        <a class="nav-item nav-link active" href="{% url 'areaVersiones' %}" style="color: #ffffff;"> Área de Versiones </a>
       </li>  
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="#" style="color: #ffffff;"> Área de Descripción Técnica </a>
+        <a class="nav-item nav-link active" href="{% url 'areaDescripcionTecnica' %}" style="color: #ffffff;"> Área de Descripción Técnica </a>
       </li> 
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="#" style="color: #ffffff;"> Área de Disponibilidad </a>
+        <a class="nav-item nav-link active" href="{% url 'areaDisponibilidad' %}" style="color: #ffffff;"> Área de Disponibilidad </a>
       </li>  
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="#" style="color: #ffffff;"> Área de Observaciones </a>
+        <a class="nav-item nav-link active" href="{% url 'areaObservaciones' %}" style="color: #ffffff;"> Área de Observaciones </a>
       </li>  
     </div>
   </nav>

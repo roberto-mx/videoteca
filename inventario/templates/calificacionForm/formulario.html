@@ -4,7 +4,6 @@
   {% for campo in formulario %}
     <div class="mb-3">
       <label for="" class="form-label">{{campo.label}}</label>
-      
       <input 
       type="{{ campo.field.widget.input_type }}"
       class="form-control"
@@ -14,27 +13,77 @@
       placeholder="{{campo.label}}">
      </div>
   {% endfor %}
-  
-    <input name="" id="siguiente-btn" class="btn btn-success" type="submit" value="Siguiente">
+    
+  <div class="d-flex justify-content-between">
+    <div>
+      <a name="" id="atrasBtn" class="btn btn-danger" href="#" role="button">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+              <span>Atras</span>
+              <i class='fas fa-hand-point-left'></i>
+          </div>
+      </a>
 
-    <a name="" id="" class="btn btn-danger" href="#" role="button">Cancelar</a> 
+      <a name="" id="siguienteBtn" class="btn btn-success" href="#" role="button">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <span>Siguiente</span>
+            <i class='fas fa-hand-point-right'></i>
+        </div>
+      </a>
+    </div>
+
+    <div>
+        <a name="" id="" class="btn btn-primary" href="{% url 'prestamos_list' %}" role="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <span>Regresar a Prestamos</span>
+                <i class="fas fa-backspace"></i>
+            </div>
+        </a>
+    </div>
+  </div>
 
 </form>
 
 <script>
-  // Selecciona el botón "Siguiente" por su ID
-  const siguienteBtn = document.getElementById('siguiente-btn');
+ 
+  const siguienteBtn = document.getElementById('siguienteBtn');
+  const atrasBtn = document.getElementById('atrasBtn');
 
-  // Agrega un evento click al botón
   siguienteBtn.addEventListener('click', function() {
-    // Redirige a la URL correspondiente a cada template
-    window.location.href = '{% url "crearRegistros" %}';
-    window.location.href = '{% url "crearIdentificacion" %}'; 
-    window.location.href = '{% url "crearMencion" %}'; 
-    setTimeout( function() { window.location.href = '{% url "crearRegistros" %}' }, 5000 );
-
-    
+    // Redirige a la URL correspondiente a la siguiente vista
+    if (window.location.href.includes('{% url "areaTitulos" %}')) {
+      window.location.href = '{% url "areaDeIdentificación" %}';
+    } else if (window.location.href.includes('{% url "areaDeIdentificación" %}')) {
+      window.location.href = '{% url "areaMencion" %}';
+    } else if (window.location.href.includes('{% url "areaMencion" %}')) {
+      window.location.href = '{% url "areaContenido" %}';
+    } else if (window.location.href.includes('{% url "areaContenido" %}')) {
+      window.location.href = '{% url "areaVersiones" %}';
+    } else if (window.location.href.includes('{% url "areaVersiones" %}')) {
+      window.location.href = '{% url "areaDescripcionTecnica" %}';
+    } else if (window.location.href.includes('{% url "areaDescripcionTecnica" %}')) {
+      window.location.href = '{% url "areaDisponibilidad" %}';
+    } else if (window.location.href.includes('{% url "areaDisponibilidad" %}')) {
+      window.location.href = '{% url "areaObservaciones" %}';
+    }
   });
 
-  //console.log(`entra a ${siguienteBtn}`)
+  atrasBtn.addEventListener('click', function() {
+    // Redirige a la URL correspondiente a la vista anterior
+    if (window.location.href.includes('{% url "areaDeIdentificación" %}')) {
+      window.location.href = '{% url "areaTitulos" %}';
+    } else if (window.location.href.includes('{% url "areaMencion" %}')) {
+      window.location.href = '{% url "areaDeIdentificación" %}';
+    } else if (window.location.href.includes('{% url "areaContenido" %}')) {
+      window.location.href = '{% url "areaMencion" %}';
+    } else if (window.location.href.includes('{% url "areaVersiones" %}')) {
+      window.location.href = '{% url "areaContenido" %}';
+    } else if (window.location.href.includes('{% url "areaDescripcionTecnica" %}')) {
+      window.location.href = '{% url "areaVersiones" %}';
+    } else if (window.location.href.includes('{% url "areaDisponibilidad" %}')) {
+      window.location.href = '{% url "areaDescripcionTecnica" %}';
+    } else if (window.location.href.includes('{% url "areaObservaciones" %}')) {
+      window.location.href = '{% url "areaDisponibilidad" %}';
+    }
+  });
 </script>
+

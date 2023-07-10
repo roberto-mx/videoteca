@@ -99,8 +99,6 @@ class AreaObservaciones(forms.ModelForm):
         model = RegistroCalificacion
         fields = ['institucion_productora','participantes']
 
-        
-
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:
         model = DetalleProgramas
