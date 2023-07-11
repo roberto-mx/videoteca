@@ -33,14 +33,13 @@ from inventario.views import (
     RegisterOutVideoteca,
     EndInVideoteca,
     GetFilePdf,
-    areaTitulos,
-    areaDeIdentificación,
-    areaMencion,
-    areaContenido,
-    areaVersiones,
-    areaDescripcionTecnica,
-    areaDisponibilidad,
-    areaObservaciones,
+    datosGenerales,
+    descripcion,
+    mapa,
+    realizacion,
+    tecnicas
+
+ 
 )
 from django.contrib.auth import(
     views
@@ -62,14 +61,11 @@ urlpatterns = [
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
     path('prestamos/person_people', obtenerPeoplePerson, name='obtenerPeoplePerson'),
 
-    path('calificaciones/areaTitulos', areaTitulos, name='areaTitulos'),
-    path('calificaciones/areaDeIdentificación', areaDeIdentificación, name='areaDeIdentificación'),
-    path('calificaciones/areaMencion', areaMencion, name='areaMencion'),
-    path('calificaciones/areaContenido', areaContenido, name='areaContenido'),
-    path('calificaciones/areaVersiones', areaVersiones, name='areaVersiones'),
-    path('calificaciones/areaDescripcionTecnica', areaDescripcionTecnica, name='areaDescripcionTecnica'),
-    path('calificaciones/areaDisponibilidad', areaDisponibilidad, name='areaDisponibilidad'),
-    path('calificaciones/areaObservaciones', areaObservaciones, name='areaObservaciones'),
+    path('calificaciones/datosGenerales', datosGenerales, name='datosGenerales'),
+    path('calificaciones/descripcion', descripcion, name='descripcion'),
+    path('calificaciones/mapa', mapa, name='mapa'),
+    path('calificaciones/realizacion', realizacion, name='realizacion'),
+    path('calificaciones/tecnicas', tecnicas, name='tecnicas'),
 
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),

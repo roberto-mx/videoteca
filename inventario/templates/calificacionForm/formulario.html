@@ -1,24 +1,24 @@
 <form enctype="multipart/form-data" method="post">
   {% csrf_token %}
-
-  {% for campo in formulario %}
-    <div class="mb-3">
-      <label for="" class="form-label">{{campo.label}}</label>
-      <input 
-      type="{{ campo.field.widget.input_type }}"
-      class="form-control"
-      name="{{ campo.name}}"
-      id=""
-      aria-describedby="helpId"
-      placeholder="{{campo.label}}">
-     </div>
+  {% for field in formulario %}
+  <div class="mb-3">
+      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+      {{ field.errors }}
+      {% if field.name == 'fecha_calificacion' %}
+          <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+      {% else %}
+          {% if field.field.widget.input_type != 'hidden' %}
+          <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+          {% endif %}
+      {% endif %}
+  </div>
   {% endfor %}
     
   <div class="d-flex justify-content-between">
     <div>
       <a name="" id="atrasBtn" class="btn btn-danger" href="#" role="button">
           <div style="display: flex; flex-direction: column; align-items: center;">
-              <span>Atras</span>
+              <span>Atrás</span>
               <i class='fas fa-hand-point-left'></i>
           </div>
       </a>
@@ -29,6 +29,13 @@
             <i class='fas fa-hand-point-right'></i>
         </div>
       </a>
+
+      <button name="" id="guardarForm" class="btn btn-success" href="#" role="button">  
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span>Guardar Formulario</span>
+          <i class="fas fa-save"></i>
+        </div>
+      </button> 
     </div>
 
     <div>
@@ -44,46 +51,69 @@
 </form>
 
 <script>
- 
-  const siguienteBtn = document.getElementById('siguienteBtn');
-  const atrasBtn = document.getElementById('atrasBtn');
-
   siguienteBtn.addEventListener('click', function() {
     // Redirige a la URL correspondiente a la siguiente vista
-    if (window.location.href.includes('{% url "areaTitulos" %}')) {
-      window.location.href = '{% url "areaDeIdentificación" %}';
-    } else if (window.location.href.includes('{% url "areaDeIdentificación" %}')) {
-      window.location.href = '{% url "areaMencion" %}';
-    } else if (window.location.href.includes('{% url "areaMencion" %}')) {
-      window.location.href = '{% url "areaContenido" %}';
-    } else if (window.location.href.includes('{% url "areaContenido" %}')) {
-      window.location.href = '{% url "areaVersiones" %}';
-    } else if (window.location.href.includes('{% url "areaVersiones" %}')) {
-      window.location.href = '{% url "areaDescripcionTecnica" %}';
-    } else if (window.location.href.includes('{% url "areaDescripcionTecnica" %}')) {
-      window.location.href = '{% url "areaDisponibilidad" %}';
-    } else if (window.location.href.includes('{% url "areaDisponibilidad" %}')) {
-      window.location.href = '{% url "areaObservaciones" %}';
-    }
+    if (window.location.href.includes('{% url "datosGenerales" %}')) {
+      window.location.href = '{% url "descripcion" %}';
+    } else if (window.location.href.includes('{% url "descripcion" %}')) {
+      window.location.href = '{% url "mapa" %}';
+    } else if (window.location.href.includes('{% url "mapa" %}')) {
+      window.location.href = '{% url "realizacion" %}';
+    } else if (window.location.href.includes('{% url "realizacion" %}')) {
+      window.location.href = '{% url "tecnicas" %}';
+    } 
+    
   });
 
   atrasBtn.addEventListener('click', function() {
     // Redirige a la URL correspondiente a la vista anterior
-    if (window.location.href.includes('{% url "areaDeIdentificación" %}')) {
-      window.location.href = '{% url "areaTitulos" %}';
-    } else if (window.location.href.includes('{% url "areaMencion" %}')) {
-      window.location.href = '{% url "areaDeIdentificación" %}';
-    } else if (window.location.href.includes('{% url "areaContenido" %}')) {
-      window.location.href = '{% url "areaMencion" %}';
-    } else if (window.location.href.includes('{% url "areaVersiones" %}')) {
-      window.location.href = '{% url "areaContenido" %}';
-    } else if (window.location.href.includes('{% url "areaDescripcionTecnica" %}')) {
-      window.location.href = '{% url "areaVersiones" %}';
-    } else if (window.location.href.includes('{% url "areaDisponibilidad" %}')) {
-      window.location.href = '{% url "areaDescripcionTecnica" %}';
-    } else if (window.location.href.includes('{% url "areaObservaciones" %}')) {
-      window.location.href = '{% url "areaDisponibilidad" %}';
-    }
+    if (window.location.href.includes('{% url "descripcion" %}')) {
+      window.location.href = '{% url "datosGenerales" %}';
+    } else if (window.location.href.includes('{% url "mapa" %}')) {
+      window.location.href = '{% url "descripcion" %}';
+    } else if (window.location.href.includes('{% url "realizacion" %}')) {
+      window.location.href = '{% url "mapa" %}';
+    } else if (window.location.href.includes('{% url "tecnicas" %}')) {
+      window.location.href = '{% url "realizacion" %}';
+    } 
   });
-</script>
+ 
+  if (window.location.href.includes('{% url "datosGenerales" %}')) {
+    atrasBtn.style.display = 'none';  // Oculta el botón de "Atás"
+    guardarForm.style.display = 'none';  // Oculta el botón de "Atás"
+  }else if(window.location.href.includes('{% url "descripcion" %}')){
+    guardarForm.style.display = 'none';
+  }else if(window.location.href.includes('{% url "mapa" %}')){
+    guardarForm.style.display = 'none';
+  }else if(window.location.href.includes('{% url "realizacion" %}')){
+    guardarForm.style.display = 'none';
+  }else if(window.location.href.includes('{% url "tecnicas" %}')){
+    siguienteBtn.style.display = 'none';
+  }
 
+  $("#guardarForm").click(function(event) {
+    event.preventDefault(); // Evitar el envío de formulario por defecto
+  
+    let $button = $(this); // Guardamos una referencia al botón actual
+
+    Swal.fire({
+      title: '¿ Deseas guardar este\n Formulario ?',
+      text: "No podrás revertir esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, continuar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          'Registrado!',
+          'Su formulario ha sido registrado,\n en estos momentos ya se encuentra en calificación.',
+          'success'
+        )
+        $button.hide(); // Oculta el botón utilizando la referencia guardada
+      }
+    });
+  });
+  
+</script>

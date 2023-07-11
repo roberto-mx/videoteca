@@ -27,14 +27,12 @@ from .maestrocintas import (
 )
 
 from .viewCalificacion import (
-    areaTitulos,
-    areaDeIdentificación,
-    areaMencion,
-    areaContenido,
-    areaVersiones,
-    areaDescripcionTecnica,
-    areaDisponibilidad,
-    areaObservaciones
+    datosGenerales,
+    descripcion,
+    mapa,
+    realizacion,
+    tecnicas
+
 )
 
 

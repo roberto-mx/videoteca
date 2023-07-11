@@ -57,44 +57,65 @@ class MaestrosCintasForm(forms.ModelForm):
         widget=forms.Select(attrs={'readonly': True})
     )
 
-class Calificacion(forms.ModelForm):
+class Generales(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
-        fields = ['serie','subtitulo_programa']
-        # fields = '__all__'
+        fields = [
+            'codigo_barras',
+            'fecha_calificacion',
+            'axo_produccion',
+            'productor',
+            'coordinador',
+            'observaciones',
+            'serie',
+            'duracion',
+            'subtitserie',
+            'programa',
+            'subtitulo_programa'
+        ]
+        widgets = {
+            'fecha_calificacion': forms.DateInput(attrs={'type': 'date'})
+        }
 
-
-class Identificacion(forms.ModelForm):
+class Descripcion(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
-        fields = ['institucion_productora','codigo_original','codigo_orig1','codigo_submaster1','derecho_patrimonial']
+        fields = [
+            'sinopsis',
+            'tiempodur',
+            'participantes',
+            'personajes',
+            'derecho_patrimonial',
+            'asignatura_materia',
+            'grado',
+            'orientacion',
+        ]
 
-class Mencion(forms.ModelForm):
+class Mapa(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
-        fields = ['institucion_productora','participantes']
+        fields = [
+            'area_de_conocimiento',
+            'participantes',
+            'eje_tematico',
+            'nivel_educativo',
+            'tema'
 
-class Contenido(forms.ModelForm):
+        ]
+
+class Realizacion(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
-        fields = ['institucion_productora','participantes']
+        fields = [
+            'guionista',
+            'locutor',
+            'investigador',
+            'elenco',
+            'conductor',
+            'institucion_productora',
+        ]
 
-class Versiones(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = ['institucion_productora','participantes']
-
-class DescripcionTecnica(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = ['institucion_productora','participantes']
-
-class AreaDisponibilidad(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = ['institucion_productora','participantes']
-
-class AreaObservaciones(forms.ModelForm):
+class Tecnicas(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
         fields = ['institucion_productora','participantes']
