@@ -1,18 +1,20 @@
 <form enctype="multipart/form-data" method="post">
   {% csrf_token %}
-  {% for field in formulario %}
-  <div class="mb-3">
-      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-      {{ field.errors }}
-      {% if field.name == 'fecha_calificacion' %}
-          <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
-      {% else %}
-          {% if field.field.widget.input_type != 'hidden' %}
-          <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
-          {% endif %}
-      {% endif %}
-  </div>
-  {% endfor %}
+{% for field in formulario %}
+<div class="mb-3">
+    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+    {{ field.errors }}
+    {% if field.name == 'fecha_calificacion' %}
+        <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+    {% elif field.name == 'observaciones' %}
+        <textarea name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
+    {% else %}
+        {% if field.field.widget.input_type != 'hidden' %}
+        <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+        {% endif %}
+    {% endif %}
+</div>
+{% endfor %}
     
   <div class="d-flex justify-content-between">
     <div>
@@ -23,12 +25,13 @@
           </div>
       </a>
 
-      <a name="" id="siguienteBtn" class="btn btn-success" href="#" role="button">
+      <button name="" id="siguienteBtn" class="btn btn-success" type="submit" role="button">
         <div style="display: flex; flex-direction: column; align-items: center;">
-            <span>Siguiente</span>
-            <i class='fas fa-hand-point-right'></i>
+          <span>Siguiente</span>
+          <i class='fas fa-hand-point-right'></i>
         </div>
-      </a>
+      </button>
+      
 
       <button name="" id="guardarForm" class="btn btn-success" href="#" role="button">  
         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -38,16 +41,15 @@
       </button> 
     </div>
 
-    <div>
+    {% comment %} <div>
         <a name="" id="" class="btn btn-primary" href="{% url 'prestamos_list' %}" role="button">
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <span>Regresar a Prestamos</span>
                 <i class="fas fa-backspace"></i>
             </div>
         </a>
-    </div>
+    </div> {% endcomment %}
   </div>
-
 </form>
 
 <script>
@@ -107,16 +109,32 @@ $("#guardarForm").click(function(event) {
     confirmButtonText: 'Sí, continuar'
   }).then((result) => {
     if (result.isConfirmed) {
-      Swal.fire(
-        'Registrado',
-        'Su formulario ha sido registrado y se encuentra en calificación.',
-        'success'
-      )
-      atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
-      $button.hide(); // Oculta el botón utilizando la referencia guardada
+      // Obtener los datos del formulario
+      let formData = $('form').serialize();
+      
+      // Realizar la petición AJAX para guardar los datos
+      $.ajax({
+        url: '{% url "tecnicas" %}',
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+          Swal.fire(
+            'Registrado',
+            'Su formulario ha sido registrado y se encuentra en calificación.',
+            'success'
+          )
+          atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
+          $button.hide(); // Oculta el botón utilizando la referencia guardada
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          // Manejar el error de la petición AJAX si es necesario
+          console.log(xhr.status);
+          console.log(thrownError);
+        }
+      });
     }
   });
 });
 
-  
+
 </script>

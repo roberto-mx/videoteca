@@ -58,6 +58,8 @@ class MaestrosCintasForm(forms.ModelForm):
     )
 
 class Generales(forms.ModelForm):
+    observaciones = forms.CharField(widget=forms.Textarea)  # Agregar campo de observaciones con un textarea
+
     class Meta:
         model = RegistroCalificacion
         fields = [
@@ -76,6 +78,7 @@ class Generales(forms.ModelForm):
         widgets = {
             'fecha_calificacion': forms.DateInput(attrs={'type': 'date'})
         }
+
 
 class Descripcion(forms.ModelForm):
     class Meta:
