@@ -51,69 +51,72 @@
 </form>
 
 <script>
-  siguienteBtn.addEventListener('click', function() {
-    // Redirige a la URL correspondiente a la siguiente vista
-    if (window.location.href.includes('{% url "datosGenerales" %}')) {
-      window.location.href = '{% url "descripcion" %}';
-    } else if (window.location.href.includes('{% url "descripcion" %}')) {
-      window.location.href = '{% url "mapa" %}';
-    } else if (window.location.href.includes('{% url "mapa" %}')) {
-      window.location.href = '{% url "realizacion" %}';
-    } else if (window.location.href.includes('{% url "realizacion" %}')) {
-      window.location.href = '{% url "tecnicas" %}';
-    } 
-    
-  });
+ // Lógica de navegación entre pestañas utilizando JavaScript
 
-  atrasBtn.addEventListener('click', function() {
-    // Redirige a la URL correspondiente a la vista anterior
-    if (window.location.href.includes('{% url "descripcion" %}')) {
-      window.location.href = '{% url "datosGenerales" %}';
-    } else if (window.location.href.includes('{% url "mapa" %}')) {
-      window.location.href = '{% url "descripcion" %}';
-    } else if (window.location.href.includes('{% url "realizacion" %}')) {
-      window.location.href = '{% url "mapa" %}';
-    } else if (window.location.href.includes('{% url "tecnicas" %}')) {
-      window.location.href = '{% url "realizacion" %}';
-    } 
-  });
- 
+siguienteBtn.addEventListener('click', function() {
+  // Redirige a la URL correspondiente a la siguiente vista
   if (window.location.href.includes('{% url "datosGenerales" %}')) {
-    atrasBtn.style.display = 'none';  // Oculta el botón de "Atás"
-    guardarForm.style.display = 'none';  // Oculta el botón de "Atás"
-  }else if(window.location.href.includes('{% url "descripcion" %}')){
-    guardarForm.style.display = 'none';
-  }else if(window.location.href.includes('{% url "mapa" %}')){
-    guardarForm.style.display = 'none';
-  }else if(window.location.href.includes('{% url "realizacion" %}')){
-    guardarForm.style.display = 'none';
-  }else if(window.location.href.includes('{% url "tecnicas" %}')){
-    siguienteBtn.style.display = 'none';
+    window.location.href = '{% url "descripcion" %}';
+  } else if (window.location.href.includes('{% url "descripcion" %}')) {
+    window.location.href = '{% url "mapa" %}';
+  } else if (window.location.href.includes('{% url "mapa" %}')) {
+    window.location.href = '{% url "realizacion" %}';
+  } else if (window.location.href.includes('{% url "realizacion" %}')) {
+    window.location.href = '{% url "tecnicas" %}';
   }
+});
 
-  $("#guardarForm").click(function(event) {
-    event.preventDefault(); // Evitar el envío de formulario por defecto
-  
-    let $button = $(this); // Guardamos una referencia al botón actual
+atrasBtn.addEventListener('click', function() {
+  // Redirige a la URL correspondiente a la vista anterior
+  if (window.location.href.includes('{% url "descripcion" %}')) {
+    window.location.href = '{% url "datosGenerales" %}';
+  } else if (window.location.href.includes('{% url "mapa" %}')) {
+    window.location.href = '{% url "descripcion" %}';
+  } else if (window.location.href.includes('{% url "realizacion" %}')) {
+    window.location.href = '{% url "mapa" %}';
+  } else if (window.location.href.includes('{% url "tecnicas" %}')) {
+    window.location.href = '{% url "realizacion" %}';
+  }
+});
 
-    Swal.fire({
-      title: '¿ Deseas guardar este\n Formulario ?',
-      text: "No podrás revertir esta acción!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#28a745',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, continuar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire(
-          'Registrado!',
-          'Su formulario ha sido registrado,\n en estos momentos ya se encuentra en calificación.',
-          'success'
-        )
-        $button.hide(); // Oculta el botón utilizando la referencia guardada
-      }
-    });
+// Ocultar botones según la URL actual
+if (window.location.href.includes('{% url "datosGenerales" %}')) {
+  atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
+  guardarForm.style.display = 'none';  // Oculta el botón de "Guardar Formulario"
+} else if (window.location.href.includes('{% url "descripcion" %}')) {
+  guardarForm.style.display = 'none';
+} else if (window.location.href.includes('{% url "mapa" %}')) {
+  guardarForm.style.display = 'none';
+} else if (window.location.href.includes('{% url "realizacion" %}')) {
+  guardarForm.style.display = 'none';
+} else if (window.location.href.includes('{% url "tecnicas" %}')) {
+  siguienteBtn.style.display = 'none';
+}
+
+$("#guardarForm").click(function(event) {
+  event.preventDefault(); // Evitar el envío de formulario por defecto
+
+  let $button = $(this); // Guardamos una referencia al botón actual
+  Swal.fire({
+    title: '¿Deseas guardar este formulario?',
+    text: 'No podrás revertir esta acción.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#28a745',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, continuar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire(
+        'Registrado',
+        'Su formulario ha sido registrado y se encuentra en calificación.',
+        'success'
+      )
+      atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
+      $button.hide(); // Oculta el botón utilizando la referencia guardada
+    }
   });
+});
+
   
 </script>

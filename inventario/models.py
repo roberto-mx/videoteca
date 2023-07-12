@@ -566,7 +566,6 @@ class RegistroCalificacion(models.Model):
     class Meta:
         db_table = 'registro_calificacion'
 
-
 class RegistroStock(models.Model):
     codificiacion = models.CharField(max_length=15, blank=True, null=True)
     codigo_barras = models.CharField(max_length=12)
