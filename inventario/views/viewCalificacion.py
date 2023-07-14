@@ -20,12 +20,12 @@ def consultaFormulario(request):
         'duracion',
         'guionista',
         'observaciones',
-        'calificador_modificacion',
+        'institucion_productora',
         'fecha_modificacion',
         'estatusCalif',
     )
 
-    # Configurar la paginación
+    # Configurar la paginación, no solo front
     paginator = Paginator(calificaciones, len(calificaciones))  # Mostrar todos los registros en una sola página
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
