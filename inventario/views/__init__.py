@@ -27,6 +27,7 @@ from .maestrocintas import (
 )
 
 from .viewCalificacion import (
+    consultaFormulario,
     datosGenerales,
     descripcion,
     mapa,

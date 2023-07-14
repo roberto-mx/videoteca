@@ -121,8 +121,7 @@ class Realizacion(forms.ModelForm):
 class Tecnicas(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
-        fields = ['institucion_productora', 'participantes']
-
+        fields = ['idioma_original']
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

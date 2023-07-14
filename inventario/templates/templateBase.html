@@ -13,12 +13,19 @@
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="{% static 'css/form.css' %}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/datatable2.css' %}">
 
+  
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
+  <script src="{% static 'js/alertMessage.js' %}"></script>
+  <script src="{% static 'js/LengujeDatatable.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
+
 
 <body>
   <nav class="navbar navbar-expand" style="background-color:#13322B;">
@@ -27,6 +34,10 @@
       <div class="d-flex align-items-end">
         <a class="navbar-brand" href="https://www.gob.mx/"><img src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="128" height="48" alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico"></a>
       </div>
+
+      <li class="nav-item">
+        <a class="nav-item nav-link active" href="{% url 'consultaFormulario' %}" style="color: #ffffff;"> Consulta </a>
+      </li> 
 
       <li class="nav-item">
         <a class="nav-item nav-link active" href="{% url 'datosGenerales' %}" style="color: #ffffff;"> Datos Generales </a>
@@ -46,6 +57,14 @@
   
       <li class="nav-item">
         <a class="nav-item nav-link active" href="{% url 'tecnicas' %}" style="color: #ffffff;"> Técnicas </a>
+      </li>  
+      <li class="nav-item">
+        <a class="nav-item nav-link active" href="{% url 'logout' %}" style="color: #ffffff;"> 
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span> Cerrar Sesión </span>
+            <i class='fas fa-power-off'></i>
+          </div>
+        </a>
       </li>  
     </div>
   </nav>

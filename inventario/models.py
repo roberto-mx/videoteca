@@ -509,7 +509,6 @@ class Recupera(models.Model):
     class Meta:
         db_table = 'recupera'
 
-
 class RegistroCalificacion(models.Model):
     codigo_original = models.CharField(max_length=15, blank=True, null=True)
     codigo_barras = models.CharField(max_length=12)
@@ -562,9 +561,12 @@ class RegistroCalificacion(models.Model):
     tiempodur = models.CharField(max_length=11, blank=True, null=True)
     orientacion = models.CharField(max_length=60, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
+    estatusCalif = models.CharField(max_length=1, blank=True)
+
 
     class Meta:
         db_table = 'registro_calificacion'
+
 
 class RegistroStock(models.Model):
     codificiacion = models.CharField(max_length=15, blank=True, null=True)

@@ -1,7 +1,42 @@
 from django.shortcuts import render, redirect
 from ..forms import Generales, Descripcion, Mapa, Realizacion, Tecnicas
 from ..models import RegistroCalificacion
-from django.db import transaction
+from django.core.paginator import Paginator
+
+
+from django.core.paginator import Paginator
+
+def consultaFormulario(request):
+    # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'X' o 'I'
+    calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
+        'id',
+        'codigo_barras',
+        'fecha_calificacion',
+        'axo_produccion',
+        'productor',
+        'coordinador',
+        'serie',
+        'programa',
+        'duracion',
+        'guionista',
+        'observaciones',
+        'calificador_modificacion',
+        'fecha_modificacion',
+        'estatusCalif',
+    )
+
+    # Configurar la paginación
+    paginator = Paginator(calificaciones, len(calificaciones))  # Mostrar todos los registros en una sola página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    consultaForm = {
+        'formulario': page_obj
+    }
+
+    return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
+
+
 
 def datosGenerales(request):
     if request.method == 'POST':
@@ -62,43 +97,6 @@ def realizacion(request):
     
     return render(request, 'calificaForm/realizacion.html', {'formulario': formulario})
 
-# def tecnicas(request):
-#     if request.method == 'POST':
-#         # Obtener los datos del formulario
-#         datos_generales = request.session.get('datos_generales')
-#         descripcion_data = request.session.get('descripcion_data')
-#         mapa_data = request.session.get('mapa_data')
-#         realizacion_data = request.session.get('realizacion_data')
-#         tecnicas_data = request.POST
-        
-#         # Actualizar los datos con los campos del formulario actual
-#         datos_generales.update(descripcion_data)
-#         datos_generales.update(mapa_data)
-#         datos_generales.update(realizacion_data)
-        
-#         # Actualizar los datos con los campos del formulario actual
-#         datos_generales.update(tecnicas_data)
-        
-#         # Crear una instancia del formulario de Generales con los datos actualizados
-#         form_datos_generales = Generales(datos_generales)
-        
-#         # Verificar si el formulario es válido
-#         if form_datos_generales.is_valid():
-#             # Guardar los datos en la base de datos
-#             registro = form_datos_generales.save()
-            
-#             # Limpiar los datos de la sesión
-#             del request.session['datos_generales']
-#             del request.session['descripcion_data']
-#             del request.session['mapa_data']
-#             del request.session['realizacion_data']
-            
-#             # Redireccionar a la vista deseada
-#             return redirect('datosGenerales')
-#     else:
-#         form_tecnicas = Tecnicas()
-    
-#     return render(request, 'calificaForm/tecnicas.html', {'formulario': form_tecnicas})
  
 def tecnicas(request):
     if request.method == 'POST':
@@ -165,7 +163,7 @@ def tecnicas(request):
             registro.elenco = form_realizacion.cleaned_data['elenco']
             registro.conductor = form_realizacion.cleaned_data['conductor']
             registro.institucion_productora = form_realizacion.cleaned_data['institucion_productora']
-            registro.participantes = form_tecnicas.cleaned_data['participantes']
+            registro.participantes = form_tecnicas.cleaned_data['idioma_original']
             
             # Guardar el registro en la base de datos
             registro.save()
@@ -182,7 +180,6 @@ def tecnicas(request):
         form_tecnicas = Tecnicas()
     
     return render(request, 'calificaForm/tecnicas.html', {'formulario': form_tecnicas})
-
 
 
 

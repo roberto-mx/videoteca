@@ -1,0 +1,27 @@
+#datatable th {
+background-color: #18463b; /* Color de fondo de las celdas de encabezado */
+color: white; /* añadido para cambiar el color de las letras */
+}
+#datatable td {
+  white-space:inherit;
+}
+.btn-regresar {
+    background-color: #b38e5d;
+    color: #ffffff;
+    padding: 10px 20px; /* Ajusta el espaciado interno del botón según sea necesario */
+    font-size: 16px; /* Ajusta el tamaño de fuente según sea necesario */
+    transition: color 0.3s ease; /* Agrega una transición suave al color de texto */
+  }
+  
+  .btn-editar {
+    background-color: #9D2449;
+    color: #ffffff;
+  }
+  
+  .btn-ver {
+    background-color: #b38e5d;
+    color: #ffffff;
+  }
+  
+
+  
