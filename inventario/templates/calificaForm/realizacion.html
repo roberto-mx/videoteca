@@ -5,15 +5,25 @@
 {% block Contenido %}
 
     <div class="card mt-3">
-        <div class="card-header text-center"  style="background-color:rgb(234, 240, 241)" >
-            <strong> Realización </strong>
-            <div class="d-flex justify-content-end">
-                <a name="" id="" class="btn btn-regresar" href="{% url 'prestamos_list' %}" role="button">
+        <div class="card-header text-center">
+            <strong>Realización</strong>
+            <div class="d-flex justify-content-between">
+              <div>
+                <a name="" id="" class="btn btn-form" href="{% url 'consultaFormulario' %}" style="background:#9D2449" role="button">
                   <div style="display: flex; flex-direction: column; align-items: center;">
-                    <span>Regresar a Prestamos</span>
-                    <i class="fas fa-backspace"></i>
+                    <span style="color: white;"> Regresar a Consulta </span>
+                    <i class='fas fa-search' style="color:white;"></i>
                   </div>
                 </a>
+              </div>
+              <div>
+                <a name="" id="" class="btn btn-regresar" style="background:#b38e5d" href="{% url 'prestamos_list' %}" role="button">
+                  <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span style="color: white;">Regresar a Prestamos</span>
+                    <i class="fas fa-backspace" style="color:white;"></i>
+                  </div>
+                </a>
+              </div>
             </div>
         </div>
         <div class="card-body">
