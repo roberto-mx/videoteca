@@ -13,7 +13,7 @@
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="{% static 'css/form.css' %}" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/datatable2.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesCalifi.css' %}">
 
   
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
@@ -36,28 +36,60 @@
       </div>
 
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="{% url 'consultaFormulario' %}" style="color: #ffffff;"> Consulta </a>
+        <a class="nav-item nav-link active" href="{% url 'consultaFormulario' %}" style="color: #ffffff;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span> Consulta </span>
+            <i class='fas fa-search'></i>
+          </div>
+        </a> 
       </li> 
 
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="{% url 'datosGenerales' %}" style="color: #ffffff;"> Datos Generales </a>
+        <a class="nav-item nav-link active" href="{% url 'datosGenerales' %}" style="color: #ffffff;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span> Datos </span>
+            <i class='fas fa-database'></i>
+          </div>
+        </a>
+
       </li> 
   
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="{% url 'descripcion' %}" style="color: #ffffff;"> Descripción </a>
+        <a class="nav-item nav-link active" href="{% url 'descripcion' %}" style="color: #ffffff;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span> Descripción </span>
+            <i class="fa fa-audio-description"></i>
+          </div>
+        </a>
       </li>  
-  
+      
       <li class="nav-item">
-        <a class="nav-item nav-link active" href=" {% url 'mapa' %} " style="color: #ffffff;"> Mapa </a>
+        <a class="nav-item nav-link active" href=" {% url 'mapa' %} " style="color: #ffffff;"> 
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span> Mapa </span>
+            <i class='fas fa-map'></i>
+          </div>
+        </a>
       </li>  
-  
+
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="{% url 'realizacion' %}" style="color: #ffffff;"> Realización </a>
+        <a class="nav-item nav-link active" href="{% url 'realizacion' %}" style="color: #ffffff;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span> Realización </span>
+            <i class='fas fa-clipboard-list'></i>
+          </div>
+        </a>
       </li> 
-  
+      
       <li class="nav-item">
-        <a class="nav-item nav-link active" href="{% url 'tecnicas' %}" style="color: #ffffff;"> Técnicas </a>
+        <a class="nav-item nav-link active" href="{% url 'tecnicas' %}" style="color: #ffffff;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span> Técnicas </span>
+            <i class="fa-solid fa-language"></i>
+          </div>  
+        </a>
       </li>  
+      
       <li class="nav-item">
         <a class="nav-item nav-link active" href="{% url 'logout' %}" style="color: #ffffff;"> 
           <div style="display: flex; flex-direction: column; align-items: center;">
@@ -69,12 +101,7 @@
     </div>
   </nav>
   
-  <style>
-    .navbar-nav .nav-item .nav-link:hover {
-      background-color: #9D2449; /* Cambia el color de fondo al pasar el mouse */
-      color: #AF52D8; 
-    }
-  </style>
+
   
 
   <div class="container">

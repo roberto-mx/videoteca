@@ -22,6 +22,10 @@ color: white; /* añadido para cambiar el color de las letras */
     background-color: #b38e5d;
     color: #ffffff;
   }
+  .navbar-nav .nav-item .nav-link:hover {
+    background-color: #9D2449; /* Cambia el color de fondo al pasar el mouse */
+    color: #AF52D8; 
+  }
   
 
   

@@ -23,34 +23,33 @@
     
   <div class="d-flex justify-content-center">
     <div>
-      <a name="" id="atrasBtn" class="btn btn-danger" href="#" role="button">
+      <a name="" id="atrasBtn" class="btn btn-atras btn-sm active"style="background-color:#9D2449;"  href="#" role="button">
           <div style="display: flex; flex-direction: column; align-items: center;">
-            <i class='fas fa-hand-point-left mt-1'></i>
-              <span>Atrás</span>
+            <span  style="color: white;">Atrás</span>
+            <i class='fas fa-hand-point-left mt-1'  style="color: white;"></i>
           </div>
       </a>
 
       <button name="" id="siguienteBtn" class="btn btn-siguiente btn-sm active" style="background-color:#b38e5d;" type="submit" role="button">
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <i class='fas fa-hand-point-right mt-1'></i>
-          <span>Siguiente</span>
+          <span style="color: white;">Siguiente</span>
+          <i class='fas fa-hand-point-right mt-1' style="color: white;"></i>
         </div>
       </button>
       
-      <button name="" id="revicionForm" class="btn btn-success" href="#" role="button">  
+      <button name="" id="revicionForm" class="btn btn-revicion btn-sm active" style="background-color:#18463b" href="#" role="button">  
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <i class="fas fa-save mt-1"></i> 
-          <span>Guardar para revisión</span>
+          <span style="color: white;">Guardar para revisión</span>
+          <i class="fas fa-save mt-1" style="color: white;"></i> 
         </div>
       </button> 
 
-      <button name="" id="aceptaForm" class="btn btn-primary" href="#" role="button">  
+      <button name="" id="aceptaForm" class="btn btn-acepta btn-sm active" style="background-color:#b38e5d" href="#" role="button">  
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <i class='fas fa-check-circle mt-1'></i>
-          <span>Revisado y Aceptado</span>
+          <span style="color:white;">Revisado y Aceptado</span>
+          <i class='fas fa-check-circle mt-1' style="color:white;"></i>
         </div>
       </button> 
-
     </div>
   </div>
 </form>
@@ -109,10 +108,10 @@ $("#revicionForm").click(function(event) {
   Swal.fire({
     title: '¿Deseas guardar este formulario?',
     text: 'No podrás revertir esta acción.',
-    icon: 'warning',
+    icon: 'info',
     showCancelButton: true,
-    confirmButtonColor: '#28a745',
-    cancelButtonColor: '#d33',
+    confirmButtonColor: '#18463b',
+    cancelButtonColor: '#9D2449',
     confirmButtonText: 'Sí, continuar'
   }).then((result) => {
     if (result.isConfirmed) {
@@ -163,9 +162,5 @@ $("#aceptaForm").click(function(event) {
     }
   });
 });
-
-  //if(field.name == 'observaciones' == ''){
-  //  console.log(1)
-  //}
 
 </script>
