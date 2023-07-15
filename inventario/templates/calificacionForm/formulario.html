@@ -106,7 +106,7 @@ $("#revicionForm").click(function(event) {
 
   let $button = $(this); // Guardamos una referencia al botón actual
   Swal.fire({
-    title: '¿Deseas guardar este formulario?',
+    title: '¿Deseas enviar este formulario\n a revisión?',
     text: 'No podrás revertir esta acción.',
     icon: 'info',
     showCancelButton: true,
@@ -147,12 +147,12 @@ $("#aceptaForm").click(function(event) {
 
   let $button = $(this); // Guardamos una referencia al botón actual
   Swal.fire({
-    title: '¿Deseas guardar este formulario?',
-    text: 'No podrás revertir esta acción.',
-    icon: 'warning',
+    title: '¿Aceptas los cambios de este formulario?',
+    text: '¡Quedará con un estatus de aprobado y no podrás revertir esta acción!.',
+    icon: 'info',
     showCancelButton: true,
-    confirmButtonColor: '#28a745',
-    cancelButtonColor: '#d33',
+    confirmButtonColor: '#18463b',
+    cancelButtonColor: '#9D2449',
     confirmButtonText: 'Sí, continuar'
   }).then((result) => {
     if (result.isConfirmed) {
