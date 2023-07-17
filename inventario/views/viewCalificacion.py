@@ -4,7 +4,6 @@ from ..models import RegistroCalificacion
 from django.core.paginator import Paginator
 
 
-from django.core.paginator import Paginator
 
 def consultaFormulario(request):
     # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'X' o 'I'
@@ -144,7 +143,7 @@ def tecnicas(request):
             registro.programa = form_datos_generales.cleaned_data['programa']
             registro.subtitulo_programa = form_datos_generales.cleaned_data['subtitulo_programa']
             
-            # Asignar otros valores de los campos según corresponda
+            # Form de descripción
             registro.sinopsis = form_descripcion.cleaned_data['sinopsis']
             registro.tiempodur = form_descripcion.cleaned_data['tiempodur']
             registro.participantes = form_descripcion.cleaned_data['participantes']
@@ -153,16 +152,19 @@ def tecnicas(request):
             registro.asignatura_materia = form_descripcion.cleaned_data['asignatura_materia']
             registro.grado = form_descripcion.cleaned_data['grado']
             registro.orientacion = form_descripcion.cleaned_data['orientacion']
+            #Form de mapa
             registro.area_de_conocimiento = form_mapa.cleaned_data['area_de_conocimiento']
             registro.eje_tematico = form_mapa.cleaned_data['eje_tematico']
             registro.nivel_educativo = form_mapa.cleaned_data['nivel_educativo']
             registro.tema = form_mapa.cleaned_data['tema']
+            #Form de realización
             registro.guionista = form_realizacion.cleaned_data['guionista']
             registro.locutor = form_realizacion.cleaned_data['locutor']
             registro.investigador = form_realizacion.cleaned_data['investigador']
             registro.elenco = form_realizacion.cleaned_data['elenco']
             registro.conductor = form_realizacion.cleaned_data['conductor']
             registro.institucion_productora = form_realizacion.cleaned_data['institucion_productora']
+            #Form de técnicas
             registro.participantes = form_tecnicas.cleaned_data['idioma_original']
             
             # Guardar el registro en la base de datos
@@ -180,8 +182,3 @@ def tecnicas(request):
         form_tecnicas = Tecnicas()
     
     return render(request, 'calificaForm/tecnicas.html', {'formulario': form_tecnicas})
-
-
-
-
-
