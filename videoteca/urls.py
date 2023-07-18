@@ -16,9 +16,39 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from inventario.views import login, PrestamosListView, DetallesListView, obtenerPeoplePerson, PrestamoDetalle,Filtrar_prestamos, generar_pdf, generar_pdf_modal,generate_pdf_resgister_folio, GetFolioPrestamo, GetFolioDetail, RegisterInVideoteca, ValidateOutVideoteca, RegisterOutVideoteca, EndInVideoteca, GetFilePdf
-from django.contrib.auth import views
-from django.views.generic import TemplateView
+from inventario.views import (
+    login,
+    PrestamosListView,
+    DetallesListView,
+    obtenerPeoplePerson,
+    PrestamoDetalle,
+    Filtrar_prestamos,
+    generar_pdf,
+    generar_pdf_modal,
+    generate_pdf_resgister_folio,
+    GetFolioPrestamo,
+    GetFolioDetail,
+    RegisterInVideoteca,
+    ValidateOutVideoteca,
+    RegisterOutVideoteca,
+    EndInVideoteca,
+    GetFilePdf,
+    consultaFormulario,
+    datosGenerales,
+    descripcion,
+    mapa,
+    realizacion,
+    tecnicas,
+    editar,
+
+ 
+)
+from django.contrib.auth import(
+    views
+) 
+from django.views.generic import(
+    TemplateView
+) 
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
@@ -32,6 +62,15 @@ urlpatterns = [
     path('prestamos/generate_pdf', generar_pdf, name='generar_pdf'),
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
     path('prestamos/person_people', obtenerPeoplePerson, name='obtenerPeoplePerson'),
+
+    path('calificaciones/consultaFormulario', consultaFormulario, name='consultaFormulario'),
+    path('calificaciones/datosGenerales', datosGenerales, name='datosGenerales'),
+    path('calificaciones/descripcion', descripcion, name='descripcion'),
+    path('calificaciones/mapa', mapa, name='mapa'),
+    path('calificaciones/realizacion', realizacion, name='realizacion'),
+    path('calificaciones/tecnicas', tecnicas, name='tecnicas'),
+    path('calificaciones/editar/<int:id>', editar, name='editar'),
+
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),

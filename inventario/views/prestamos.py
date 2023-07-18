@@ -11,17 +11,13 @@ from django.template.loader import get_template
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.db.models import F
-from django.shortcuts import get_object_or_404
 import tempfile
 import os
 # from businesstimedelta import Businesstimedelta
 
-from django.db import transaction
 # from django.utils import timezone
 from datetime import datetime, timedelta, date
 # from django.utils import timezone
-import pandas as pd
 from django.db import connections
 
     # ---------------------------
@@ -67,6 +63,7 @@ class PrestamosListView(ListView):
         }
         return render(request, 'prestamos/prestamos_list.html', context)
     
+
 #vista detalle    
 @csrf_exempt
 def DetallesListView(request):

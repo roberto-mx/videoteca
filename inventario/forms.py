@@ -1,5 +1,5 @@
 from django import forms
-from .models import MaestroCintas, DetalleProgramas, UsuariosVid, DetallePrestamos, Prestamos
+from .models import MaestroCintas, DetalleProgramas, UsuariosVid, DetallePrestamos, Prestamos, RegistroCalificacion
 from django.forms.models import inlineformset_factory
 
 import datetime
@@ -57,7 +57,71 @@ class MaestrosCintasForm(forms.ModelForm):
         widget=forms.Select(attrs={'readonly': True})
     )
 
+class Generales(forms.ModelForm):
+    observaciones = forms.CharField(widget=forms.Textarea)  # Agregar campo de observaciones con un textarea
 
+    class Meta:
+        model = RegistroCalificacion
+        fields = [
+            'codigo_barras',
+            'fecha_calificacion',
+            'axo_produccion',
+            'productor',
+            'coordinador',
+            'observaciones',
+            'serie',
+            'duracion',
+            'subtitserie',
+            'programa',
+            'subtitulo_programa'
+        ]
+        widgets = {
+            'fecha_calificacion': forms.DateInput(attrs={'type': 'date'})
+        }
+
+
+class Descripcion(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = [
+            'sinopsis',
+            'tiempodur',
+            'participantes',
+            'personajes',
+            'derecho_patrimonial',
+            'asignatura_materia',
+            'grado',
+            'orientacion',
+        ]
+
+class Mapa(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = [
+            'area_de_conocimiento',
+            'participantes',
+            'eje_tematico',
+            'nivel_educativo',
+            'tema'
+
+        ]
+
+class Realizacion(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = [
+            'guionista',
+            'locutor',
+            'investigador',
+            'elenco',
+            'conductor',
+            'institucion_productora',
+        ]
+
+class Tecnicas(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['idioma_original']
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

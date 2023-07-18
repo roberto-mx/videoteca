@@ -1,0 +1,20 @@
+/* estilos.css */
+/* Estilos para los campos de entrada */
+input[type="date"],
+input[type="text"] {
+    width: 28%;  /* Ajusta el ancho según tus preferencias */
+    padding: 3px; /* Ajusta el relleno según tus preferencias */
+    box-sizing: border-box; /* Asegura que el ancho incluya el relleno */
+}
+
+textarea {
+    width: 30%;  /* Ajusta el ancho según tus preferencias */
+    height: 28px; /* Ajusta la altura según tus preferencias */
+    box-sizing: border-box; /* Asegura que el ancho y la altura incluyan el relleno */  
+}
+
+element.style {
+    color: #ffffff;
+    height: 100%;
+    padding-top: 1rem;
+}
