@@ -32,7 +32,8 @@ from .viewCalificacion import (
     descripcion,
     mapa,
     realizacion,
-    tecnicas
+    tecnicas,
+    editar
 
 )
 

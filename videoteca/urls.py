@@ -38,7 +38,8 @@ from inventario.views import (
     descripcion,
     mapa,
     realizacion,
-    tecnicas
+    tecnicas,
+    editar,
 
  
 )
@@ -68,6 +69,7 @@ urlpatterns = [
     path('calificaciones/mapa', mapa, name='mapa'),
     path('calificaciones/realizacion', realizacion, name='realizacion'),
     path('calificaciones/tecnicas', tecnicas, name='tecnicas'),
+    path('calificaciones/editar/<int:id>', editar, name='editar'),
 
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),

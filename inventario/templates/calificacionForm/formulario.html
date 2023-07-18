@@ -112,7 +112,6 @@
       let formData = new FormData(document.querySelector('form'));
       let isEmptyForm = false;
     
-      
       //Verifico que el formulario este vacío
       formData.forEach((value) => {
         if (value.trim() == "") {
@@ -121,7 +120,6 @@
         }
       });
     
-      console.log(isEmptyForm)
       if (isEmptyForm) {
         Swal.fire({
           title: 'Formulario vacío',
@@ -132,7 +130,6 @@
         });
         return;
       }
-    
     
       Swal.fire({
         title: '¿Deseas enviar este formulario a revisión?',
@@ -168,12 +165,32 @@
     });
     
   //aceptaForm.addEventListener('click', function(event) {
-  $("#aceptaForm").click(function() {
+ //aceptaForm.addEventListener('click', function(event) {
+  $("#aceptaForm").click(function(event) {
     event.preventDefault(); // Evitar el envío de formulario por defecto
-
+  
     let formData = new FormData(document.querySelector('form'));
-    let isEmpty = true;
-
+    let isEmptyForm = false;
+  
+    // Verifico que el formulario esté vacío
+    formData.forEach((value) => {
+      if (value.trim() == "") {
+        isEmptyForm = true;
+        return;
+      }
+    });
+  
+    if (isEmptyForm) {
+      Swal.fire({
+        title: 'Formulario vacío',
+        text: 'Por favor, completa todos los campos antes de enviar el formulario a revisión.',
+        icon: 'warning',
+        confirmButtonColor: '#18463b',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+  
     Swal.fire({
       title: '¿Aceptas los cambios de este formulario?',
       text: '¡Quedará con un estatus de aprobado y no podrás revertir esta acción!',
@@ -184,6 +201,10 @@
       confirmButtonText: 'Sí, continuar'
     }).then((result) => {
       if (result.isConfirmed) {
+        // 
+        formData.set('estatusCalif', 'R');
+        console.log(formData)
+  
         // Realizar la petición AJAX para guardar los datos
         $.ajax({
           url: '{% url "tecnicas" %}',
@@ -192,7 +213,7 @@
           processData: false,
           contentType: false,
           success: function(response) {
-            alertMessage('success', 'Su formulario fue revisado y aceptado.', '¡Calificado!', '#18463b')
+            alertMessage('success', 'Su formulario fue revisado y aceptado.', '¡Calificado!', '#18463b');
             atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
             revicionForm.style.display = 'none'; // Oculta el botón de "Guardar para revisión"
             aceptaForm.style.display = 'none'; // Oculta el botón de "Guardar para revisión"
@@ -206,4 +227,6 @@
       }
     });
   });
+  
+
 </script>

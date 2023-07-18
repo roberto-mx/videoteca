@@ -1,0 +1,61 @@
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {% for field in formulario %}
+    <div class="mb-3">
+      {% if field.name == 'axo_produccion' %}
+        <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
+        <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="Año de producción">
+      {% else %}
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+      {% endif %}
+      {{ field.errors }}
+      {% if field.name == 'fecha_calificacion' %}
+        <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+      {% elif field.name == 'observaciones' %}
+        <textarea name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
+      {% else %}
+        {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+          <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+        {% endif %}
+      {% endif %}
+    </div>
+    {% endfor %}
+      
+    {% comment %} <div class="d-flex justify-content-center">
+      <div>
+        <a name="" id="atrasBtn" class="btn btn-atras btn-sm active" style="background-color:#9D2449;" href="#" role="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Atrás</span>
+              <i class="fas fa-hand-point-left mt-1" style="color: white;"></i>
+            </div>
+        </a>
+  
+        <button name="" id="siguienteBtn" class="btn btn-siguiente btn-sm active" style="background-color:#b38e5d;" type="submit" role="button">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color: white;">Siguiente</span>
+            <i class="fas fa-hand-point-right mt-1" style="color: white;"></i>
+          </div>
+        </button>
+        
+        <button name="" id="revicionForm" class="btn btn-revicion btn-sm active" style="background-color:#18463b" href="#" role="button">  
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color: white;">Guardar para revisión</span>
+            <i class="fas fa-save mt-1" style="color: white;"></i> 
+          </div>
+        </button> 
+  
+        <button name="" id="aceptaForm" class="btn btn-acepta btn-sm active" style="background-color:#b38e5d" href="#" role="button">  
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color:white;">Revisado y Aceptado</span>
+            <i class="fas fa-check-circle mt-1" style="color:white;"></i>
+          </div>
+        </button> 
+      </div>
+    </div> {% endcomment %}
+  </form>
+  
+  <script>
+
+  
+  </script>
+  

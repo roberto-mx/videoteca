@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from ..forms import Generales, Descripcion, Mapa, Realizacion, Tecnicas
 from ..models import RegistroCalificacion
 from django.core.paginator import Paginator
-
-
+from django.contrib import messages
+from django.core.paginator import Paginator
 
 def consultaFormulario(request):
     # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'X' o 'I'
@@ -34,8 +34,6 @@ def consultaFormulario(request):
     }
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
-
-
 
 def datosGenerales(request):
     if request.method == 'POST':
@@ -95,7 +93,6 @@ def realizacion(request):
         formulario = Realizacion(initial=request.session.get('realizacion_data'))
     
     return render(request, 'calificaForm/realizacion.html', {'formulario': formulario})
-
  
 def tecnicas(request):
     if request.method == 'POST':
@@ -105,12 +102,6 @@ def tecnicas(request):
         mapa_data = request.session.get('mapa_data')
         realizacion_data = request.session.get('realizacion_data')
         tecnicas_data = request.POST
-        
-        # Actualizar los datos con los campos del formulario actual
-        datos_generales.update(descripcion_data)
-        datos_generales.update(mapa_data)
-        datos_generales.update(realizacion_data)
-        datos_generales.update(tecnicas_data)
         
         # Crear instancias de los formularios con los datos actualizados
         form_datos_generales = Generales(data=datos_generales)
@@ -164,12 +155,11 @@ def tecnicas(request):
             registro.elenco = form_realizacion.cleaned_data['elenco']
             registro.conductor = form_realizacion.cleaned_data['conductor']
             registro.institucion_productora = form_realizacion.cleaned_data['institucion_productora']
+            registro.estatusCalif = 'P'  # Colocar  estatusCalif  'P'
             #Form de técnicas
             registro.participantes = form_tecnicas.cleaned_data['idioma_original']
-            
             # Guardar el registro en la base de datos
             registro.save()
-            
             # Limpiar los datos de la sesión
             del request.session['datos_generales']
             del request.session['descripcion_data']
@@ -177,8 +167,15 @@ def tecnicas(request):
             del request.session['realizacion_data']
             
             # Redireccionar a la vista deseada
-            return redirect('datosGenerales')
+            if(registro.save()):
+
+                return redirect('calificaciones/consultaFormulario')
     else:
         form_tecnicas = Tecnicas()
     
     return render(request, 'calificaForm/tecnicas.html', {'formulario': form_tecnicas})
+
+def editar(request, id):
+    registro = RegistroCalificacion.objects.get(id=id)
+    formulario = Generales(request.POST or None, request.FILES or None, instance=registro)
+    return render(request, 'calificaForm/editar.html', {'formulario': formulario})
