@@ -175,67 +175,55 @@ def tecnicas(request):
     
     return render(request, 'calificaForm/tecnicas.html', {'formulario': form_tecnicas})
 
-# def editar(request, id):
-#     registro = RegistroCalificacion.objects.get(id=id)
-#     formulario = Generales(request.POST or None, request.FILES or None, instance=registro)
-#     formulario2 = Descripcion(request.POST or None, request.FILES or None, instance=registro)
-#     formulario3 = Mapa(request.POST or None, request.FILES or None, instance=registro)
-#     formulario4 = Realizacion(request.POST or None, request.FILES or None, instance=registro)
-#     formulario5 = Tecnicas(request.POST or None, request.FILES or None, instance=registro)
-#     return render(request, 'calificaForm/editar.html',
-#                    {
-#                        'formulario'  : formulario,
-#                         'formulario2': formulario2,
-#                         'formulario3': formulario3,
-#                         'formulario4': formulario4,
-#                         'formulario5': formulario5
-#                     }               
-#     )
-
 def editar(request, id):
     registro = RegistroCalificacion.objects.get(id=id)
+    formulario = Generales(request.POST or None, request.FILES or None, instance=registro)
+    formulario2 = Descripcion(request.POST or None, request.FILES or None, instance=registro)
+    formulario3 = Mapa(request.POST or None, request.FILES or None, instance=registro)
+    formulario4 = Realizacion(request.POST or None, request.FILES or None, instance=registro)
+    formulario5 = Tecnicas(request.POST or None, request.FILES or None, instance=registro)
 
     if request.method == 'POST':
+        # Si se presionó el botón "Guardar para revisión"
+        if 'guardar_btn' in request.POST:
+            if formulario.is_valid() and formulario2.is_valid() and formulario3.is_valid() and formulario4.is_valid() and formulario5.is_valid():
+                registro = formulario.save(commit=False)
+                registro.estatusCalif = 'P'  # Guardado para revisión
+                registro.save()
+                return render(request, 'calificaForm/editar.html',
+                              {
+                                  'formulario': formulario,
+                                  'formulario2': formulario2,
+                                  'formulario3': formulario3,
+                                  'formulario4': formulario4,
+                                  'formulario5': formulario5,
+                                  'guardado_para_revision': True
+                              })
 
-        formulario =  Generales(request.POST, instance=registro)
-        formularioDescripcion = Descripcion(request.POST, instance=registro)
-        formularioMapa = Mapa(request.POST, instance=registro)
-        formularioRealizacion = Realizacion(request.POST, instance=registro)
-        formularioTecnicas = Tecnicas(request.POST, instance=registro)
+        # Si se presionó el botón "Revisado y Aceptado"
+        if 'aceptaForm' in request.POST:
+            if formulario.is_valid() and formulario2.is_valid() and formulario3.is_valid() and formulario4.is_valid() and formulario5.is_valid():
+                registro = formulario.save(commit=False)
+                registro.estatusCalif = 'R'  # Revisado y Aceptado
+                registro.save()
+                return render(request, 'calificaForm/editar.html',
+                              {
+                                  'formulario': formulario,
+                                  'formulario2': formulario2,
+                                  'formulario3': formulario3,
+                                  'formulario4': formulario4,
+                                  'formulario5': formulario5,
+                                  'revisado_y_aceptado': True
+                              })
 
-        if (
-            formulario.is_valid() and
-            formularioDescripcion.is_valid() and
-            formularioMapa.is_valid() and
-            formularioRealizacion.is_valid() and
-            formularioTecnicas.is_valid()
-        ):
+    return render(request, 'calificaForm/editar.html',
+                  {
+                      'formulario': formulario,
+                      'formulario2': formulario2,
+                      'formulario3': formulario3,
+                      'formulario4': formulario4,
+                      'formulario5': formulario5
+                  })
 
-            formulario.save()
-            formularioDescripcion.save()
-            formularioMapa.save()
-            formularioRealizacion.save()
-            formularioTecnicas.save()
 
-            registro.estatusCalif = 'R'
-            registro.save()
-
-            return redirect('consultaFormulario')
-
-    else:
-        
-        formulario = Generales(instance=registro)
-        formularioDescripcion = Descripcion(instance=registro)
-        formularioMapa = Mapa(instance=registro)
-        formularioRealizacion = Realizacion(instance=registro)
-        formularioTecnicas = Tecnicas(instance=registro)
-
-    return render(request, 'calificaForm/editar.html', {
-        'formulario': formulario,
-        'formularioDescripcion': formularioDescripcion,
-        'formularioMapa': formularioMapa,
-        'formularioRealizacion': formularioRealizacion,
-        'formularioTecnicas': formularioTecnicas,
-        'registro_id': id,
-    })
 
