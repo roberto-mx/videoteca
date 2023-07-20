@@ -27,9 +27,13 @@
     <nav class="navbar navbar-expand" style="background-color:#13322B;">
       <div class="nav navbar-nav">
 
-        <div class="d-flex align-items-end">
-          <a class="navbar-brand" href="https://www.gob.mx/"><img src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="128" height="48" alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico"></a>
-        </div>
+        {% comment %} <li class="nav-item"> {% endcomment %}
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <a class="navbar-brand"  href="https://www.gob.mx/"><img src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="128" height="48" alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico">
+              <span style="color: #ffffff"> Dirección General de Televisión Educativa - Videoteca </span>  
+            </a> 
+          </div>
+        {% comment %} </li>  {% endcomment %}
 
         <li class="nav-item">
           <a class="nav-item nav-link active" href="{% url 'consultaFormulario' %}" style="color: #ffffff;">
