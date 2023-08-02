@@ -5,7 +5,7 @@
 {% block Contenido %}
 
 <div class="card col-12 mt-5">
-  <div class="card-header text-center" style="background-color:rgb(234, 240, 241)">
+  <div class="card-header text-center" style="background-color:#F1F7F8;">
     <strong>Consulta formulario</strong>
     <div class="d-flex justify-content-between">
       <div>
@@ -33,12 +33,14 @@
         <!-- ... Código de la tabla ... -->
         <thead>
           <tr>
-            <th>Id</th>
+            <th>Id</th>+
+            <th>codigo_barras</th>
             <th>Fecha Calificación</th>
             <th>Año Producción</th>
-            <th>Productor</th>
             <th>Programa</th>
-            <th>Institución Calificadora</th>
+            <th>subtitulo_programa</th>
+            <th>duracion</th>
+            <th>Calificador</th>
             <th>Fecha modificacion</th>
             <th>Estatus</th>
             <th>Acciones</th>
@@ -47,12 +49,20 @@
         <tbody>
           {% for data in formulario %}
           <tr>
-            <td>{{ data.id }}</td>
+            <td>{{ data.id }}</td>+
+            <td>{{ data.codigo_barras }}</td>
             <td>{{ data.fecha_calificacion }}</td>
             <td>{{ data.axo_produccion }}</td>
-            <td>{{ data.productor }}</td>
             <td>{{ data.programa }}</td>
-            <td>{{ data.institucion_productora }}</td>
+            <td>
+              {%if data.subtitulo_programa == ""%}
+                No tiene datos
+              {%else%}
+                {{ data.subtitulo_programa }}
+              {% endif %}
+            </td>
+            <td>{{ data.duracion }}</td>
+            <td>{{ data.calificador_modificacion }}</td>
             <td>{{ data.fecha_modificacion }}</td>
             <td>
               {% if data.estatusCalif == 'P' %}
@@ -61,25 +71,32 @@
               Revisado
               {% endif %}
             </td>
-            <td>
+            <td class="d-flex justify-content-center">
               <!-- Editar -->
-              <a href="#" class="btn btn-editar btn-sm active text-white" style="background-color:#9D2449;" title="Editar">
+              <a href="" class="btn btn-editar btn-sm active text-white" style="background-color:#9D2449;" title="Editar">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class="fas fa-edit"></i>
                   <span></span>
                 </div>
               </a>
               <!-- Ver -->
-              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#b38e5d;" data-bs-toggle="modal" data-bs-target="#exampleModal{{ data.id }}" title="Observaciones"> 
+              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#b38e5d;" data-bs-toggle="modal" data-bs-target="#modalObservacion{{ data.id }}" title="Observaciones"> 
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class='far fa-eye'></i>
+                  <span></span>
+                </div>
+              </a>
+              <!-- Añadir -->
+              <a href="#" class="btn btn-anadir btn-sm active text-white" id="anadir" style="background-color:#10A9C8;" data-bs-toggle="modal" data-bs-target="#{{ data.id }}" title="Añadir"> 
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <i class="fa-solid fa-circle-plus" style="color:white;"></i>
                   <span></span>
                 </div>
               </a>
             </td>
           </tr>
           {% empty %}
-          {% endfor %}
+          {% endfor %}  
         </tbody>
       </table>
     </div>
@@ -88,11 +105,11 @@
 
 {% for data in formulario %}
 <!-- Modal de Observaciones -->
-<div class="modal fade" id="exampleModal{{ data.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalObservacion{{ data.id }}" tabindex="-1" aria-labelledby="modalObservacionLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header" style="background-color:#18463b;">
-        <h4 class="modal-title fs-5" id="exampleModalLabel" style="color: white;">*** Observaciones de calificación ***</h4>
+        <h4 class="modal-title fs-5" id="modalObservacionLabel" style="color: white;">*** Observaciones de calificación ***</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

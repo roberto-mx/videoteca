@@ -1,8 +1,21 @@
 from django import forms
-from .models import MaestroCintas, DetalleProgramas, UsuariosVid, DetallePrestamos, Prestamos, RegistroCalificacion
+from .models import (
+        MaestroCintas,
+        DetalleProgramas,
+        UsuariosVid,
+        DetallePrestamos,
+        Prestamos,
+        RegistroCalificacion,
+        FormatosCintas,
+        CatStatus,
+        TipoSerie,
+        OrigenSerie
+)
+
 from django.forms.models import inlineformset_factory
 
 import datetime
+
 
 class Login(forms.Form):
     usuario = forms.CharField(label='Usuario', max_length=100)
@@ -57,28 +70,29 @@ class MaestrosCintasForm(forms.ModelForm):
         widget=forms.Select(attrs={'readonly': True})
     )
 
-class Generales(forms.ModelForm):
-    observaciones = forms.CharField(widget=forms.Textarea)  # Agregar campo de observaciones con un textarea
-
-    class Meta:
-        model = RegistroCalificacion
-        fields = [
-            'codigo_barras',
-            'fecha_calificacion',
-            'axo_produccion',
-            'productor',
-            'coordinador',
-            'observaciones',
-            'serie',
-            'duracion',
-            'subtitserie',
-            'programa',
-            'subtitulo_programa'
-        ]
-        widgets = {
+class FormularioCombinado(forms.Form):
+    # Campos de Registro Calificación
+    codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
+    fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    productor = forms.CharField(max_length=60, required=True)
+    coordinador = forms.CharField(max_length=40, required=True)
+    observaciones = forms.CharField(max_length=150, required=True)
+    video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
+    duracion = forms.CharField(max_length=11, required=True)
+    video_codificacion = forms.CharField(max_length=20, required=True)
+    video_estatus = forms.CharField(max_length=20, required=True)
+    video_observaciones = forms.CharField(max_length=20, required=True)
+    programa = forms.CharField(max_length=50, required=True)
+    serie = forms.CharField(max_length=50, required=True)
+    subtitulo_programa = forms.CharField(max_length=50, required=True)  
+    subtitserie = forms.CharField(max_length=50, required=True)
+    origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    form_clave = forms.ModelChoiceField(queryset=FormatosCintas.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    widgets = {
             'fecha_calificacion': forms.DateInput(attrs={'type': 'date'})
         }
-
 
 class Descripcion(forms.ModelForm):
     class Meta:
@@ -121,7 +135,7 @@ class Realizacion(forms.ModelForm):
 class Tecnicas(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
-        fields = ['idioma_original']
+        fields = ['idioma_original','observaciones']
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

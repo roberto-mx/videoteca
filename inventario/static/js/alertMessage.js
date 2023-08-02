@@ -1,11 +1,24 @@
-const alertMessage = (type, message, title) => {
-  Swal.fire
-  ({
-    icon:   type,
-    title:  title,
-    text:   message,
+const alertMessage = (type, message, title, button) => {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: message,
+    confirmButtonColor: button
   });
-}
+};
+
+const messageAlerta = (type, message, title, button) => {
+  Swal.fire({
+    position: 'top-center',
+    icon: type,
+    title: title,
+    text: message,
+    showConfirmButton: true,
+    timer: false,
+    confirmButtonColor: button
+  });
+};
+
 
 const alertMessageContent = (title, text, icon, showCancelButton, confirmButtonColor, cancelButtonColor) => {
   Swal.fire({
