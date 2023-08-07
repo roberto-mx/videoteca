@@ -68,6 +68,7 @@ urlpatterns = [
     path('calificaciones/mapa', mapa, name='mapa'),
     path('calificaciones/realizacion', realizacion, name='realizacion'),
     path('calificaciones/tecnicas', tecnicas, name='tecnicas'),
+    
 
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),

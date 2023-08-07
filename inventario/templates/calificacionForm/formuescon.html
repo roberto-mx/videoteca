@@ -1,0 +1,260 @@
+{% extends "__base.html" %}
+
+{% block breadcrumb %}
+                <li><a href="https://www.gob.mx/sep"><i class="icon icon-home"></i></a></li>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/inventario">Inventario</a></li>
+                <li class="active">Actualizar programa</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">{{ programa.vp_serie|default:"&nbsp;" }}</h2>
+        <h5 class="card-title">{{ programa.vp_programa|default:"&nbsp;" }}</h5>
+        <hr class="red">
+    </div>
+    <form method="post">
+        <div class="card-body">
+            {% csrf_token %}
+            <dl class="row">
+                <dt class="col-sm-6">Código de barras</dt>
+                <dt class="col-sm-6">Folio</dt>
+
+                <dl class="col-sm-6">
+                    <a href="/inventario/cintas/{{ programa.video_cbarras }}/">{{ programa.video_cbarras }}</a>
+                </dl>
+                <dl class="col-sm-6">{{ programa.video_id }}</dl>
+
+                <dt class="col-sm-6">Título de la serie</dt>
+                <dt class="col-sm-6">Título del programa</dt>
+
+                <dd class="col-sm-6">{{ form.vp_serie }}</dd>
+                <dd class="col-sm-6">{{ form.vp_programa }}</dd>
+
+                <div class="col-sm-12">&nbsp;</div>
+
+                <dt class="col-sm-6">Subtítulo de la serie</dt>
+                <dt class="col-sm-6">Subtítulo del programa</dt>
+
+                <dd class="col-sm-6">{{ form.vp_subtitserie }}</dd>
+                <dd class="col-sm-6">{{ form.vp_subtitulo }}</dd>
+            </d1>
+        </div>
+        <div class="panel-group ficha-collapse" id="description">
+            <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-parent="#description" data-toggle="collapse" href="#panel-01" aria-expanded="true" aria-controls="panel-01">
+                Descripci&oacute;n
+                </a>
+                </h4>
+                <button type="button" class="collpase-button collapsed" data-parent="#description" data-toggle="collapse" href="#panel-01"></button>
+            </div>
+            <div class="panel-collapse collapse in" id="panel-01">
+                <div class="panel-body">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <dt class="col-sm-12">Sinopsis</dt>
+                            <dd class="col-sm-12">{{ form.vp_sinopsis|default:"&nbsp;" }}</dd>
+                
+                            <div class="col-sm-12">&nbsp;</div>
+
+                            <dt class="col-sm-6">Participantes</dt>
+                            <dt class="col-sm-6">Personajes</dt>
+                
+                            <dd class="col-sm-6">{{ form.vp_participantes|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_personajes|default:"&nbsp;" }}</dd>
+
+                            <div class="col-sm-12">&nbsp;</div>
+
+                            <dt class="col-sm-6">Derecho patrimonial</dt>
+                            <dt class="col-sm-6">Registro de Obra</dt>
+
+                            <dd class="col-sm-6">{{ form.vp_derechopatrimonial|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_registro_obra|default:"&nbsp;" }}</dd>
+
+                            <div class="col-sm-12">&nbsp;</div>
+
+                            <dt class="col-sm-2">Duración:</dt>
+                            <dd class="col-sm-2">{{ form.vp_duracion|default:"&nbsp;" }}</dd>
+                            <dt class="col-sm-1">In:</dt>
+                            <dd class="col-sm-2">{{ form.vp_duracionin|default:"&nbsp;" }}</dd>
+                            <dt class="col-sm-1">Out:</dt>
+                            <dd class="col-sm-2">{{ form.vp_duracionout|default:"&nbsp;" }}</dd>
+                            <dt class="col-sm-1">TX:</dt>
+                            <dd class="col-sm-1">{{ form.tx|default:"&nbsp;" }}</dd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="panel-group ficha-collapse" id="mapa_curricular">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-parent="#mapa_curricular" data-toggle="collapse" href="#panel-02" aria-expanded="true" aria-controls="panel-02">
+                        Mapa curricular
+                    </a>
+                    </h4>
+                    <button type="button" class="collpase-button collapsed" data-parent="#mapa_curricular" data-toggle="collapse" href="#panel-02"></button>
+                </div>
+                <div class="panel-collapse collapse in" id="panel-02">
+                    <div class="panel-body">
+                        <div class="row">
+                            <dt class="col-sm-6">Area de conocimiento</dt>
+                            <dt class="col-sm-6">Eje temático</dt>
+
+                            <dd class="col-sm-6">{{ form.vp_areaconocimiento|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_ejetematico|default:"&nbsp;" }}</dd>
+                
+                            <dt class="col-sm-6">Nivel educativo</dt>
+                            <dt class="col-sm-6">Tema</dt>
+                
+                            <dd class="col-sm-6">{{ form.vp_niveleducativo|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_tema|default:"&nbsp;" }}</dd>
+
+                            <dt class="col-sm-6">Asignatura/materia</dt>
+                            <dt class="col-sm-6">Grado</dt>
+
+                            <dd class="col-sm-6">{{ form.vp_asigmateria|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_grado|default:"&nbsp;" }}</dd>
+                
+                            <dt class="col-sm-12">Orientación curricular</dt>
+                            <dd class="col-sm-12">{{ form.vp_orientacion|default:"&nbsp;" }}</dd>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group ficha-collapse" id="tecnicas">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-parent="#tecnicas" data-toggle="collapse" href="#panel-03" aria-expanded="true" aria-controls="panel-03">
+                        Especificaciones técnicas
+                    </a>
+                    </h4>
+                    <button type="button" class="collpase-button collapsed" data-parent="#tecnicas" data-toggle="collapse" href="#panel-03"></button>
+                </div>
+                <div class="panel-collapse collapse in" id="panel-03">
+                    <div class="panel-body">
+                        <div class="row">
+                            <dt class="col-sm-12">Observaciones:</dt>
+                            <dd class="col-sm-12">{{ form.vp_observaciones|default:"&nbsp;" }}</dd>
+
+                            <div class="col-sm-12">&nbsp;</div>
+
+                            <dt class="col-sm-6">Idioma original:</dt>
+                            <dt class="col-sm-6">Sistema:</dt>
+
+                            <dd class="col-sm-6">{{ form.vp_idiomaoriginal|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_sistema|default:"&nbsp;" }}</dd>
+                
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group ficha-collapse" id="realizacion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-parent="#realizacion" data-toggle="collapse" href="#panel-04" aria-expanded="true" aria-controls="panel-04">
+                        Datos de Realización
+                    </a>
+                    </h4>
+                    <button type="button" class="collpase-button collapsed" data-parent="#realizacion" data-toggle="collapse" href="#panel-04"></button>
+                </div>
+                <div class="panel-collapse collapse in" id="panel-04">
+                    <div class="panel-body">
+                        <div class="row">
+                            <dt class="col-sm-6">Guionista</dt>
+                            <dt class="col-sm-6">Locutor</dt>
+                            <dd class="col-sm-6">{{ form.vp_guionista|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_locutor|default:"&nbsp;" }}</dd>
+
+                            <dt class="col-sm-6">Investigador:</dt>
+                            <dt class="col-sm-6">Elenco</dt>
+                            <dd class="col-sm-6">{{ form.vp_investigador|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_elenco|default:"&nbsp;" }}</dd>
+
+                            <dt class="col-sm-6">Conductor</dt>
+                            <dt class="col-sm-6">Institución productora</dt>
+                            <dd class="col-sm-6">{{ form.vp_conductor|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_institproductora|default:"&nbsp;" }}</dd>
+                
+                            <dt class="col-sm-6">Realizador</dt>
+                            <dt class="col-sm-6">Cantante</dt>
+                            <dd class="col-sm-6">{{ form.vp_realizador|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_cantante|default:"&nbsp;" }}</dd>
+
+                            <dt class="col-sm-6">Música de apertura</dt>
+                            <dt class="col-sm-6">Música de cierre</dt>
+                            <dd class="col-sm-6">{{ form.vp_musicai|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_musicao|default:"&nbsp;" }}</dd>
+
+                            <dt class="col-sm-6">Disquera</dt>
+                            <dt class="col-sm-6">Libreria musical</dt>
+                            <dd class="col-sm-6">{{ form.vp_disquera|default:"&nbsp;" }}</dd>
+                            <dd class="col-sm-6">{{ form.vp_libreriam|default:"&nbsp;" }}</dd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group ficha-collapse" id="meta">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-parent="#meta" data-toggle="collapse" href="#panel-05" aria-expanded="true" aria-controls="panel-05">
+                        Calificaci&oacute;n
+                    </a>
+                    </h4>
+                    <button type="button" class="collpase-button collapsed" data-parent="#meta" data-toggle="collapse" href="#panel-05"></button>
+                </div>
+                <div class="panel-collapse collapse in" id="panel-05">
+                    <div class="panel-body">
+                        <div class="row">
+                            <dt class="col-sm-6">Fecha de Calificación:</dt>
+                            <dt class="col-sm-6">Calificador:</dt>
+                            <dd class="col-sm-6">
+                                <div class="datepicker-group">
+                                    <input class="form-control" name="vp_fechacalificacion" value="{{ form.vp_fechacalificacion|date:'Y-m-d' }}" id="id_vp_fechacalificacion" type="text">
+                                    <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                                </div>
+                            </dd>
+                            <dd class="col-sm-6">{{ form.vp_calificador }}</dd>
+
+                            <dt class="col-sm-12">Calificador mod:</dt>
+                            <dd class="col-sm-6">{{ form.vp_calificadormod }}</dd>
+                            <dt class="col-sm-6">&nbsp;</dt>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <dt class="col-sm-4">Fecha de última actualización:</dt>
+            <dd class="col-sm-8">{{ programa.vp_fecha_modificacion|date:'Y-m-d' }}</dd>
+        </div>
+        <div class="clearfix">
+            <div class="pull-right">
+                <a class="btn btn-default active" href="/inventario/programas/{{programa.vp_id}}">Cancelar</a>
+                <a class="btn btn-danger active" href="/inventario/programas/{{programa.vp_id}}/eliminar">Eliminar</a>
+                <button class="btn btn-primary active" type="submit">Actualizar</button>
+            </div>
+        </div>
+    </form>
+</div>
+<br /><br />
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $( "#id_vp_fechacalificacion" ).datepicker( { changeYear: true } );
+    </script>
+{% endblock %}

@@ -6,90 +6,95 @@ from ..forms import (
     Tecnicas,
     FormularioCombinado
 )
-from ..models import RegistroCalificacion, MaestroCintas
+from django.contrib.auth.decorators import login_required
+
+from django.http import JsonResponse
+from ..models import RegistroCalificacion, MaestroCintas,CatStatus,TipoSerie, OrigenSerie
 from django.core.paginator import Paginator
 from django.db import transaction
 
-
-from django.core.paginator import Paginator
-
 def consultaFormulario(request):
-    # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'X' o 'I'
+    # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'P' o 'R'
     calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
         'id',
-        'codigo_barras',
+        'codigo_barras',  # Acceso a través de la relación
         'fecha_calificacion',
         'axo_produccion',
         'productor',
         'coordinador',
         'serie',
         'programa',
+        'subtitulo_programa',
         'duracion',
         'guionista',
         'observaciones',
-        'institucion_productora',   
         'fecha_modificacion',
         'estatusCalif',
+        'calificador_modificacion',
     )
 
-    # Configurar la paginación, no solo front
-    paginator = Paginator(calificaciones, len(calificaciones))  # Mostrar todos los registros en una sola página
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
     consultaForm = {
-        'formulario': page_obj
+        'formulario': calificaciones
     }
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 
+@login_required
 def datosGenerales(request):
+    programasYSeries = request.session.get('programasYSeries', [])  # Recuperar la lista o usar una lista vacía por defecto
 
     if request.method == 'POST':
-        formulario = FormularioCombinado(request.POST)        
+        formulario = FormularioCombinado(request.POST)
         if formulario.is_valid():
             # Extraer la fecha del formulario
             fecha_calificacion = formulario.cleaned_data['fecha_calificacion']
             try:
-
                 fecha_calificacion_str = fecha_calificacion.strftime('%Y-%m-%d')
+                programasYSeries.append({
+                    'programa': formulario.cleaned_data['programa'],
+                    'serie': formulario.cleaned_data['serie'],
+                    'subtitulo_programa': formulario.cleaned_data['subtitulo_programa'],
+                    'subtitserie': formulario.cleaned_data['subtitserie'],
+                    # Agregar más campos si es necesario
+                })
 
-                # Crear un diccionario con los datos generales y guardar en la sesión
+                # Crear un diccionario con los datos generales
                 datos_generales = {
                     'codigo_barras': formulario.cleaned_data['codigo_barras'],
-                    'form_clave': formulario.cleaned_data['form_clave'].form_clave if formulario.cleaned_data['form_clave'] else None, #campos MaestroCintas
-                    'tipo_id': formulario.cleaned_data['tipo_id'].tipo_id if formulario.cleaned_data['tipo_id'] else None, #campos MaestroCintas
+                    'form_clave': formulario.cleaned_data['form_clave'].form_clave if formulario.cleaned_data['form_clave'] else None,
+                    'tipo_id': formulario.cleaned_data['tipo_id'].tipo_id if formulario.cleaned_data['tipo_id'] else None,
                     'coordinador': formulario.cleaned_data['coordinador'],
                     'observaciones': formulario.cleaned_data['observaciones'],
                     'productor': formulario.cleaned_data['productor'],
                     'video_tipo': formulario.cleaned_data['video_tipo'].id_status if formulario.cleaned_data['video_tipo'] else None,
-                    'origen_id': formulario.cleaned_data['origen_id'].origen_id if formulario.cleaned_data['origen_id'] else None, #campos MaestroCintas
-                    'video_anoproduccion': formulario.cleaned_data['video_anoproduccion'], #campos MaestroCintas
+                    'origen_id': formulario.cleaned_data['origen_id'].origen_id if formulario.cleaned_data['origen_id'] else None,
+                    'video_anoproduccion': formulario.cleaned_data['video_anoproduccion'],
                     'duracion': formulario.cleaned_data['duracion'],
-                    'video_codificacion': formulario.cleaned_data['video_codificacion'], #campos MaestroCintas
+                    'video_codificacion': formulario.cleaned_data['video_codificacion'],
                     'serie': formulario.cleaned_data['serie'],
                     'programa': formulario.cleaned_data['programa'],
                     'subtitulo_programa': formulario.cleaned_data['subtitulo_programa'],
-                    'video_estatus': formulario.cleaned_data['video_estatus'], #campos MaestroCintas
-                    'video_observaciones': formulario.cleaned_data['video_observaciones'],  # Agregado el campo de observaciones #campos MaestroCintas
-                    'subtitserie': formulario.cleaned_data['subtitserie'],  # Agregado el campo de observaciones
-                    'fecha_calificacion': fecha_calificacion_str,  # Almacenar la fecha como objeto datetime.date
+                    'video_estatus': formulario.cleaned_data['video_estatus'],
+                    'video_observaciones': formulario.cleaned_data['video_observaciones'],
+                    'subtitserie': formulario.cleaned_data['subtitserie'],
+                    'fecha_calificacion': fecha_calificacion_str,
                 }
 
-                # Guardar el diccionario de datos generales en la sesión solo si el formulario es válido
+                # Guardar los datos en la sesión
                 request.session['datos_generales'] = datos_generales
+                request.session['programasYSeries'] = programasYSeries
 
                 return redirect('descripcion')
             except ValueError:
-                # Si la conversión de fecha falla, agregar un error personalizado al campo fecha_calificacion
                 formulario.add_error('fecha_calificacion', 'Fecha inválida')
-
     else:
-        # Inicializar el formulario con los datos almacenados en la sesión
         formulario = FormularioCombinado(initial=request.session.get('datos_generales'))
+        programasYSeries = request.session.get('programasYSeries', [])
 
-    return render(request, 'calificaForm/datosGenerales.html', {'formulario': formulario})
+    return render(request, 'calificaForm/datosGenerales.html', {'formulario': formulario, 'programasYSeries': programasYSeries})
 
+    
+  
 def descripcion(request):
     if request.method == 'POST':
         formulario = Descripcion(request.POST)
@@ -133,68 +138,70 @@ def tecnicas(request):
             descripcion_data = request.session.get('descripcion_data')
             mapa_data = request.session.get('mapa_data')
             realizacion_data = request.session.get('realizacion_data')
-            tecnicas_data = form_tecnicas.cleaned_data
 
-            # Obtener los datos de programas y series del formulario
-            programas_series_data = {
-                'programa': tecnicas_data.get('programa'),
-                'serie': tecnicas_data.get('serie'),
-                'subtitulo_programa': tecnicas_data.get('subtitulo_programa'),
-                'subtitserie': tecnicas_data.get('subtitserie'),
-            }
+            id_status = datos_generales.get('id_status', '')
+            tipo_id = datos_generales.get('tipo_id', '')
+            origen_id = datos_generales.get('origen_id', '')
 
+
+                # Buscar la instancia de CatStatus basada en el valor de id_status
             try:
-                with transaction.atomic():
-                    # Crear una instancia de MaestroCintas con los datos combinados
-                    maestro_cintas_instance = MaestroCintas(
-                        video_cbarras=datos_generales.get('codigo_barras', ''),
-                        tipo_id=datos_generales.get('tipo_id', ''),
-                        form_clave=datos_generales.get('form_clave', ''),
-                        video_tipo=datos_generales.get('video_tipo', ''),
-                        origen_id=datos_generales.get('origen_id', ''),
-                        video_anoproduccion=datos_generales.get('video_anoproduccion', ''),
-                        video_estatus=datos_generales.get('video_estatus', ''),
-                        video_codificacion=datos_generales.get('video_codificacion', ''),
-                        video_observaciones=datos_generales.get('video_observaciones', ''),
-                        # Campos de MaestroCintas
-                    )
-                    maestro_cintas_instance.save()
+                cat_status_instance = CatStatus.objects.get(id_status=id_status)
+                tipo_id_instance = TipoSerie.objects.get(tipo_id=tipo_id)
+                origen_id_instance = TipoSerie.objects.get(origen_id=origen_id)
+            except CatStatus.DoesNotExist:
+                # Manejar el caso si no se encuentra CatStatus con el id_status proporcionado
+                cat_status_instance = None
+                tipo_id_instance = None
+                origen_id_instance = None
+            
+            with transaction.atomic():
+                # Crear una instancia de MaestroCintas con los datos combinados
+                maestro_cintas_instance = MaestroCintas(
+                    video_cbarras=datos_generales.get('codigo_barras', ''),
+                    tipo_id=tipo_id_instance,  # Asegúrate de definir tipo_id_instance correctamente
+                    video_tipo=cat_status_instance,  # Asegúrate de definir cat_status_instance correctamente
+                    origen_id=origen_id_instance,  # Asegúrate de definir origen_id_instance correctamente
+                    video_anoproduccion=datos_generales.get('video_anoproduccion', ''),
+                    video_estatus=datos_generales.get('video_estatus', ''),
+                    video_codificacion=datos_generales.get('video_codificacion', ''),
+                    video_observaciones=datos_generales.get('video_observaciones', ''),
+                    # Otros campos de MaestroCintas
+                )
+                maestro_cintas_instance.save()
 
-                    # Crear una instancia de RegistroCalificacion y establecer la relación con MaestroCintas
-                    registro_calificacion_instance = RegistroCalificacion(
-                        codigo_barras=maestro_cintas_instance,
-                        coordinador=datos_generales.get('coordinador',''),
-                        observaciones=datos_generales.get('observaciones',''),
-                        productor=datos_generales.get('productor',''),
-                        duracion=datos_generales.get('duracion',''),
-                        serie=datos_generales.get('serie',''),
-                        programa=datos_generales.get('programa',''),
-                        subtitulo_programa=datos_generales.get('subtitulo_programa',''),
-                        descripcion_data=descripcion_data,
-                        mapa_data=mapa_data,
-                        realizacion_data=realizacion_data,
-                        estatusCalif='P'  # Establecer el valor de estatusCalif como 'P'
-                        # Campos de RegistroCalificacion 
-                    )
-                    registro_calificacion_instance.save()
+                # Crear una instancia de RegistroCalificacion y establecer la relación con MaestroCintas
+                registro_calificacion_instance = RegistroCalificacion(
+                    codigo_barras=maestro_cintas_instance,
+                    coordinador=datos_generales.get('coordinador',''),
+                    observaciones=datos_generales.get('observaciones',''),
+                    productor=datos_generales.get('productor',''),
+                    duracion=datos_generales.get('duracion',''),
+                    serie=datos_generales.get('serie',''),
+                    programa=datos_generales.get('programa',''),
+                    subtitulo_programa=datos_generales.get('subtitulo_programa',''),
+                    descripcion_data=descripcion_data,
+                    mapa_data=mapa_data,
+                    realizacion_data=realizacion_data
+                    # Otros campos de RegistroCalificacion 
+                )
+                registro_calificacion_instance.save()
 
-                    # Guardar los datos de programas y series en la sesión
-                    request.session['programas_series_data'] = programas_series_data
+            # Eliminar los datos de la sesión
+            del request.session['datos_generales']
+            del request.session['descripcion_data']
+            del request.session['mapa_data']
+            del request.session['realizacion_data']
 
-                return redirect('calificaciones/consultaFormulario')
-            except Exception as e:
-                # Manejar el error de la transacción si es necesario
-                print(str(e))
-                # Puedes agregar un mensaje de error si deseas notificar al usuario sobre el problema
-                return redirect('error_transaccion')
+            return redirect('calificaciones/consultaFormulario')
         else:
             # El formulario no es válido, puedes mostrar un mensaje de error si es necesario
+            print('Error en el formulario')
             pass
     else:
         form_tecnicas = Tecnicas()
 
     return render(request, 'calificaForm/tecnicas.html', {'formulario': form_tecnicas})
-
 
 
 

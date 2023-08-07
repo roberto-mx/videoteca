@@ -31,7 +31,6 @@ class FormatosCintasForm(forms.Form):
     def send_email(self):
         pass
 
-
 class MaestroCintasFilter(forms.Form):
     cbarras = forms.CharField(label="Código de barras", max_length=12)
     formato = forms.ChoiceField(label="Formato")
@@ -71,7 +70,6 @@ class MaestrosCintasForm(forms.ModelForm):
     )
 
 class FormularioCombinado(forms.Form):
-    # Campos de Registro Calificación
     codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
     fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     productor = forms.CharField(max_length=60, required=True)
@@ -90,10 +88,13 @@ class FormularioCombinado(forms.Form):
     video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     form_clave = forms.ModelChoiceField(queryset=FormatosCintas.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    # video_id = forms.CharField(max_length=60, required=True, widget=forms.HiddenInput())
     widgets = {
-            'fecha_calificacion': forms.DateInput(attrs={'type': 'date'})
-        }
+            'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
+             'video_id': forms.HiddenInput(),
+    }
 
+  
 class Descripcion(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
