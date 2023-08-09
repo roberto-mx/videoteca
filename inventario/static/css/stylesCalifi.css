@@ -14,10 +14,11 @@
     white-space:inherit;
   }
   
-  .navbar-nav .nav-item .nav-link:hover {
+  /* .navbar-nav .nav-item .nav-link:hover {
     background-color: #9D2449; /* Cambia el color de fondo al pasar el mouse */
     
-  }
+  /*} 
+  
   
   /* Estilos para centrar el título */
   .centered-title {
@@ -26,6 +27,16 @@
     align-items: center;
     margin-bottom: 0; /* Para quitar el espacio inferior */
   }
-  
-    
-    
+
+/* estilos.css */
+
+/* Cambia el color del texto e icono del botón al pasar el mouse */
+.btn-button:hover {
+  background-color: #9D2449; /* Cambia el color de fondo al pasar el mouse */
+}
+
+/* Estilo para el color del texto e icono del botón */
+.btn-button span,
+.btn-button i {
+  color: #ffffff; /* Color del texto e icono */
+}

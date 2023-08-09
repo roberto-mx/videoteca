@@ -74,26 +74,31 @@ class FormularioCombinado(forms.Form):
     fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     productor = forms.CharField(max_length=60, required=True)
     coordinador = forms.CharField(max_length=40, required=True)
-    observaciones = forms.CharField(max_length=150, required=True)
     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
     duracion = forms.CharField(max_length=11, required=True)
     video_codificacion = forms.CharField(max_length=20, required=True)
     video_estatus = forms.CharField(max_length=20, required=True)
     video_observaciones = forms.CharField(max_length=20, required=True)
-    programa = forms.CharField(max_length=50, required=True)
-    serie = forms.CharField(max_length=50, required=True)
-    subtitulo_programa = forms.CharField(max_length=50, required=True)  
-    subtitserie = forms.CharField(max_length=50, required=True)
     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     form_clave = forms.ModelChoiceField(queryset=FormatosCintas.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
-    # video_id = forms.CharField(max_length=60, required=True, widget=forms.HiddenInput())
+    observaciones = forms.CharField(max_length=150, required=True)
+    video_id = forms.CharField(max_length=60, required=True, widget=forms.HiddenInput())
     widgets = {
             'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
              'video_id': forms.HiddenInput(),
     }
 
+class ModalForm(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = [
+            'subtitserie',
+            'subtitulo_programa',
+            'serie',
+            'programa',
+        ]
   
 class Descripcion(forms.ModelForm):
     class Meta:
@@ -121,6 +126,11 @@ class Mapa(forms.ModelForm):
 
         ]
 
+class Tecnicas(forms.ModelForm):
+    class Meta:
+        model = RegistroCalificacion
+        fields = ['idioma_original','observaciones']
+        
 class Realizacion(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
@@ -133,10 +143,6 @@ class Realizacion(forms.ModelForm):
             'institucion_productora',
         ]
 
-class Tecnicas(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = ['idioma_original','observaciones']
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

@@ -38,7 +38,8 @@ from inventario.views import (
     descripcion,
     mapa,
     realizacion,
-    tecnicas
+    tecnicas,
+    formulario
 
  
 )
@@ -68,6 +69,8 @@ urlpatterns = [
     path('calificaciones/mapa', mapa, name='mapa'),
     path('calificaciones/realizacion', realizacion, name='realizacion'),
     path('calificaciones/tecnicas', tecnicas, name='tecnicas'),
+    # Prueba
+    path('calificaciones/formulario', formulario, name='formulario'),
     
 
     # Aquí ira el tercer pdf

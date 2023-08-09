@@ -132,31 +132,6 @@
 
 let programasYSeries = [];
 
-  // Obtener el token CSRF del elemento con nombre 'csrfmiddlewaretoken'
-//const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-//
-//// Realizar la solicitud POST con el token CSRF
-//$.ajax({
-//  url: '{% url "datosGenerales" %}', // Cambia esto a la URL correcta de tu vista de Django
-//  type: 'POST',
-//  data: {
-//    csrfmiddlewaretoken: '{{ csrf_token }}', // Asegúrate de incluir el token CSRF
-//    //programasYSeries: JSON.stringify(programasYSeries),
-//    programasYSeries: programasYSeries
-//  },
-//  
-//  success: function(response) {
-//    console.log({Aquí: response})
-//    // Procesa la respuesta del servidor si es necesario
-//    // ...
-//  },
-//  error: function(xhr, ajaxOptions, thrownError) {
-//    // Maneja los errores de la solicitud AJAX si es necesario
-//    console.log(xhr.status);
-//    console.log(thrownError);
-//  }
-//});
-
 
   const limpiarFormulario = () => {
     const formulario = document.getElementById('formularioPrograma');
@@ -220,48 +195,54 @@ document.getElementById('agregarProgramaSerie').addEventListener('click', functi
     codigoBarras: codigoBarrasValor,
   });
 
-  // Actualizar la sesión con los datos
   $.ajax({
-    url: '{% url "datosGenerales" %}', // Cambia a la URL correcta en tu aplicación
-    type: 'POST',
-    data: {
-      csrfmiddlewaretoken: '{{ csrf_token }}',
-      programasYSeries: JSON.stringify(programasYSeries),
-    },
-    success: function(response) {
-      console.log(response);  // Verifica la respuesta del servidor en la consola
-    },
-    error: function(xhr, ajaxOptions, thrownError) {
-      console.log('Error al guardar los datos:', xhr.status, thrownError);
-    }
+      url: '{% url "datosGenerales" %}', // Cambia a la URL correcta en tu aplicación
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        programasYSeries: JSON.stringify(programasYSeries),
+      },
+      success: function(response) {
+       
+        // Agregar la nueva fila a la tabla
+        const newRow = tableBody.insertRow();
+        const cellId = newRow.insertCell(0);
+        const cellCodigoBarras = newRow.insertCell(1);
+        const cellSerie = newRow.insertCell(2);
+        const cellPrograma = newRow.insertCell(3);
+        const cellSub_Programa = newRow.insertCell(4);
+        const cellSub_Serie = newRow.insertCell(5);
+        const cellAcciones = newRow.insertCell(6);
+
+        cellId.innerHTML = programasYSeries.length;
+        cellCodigoBarras.innerHTML = codigoBarrasValor;
+        cellSerie.innerHTML = serie;
+        cellPrograma.innerHTML = programa;
+        cellSub_Programa.innerHTML = programaSubtitulo;
+        cellSub_Serie.innerHTML = serieSubtitulo;
+        cellAcciones.innerHTML = `
+          <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${newRow.id}" onclick="eliminarColumn(this)">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <i class="fa-sharp fa-solid fa-trash"></i>
+            </div>
+          </button>`;
+        
+        // Limpiar el formulario y mostrar la tabla
+        limpiarFormulario();
+        tableBody.parentElement.style.display = 'table';
+        
+    
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        console.log('Error al guardar los datos:', xhr.status, thrownError);
+      }
   });
-
-  // Agregar la nueva fila a la tabla
-  const newRow = tableBody.insertRow();
-  const cellId = newRow.insertCell(0);
-  const cellCodigoBarras = newRow.insertCell(1);
-  const cellSerie = newRow.insertCell(2);
-  const cellPrograma = newRow.insertCell(3);
-  const cellSub_Programa = newRow.insertCell(4);
-  const cellSub_Serie = newRow.insertCell(5);
-  const cellAcciones = newRow.insertCell(6);
-
-  cellId.innerHTML = programasYSeries.length;
-  cellCodigoBarras.innerHTML = codigoBarrasValor;
-  cellSerie.innerHTML = serie;
-  cellPrograma.innerHTML = programa;
-  cellSub_Programa.innerHTML = programaSubtitulo;
-  cellSub_Serie.innerHTML = serieSubtitulo;
-  cellAcciones.innerHTML = `
-    <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${newRow.id}" onclick="eliminarColumn(this)">
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <i class="fa-sharp fa-solid fa-trash"></i>
-      </div>
-    </button>`;
-
-  limpiarFormulario();
-  tableBody.parentElement.style.display = 'table';
 });
+
+// ... Tu código posterior ...
+
+
+  
 
 
   
@@ -298,30 +279,30 @@ document.getElementById('agregarProgramaSerie').addEventListener('click', functi
   // Ocultar botones según la URL actual
   if (window.location.href.includes('{% url "datosGenerales" %}')) {
     
-    atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
-    revicionForm.style.display = 'none';  // Oculta el botón de "Guardar Formulario"   
-    $("#tablePrograma").hide()
+      atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
+      revicionForm.style.display = 'none';  // Oculta el botón de "Guardar Formulario"   
+      $("#tablePrograma").hide()
+      
+    } else if (window.location.href.includes('{% url "descripcion" %}')) {
+      revicionForm.style.display = 'none';
+      agregaPrograma.style.display = 'none';
+      tablePrograma.style.display = 'none';
+    } else if (window.location.href.includes('{% url "mapa" %}')) {
+      revicionForm.style.display = 'none';
+      agregaPrograma.style.display = 'none';
+      tablePrograma.style.display = 'none';
     
-  } else if (window.location.href.includes('{% url "descripcion" %}')) {
-    revicionForm.style.display = 'none';
-    agregaPrograma.style.display = 'none';
-    tablePrograma.style.display = 'none';
-  } else if (window.location.href.includes('{% url "mapa" %}')) {
-    revicionForm.style.display = 'none';
-    agregaPrograma.style.display = 'none';
-    tablePrograma.style.display = 'none';
-  
-  } else if (window.location.href.includes('{% url "realizacion" %}')) {
-    revicionForm.style.display = 'none';
-    agregaPrograma.style.display = 'none';
-    tablePrograma.style.display = 'none';
-  
-  } else if (window.location.href.includes('{% url "tecnicas" %}')) {
-    siguienteBtn.style.display = 'none';
-    agregaPrograma.style.display = 'none';
-    tablePrograma.style.display = 'none';
-  }
-  
+    } else if (window.location.href.includes('{% url "realizacion" %}')) {
+      revicionForm.style.display = 'none';
+      agregaPrograma.style.display = 'none';
+      tablePrograma.style.display = 'none';
+    
+    } else if (window.location.href.includes('{% url "tecnicas" %}')) {
+      siguienteBtn.style.display = 'none';
+      agregaPrograma.style.display = 'none';
+      tablePrograma.style.display = 'none';
+    }
+    
 
   
   $("#revicionForm").click(function(event) {

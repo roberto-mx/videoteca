@@ -36,6 +36,11 @@ from .viewCalificacion import (
 
 )
 
+from .formularios import (
+    formulario,
+    # descripcion
+
+)
 
 from .prestamos import (
     PrestamosListView,
