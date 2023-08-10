@@ -8,7 +8,7 @@
     {% comment %} <h1>Formulario</h1> {% endcomment %}
     <div class="col-md-12">
         <div class="card">
-            <div class="card-body" style="background:#13322B">
+            <div class="card-header" style="background:#13322B">
                 <div class="d-flex justify-content-center">
                   <li>
                     <a style="color:#ffffff; "class="btn-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDatosGenerales" aria-expanded="false" aria-controls="collapseDatosGenerales">
@@ -65,7 +65,7 @@
                     <h2> Datos Generales </h2>
                     <form enctype="multipart/form-data" method="post">
                         {% csrf_token %}
-                        <div class="row mt-2">
+                        <div class="row mt-4">
                           {% for field in formulario_principal %}
                           <div class="col-md-4 mb-2">
                             <div class="mb-1">
@@ -80,8 +80,8 @@
                               {% else %}
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                 {% if field.name == 'fecha_calificacion' %}
-                                  <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
-                                  {{ field.errors }}
+                                  <input type="date" name="fecha_calificacion" value="{{ fecha_calificacion_actual }}" class="form-control smaller-input" placeholder="{{ field.label }}">
+                                {{ field.errors }}
                                 {% elif field.name == 'observaciones' %}
                                   <textarea name="{{ field.name }}" class="form-control smaller-input" placeholder="{{ field.label }}" rows="3">{{ field.value|default_if_none:'' }}</textarea>
                                   {{ field.errors }}
@@ -112,15 +112,33 @@
                         {% endfor %}
                         </div>
                         <div class="d-flex justify-content-center">
-                          <div>
                             <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#9D2449;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
                               <i class="fa-solid fa-circle-plus" style="color:white;"></i>
                                 <span style="color: white;">Añadir Programa</span>
                             </button>
-                          
-                          </div>
                         </div>
                       </form>
+                      <div class="card-body">
+                        <div class="table-responsive"> <!-- Agregar esta clase -->
+                          <table class="table table-hover" id="tablePrograma">
+                            <!-- ... Código de la tabla ... -->
+                            <thead>
+                              <tr>
+                                <th>Id</th>
+                                <th>Código de barras</th>
+                                <th>Serie</th>
+                                <th>Programa</th>
+                                <th>Subtitulo Programa</th>
+                                <th>Subtitulo Serie</th>
+                                <th>Acciones</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                             <!--lA TABLA SE LLENA DINAMICAMENTE EN EL JAVASCRIPT-->
+                            </tbody>
+                          </table>
+                        </div> 
+                      </div> 
                 </div>
             </div>
  
@@ -130,7 +148,7 @@
                   <h2> Descripción </h2>
                   <form enctype="multipart/form-data" method="post">
                       {% csrf_token %}
-                      <div class="row mt-2">
+                      <div class="row mt-4">
                           {% for campo in formulario_descripcion  %}
                           <div class="col-md-6">
                               <div class="mb-3">
@@ -157,7 +175,7 @@
                   <h2> Mapa </h2>
                   <form enctype="multipart/form-data" method="post">
                       {% csrf_token %}
-                      <div class="row mt-2">
+                      <div class="row mt-4">
                           {% for campo in formulario_mapa  %}
                           <div class="col-md-6">
                               <div class="mb-3">
@@ -184,7 +202,7 @@
                 <h2> Técnicas </h2>
                 <form enctype="multipart/form-data" method="post">
                     {% csrf_token %}
-                    <div class="row mt-2">
+                    <div class="row mt-4">
                         {% for campo in formulario_tecnicas  %}
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -211,7 +229,7 @@
                 <h2> Realización </h2>
                 <form enctype="multipart/form-data" method="post">
                     {% csrf_token %}
-                    <div class="row mt-2">
+                    <div class="row mt-4">
                         {% for campo in formulario_realizacion  %}
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -267,7 +285,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-agregar" style="background-color:#b38e5d" id="agregarProgramaSerie" >
-          <span style="color: white;">Agregar</span>
+          <span class="text" style="color: white;">Agregar</span>
         </button>
         {% comment %} <button type="button" class="btn btn-guardar-modal" style="background-color:#18463b" id="guardarModal">
           <span style="color: white;">Guardar en sesión</span>
@@ -277,141 +295,135 @@
   </div>
 </div>
 
-<div class="card-body">
-  <div class="table-responsive"> <!-- Agregar esta clase -->
-    <table class="table table-hover" id="tablePrograma">
-      <!-- ... Código de la tabla ... -->
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Código de barras</th>
-          <th>Serie</th>
-          <th>Programa</th>
-          <th>Subtitulo Programa</th>
-          <th>Subtitulo Serie</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-       <!--lA TABLA SE LLENA DINAMICAMENTE EN EL JAVASCRIPT-->
-      </tbody>
-    </table>
-  </div> 
-</div> 
-
 <script>
+  let programasYSeries = [];
   $("#tablePrograma").hide();
 
-  document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
-    const programa = document.getElementById('programa').value;
-    const serie = document.getElementById('serie').value;
-    const programaSubtitulo = document.getElementById('subtitulo_programa').value;
-    const serieSubtitulo = document.getElementById('subtitserie').value;
-    const codigoBarrasValor = document.getElementById('codigo_barras').value;
+  const limpiarFormulario = () => {
+    const formulario = document.getElementById('formularioPrograma');
+    formulario.reset();
+  }
+
   
-    // Validación para asegurarse de que los campos no estén vacíos
-    if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
-      messageAlerta('info', 'Completa los campos solicitados para agregar un programa.', '¡Oops!', '#18463b');
-      return;
-    } else if (codigoBarrasValor.trim() === '') {
-      messageAlerta('info', 'No ingresaste un Código de Barras.', '¡Oops!', '#18463b');
-      return;
-    }
   
-    // Agregar los datos a la lista de programas y series
-    programasYSeries.push({
-      id: programasYSeries.length + 1, // Cambia esto según tu lógica
-      programa: programa,
-      serie: serie,
-      programaSubtitulo: programaSubtitulo,
-      serieSubtitulo: serieSubtitulo,
-      codigoBarras: codigoBarrasValor,
+ const actualizarTablaPrograma = () => {
+    const tableBody = document.getElementById('tablePrograma').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = ''; // Limpia el contenido actual de la tabla
+    $("#tablePrograma").show();
+
+  // Itera a través de los datos almacenados en programasYSeries
+    programasYSeries.forEach(function(datos, index) {
+      const newRow = tableBody.insertRow();
+      const cellId = newRow.insertCell(0);
+      const cellCodigoBarras = newRow.insertCell(1);
+      const cellSerie = newRow.insertCell(2);
+      const cellPrograma = newRow.insertCell(3);
+      const cellSub_Programa = newRow.insertCell(4);
+      const cellSub_Serie = newRow.insertCell(5);
+      const cellAcciones = newRow.insertCell(6);
+
+      cellId.innerHTML = datos.id;
+      console.log({id: datos.id})
+      cellCodigoBarras.innerHTML = datos.codigoBarras;
+      cellSerie.innerHTML = datos.serie;
+      cellPrograma.innerHTML = datos.programa;
+      cellSub_Programa.innerHTML = datos.programaSubtitulo;
+      cellSub_Serie.innerHTML = datos.serieSubtitulo;
+      cellAcciones.innerHTML = `
+        <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${datos.id}" onclick="eliminarFila(${index})">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <i class="fa-sharp fa-solid fa-trash"></i>
+          </div>
+        </button>`;
     });
-  
-    $.ajax({
-        url: '{% url "formulario" %}', // Cambia a la URL correcta en tu aplicación
-        type: 'POST',
-        data: {
-          csrfmiddlewaretoken: '{{ csrf_token }}',
-          programasYSeries: JSON.stringify(programasYSeries),
-        },
-        success: function(response) {
-         
-          // Agregar la nueva fila a la tabla
-          const newRow = tableBody.insertRow();
-          const cellId = newRow.insertCell(0);
-          const cellCodigoBarras = newRow.insertCell(1);
-          const cellSerie = newRow.insertCell(2);
-          const cellPrograma = newRow.insertCell(3);
-          const cellSub_Programa = newRow.insertCell(4);
-          const cellSub_Serie = newRow.insertCell(5);
-          const cellAcciones = newRow.insertCell(6);
-  
-          cellId.innerHTML = programasYSeries.length;
-          cellCodigoBarras.innerHTML = codigoBarrasValor;
-          cellSerie.innerHTML = serie;
-          cellPrograma.innerHTML = programa;
-          cellSub_Programa.innerHTML = programaSubtitulo;
-          cellSub_Serie.innerHTML = serieSubtitulo;
-          cellAcciones.innerHTML = `
-            <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${newRow.id}" onclick="eliminarColumn(this)">
-              <div style="display: flex; flex-direction: column; align-items: center;">
-                <i class="fa-sharp fa-solid fa-trash"></i>
-              </div>
-            </button>`;
-          
-          // Limpiar el formulario y mostrar la tabla
-          limpiarFormulario();
-          tableBody.parentElement.style.display = 'table';
-          
-      
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-          console.log('Error al guardar los datos:', xhr.status, thrownError);
-        }
-    });
+}
+
+//function eliminarFila(id) {
+//  const index = programasYSeries.findIndex(datos => datos.id === id);
+//
+//  console.log({index})
+//  //if (index !== -1) {
+//  //  programasYSeries.splice(index, 1); // Elimina el elemento del arreglo
+//  //  actualizarTablaPrograma(); // Actualiza la tabla con los datos actualizados
+//  //}
+//}
+
+// Agrega el evento click al botón "Agregar Programa/Serie"
+document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
+  const programa = document.getElementById('programa').value;
+  const serie = document.getElementById('serie').value;
+  const programaSubtitulo = document.getElementById('subtitulo_programa').value;
+  const serieSubtitulo = document.getElementById('subtitserie').value;
+  const codigoBarrasValor = document.getElementById('codigo_barras').value;
+
+  // Validación para asegurarse de que los campos no estén vacíos
+  if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
+    messageAlerta('info', 'Completa los campos solicitados para agregar un programa.', '¡Oops!', '#18463b');
+    return;
+  } else if (codigoBarrasValor.trim() === '') {
+    messageAlerta('info', 'No ingresaste un Código de Barras.', '¡Oops!', '#18463b');
+    return;
+  }
+
+  // Agregar los datos a la lista de programas y series
+  programasYSeries.push({
+    id: programasYSeries.length + 1, // Cambia esto según tu lógica
+    programa: programa,
+    serie: serie,
+    programaSubtitulo: programaSubtitulo,
+    serieSubtitulo: serieSubtitulo,
+    codigoBarras: codigoBarrasValor,
   });
 
-  $("#revicionForm").click(function(event) {
-    event.preventDefault(); // Evitar el envío de formulario por defecto
+  // Actualiza la tabla con los nuevos datos
+  actualizarTablaPrograma();
   
-    let $button = $(this); // Guardamos una referencia al botón actual
-    Swal.fire({
-      title: '¿Deseas enviar este formulario\n a revisión?',
-      text: 'No podrás revertir esta acción.',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonColor: '#18463b',
-      cancelButtonColor: '#9D2449',
-      confirmButtonText: 'Sí, continuar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Obtener los datos del formulario
-        let formData = $('form').serialize();
-        
-        // Realizar la petición AJAX para guardar los datos
-        $.ajax({
-          url: '{% url "tecnicas" %}',
-          type: 'POST',
-          data: formData,
-          success: function(response) {
-            Swal.fire(
-              'Registrado',
-              'Su formulario ha sido registrado y se encuentra en calificación.',
-              'success'
-            )
-            atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
-            $button.hide(); // Oculta el botón utilizando la referencia guardada
-          },
-          error: function(xhr, ajaxOptions, thrownError) {
-            // Manejar el error de la petición AJAX si es necesario
-            console.log(xhr.status);
-            console.log(thrownError);
-          }
-        });
-      }
-    });
-  });
+  // Limpia el formulario modal
+  limpiarFormulario();
+});
+
+
+
+  //$("#revicionForm").click(function(event) {
+  //  event.preventDefault(); // Evitar el envío de formulario por defecto
+  //
+  //  let $button = $(this); // Guardamos una referencia al botón actual
+  //  Swal.fire({
+  //    title: '¿Deseas enviar este formulario\n a revisión?',
+  //    text: 'No podrás revertir esta acción.',
+  //    icon: 'info',
+  //    showCancelButton: true,
+  //    confirmButtonColor: '#18463b',
+  //    cancelButtonColor: '#9D2449',
+  //    confirmButtonText: 'Sí, continuar'
+  //  }).then((result) => {
+  //    if (result.isConfirmed) {
+  //      // Obtener los datos del formulario
+  //      let formData = $('form').serialize();
+  //      
+  //      // Realizar la petición AJAX para guardar los datos
+  //      $.ajax({
+  //        url: '{% url "tecnicas" %}',
+  //        type: 'POST',
+  //        data: formData,
+  //        success: function(response) {
+  //          Swal.fire(
+  //            'Registrado',
+  //            'Su formulario ha sido registrado y se encuentra en calificación.',
+  //            'success'
+  //          )
+  //          atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
+  //          $button.hide(); // Oculta el botón utilizando la referencia guardada
+  //        },
+  //        error: function(xhr, ajaxOptions, thrownError) {
+  //          // Manejar el error de la petición AJAX si es necesario
+  //          console.log(xhr.status);
+  //          console.log(thrownError);
+  //        }
+  //      });
+  //    }
+  //  });
+  //});
 
 </script>
 
