@@ -1,8 +1,0 @@
-Aquí se hacen los estyles delos inputs del formularioMaestro
-.smaller-input {
-    width: 0%; /* Ajustar este valor para cambiar el ancho */
-    padding: 5px;
-    height: 32px; /* Ajustar este valor para cambiar la altura */
-    box-sizing: border-box;
-  }
-  

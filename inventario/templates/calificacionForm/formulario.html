@@ -305,45 +305,45 @@ document.getElementById('agregarProgramaSerie').addEventListener('click', functi
     
 
   
-  $("#revicionForm").click(function(event) {
-    event.preventDefault(); // Evitar el envío de formulario por defecto
-  
-    let $button = $(this); // Guardamos una referencia al botón actual
-    Swal.fire({
-      title: '¿Deseas enviar este formulario\n a revisión?',
-      text: 'No podrás revertir esta acción.',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonColor: '#18463b',
-      cancelButtonColor: '#9D2449',
-      confirmButtonText: 'Sí, continuar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Obtener los datos del formulario
-        let formData = $('form').serialize();
-        
-        // Realizar la petición AJAX para guardar los datos
-        $.ajax({
-          url: '{% url "tecnicas" %}',
-          type: 'POST',
-          data: formData,
-          success: function(response) {
-            Swal.fire(
-              'Registrado',
-              'Su formulario ha sido registrado y se encuentra en calificación.',
-              'success'
-            )
-            atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
-            $button.hide(); // Oculta el botón utilizando la referencia guardada
-          },
-          error: function(xhr, ajaxOptions, thrownError) {
-            // Manejar el error de la petición AJAX si es necesario
-            console.log(xhr.status);
-            console.log(thrownError);
-          }
-        });
-      }
+    $("#revicionForm").click(function(event) {
+      event.preventDefault(); // Evitar el envío de formulario por defecto
+    
+      let $button = $(this); // Guardamos una referencia al botón actual
+      Swal.fire({
+        title: '¿Deseas enviar este formulario\n a revisión?',
+        text: 'No podrás revertir esta acción.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#18463b',
+        cancelButtonColor: '#9D2449',
+        confirmButtonText: 'Sí, continuar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Obtener los datos del formulario
+          let formData = $('form').serialize();
+          
+          // Realizar la petición AJAX para guardar los datos
+          $.ajax({
+            url: '{% url "tecnicas" %}',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+              Swal.fire(
+                'Registrado',
+                'Su formulario ha sido registrado y se encuentra en calificación.',
+                'success'
+              )
+              atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
+              $button.hide(); // Oculta el botón utilizando la referencia guardada
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+              // Manejar el error de la petición AJAX si es necesario
+              console.log(xhr.status);
+              console.log(thrownError);
+            }
+          });
+        }
+      });
     });
-  });
   </script>
   

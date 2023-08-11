@@ -19,7 +19,6 @@ const messageAlerta = (type, message, title, button) => {
   });
 };
 
-
 const alertMessageContent = (title, text, icon, showCancelButton, confirmButtonColor, cancelButtonColor) => {
   Swal.fire({
     title: title,

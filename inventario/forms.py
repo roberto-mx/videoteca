@@ -93,10 +93,10 @@ class ModalForm(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
         fields = [
-            'subtitserie',
-            'subtitulo_programa',
-            'serie',
             'programa',
+            'serie',
+            'subtitulo_programa',
+            'subtitserie',
         ]
   
 class Descripcion(forms.ModelForm):

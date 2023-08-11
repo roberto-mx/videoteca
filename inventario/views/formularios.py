@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm
 from ..models import MaestroCintas, RegistroCalificacion
+from django.db.models import Max
 from django.utils import timezone
 
 def formulario(request):
+    programasYSeries = request.session.get('programasYSeries', []) 
     if request.method == 'POST':
         formulario_principal = FormularioCombinado(request.POST)
         formulario_descripcion = Descripcion(request.POST)
@@ -12,21 +14,33 @@ def formulario(request):
         formulario_tecnicas = Tecnicas(request.POST)
         modal_form = ModalForm(request.POST)
         
-        if formulario_realizacion.is_valid():
-            # Procesar los datos del formulario principal
+        if formulario_principal.is_valid() and formulario_descripcion.is_valid() and formulario_mapa.is_valid() and formulario_realizacion.is_valid() and formulario_tecnicas.is_valid() and modal_form.is_valid():
             datos_formulario_principal = formulario_principal.cleaned_data
-            
-            # Obtener valores de los otros formularios
+            # Obtener valores de los formularios
             datos_formulario_descripcion = formulario_descripcion.cleaned_data
             datos_formulario_mapa = formulario_mapa.cleaned_data
             datos_formulario_tecnicas = formulario_tecnicas.cleaned_data
-            datos_formulario_realizacion = formulario_realizacion.cleaned_data
             datos_modal_form = modal_form.cleaned_data  
+            datos_formulario_realizacion = formulario_realizacion.cleaned_data
 
             fecha_calificacion_actual = timezone.now().strftime('%Y-%m-%d')
+            programasYSeries.append({
+                'programa': datos_modal_form['programa'],
+                'serie': datos_modal_form['serie'],
+                'subtitulo_programa': datos_modal_form['subtitulo_programa'],
+                'subtitserie': datos_modal_form['subtitserie'],
+                # Agregar más campos si es necesario
+            })
 
-            # Inserción en MaestroCintas
+             # Obtener el último valor de video_id
+            ultimo_video_id = MaestroCintas.objects.aggregate(Max('video_id'))['video_id__max']
+            if ultimo_video_id is None:
+                nuevo_video_id = 1
+            else:
+                nuevo_video_id = ultimo_video_id + 1
+
             maestro_cintas = MaestroCintas(
+                video_id=nuevo_video_id,
                 video_cbarras=datos_formulario_principal['codigo_barras'],
                 form_clave=datos_formulario_principal['form_clave'],
                 tipo_id=datos_formulario_principal['tipo_id'],
@@ -36,13 +50,13 @@ def formulario(request):
                 video_estatus=datos_formulario_principal['video_estatus'],
                 video_codificacion=datos_formulario_principal['video_codificacion'],
                 video_anoproduccion=datos_formulario_principal['video_anoproduccion'],
-                # Agregar otros campos aquí si son necesarios
             )
             maestro_cintas.save()
-            
+
             # Crear objeto RegistroCalificacion
             registro_calificacion = RegistroCalificacion(
-                codigo_barras=datos_formulario_principal['codigo_barras'],
+                codigo_barras=maestro_cintas,  # Asignar la instancia de MaestroCintas
+                estatusCalif='P',
                 fecha_calificacion=fecha_calificacion_actual,  # Asignar la fecha actual
                 productor=datos_formulario_principal['productor'],
                 coordinador=datos_formulario_principal['coordinador'],
@@ -64,7 +78,7 @@ def formulario(request):
                 nivel_educativo=datos_formulario_mapa['nivel_educativo'],
                 tema=datos_formulario_mapa['tema'],
 
-                #Form Técnicas
+                # Form Técnicas
                 idioma_original=datos_formulario_tecnicas['idioma_original'],
                 observaciones=datos_formulario_tecnicas['observaciones'],
 
@@ -76,18 +90,18 @@ def formulario(request):
                 conductor=datos_formulario_realizacion['conductor'],
                 institucion_productora=datos_formulario_realizacion['institucion_productora'],
 
-                # Form Modal
-                serie=datos_modal_form['serie'],
+                # Form Modal (programas y series)
                 programa=datos_modal_form['programa'],
+                serie=datos_modal_form['serie'],
                 subtitulo_programa=datos_modal_form['subtitulo_programa'],
                 subtitserie=datos_modal_form['subtitserie']
-                # ... otros campos ...
-                # Agregar campos de los otros formularios aquí
             )
+
+            request.session['programasYSeries'] = programasYSeries
             registro_calificacion.save()
-            
+
             # Redirigir o realizar otra acción si es necesario
-            return redirect('calificaciones/consultaFormulario')
+            return redirect('consultaFormulario')
             
     else:
         formulario_principal = FormularioCombinado()
@@ -96,6 +110,7 @@ def formulario(request):
         formulario_tecnicas = Tecnicas()
         formulario_realizacion = Realizacion()
         modal_form = ModalForm()
+        programasYSeries = request.session.get('programasYSeries', [])
 
     return render(request, 'calificaForm/formulario.html', {
         'formulario_principal': formulario_principal,
@@ -104,4 +119,6 @@ def formulario(request):
         'formulario_tecnicas': formulario_tecnicas,
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
+        'programasYSeries': programasYSeries
     })
+
