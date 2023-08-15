@@ -25,7 +25,7 @@ class CatStatus(models.Model):
 
 
 class FormatosCintas(models.Model):
-    form_clave = models.IntegerField('Formato de cinta', primary_key=True)
+    form_clave = models.IntegerField('Formato de cinta', primary_key=True)  
     form_descripcion = models.CharField('Formato de la cinta', max_length=25)
     form_duracion = models.CharField(max_length=10, blank=True, null=True)
     form_prefijo = models.CharField(max_length=15, blank=True, null=True)

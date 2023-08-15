@@ -1,11 +1,21 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm
 from ..models import MaestroCintas, RegistroCalificacion
 from django.db.models import Max
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
 from django.utils import timezone
 
+@csrf_exempt
 def formulario(request):
-    programasYSeries = request.session.get('programasYSeries', []) 
+    formulario_principal = FormularioCombinado()
+    formulario_descripcion = Descripcion()
+    formulario_mapa = Mapa()
+    formulario_realizacion = Realizacion()
+    formulario_tecnicas = Tecnicas()
+    modal_form = ModalForm()
+
     if request.method == 'POST':
         formulario_principal = FormularioCombinado(request.POST)
         formulario_descripcion = Descripcion(request.POST)
@@ -14,30 +24,19 @@ def formulario(request):
         formulario_tecnicas = Tecnicas(request.POST)
         modal_form = ModalForm(request.POST)
         
-        if formulario_principal.is_valid() and formulario_descripcion.is_valid() and formulario_mapa.is_valid() and formulario_realizacion.is_valid() and formulario_tecnicas.is_valid() and modal_form.is_valid():
-            datos_formulario_principal = formulario_principal.cleaned_data
+        if formulario_principal.is_valid() and formulario_descripcion.is_valid() and formulario_mapa.is_valid() and formulario_realizacion.is_valid() and formulario_tecnicas.is_valid():
             # Obtener valores de los formularios
+            datos_formulario_principal = formulario_principal.cleaned_data
             datos_formulario_descripcion = formulario_descripcion.cleaned_data
             datos_formulario_mapa = formulario_mapa.cleaned_data
             datos_formulario_tecnicas = formulario_tecnicas.cleaned_data
-            datos_modal_form = modal_form.cleaned_data  
             datos_formulario_realizacion = formulario_realizacion.cleaned_data
-
+            # datos_modal_form = modal_form.cleaned_data
             fecha_calificacion_actual = timezone.now().strftime('%Y-%m-%d')
-            programasYSeries.append({
-                'programa': datos_modal_form['programa'],
-                'serie': datos_modal_form['serie'],
-                'subtitulo_programa': datos_modal_form['subtitulo_programa'],
-                'subtitserie': datos_modal_form['subtitserie'],
-                # Agregar más campos si es necesario
-            })
 
-             # Obtener el último valor de video_id
-            ultimo_video_id = MaestroCintas.objects.aggregate(Max('video_id'))['video_id__max']
-            if ultimo_video_id is None:
-                nuevo_video_id = 1
-            else:
-                nuevo_video_id = ultimo_video_id + 1
+            # Crear instancia de MaestroCintas
+            nuevo_video_id = MaestroCintas.objects.aggregate(Max('video_id'))['video_id__max'] or 0
+            nuevo_video_id += 1
 
             maestro_cintas = MaestroCintas(
                 video_id=nuevo_video_id,
@@ -53,64 +52,80 @@ def formulario(request):
             )
             maestro_cintas.save()
 
-            # Crear objeto RegistroCalificacion
-            registro_calificacion = RegistroCalificacion(
-                codigo_barras=maestro_cintas,  # Asignar la instancia de MaestroCintas
-                estatusCalif='P',
-                fecha_calificacion=fecha_calificacion_actual,  # Asignar la fecha actual
-                productor=datos_formulario_principal['productor'],
-                coordinador=datos_formulario_principal['coordinador'],
-                duracion=datos_formulario_principal['duracion'],
+            prueba = request.POST.get("programasYSeries")
+            # Datos del front-end
+            datos_modal_form = json.loads(prueba)
 
-                # Form Descripción
-                sinopsis=datos_formulario_descripcion['sinopsis'],
-                tiempodur=datos_formulario_descripcion['tiempodur'],
-                participantes=datos_formulario_descripcion['participantes'],
-                personajes=datos_formulario_descripcion['personajes'],
-                derecho_patrimonial=datos_formulario_descripcion['derecho_patrimonial'],
-                asignatura_materia=datos_formulario_descripcion['asignatura_materia'],
-                grado=datos_formulario_descripcion['grado'],
-                orientacion=datos_formulario_descripcion['orientacion'],
 
-                # Form Mapa
-                area_de_conocimiento=datos_formulario_mapa['area_de_conocimiento'],
-                eje_tematico=datos_formulario_mapa['eje_tematico'],
-                nivel_educativo=datos_formulario_mapa['nivel_educativo'],
-                tema=datos_formulario_mapa['tema'],
+            # programadatossYSeries = datos_modal_form.get('', [])
+            print(datos_modal_form)
+              
+            for item in datos_modal_form:
+                programa = item.get('programa')
+                serie = item.get('serie')
+                programaSubtitulo = item.get('programaSubtitulo')
+                serieSubtitulo = item.get('serieSubtitulo')
+                
+                # Crear instancia de RegistroCalificacion para cada programa y serie
+                registro_calificacion = RegistroCalificacion(
+                    codigo_barras=maestro_cintas,  # Asignar la instancia de MaestroCintas
+                    estatusCalif='P',
+                    fecha_calificacion=fecha_calificacion_actual,  # Asignar la fecha actual
+                    productor=datos_formulario_principal['productor'],
+                    coordinador=datos_formulario_principal['coordinador'],
+                    duracion=datos_formulario_principal['duracion'],
 
-                # Form Técnicas
-                idioma_original=datos_formulario_tecnicas['idioma_original'],
-                observaciones=datos_formulario_tecnicas['observaciones'],
+                    # Form Descripción
+                    sinopsis=datos_formulario_descripcion['sinopsis'],
+                    tiempodur=datos_formulario_descripcion['tiempodur'],
+                    participantes=datos_formulario_descripcion['participantes'],
+                    personajes=datos_formulario_descripcion['personajes'],
+                    derecho_patrimonial=datos_formulario_descripcion['derecho_patrimonial'],
+                    asignatura_materia=datos_formulario_descripcion['asignatura_materia'],
+                    grado=datos_formulario_descripcion['grado'],
+                    orientacion=datos_formulario_descripcion['orientacion'],
 
-                # Form Realización
-                guionista=datos_formulario_realizacion['guionista'],
-                locutor=datos_formulario_realizacion['locutor'],
-                investigador=datos_formulario_realizacion['investigador'],
-                elenco=datos_formulario_realizacion['elenco'],
-                conductor=datos_formulario_realizacion['conductor'],
-                institucion_productora=datos_formulario_realizacion['institucion_productora'],
+                    # Form Mapa
+                    area_de_conocimiento=datos_formulario_mapa['area_de_conocimiento'],
+                    eje_tematico=datos_formulario_mapa['eje_tematico'],
+                    nivel_educativo=datos_formulario_mapa['nivel_educativo'],
+                    tema=datos_formulario_mapa['tema'],
 
-                # Form Modal (programas y series)
-                programa=datos_modal_form['programa'],
-                serie=datos_modal_form['serie'],
-                subtitulo_programa=datos_modal_form['subtitulo_programa'],
-                subtitserie=datos_modal_form['subtitserie']
-            )
+                    # Form Técnicas
+                    idioma_original=datos_formulario_tecnicas['idioma_original'],
+                    observaciones=datos_formulario_tecnicas['observaciones'],
 
-            request.session['programasYSeries'] = programasYSeries
-            registro_calificacion.save()
+                    # Form Realización
+                    guionista=datos_formulario_realizacion['guionista'],
+                    locutor=datos_formulario_realizacion['locutor'],
+                    investigador=datos_formulario_realizacion['investigador'],
+                    elenco=datos_formulario_realizacion['elenco'],
+                    conductor=datos_formulario_realizacion['conductor'],
+                    institucion_productora=datos_formulario_realizacion['institucion_productora'],
 
-            # Redirigir o realizar otra acción si es necesario
-            return redirect('consultaFormulario')
-            
-    else:
-        formulario_principal = FormularioCombinado()
-        formulario_descripcion = Descripcion()
-        formulario_mapa = Mapa()
-        formulario_tecnicas = Tecnicas()
-        formulario_realizacion = Realizacion()
-        modal_form = ModalForm()
-        programasYSeries = request.session.get('programasYSeries', [])
+                    programa=programa,
+                    serie=serie,
+                    subtitulo_programa=programaSubtitulo,
+                    subtitserie=serieSubtitulo,
+                )
+                registro_calificacion.save()
+
+            response_data = {
+                'message': 'Los datos se guardaron exitosamente.',
+                'datos_modal_form': datos_modal_form  # Agrega los datos aquí
+
+                
+            }
+            return JsonResponse(response_data)
+
+        else:
+
+            formulario_principal = FormularioCombinado()
+            formulario_descripcion = Descripcion()
+            formulario_mapa = Mapa()
+            formulario_tecnicas = Tecnicas()
+            formulario_realizacion = Realizacion()
+            modal_form = ModalForm()
 
     return render(request, 'calificaForm/formulario.html', {
         'formulario_principal': formulario_principal,
@@ -119,6 +134,5 @@ def formulario(request):
         'formulario_tecnicas': formulario_tecnicas,
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
-        'programasYSeries': programasYSeries
+        # 'programasYSeries': programasYSeries
     })
-

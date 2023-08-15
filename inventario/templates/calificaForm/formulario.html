@@ -95,11 +95,11 @@
                                   {% if field.name == 'axo_produccion' %}
                                     <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
                                     <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="Año de producción">
-                                    {{ field.errors }}
+                                    {% comment %} {{ field.errors }} {% endcomment %}
                                   {% elif field.name == 'codigo_barras' %}
                                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                     <input type="text" id="codigo_barras" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
-                                    {{ field.errors }}
+                                    {% comment %} {{ field.errors }} {% endcomment %}
                                   {% else %}
                                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                     {% if field.name == 'fecha_calificacion' %}
@@ -107,8 +107,13 @@
                                     {{ field.errors }}
                                     {% elif field.name == 'observaciones' %}
                                       <textarea name="{{ field.name }}" class="form-control smaller-input" placeholder="{{ field.label }}" rows="3">{{ field.value|default_if_none:'' }}</textarea>
-                                      {{ field.errors }}
-                                    {% else %}
+                                      {% comment %} {{ field.errors }} {% endcomment %}
+                                      {% elif field.name == 'duracion' %}
+                                      <div class="time-input-container">
+                                        <input type="text" name="duracion" pattern="[0-9]{2}:[0-5][0-9]:[0-5][0-9]" class="form-control time-input" placeholder="HH:MM:SS" >
+                                      </div>
+                                      {% comment %} {{ field.errors }} {% endcomment %}
+                                      {% else %}
                                       {% if field.field.widget.input_type == 'select' %}
                                         <select name="{{ field.name }}" class="form-control smaller-input">
                                           {% for choice in field.field.choices %}
@@ -118,14 +123,14 @@
                           
                                             {% else %}
                                               <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                                              {{ field.errors }}
+                                              {% comment %} {{ field.errors }} {% endcomment %}
                                               {% endif %}
                                             {% endfor %}
                                         </select>
                                       {% else %}
                                         {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
                                           <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
-                                          {{ field.errors }}
+                                          {% comment %} {{ field.errors }} {% endcomment %}
                                         {% endif %}
                                       {% endif %}
                                     {% endif %}
@@ -135,7 +140,7 @@
                             {% endfor %}
                             </div>
                             <div class="d-flex justify-content-center">
-                                <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#48E1DA;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
+                                <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#4AADA6;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
                                   <i class="fa-solid fa-circle-plus" style="color:white;"></i>
                                     <span style="color: white;">Añadir Programa</span>
                                 </button>
@@ -334,6 +339,38 @@
     }
   }
   
+  // Agrega el evento click al botón "Agregar Programa/Serie"
+  document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
+      const programa = document.getElementById('programa').value;
+      const serie = document.getElementById('serie').value;
+      const programaSubtitulo = document.getElementById('subtitulo_programa').value;
+      const serieSubtitulo = document.getElementById('subtitserie').value;
+      const codigoBarrasValor = document.getElementById('codigo_barras').value;
+  
+      // Validación para asegurarse de que los campos no estén vacíos
+      if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
+        messageAlerta('info', 'Completa los campos solicitados para agregar un programa.', '¡Oops!', '#18463b');
+        return;
+      } else if (codigoBarrasValor.trim() === '') {
+        messageAlerta('info', 'No ingresaste un Código de Barras.', '¡Oops!', '#18463b');
+        return;
+      }
+  
+      // Agregar los datos a la lista de programas y series
+      programasYSeries.push({
+        id: programasYSeries.length + 1,
+        programa: programa,
+        serie: serie,
+        programaSubtitulo: programaSubtitulo,
+        serieSubtitulo: serieSubtitulo,
+        codigoBarras: codigoBarrasValor,
+      });
+
+      actualizarTablaPrograma();
+      limpiarFormulario();
+   
+  });
+  
   const actualizarTablaPrograma = () => {
     const tableBody = document.getElementById('tablePrograma').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = ''; // Limpia el contenido actual de la tabla
@@ -365,106 +402,56 @@
     });
   }
   
-// Agrega el evento click al botón "Agregar Programa/Serie"
-document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
-  const programa = document.getElementById('programa').value;
-  const serie = document.getElementById('serie').value;
-  const programaSubtitulo = document.getElementById('subtitulo_programa').value;
-  const serieSubtitulo = document.getElementById('subtitserie').value;
-  const codigoBarrasValor = document.getElementById('codigo_barras').value;
-
-  // Validación para asegurarse de que los campos no estén vacíos
-  if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
-    messageAlerta('info', 'Completa los campos solicitados para agregar un programa.', '¡Oops!', '#18463b');
-    return;
-  } else if (codigoBarrasValor.trim() === '') {
-    messageAlerta('info', 'No ingresaste un Código de Barras.', '¡Oops!', '#18463b');
-    return;
-  }
-
-  // Agregar los datos a la lista de programas y series
-  programasYSeries.push({
-    id: programasYSeries.length + 1, // Cambia esto según tu lógica
-    programa: programa,
-    serie: serie,
-    programaSubtitulo: programaSubtitulo,
-    serieSubtitulo: serieSubtitulo,
-    codigoBarras: codigoBarrasValor,
-  });
-
-  // Actualiza la tabla con los nuevos datos
-  actualizarTablaPrograma();
+  $("#revicionForm").click(function(event) {
+    event.preventDefault(); // Evitar el envío de formulario por defecto
   
-  // Limpia el formulario modal
-  limpiarFormulario();
-
-  // Crear objeto con los datos a enviar al backend
-  const datos = {
-    programa: programa,
-    serie: serie,
-    subtitulo_programa: programaSubtitulo,
-    subtitserie: serieSubtitulo,
-    codigo_barras: codigoBarrasValor,
-  };
-
-  // Realizar la petición AJAX para guardar los datos en el backend
-  $.ajax({
-    url: '{% url "formulario" %}', // Cambia "nombre_de_tu_vista" por la URL correcta
-    type: 'POST',
-    data: {
-      csrfmiddlewaretoken: '{{ csrf_token }}',
-      programasYSeries: JSON.stringify(programasYSeries),
-    },
-    success: function(response) {
-      console.log('Datos enviados al backend:', response);
-      // Puedes mostrar una notificación de éxito aquí si lo deseas
-    },
-    error: function(xhr, ajaxOptions, thrownError) {
-      // Manejar el error de la petición AJAX si es necesario
-      console.log('Error en la petición AJAX:', xhr.status, thrownError);
-    }
-  });
-});
-
-
-$("#revicionForm").click(function(event) {
-  event.preventDefault(); // Evitar el envío de formulario por defecto
+    Swal.fire({
+      title: '¿Deseas enviar este formulario\n a revisión?',
+      text: 'No podrás revertir esta acción.',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#13322B',
+      cancelButtonColor: '#9D2449',
+      confirmButtonText: 'Sí, continuar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Obtener los datos del formulario
+        let formData = $('form').serialize();
   
-  let $button = $(this); // Guardamos una referencia al botón actual
-  Swal.fire({
-    title: '¿Deseas enviar este formulario\n a revisión?',
-    text: 'No podrás revertir esta acción.',
-    icon: 'info',
-    showCancelButton: true,
-    confirmButtonColor: '#13322B',
-    cancelButtonColor: '#9D2449',
-    confirmButtonText: 'Sí, continuar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Obtener los datos del formulario
-      let formData = $('form').serialize();
-      
-      // Realizar la petición AJAX para guardar los datos
-      $.ajax({
-        url: '{% url "formulario" %}',  // Cambia "nombre_de_tu_vista" por la URL correcta
-        type: 'POST',
-        data: formData,
-        success: function(response) {
-          Swal.fire(
-            'Registrado',
-            'Su formulario ha sido registrado y se encuentra en calificación.',
-            'success'
-          )
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-          // Manejar el error de la petición AJAX si es necesario
-          console.log(xhr.status);
-          console.log(thrownError);
-        }
-      });
-    }
+        // Crear una copia de programasYSeries omitiendo el campo "id"
+        const programasYSeriesSinId = programasYSeries.map(item => {
+          const { id, ...rest } = item;
+          return rest;
+        });
+  
+        // Agregar los datos de programasYSeries a formData
+        formData += '&programasYSeries=' + JSON.stringify(programasYSeriesSinId);
+  
+        // Realizar la petición AJAX para guardar los datos
+        $.ajax({
+          url: '{% url "formulario" %}',
+          type: 'POST',
+          data: formData,
+          success: function(response) {
+            //console.log(response);
+            Swal.fire(
+              'Registrado',
+              'Su formulario ha sido registrado y se encuentra en calificación.',
+              'success'
+            );
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            // Manejar el error de la petición AJAX si es necesario
+            console.log(xhr.status);
+            console.log(thrownError);
+          }
+        });
+      }
+    });
   });
-});
+  
+  
+
 </script>
 
 {% endblock %}
