@@ -5,7 +5,7 @@
 {% block Contenido %}
 
 <div class="card mt-3" >
-  <div class="card-header text-center" style="background:#13322B">
+  <div class="card-header text-center" style="background:#F1F7F8">
       <div class="d-flex justify-content-between">
         <div>
           <a name="" id="" class="btn btn-form" href="{% url 'consultaFormulario' %}" style="background:#B93158" role="button">
@@ -420,8 +420,20 @@ const formularioMapa = document.getElementById('formularioMapa');
 const formTecnicas = document.getElementById('formTecnicas');
 const formRealizacion = document.getElementById('formRealizacion');
 
+
 $("#revicionForm").click(function(event) {
   event.preventDefault(); // Evitar el envío de formulario por defecto
+
+  const codigoBarrasValor = document.getElementById('codigo_barras').value;
+
+  //Aquí valido que no sea mayor a 12 digitos el código de barras
+  if(codigoBarrasValor.length>12){
+    messageAlerta('info','El código de barras, no puede tener más de 12 digitos,\n favor de revisar datosGenerales.','¡Oops!', '#18463b')
+    return;
+  }
+
+  console.log(codigoBarrasValor.length )
+  console.log(formularioDatosGenerales)
 
   // Verificar si los campos requeridos en cada formulario están llenos
   if (!verificarCamposRequeridos(formularioDatosGenerales) ||
@@ -467,7 +479,9 @@ $("#revicionForm").click(function(event) {
             'Registrado',
             'Su formulario ha sido registrado y se encuentra en calificación.',
             'success'
-          );
+          ).then(() => {
+            location.reload(); // Realizar un reload de la página después del OK
+          });
         },
         error: function(xhr, ajaxOptions, thrownError) {
           // Manejar el error de la petición AJAX si es necesario
@@ -492,6 +506,8 @@ function verificarCamposRequeridos(formulario) {
   });
   return camposCompletos;
 }
+
+
 
 </script>
 
