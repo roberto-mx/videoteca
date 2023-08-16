@@ -26,20 +26,9 @@ from .maestrocintas import (
     
 )
 
-from .viewCalificacion import (
-    consultaFormulario,
-    datosGenerales,
-    descripcion,
-    mapa,
-    realizacion,
-    tecnicas
-
-)
-
 from .formularios import (
     formulario,
-
-
+    consultaFormulario
 )
 
 from .prestamos import (

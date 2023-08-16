@@ -236,7 +236,6 @@ class CalFichatec(models.Model):
     class Meta:
         db_table = 'cal_fichatec'
 
-
 class CargaMat(models.Model):
     folio_cb = models.CharField(primary_key=True, max_length=12)
     noproduccion = models.IntegerField()

@@ -52,13 +52,9 @@ def formulario(request):
             )
             maestro_cintas.save()
 
-            prueba = request.POST.get("programasYSeries")
-            # Datos del front-end
-            datos_modal_form = json.loads(prueba)
-
-
-            # programadatossYSeries = datos_modal_form.get('', [])
-            print(datos_modal_form)
+            # Datos del front-end-convertir json
+            enviaForm = request.POST.get("programasYSeries")
+            datos_modal_form = json.loads(enviaForm)
               
             for item in datos_modal_form:
                 programa = item.get('programa')
@@ -102,7 +98,7 @@ def formulario(request):
                     elenco=datos_formulario_realizacion['elenco'],
                     conductor=datos_formulario_realizacion['conductor'],
                     institucion_productora=datos_formulario_realizacion['institucion_productora'],
-
+                    #Obtengo los datos del objeto de el front
                     programa=programa,
                     serie=serie,
                     subtitulo_programa=programaSubtitulo,
@@ -112,9 +108,7 @@ def formulario(request):
 
             response_data = {
                 'message': 'Los datos se guardaron exitosamente.',
-                'datos_modal_form': datos_modal_form  # Agrega los datos aquí
-
-                
+                'datos_modal_form': datos_modal_form  # Agrega los datos aquí 
             }
             return JsonResponse(response_data)
 
@@ -136,3 +130,29 @@ def formulario(request):
         'modal_form': modal_form,
         # 'programasYSeries': programasYSeries
     })
+
+def consultaFormulario(request):
+    # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'P' o 'R'
+    calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
+        'id',
+        'codigo_barras',  # Acceso a través de la relación
+        'fecha_calificacion',
+        'axo_produccion',
+        'productor',
+        'coordinador',
+        'serie',
+        'programa',
+        'subtitulo_programa',
+        'duracion',
+        'guionista',
+        'observaciones',
+        'fecha_modificacion',
+        'estatusCalif',
+        'calificador_modificacion',
+    )
+
+    consultaForm = {
+        'formulario': calificaciones
+    }
+
+    return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
