@@ -52,6 +52,8 @@ def formulario(request):
             )
             maestro_cintas.save()
 
+            ano_produccion = maestro_cintas.video_anoproduccion
+
             # Datos del front-end-convertir json
             enviaForm = request.POST.get("programasYSeries")
             datos_modal_form = json.loads(enviaForm)
@@ -70,6 +72,7 @@ def formulario(request):
                     productor=datos_formulario_principal['productor'],
                     coordinador=datos_formulario_principal['coordinador'],
                     duracion=datos_formulario_principal['duracion'],
+                    axo_produccion=ano_produccion,
 
                     # Form Descripción
                     sinopsis=datos_formulario_descripcion['sinopsis'],

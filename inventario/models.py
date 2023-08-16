@@ -196,7 +196,6 @@ class CalBloques(models.Model):
     class Meta:
         db_table = 'cal_bloques'
 
-
 class CalContenido(models.Model):
     vp_id = models.IntegerField()
     id_segmento = models.IntegerField()
@@ -250,7 +249,6 @@ class CargaMat(models.Model):
 
     class Meta:
         db_table = 'carga_mat'
-
 
 class CatArea(models.Model):
     id_area = models.IntegerField()

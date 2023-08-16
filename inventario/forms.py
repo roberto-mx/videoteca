@@ -71,7 +71,7 @@ class MaestrosCintasForm(forms.ModelForm):
 
 class FormularioCombinado(forms.Form):
     codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
-    fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)  # Descomenta esta línea
+    fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True) 
     productor = forms.CharField(max_length=60, required=True)
     coordinador = forms.CharField(max_length=40, required=True)
     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
@@ -85,7 +85,7 @@ class FormularioCombinado(forms.Form):
     tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     widgets = {
             'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
-             'video_id': forms.HiddenInput(),
+            'video_id': forms.HiddenInput(),
     }
 
 
