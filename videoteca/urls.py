@@ -59,7 +59,9 @@ urlpatterns = [
     # Form
     path('calificaciones/consultaFormulario', consultaFormulario, name='consultaFormulario'),
     path('calificaciones/formulario', formulario, name='formulario'),
-    path('calificaciones/editar/<int:codigo_barras>', editar, name='editar'),
+
+    path('calificaciones/editar/<str:codigo_barras>/', editar, name='editar'),
+
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),
