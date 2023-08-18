@@ -293,8 +293,9 @@
     <div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header text-center" style="background-color:#303D3C;">
-            <h5 class="modal-title" id="exampleModalLabel" style="color: white;">Añadir Programa</h5>
+          <div class="modal-header text-center" style="background-color:#13322B;">
+            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
+            <input id="codigoId" disabled style="color:white;"></input>
           </div>
           <div class="modal-body">
             <form id="formularioPrograma" method="post" action="{% url 'formulario' %}"  >
@@ -319,15 +320,13 @@
         </div>
       </div>
     </div>
+    {% comment %}  {% endcomment %}
   </div>
 </div>
 
 
 <script>
   
- 
-
-
   let programasYSeries = [];
   $("#tablePrograma").hide();
    
@@ -353,11 +352,12 @@
   
   // Agrega el evento click al botón "Agregar Programa/Serie"
   document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
-      const programa = document.getElementById('programa').value;
-      const serie = document.getElementById('serie').value;
-      const programaSubtitulo = document.getElementById('subtitulo_programa').value;
-      const serieSubtitulo = document.getElementById('subtitserie').value;
-      const codigoBarrasValor = document.getElementById('codigo_barras').value;
+    const programa = document.getElementById('programa').value;
+    const serie = document.getElementById('serie').value;
+    const programaSubtitulo = document.getElementById('subtitulo_programa').value;
+    const serieSubtitulo = document.getElementById('subtitserie').value;
+    const codigoBarrasValor = document.getElementById('codigo_barras').value;
+    $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
 
       if (!validarCampos(programa, serie, programaSubtitulo, serieSubtitulo, codigoBarrasValor)) {
         messageAlerta('info', 'Completa los campos solicitados para agregar un programa.', '¡Oops!', '#18463b');

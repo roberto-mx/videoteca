@@ -13,8 +13,8 @@ from .models import (
 )
 
 from django.forms.models import inlineformset_factory
-
 import datetime
+
 
 
 class Login(forms.Form):
@@ -88,7 +88,6 @@ class FormularioCombinado(forms.Form):
             'video_id': forms.HiddenInput(),
     }
 
-
 class ModalForm(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
@@ -142,7 +141,6 @@ class Realizacion(forms.ModelForm):
             'conductor',
             'institucion_productora',
         ]
-
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

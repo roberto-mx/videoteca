@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm
 from ..models import MaestroCintas, RegistroCalificacion
 from django.db.models import Max
@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from django.utils import timezone
+from django.http import HttpResponse
+
 
 @csrf_exempt
 def formulario(request):
@@ -136,7 +138,7 @@ def formulario(request):
 
 def consultaFormulario(request):
     # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'P' o 'R'
-    calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
+    calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).order_by('-id').values(
         'id',
         'codigo_barras',  # Acceso a través de la relación
         'fecha_calificacion',
@@ -149,13 +151,76 @@ def consultaFormulario(request):
         'duracion',
         'guionista',
         'observaciones',
-        'fecha_modificacion',
+        'subtitserie',
         'estatusCalif',
-        'calificador_modificacion',
+        'tema',
+        'eje_tematico',
+        'institucion_productora',
+        'derecho_patrimonial',
+        'idioma_original',
+        'elenco',
+        'conductor',
+        'locutor',
+        'investigador',
+        'tiempodur',
+        'orientacion',
     )
 
+    modal_form = ModalForm(request.POST or None)  # Inicializar el formulario
+
+    if request.method == 'POST':
+        # Aquí puedes manejar la lógica de guardado si es necesario
+        pass  # Debes agregar tu lógica de guardado aquí
+
     consultaForm = {
-        'formulario': calificaciones
+        'formulario': calificaciones,
+        'modal_form': modal_form,
     }
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
+
+def editar(request, codigo_barras):
+    try:
+        # Obtener el objeto de MaestroCintas usando el video_cbarras proporcionado
+        maestro_cintas = MaestroCintas.objects.get(codigo_barras=codigo_barras)
+        registro_calificacion = RegistroCalificacion.objects.get(codigo_barras=maestro_cintas)
+
+        formulario_principal = FormularioCombinado(instance=maestro_cintas)
+        formulario_descripcion = Descripcion(instance=registro_calificacion)
+        formulario_mapa = Mapa(instance=registro_calificacion)
+        formulario_realizacion = Realizacion(instance=registro_calificacion)
+        formulario_tecnicas = Tecnicas(instance=registro_calificacion)
+        modal_form = ModalForm()
+
+        if request.method == 'POST':
+            formulario_principal = FormularioCombinado(request.POST, instance=maestro_cintas)
+            formulario_descripcion = Descripcion(request.POST, instance=registro_calificacion)
+            formulario_mapa = Mapa(request.POST, instance=registro_calificacion)
+            formulario_realizacion = Realizacion(request.POST, instance=registro_calificacion)
+            formulario_tecnicas = Tecnicas(request.POST, instance=registro_calificacion)
+            modal_form = ModalForm(request.POST)
+
+            if formulario_principal.is_valid() and formulario_descripcion.is_valid() and formulario_mapa.is_valid() and formulario_realizacion.is_valid() and formulario_tecnicas.is_valid():
+                # Guardar los cambios en los modelos
+                maestro_cintas = formulario_principal.save()
+                registro_calificacion = formulario_descripcion.save()
+                formulario_mapa.save()
+                formulario_realizacion.save()
+                formulario_tecnicas.save()
+
+                # Redirigir a la página de consulta o a donde desees después de la edición exitosa
+                return redirect('consultaFormulario')
+
+    except MaestroCintas.DoesNotExist:
+        # Manejar el caso cuando no se encuentra el objeto
+        return HttpResponse("No se encontró el registro con el ID proporcionado.")
+
+    return render(request, 'calificaForm/editar.html', {
+        'formulario_principal': formulario_principal,
+        'formulario_descripcion': formulario_descripcion,
+        'formulario_mapa': formulario_mapa,
+        'formulario_tecnicas': formulario_tecnicas,
+        'formulario_realizacion': formulario_realizacion,
+        'modal_form': modal_form,
+    })
+

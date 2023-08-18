@@ -37,11 +37,26 @@
             <th>codigo_barras</th>
             <th>Fecha Calificación</th>
             <th>Año Producción</th>
+            <th>Productor</th>
+            <th>Coordinador</th>
+            <th>Serie</th>
+            <th>Subtítulo Serie</th>
             <th>Programa</th>
-            <th>subtitulo_programa</th>
-            <th>duracion</th>
+            <th>Subtítulo Programa</th>
+            <th>Duracion</th>
+            <th>Guionista</th>
             <th>Calificador</th>
-            <th>Fecha modificacion</th>
+            <th>Tema</th>
+            <th>Ejetematico</th>
+            <th>Institucion Productora</th>
+            <th>Derecho Patrimonial</th>
+            <th>Idioma Original</th>
+            <th>Elenco</th>
+            <th>Conductor</th>
+            <th>Locutor</th>
+            <th>Investigador</th>
+            <th>Tiempodur</th>
+            <th>Orientacion</th>
             <th>Estatus</th>
             <th>Acciones</th>
           </tr>
@@ -53,6 +68,10 @@
             <td>{{ data.codigo_barras }}</td>
             <td>{{ data.fecha_calificacion }}</td>
             <td>{{ data.axo_produccion }}</td>
+            <td>{{ data.productor }}</td>
+            <td>{{ data.coordinador }}</td>
+            <td>{{ data.serie }}</td>
+            <td>{{ data.subtitserie }}</td>
             <td>{{ data.programa }}</td>
             <td>
               {%if data.subtitulo_programa == ""%}
@@ -62,8 +81,19 @@
               {% endif %}
             </td>
             <td>{{ data.duracion }}</td>
+            <td>{{ data.guionista }}</td>
             <td>{{ data.calificador_modificacion }}</td>
-            <td>{{ data.fecha_modificacion }}</td>
+            <td>{{ data.tema }}</td>
+            <td>{{ data.eje_tematico }}</td>
+            <td>{{ data.institucion_productora }}</td>
+            <td>{{ data.derecho_patrimonial }}</td>
+            <td>{{ data.idioma_original }}</td>
+            <td>{{ data.elenco }}</td>
+            <td>{{ data.conductor }}</td>
+            <td>{{ data.locutor }}</td>
+            <td>{{ data.investigador }}</td>
+            <td>{{ data.tiempodur }}</td>
+            <td>{{ data.orientacion }}</td>
             <td>
               {% if data.estatusCalif == 'P' %}
               Pendiente
@@ -73,23 +103,17 @@
             </td>
             <td class="d-flex justify-content-center">
               <!-- Editar -->
-              <a href="" class="btn btn-editar btn-sm active text-white" style="background-color:#9D2449;" title="Editar">
+              <a href="{% url 'editar' id=data.codigo_barras %}" class="btn btn-editar btn-sm active text-white" style="background-color:#b38e5d;" title="Editar">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class="fas fa-edit"></i>
                   <span></span>
                 </div>
               </a>
+              
               <!-- Ver -->
-              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#b38e5d;" data-bs-toggle="modal" data-bs-target="#modalObservacion{{ data.id }}" title="Observaciones"> 
+              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#13322B;" data-bs-toggle="modal" data-bs-target="#modalObservacion{{ data.id }}" title="Observaciones"> 
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class='far fa-eye'></i>
-                  <span></span>
-                </div>
-              </a>
-              <!-- Añadir -->
-              <a href="#" class="btn btn-anadir btn-sm active text-white" id="anadir" style="background-color:#10A9C8;" data-bs-toggle="modal" data-bs-target="#{{ data.id }}" title="Añadir"> 
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                  <i class="fa-solid fa-circle-plus" style="color:white;"></i>
                   <span></span>
                 </div>
               </a>
@@ -126,12 +150,21 @@
 {% endfor %}
 
 <script>
-  $(document).ready(function() {
-    $('#datatable').DataTable({
-      // Configuración del DataTable
-      ...len
-    });
+
+    // Manejar clic en el botón de "Añadir"
+$(".btn-anadir").click(function() {
+  const codigoBarras = $(this).data("codigo-barras");
+  console.log({codigoBarras})
+  $('#codigoId').val(`Código - ${codigoBarras}`).prop('disabled', true);
+
+});
+
+$(document).ready(function() {
+  $('#datatable').DataTable({
+    // Configuración del DataTable
+    ...len
   });
+});
 </script>
 
 {% endblock %}
