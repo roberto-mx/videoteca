@@ -14,11 +14,15 @@
     white-space:inherit;
   }
   
-  /* .navbar-nav .nav-item .nav-link:hover {
-    background-color: #9D2449; /* Cambia el color de fondo al pasar el mouse */
-    
-  /*} 
+  #editTablePrograma th {
+  background-color: #1b725e; /* Color de fondo de las celdas de encabezado */
+  color: white; /* añadido para cambiar el color de las letras */
+  }
+  #editTablePrograma td {
+    white-space:inherit;
+  }
   
+
   
   /* Estilos para centrar el título */
   .centered-title {

@@ -135,7 +135,6 @@ def formulario(request):
         'formulario_tecnicas': formulario_tecnicas,
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
-        # 'programasYSeries': programasYSeries
     })
 
 def consultaFormulario(request):
@@ -190,6 +189,7 @@ def editar(request, codigo_barras):
         registro_calificaciones = RegistroCalificacion.objects.filter(codigo_barras=maestro_cintas)
 
         if request.method == 'POST':
+            # Procesar los datos del formulario principal y de la tabla de programas
             formulario_principal = FormularioCombinado(request.POST)
             formulario_descripcion = Descripcion(request.POST, instance=registro_calificaciones[0])
             formulario_mapa = Mapa(request.POST, instance=registro_calificaciones[0])
@@ -225,7 +225,17 @@ def editar(request, codigo_barras):
                 'duracion': registro_calificaciones[0].duracion,  # Agregamos la duración
             })
 
-            print( registro_calificaciones[0].duracion)
+            # Obtener datos de la tabla de programas, creando un arreglo vacio para despues insertar ahi los datos
+            programas_data = []  # Lista para almacenar los datos
+            for registro in registro_calificaciones:
+                programas_data.append({
+                    'programa': registro.programa,
+                    'serie': registro.serie,
+                    'programaSubtitulo': registro.subtitulo_programa,
+                    'serieSubtitulo': registro.subtitserie,
+                })
+
+            print(programas_data)
 
             formulario_descripcion = Descripcion(instance=registro_calificaciones[0])
             formulario_mapa = Mapa(instance=registro_calificaciones[0])
@@ -244,8 +254,9 @@ def editar(request, codigo_barras):
         'formulario_tecnicas': formulario_tecnicas,
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
+        'programas_data': programas_data,
+        'codigo_barras': codigo_barras,  # Agregamos los datos de la tabla de programas al contexto
     })
-
 
 
 

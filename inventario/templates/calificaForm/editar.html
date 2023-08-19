@@ -40,45 +40,34 @@
                             <i class='fas fa-database'></i>
                           </div>
                         </button>
-                      
-    
-                      <!-- Repite este patrón para otros botones -->
-                      
+                                        
                         <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescripcion" aria-expanded="false" aria-controls="collapseDescripcion">
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <span> Descripción </span>
                                 <i class="fa fa-audio-description"></i>
                             </div>
                         </button>
-                      
-                      <!-- Repite este patrón para otros botones -->
-                      
+                 
                         <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapa" aria-expanded="false" aria-controls="collapseMapa">
                           <div style="display: flex; flex-direction: column; align-items: center;">
                               <span> Mapa </span>
                               <i class='fas fa-map'></i>
                           </div>
                         </button>
-                      
-                      
-                      <!-- Repite este patrón para otros botones -->
-                      
+                                        
                         <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTecnicas" aria-expanded="false" aria-controls="collapseTecnicas">
                           <div style="display: flex; flex-direction: column; align-items: center;">
                             <span> Técnicas </span>
                             <i class="fa-solid fa-language"></i>
                           </div>
                         </button>
-                      
-    
-                    
-                      <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRealizacion" aria-expanded="false" aria-controls="collapseRealizacion">
-                        <div style="display: flex; flex-direction: column; align-items: center;">
-                            <span> Realización </span>
-                            <i class='fas fa-clipboard-list'></i>
-                        </div>
-                      </button>
-                    
+                                      
+                        <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRealizacion" aria-expanded="false" aria-controls="collapseRealizacion">
+                          <div style="display: flex; flex-direction: column; align-items: center;">
+                              <span> Realización </span>
+                              <i class='fas fa-clipboard-list'></i>
+                          </div>
+                        </button>
                   </div>
                 </div>
     
@@ -97,7 +86,7 @@
                                     {{ field.errors }}
                                   {% elif field.name == 'codigo_barras' %}
                                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                    <input type="text" id="codigo_barras" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
+                                    <input type="text" id="codigo_barras" disabled name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
                                     {{ field.errors }}
                                   {% else %}
                                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
@@ -142,77 +131,169 @@
                                 </button>
                             </div>
                           </form>
+
                           <div class="card-body">
-                            <div class="table-responsive"> <!-- Agregar esta clase -->
-                              <table class="table table-hover" id="tablePrograma">
-                                <!-- ... Código de la tabla ... -->
-                                <thead>
-                                  <tr>
-                                    <th>Id</th>
-                                    <th>Código de barras</th>
-                                    <th>Serie</th>
-                                    <th>Programa</th>
-                                    <th>Subtitulo Programa</th>
-                                    <th>Subtitulo Serie</th>
-                                    <th>Acciones</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                 <!--lA TABLA SE LLENA DINAMICAMENTE EN EL JAVASCRIPT-->
-                                </tbody>
+                            <div class="table-responsive">
+                              <table class="table table-striped table-hover" id="editTablePrograma" >
+                                  <thead>
+                                      <tr>
+                                          <th>Programa</th>
+                                          <th>Serie</th>
+                                          <th>Subtítulo del Programa</th>
+                                          <th>Subtítulo de la Serie</th>
+                                          <th>Acciones</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for programa in programas_data %}
+                                          <tr>
+                                              <td>{{ programa.programa }}</td>
+                                              <td>{{ programa.serie }}</td>
+                                              <td>{{ programa.programaSubtitulo }}</td>
+                                              <td>{{ programa.serieSubtitulo }}</td>
+                                              <td>
+                                                <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" disabled title="Eliminar" data-id="" onclick="eliminarFila(${datos.id})">
+                                                  <div style="display: flex; flex-direction: column; align-items: center;">
+                                                    <i class="fa-sharp fa-solid fa-trash"></i>
+                                                  </div>
+                                                </button>
+                                              </td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
                               </table>
-                            </div> 
+                            </div>
                           </div> 
                     </div>
                 </div>
      
-                <!-- Repite este patrón para otras secciones de formulario -->
                 <div class="collapse" id="collapseDescripcion">
                   <div class="card card-body">
                       <h2>Descripción</h2>
                       <form method="post">
-                          {% csrf_token %}
-                          {{ formulario_descripcion.as_p }}
-                          {% comment %} <button type="submit">Guardar cambios</button> {% endcomment %}
+                        <div class="row mt-4">
+                          {% for field in formulario_descripcion %}
+                          <div class="col-md-4 mb-2">
+                              <div class="mb-1">
+                                  <!-- Etiqueta del campo de formulario -->
+                                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                  
+                                  <!-- Campo de formulario -->
+                                  {% if field.field.widget.input_type == 'select' %}
+                                      <select name="{{ field.name }}" class="form-control">
+                                          {% for choice in field.field.choices %}
+                                              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                          {% endfor %}
+                                      </select>
+                                  {% else %}
+                                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                                  {% endif %}
+                                  
+                                  <!-- Errores de validación -->
+                                  {{ field.errors }}
+                              </div>
+                          </div>
+                          {% endfor %}
+                      </div>
                       </form>
                   </div>
-              </div>
-              
-                <!-- Repite este patrón para otras secciones de formulario -->
+                </div>
+
                 <div class="collapse" id="collapseMapa">
                   <div class="card card-body">
                       <h2>Mapa</h2>
                       <form method="post">
-                          {% csrf_token %}
-                          {{ formulario_mapa.as_p }}
-                          <button type="submit">Guardar cambios</button>
+                        <div class="row mt-4">
+                          {% for field in formulario_mapa %}
+                          <div class="col-md-4 mb-2">
+                              <div class="mb-1">
+                                  <!-- Etiqueta del campo de formulario -->
+                                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                  
+                                  <!-- Campo de formulario -->
+                                  {% if field.field.widget.input_type == 'select' %}
+                                      <select name="{{ field.name }}" class="form-control">
+                                          {% for choice in field.field.choices %}
+                                              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                          {% endfor %}
+                                      </select>
+                                  {% else %}
+                                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                                  {% endif %}
+                                  
+                                  <!-- Errores de validación -->
+                                  {{ field.errors }}
+                              </div>
+                          </div>
+                          {% endfor %}
+                      </div>
                       </form>
                   </div>
-              </div>
-              
-              <!-- Repite este patrón para otras secciones de formulario -->
-              <div class="collapse" id="collapseTecnicas">
-                <div class="card card-body">
-                    <h2> Técnicas </h2>
-                    <form method="post">
-                      {% csrf_token %}
-                      {{ formulario_tecnicas.as_p }}
-                      <button type="submit">Guardar cambios</button>
-                  </form>
                 </div>
-              </div>
-    
-              <!-- Repite este patrón para otras secciones de formulario -->
-              <div class="collapse" id="collapseRealizacion">
-                <div class="card card-body">
-                    <h2> Realización </h2>
-                    <form method="post">
-                      {% csrf_token %}
-                      {{ formulario_realizacion.as_p }}
-                      <button type="submit">Guardar cambios</button>
-                  </form>
+
+                <div class="collapse" id="collapseTecnicas">
+                  <div class="card card-body">
+                      <h2>Técnicas</h2>
+                      <form method="post">
+                        <div class="row mt-4">
+                          {% for field in formulario_tecnicas %}
+                          <div class="col-md-4 mb-2">
+                              <div class="mb-1">
+                                  <!-- Etiqueta del campo de formulario -->
+                                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                  
+                                  <!-- Campo de formulario -->
+                                  {% if field.field.widget.input_type == 'select' %}
+                                      <select name="{{ field.name }}" class="form-control">
+                                          {% for choice in field.field.choices %}
+                                              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                          {% endfor %}
+                                      </select>
+                                  {% else %}
+                                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                                  {% endif %}
+                                  
+                                  <!-- Errores de validación -->
+                                  {{ field.errors }}
+                              </div>
+                          </div>
+                          {% endfor %}
+                      </div>
+                      </form>
+                  </div>
                 </div>
-              </div>
+
+                <div class="collapse" id="collapseRealizacion">
+                  <div class="card card-body">
+                      <h2>Realización</h2>
+                      <form method="post">
+                        <div class="row mt-4">
+                          {% for field in formulario_realizacion %}
+                          <div class="col-md-4 mb-2">
+                              <div class="mb-1">
+                                  <!-- Etiqueta del campo de formulario -->
+                                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                  
+                                  <!-- Campo de formulario -->
+                                  {% if field.field.widget.input_type == 'select' %}
+                                      <select name="{{ field.name }}" class="form-control">
+                                          {% for choice in field.field.choices %}
+                                              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                          {% endfor %}
+                                      </select>
+                                  {% else %}
+                                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                                  {% endif %}
+                                  
+                                  <!-- Errores de validación -->
+                                  {{ field.errors }}
+                              </div>
+                          </div>
+                          {% endfor %}
+                      </div>
+                      </form>
+                  </div>
+                </div>
             </div>
         </div>
     </div>
@@ -220,8 +301,9 @@
     <div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header text-center" style="background-color:#303D3C;">
-            <h5 class="modal-title" id="exampleModalLabel" style="color: white;">Añadir Programa</h5>
+          <div class="modal-header text-center" style="background-color:#13322B;">
+            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
+            <input id="codigoId" disabled style="color:white;" value="Código - {{ codigo_barras }}" >
           </div>
           <div class="modal-body">
             <form id="formularioPrograma" method="post" action="{% url 'formulario' %}"  >
@@ -246,192 +328,17 @@
         </div>
       </div>
     </div>
+    {% comment %}  {% endcomment %}
   </div>
 </div>
 
-
 <script>
   
-  let programasYSeries = [];
-  $("#tablePrograma").hide();
-   
-  const limpiarFormulario = () => {
-    const formulario = document.getElementById('formularioPrograma');
-    formulario.reset();
-  }
-  
-  function eliminarFila(id) {
-    const index = programasYSeries.findIndex(datos => datos.id === id);
-    if (index !== -1) {
-      programasYSeries.splice(index, 1); // Elimina el elemento del arreglo
-      actualizarTablaPrograma(); // Actualiza la tabla con los datos actualizados
-    }
-  }
-
-  const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, codigoBarras) => {
-    if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
-      return false; // Alguno de los campos está vacío
-    }
-    return true; // Todos los campos están llenos
-  }
-  
-  // Agrega el evento click al botón "Agregar Programa/Serie"
-  document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
-      const programa = document.getElementById('programa').value;
-      const serie = document.getElementById('serie').value;
-      const programaSubtitulo = document.getElementById('subtitulo_programa').value;
-      const serieSubtitulo = document.getElementById('subtitserie').value;
-      const codigoBarrasValor = document.getElementById('codigo_barras').value;
-
-      if (!validarCampos(programa, serie, programaSubtitulo, serieSubtitulo, codigoBarrasValor)) {
-        messageAlerta('info', 'Completa los campos solicitados para agregar un programa.', '¡Oops!', '#18463b');
-        return;
-      }
-      else if (codigoBarrasValor.trim() === '') {
-        messageAlerta('info', 'No ingresaste un Código de Barras.', '¡Oops!', '#18463b');
-        return;
-      }
-  
-      // Agregar los datos a la lista de programas y series
-      programasYSeries.push({
-        id: programasYSeries.length + 1,
-        programa: programa,
-        serie: serie,
-        programaSubtitulo: programaSubtitulo,
-        serieSubtitulo: serieSubtitulo,
-        codigoBarras: codigoBarrasValor,
-      });
-
-      actualizarTablaPrograma();
-      limpiarFormulario();
-   
-  });
-  
-  const actualizarTablaPrograma = () => {
-    const tableBody = document.getElementById('tablePrograma').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Limpia el contenido actual de la tabla
-    $("#tablePrograma").show();
-  
-    // Itera a través de los datos almacenados en programasYSeries
-    programasYSeries.forEach(function(datos, index) {
-      const newRow = tableBody.insertRow();
-      const cellId = newRow.insertCell(0);
-      const cellCodigoBarras = newRow.insertCell(1);
-      const cellSerie = newRow.insertCell(2);
-      const cellPrograma = newRow.insertCell(3);
-      const cellSub_Programa = newRow.insertCell(4);
-      const cellSub_Serie = newRow.insertCell(5);
-      const cellAcciones = newRow.insertCell(6);
-  
-      cellId.innerHTML = datos.id;
-      cellCodigoBarras.innerHTML = datos.codigoBarras;
-      cellSerie.innerHTML = datos.serie;
-      cellPrograma.innerHTML = datos.programa;
-      cellSub_Programa.innerHTML = datos.programaSubtitulo;
-      cellSub_Serie.innerHTML = datos.serieSubtitulo;
-      cellAcciones.innerHTML = `
-        <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${datos.id}" onclick="eliminarFila(${datos.id})">
-          <div style="display: flex; flex-direction: column; align-items: center;">
-            <i class="fa-sharp fa-solid fa-trash"></i>
-          </div>
-        </button>`;
+  $(document).ready(function() {
+    $('#editTablePrograma').DataTable({
+      ...len
     });
-  }
-
-const formularioDatosGenerales = document.getElementById('formularioDatosGenerales');
-const formularioDescripcion = document.getElementById('formularioDescripcion');
-const formularioMapa = document.getElementById('formularioMapa');
-const formTecnicas = document.getElementById('formTecnicas');
-const formRealizacion = document.getElementById('formRealizacion');
-
-
-$("#revicionForm").click(function(event) {
-  event.preventDefault(); // Evitar el envío de formulario por defecto
-
-  const codigoBarrasValor = document.getElementById('codigo_barras').value;
-
-  //Aquí valido que no sea mayor a 12 digitos el código de barras
-  if(codigoBarrasValor.length>12){
-    messageAlerta('info','El código de barras, no puede tener más de 12 digitos,\n favor de revisar datosGenerales.','¡Oops!', '#18463b')
-    return;
-  }
-
-  console.log(codigoBarrasValor.length )
-  console.log(formularioDatosGenerales)
-
-  // Verificar si los campos requeridos en cada formulario están llenos
-  if (!verificarCamposRequeridos(formularioDatosGenerales) ||
-      !verificarCamposRequeridos(formularioDescripcion) ||
-      !verificarCamposRequeridos(formularioMapa) ||
-      !verificarCamposRequeridos(formTecnicas) ||
-      !verificarCamposRequeridos(formRealizacion)) {
-    // Mostrar mensaje de alerta si algún formulario está incompleto
-    messageAlerta('info', 'Completa todos los campos requeridos antes de guardar.', '¡Oops!', '#18463b');
-    return;
-  }
-
-  Swal.fire({
-    title: '¿Deseas enviar este formulario a revisión?',
-    text: 'No podrás revertir esta acción.',
-    icon: 'info',
-    showCancelButton: true,
-    confirmButtonColor: '#13322B',
-    cancelButtonColor: '#9D2449',
-    confirmButtonText: 'Sí, continuar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Obtener los datos del formulario
-      let formData = $('form').serialize();
-
-      // Crear una copia de programasYSeries omitiendo el campo "id"
-      const programasYSeriesSinId = programasYSeries.map(item => {
-        const { id, ...rest } = item;
-        return rest;
-      });
-
-      // Agregar los datos de programasYSeries a formData
-      formData += '&programasYSeries=' + JSON.stringify(programasYSeriesSinId);
-
-      // Realizar la petición AJAX para guardar los datos
-      $.ajax({
-        url: '{% url "formulario" %}',
-        type: 'POST',
-        data: formData,
-        success: function(response) {
-          //console.log(response);
-          Swal.fire(
-            'Registrado',
-            'Su formulario ha sido registrado y se encuentra en calificación.',
-            'success'
-          ).then(() => {
-            location.reload(); // Realizar un reload de la página después del OK
-          });
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-          // Manejar el error de la petición AJAX si es necesario
-          messageAlerta('error', 'Hubo un error, comuníquese con el administrador.', '¡Oops!', '#18463b');
-          console.log(xhr.status);
-          console.log(thrownError);
-        }
-      });
-    }
-  });
-});
-
-// Función para verificar si los campos requeridos en un formulario están llenos
-function verificarCamposRequeridos(formulario) {
-  let camposCompletos = true;
-  $(formulario).find('input[type="text"], input[type="date"], input[type="number"], input[type="checkbox"], select').each(function() {
-    const valor = $(this).val().trim();
-    if (valor === '') {
-      camposCompletos = false;
-      return false; // Detener el bucle si se encuentra un campo vacío
-    }
-  });
-  return camposCompletos;
-}
-
-
+  })
 
 </script>
 

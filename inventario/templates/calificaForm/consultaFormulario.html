@@ -151,14 +151,6 @@
 
 <script>
 
-    // Manejar clic en el botón de "Añadir"
-$(".btn-anadir").click(function() {
-  const codigoBarras = $(this).data("codigo-barras");
-  console.log({codigoBarras})
-  $('#codigoId').val(`Código - ${codigoBarras}`).prop('disabled', true);
-
-});
-
 $(document).ready(function() {
   $('#datatable').DataTable({
     // Configuración del DataTable
