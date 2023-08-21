@@ -194,10 +194,10 @@ def editar(request, codigo_barras):
                     programa_a_eliminar = RegistroCalificacion.objects.get(id=eliminar_id)
                     programa_a_eliminar.delete()
                     # Redirige de nuevo a la página de edición después de eliminar
-                    return redirect('editar', codigo_barras=codigo_barras)
+                    return JsonResponse({'success': True})
                 
                 except RegistroCalificacion.DoesNotExist:
-                    return HttpResponse("No se encontró el programa a eliminar.")
+                    return JsonResponse({'success': False, 'error': 'No se encontró el programa a eliminar.'})
 
             # Resto de la lógica para procesar los formularios de edición
             formulario_principal = FormularioCombinado(request.POST)
