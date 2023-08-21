@@ -184,12 +184,21 @@ def consultaFormulario(request):
 # views.py
 def editar(request, codigo_barras):
     try:
-        # Obtener el objeto de MaestroCintas usando el codigo_barras proporcionado
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
         registro_calificaciones = RegistroCalificacion.objects.filter(codigo_barras=maestro_cintas)
 
         if request.method == 'POST':
-            # Procesar los datos del formulario principal y de la tabla de programas
+            eliminar_id = request.POST.get('eliminar_id')  # Obtén el ID del programa a eliminar
+            if eliminar_id is not None:
+                try:
+                    programa_a_eliminar = RegistroCalificacion.objects.get(id=eliminar_id)
+                    programa_a_eliminar.delete()
+                    # Redirige de nuevo a la página de edición después de eliminar
+                    return redirect('editar', codigo_barras=codigo_barras)
+                except RegistroCalificacion.DoesNotExist:
+                    return HttpResponse("No se encontró el programa a eliminar.")
+
+            # Resto de la lógica para procesar los formularios de edición
             formulario_principal = FormularioCombinado(request.POST)
             formulario_descripcion = Descripcion(request.POST, instance=registro_calificaciones[0])
             formulario_mapa = Mapa(request.POST, instance=registro_calificaciones[0])
@@ -229,10 +238,18 @@ def editar(request, codigo_barras):
             programas_data = []  # Lista para almacenar los datos
             for registro in registro_calificaciones:
                 programas_data.append({
+                    'id': registro.id,
                     'programa': registro.programa,
                     'serie': registro.serie,
                     'programaSubtitulo': registro.subtitulo_programa,
                     'serieSubtitulo': registro.subtitserie,
+                    'axo_produccion': registro.axo_produccion,
+                    'duracion': registro.duracion,
+                    'productor': registro.productor,
+                    'coordinador': registro.coordinador,
+                    'sinopsis': registro.sinopsis,
+                    'participantes': registro.participantes,
+                    'personajes': registro.personajes,
                 })
 
             print(programas_data)
