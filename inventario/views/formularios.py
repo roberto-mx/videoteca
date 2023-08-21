@@ -195,6 +195,7 @@ def editar(request, codigo_barras):
                     programa_a_eliminar.delete()
                     # Redirige de nuevo a la página de edición después de eliminar
                     return redirect('editar', codigo_barras=codigo_barras)
+                
                 except RegistroCalificacion.DoesNotExist:
                     return HttpResponse("No se encontró el programa a eliminar.")
 
@@ -215,7 +216,7 @@ def editar(request, codigo_barras):
                 formulario_tecnicas.save()
 
                 # Redirigir a la página de consulta o a donde desees después de la edición exitosa
-                return redirect('consultaFormulario')
+                return redirect('editar')
 
         else:
             formulario_principal = FormularioCombinado(initial={
@@ -251,8 +252,6 @@ def editar(request, codigo_barras):
                     'participantes': registro.participantes,
                     'personajes': registro.personajes,
                 })
-
-            print(programas_data)
 
             formulario_descripcion = Descripcion(instance=registro_calificaciones[0])
             formulario_mapa = Mapa(instance=registro_calificaciones[0])

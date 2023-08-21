@@ -359,7 +359,7 @@
     });
   })
   const eliminarFila = (id, codigo_barras) => {
-    console.log({id, codigo_barras})
+    
     Swal.fire({
         title: '¿Estás seguro?',
         text: 'Esta acción eliminará el programa de la base de datos',
@@ -371,24 +371,27 @@
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Realizar la solicitud AJAX para eliminar el programa
-          //fetch(`/calificaciones/editar/${codigo_barras}/${id}/`, { method: 'POST' })
-          fetch(`/calificaciones/editar/`, { method: 'POST' })
+          // Enviar solicitud POST para eliminar
+          fetch(`/calificaciones/editar/${codigo_barras}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+                'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
+            },
+            body: new URLSearchParams({
+                eliminar_id: id // Envía el ID del programa a eliminar
+            })
+        })
           .then(response => response.json())
           .then(data => {
-            // Verificar la respuesta del servidor
-            console.log({data})
             if (data.success) {
-
-                // Actualizar la tabla y realizar otras acciones si es necesario
-                // Recargar la página o actualizar la tabla en la vista
                 location.reload(); // Ejemplo: recargar la página
             } else {
                 // Manejar el caso de error si es necesario
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo eliminar el programa',
+                    icon:   'error',
+                    title:  'Error 404',
+                    text:   'No se pudo eliminar el programa',
                 });
             }
           });
