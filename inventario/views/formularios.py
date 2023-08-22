@@ -182,12 +182,15 @@ def consultaFormulario(request):
 
 
 # views.py
+@csrf_exempt
 def editar(request, codigo_barras):
+    programas_data = []  # Lista para almacenar los datos
     try:
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
         registro_calificaciones = RegistroCalificacion.objects.filter(codigo_barras=maestro_cintas)
 
         if request.method == 'POST':
+            print('Datos POST:', request.POST)
             eliminar_id = request.POST.get('eliminar_id')  # Obtén el ID del programa a eliminar
             if eliminar_id is not None:
                 try:
@@ -201,22 +204,46 @@ def editar(request, codigo_barras):
 
             # Resto de la lógica para procesar los formularios de edición
             formulario_principal = FormularioCombinado(request.POST)
+            if formulario_principal.is_valid():
+                # Actualizar los datos en MaestroCintas
+                maestro_cintas.form_clave = formulario_principal.cleaned_data['form_clave']
+                maestro_cintas.tipo_id = formulario_principal.cleaned_data['tipo_id']
+                maestro_cintas.video_tipo = formulario_principal.cleaned_data['video_tipo']
+                maestro_cintas.origen_id = formulario_principal.cleaned_data['origen_id']
+                maestro_cintas.video_observaciones = formulario_principal.cleaned_data['video_observaciones']
+                maestro_cintas.video_estatus = formulario_principal.cleaned_data['video_estatus']
+                maestro_cintas.video_codificacion = formulario_principal.cleaned_data['video_codificacion']
+                maestro_cintas.video_anoproduccion = formulario_principal.cleaned_data['video_anoproduccion']
+                # Actualizar otros campos si es necesario
+                maestro_cintas.save()
+                
+                # Actualizar los datos en RegistroCalificacion
+                registro = registro_calificaciones[0]
+                registro.fecha_calificacion = formulario_principal.cleaned_data['fecha_calificacion']
+                registro.productor = formulario_principal.cleaned_data['productor']
+                registro.coordinador = formulario_principal.cleaned_data['coordinador']
+                registro.duracion = formulario_principal.cleaned_data['duracion']
+                # Actualizar otros campos si es necesario
+                registro.save()
+
             formulario_descripcion = Descripcion(request.POST, instance=registro_calificaciones[0])
             formulario_mapa = Mapa(request.POST, instance=registro_calificaciones[0])
             formulario_realizacion = Realizacion(request.POST, instance=registro_calificaciones[0])
             formulario_tecnicas = Tecnicas(request.POST, instance=registro_calificaciones[0])
-            modal_form = ModalForm(request.POST)
-
-            if formulario_principal.is_valid() and formulario_descripcion.is_valid() and formulario_mapa.is_valid() and formulario_realizacion.is_valid() and formulario_tecnicas.is_valid():
+            
+            
+            if (formulario_principal.is_valid() and formulario_descripcion.is_valid() and
+                formulario_mapa.is_valid() and formulario_realizacion.is_valid() and
+                formulario_tecnicas.is_valid()):
                 # Guardar los cambios en los modelos
-                formulario_principal.save()
+                # formulario_principal.save()
                 formulario_descripcion.save()
                 formulario_mapa.save()
                 formulario_realizacion.save()
                 formulario_tecnicas.save()
 
                 # Redirigir a la página de consulta o a donde desees después de la edición exitosa
-                return redirect('editar')
+                return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
 
         else:
             formulario_principal = FormularioCombinado(initial={
@@ -236,7 +263,7 @@ def editar(request, codigo_barras):
             })
 
             # Obtener datos de la tabla de programas, creando un arreglo vacio para despues insertar ahi los datos
-            programas_data = []  # Lista para almacenar los datos
+            
             for registro in registro_calificaciones:
                 programas_data.append({
                     'id': registro.id,
@@ -257,23 +284,17 @@ def editar(request, codigo_barras):
             formulario_mapa = Mapa(instance=registro_calificaciones[0])
             formulario_realizacion = Realizacion(instance=registro_calificaciones[0])
             formulario_tecnicas = Tecnicas(instance=registro_calificaciones[0])
-            modal_form = ModalForm()
 
     except (MaestroCintas.DoesNotExist, RegistroCalificacion.DoesNotExist):
-        # Manejar el caso cuando no se encuentra el objeto
-        return HttpResponse("No se encontró el registro con el código de barras proporcionado.")
-
+    # Manejar el caso cuando no se encuentra el objeto
+            return JsonResponse({'error': "No se encontró el registro con el código de barras proporcionado."})
+    
     return render(request, 'calificaForm/editar.html', {
         'formulario_principal': formulario_principal,
         'formulario_descripcion': formulario_descripcion,
         'formulario_mapa': formulario_mapa,
         'formulario_tecnicas': formulario_tecnicas,
         'formulario_realizacion': formulario_realizacion,
-        'modal_form': modal_form,
         'programas_data': programas_data,
         'codigo_barras': codigo_barras,  # Agregamos los datos de la tabla de programas al contexto
     })
-
-
-
-

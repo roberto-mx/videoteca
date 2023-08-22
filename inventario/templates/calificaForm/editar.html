@@ -75,7 +75,7 @@
                 <div class="collapse" id="collapseDatosGenerales">
                     <div class="card card-body ">
                         <h2> Datos Generales </h2>
-                        <form enctype="multipart/form-data" method="post" id="formularioDatosGenerales">
+                        <form method="post" id="formulario_principal">
                             {% csrf_token %}
                             <div class="row mt-4">
                               {% for field in formulario_principal %}
@@ -84,20 +84,20 @@
                                   {% if field.name == 'video_anoproduccion' %}
                                     <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
                                     <input type="number"  min="1" max="9" id='ahoProduction' name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="Año de producción">
-                                    {{ field.errors }}
+                                    
                                   {% elif field.name == 'codigo_barras' %}
                                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                     <input type="text" id="codigo_barras" disabled name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
-                                    {{ field.errors }}
+                                    
                                   {% else %}
                                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                     {% if field.name == 'fecha_calificacion' %}
                                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                     <input type="text" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
-                                    {{ field.errors }}
+                                    
                                     {% elif field.name == 'observaciones' %}
                                       <textarea name="{{ field.name }}" class="form-control smaller-input" placeholder="{{ field.label }}" rows="3">{{ field.value|default_if_none:'' }}</textarea>
-                                    {{ field.errors }}
+                                    
                                    
                                       {% else %}
                                       {% if field.field.widget.input_type == 'select' %}
@@ -105,18 +105,18 @@
                                           {% for choice in field.field.choices %}
                                             {% if field.value|stringformat:'s' == choice.0|stringformat:'s' %}
                                               <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
-                                              {{ field.errors }}
+                                              
                           
                                             {% else %}
                                               <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                                              {{ field.errors }}
+                                              
                                               {% endif %}
                                             {% endfor %}
                                         </select>
                                       {% else %}
                                         {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
                                           <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
-                                          {{ field.errors }}
+                                          
                                         {% endif %}
                                       {% endif %}
                                     {% endif %}
@@ -124,12 +124,6 @@
                                 </div>
                               </div>
                             {% endfor %}
-                            </div>
-                            <div class="d-flex justify-content-center">
-                                <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#9D2449;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
-                                  <i class="fa-solid fa-circle-plus" style="color:white;"></i>
-                                    <span style="color: white;">Añadir Programa</span>
-                                </button>
                             </div>
                           </form>
 
@@ -189,7 +183,7 @@
                 <div class="collapse" id="collapseDescripcion">
                   <div class="card card-body">
                       <h2>Descripción</h2>
-                      <form method="post">
+                      <form method="post" id="formulario_descripcion">
                         <div class="row mt-4">
                           {% for field in formulario_descripcion %}
                           <div class="col-md-4 mb-2">
@@ -207,9 +201,7 @@
                                   {% else %}
                                       <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
                                   {% endif %}
-                                  
-                                  <!-- Errores de validación -->
-                                  {{ field.errors }}
+
                               </div>
                           </div>
                           {% endfor %}
@@ -221,7 +213,7 @@
                 <div class="collapse" id="collapseMapa">
                   <div class="card card-body">
                       <h2>Mapa</h2>
-                      <form method="post">
+                      <form method="post" id="formulario_mapa">
                         <div class="row mt-4">
                           {% for field in formulario_mapa %}
                           <div class="col-md-4 mb-2">
@@ -239,9 +231,7 @@
                                   {% else %}
                                       <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
                                   {% endif %}
-                                  
-                                  <!-- Errores de validación -->
-                                  {{ field.errors }}
+     
                               </div>
                           </div>
                           {% endfor %}
@@ -253,7 +243,7 @@
                 <div class="collapse" id="collapseTecnicas">
                   <div class="card card-body">
                       <h2>Técnicas</h2>
-                      <form method="post">
+                      <form method="post" id="formulario_tecnicas">
                         <div class="row mt-4">
                           {% for field in formulario_tecnicas %}
                           <div class="col-md-4 mb-2">
@@ -271,9 +261,7 @@
                                   {% else %}
                                       <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
                                   {% endif %}
-                                  
-                                  <!-- Errores de validación -->
-                                  {{ field.errors }}
+
                               </div>
                           </div>
                           {% endfor %}
@@ -285,7 +273,7 @@
                 <div class="collapse" id="collapseRealizacion">
                   <div class="card card-body">
                       <h2>Realización</h2>
-                      <form method="post">
+                      <form method="post" id="formulario_realizacion">
                         <div class="row mt-4">
                           {% for field in formulario_realizacion %}
                           <div class="col-md-4 mb-2">
@@ -303,9 +291,7 @@
                                   {% else %}
                                       <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
                                   {% endif %}
-                                  
-                                  <!-- Errores de validación -->
-                                  {{ field.errors }}
+
                               </div>
                           </div>
                           {% endfor %}
@@ -331,100 +317,135 @@
             </div>
         </div>
     </div>
-    
-    <div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header text-center" style="background-color:#13322B;">
-            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
-            <input id="codigoId" disabled style="color:white;" value="Código - {{ codigo_barras }}" >
-          </div>
-          <div class="modal-body">
-            <form id="formularioPrograma" method="post" action="{% url 'formulario' %}"  >
-              {% csrf_token %}
-              {% for field in modal_form %}
-                {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitserie' %}
-                  <div class="mb-3">
-                    <!-- Asignamos un id al campo -->
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-agregar" style="background-color:#13322B" id="agregarProgramaSerie" >
-              <span class="text" style="color: white;">Agregar</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% comment %}  {% endcomment %}
   </div>
 </div>
 
 <script>
+
+
   
+$("#btnEdit").click(function(event) {
+  event.preventDefault(); // Evitar el envío de formulario por defecto
+
+  Swal.fire({
+    title: '¿Estás seguro de guardar los cambios?',
+    text: 'Esta acción actualizará la base de datos',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, guardar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const codigo_barras = "{{ codigo_barras }}"; // Asegúrate de obtener el código de barras de alguna manera
+      const form_data = new FormData();
+      form_data.append('codigo_barras', codigo_barras);
+      //console.log(`Código: ${codigo_barras}`)
+      const formularios = {
+        formulario_principal: 'formulario_principal',
+        formulario_descripcion: 'formulario_descripcion',
+        formulario_mapa: 'formulario_mapa',
+        formulario_tecnicas: 'formulario_tecnicas',
+        formulario_realizacion: 'formulario_realizacion',
+      };
+
+      Object.values(formularios).forEach(formId => {
+        const formData = new FormData(document.getElementById(formId));
+        for (const [name, value] of formData.entries()) {
+          form_data.append(name, value);
+        }
+      });
+
+      fetch(`/calificaciones/editar/${codigo_barras}/`, {
+        method: 'POST',
+        headers: {
+         // 'Content-Type': 'application/x-www-form-urlencoded', 
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: form_data
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              alertMessage('success', data.message, 'Genial!');
+          } else {
+              alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+    }
+  });
+});
+  
+
+
+
+
+
+
+
+
   $(document).ready(function() {
     $('#editTablePrograma').DataTable({
       ...len
     });
+
   })
   const eliminarFila = (id, codigo_barras) => {
     
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción eliminará el programa de la base de datos',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-          // Enviar solicitud POST para eliminar
-          fetch(`/calificaciones/editar/${codigo_barras}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
-                'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
-            },
-            body: new URLSearchParams({
-                eliminar_id: id // Envía el ID del programa a eliminar
-            })
-        })
-          .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            console.log({response});
-            return response.json();
+  Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción eliminará el programa de la base de datos',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+  }).then((result) => {
+      if (result.isConfirmed) {
+        // Enviar solicitud POST para eliminar
+        fetch(`/calificaciones/editar/${codigo_barras}/`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+              'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
+          },
+          body: new URLSearchParams({
+              eliminar_id: id // Envía el ID del programa a eliminar
           })
-          .then(data => {
-            if (data.success) {
-                Swal.fire(
-                  'Eliminado!',
-                  'Se elimino exitosamente su registro.',
-                  'success'
-                ).then(() => {
-                  location.reload(); // Realizar un reload de la página después del OK
-                });
-                
-            } else {
-                // Manejar el caso de error si es necesario
-                Swal.fire({
-                    icon:   'error',
-                    title:  'Error 404',
-                    text:   'No se pudo eliminar el programa',
-                });
-            }
-          });
-        }
-    });
+      })
+        .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          console.log({response});
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+              Swal.fire(
+                'Eliminado!',
+                'Se elimino exitosamente su registro.',
+                'success'
+              ).then(() => {
+                location.reload(); // Realizar un reload de la página después del OK
+              });
+              
+          } else {
+              // Manejar el caso de error si es necesario
+              Swal.fire({
+                  icon:   'error',
+                  title:  'Error 404',
+                  text:   'No se pudo eliminar el programa',
+              });
+          }
+        });
+      }
+  });
 }
 
 </script>
