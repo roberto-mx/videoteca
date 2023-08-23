@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm
+from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm, FormularioCombinadoEditar
 from ..models import MaestroCintas, RegistroCalificacion
 from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
@@ -167,43 +167,38 @@ def consultaFormulario(request):
         'orientacion',
     )
 
-    modal_form = ModalForm(request.POST or None)  # Inicializar el formulario
-
-    if request.method == 'POST':
-        # Aquí puedes manejar la lógica de guardado si es necesario
-        pass  # Debes agregar tu lógica de guardado aquí
-
     consultaForm = {
         'formulario': calificaciones,
-        'modal_form': modal_form,
+        
     }
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 
 
+def eliminar(request, id):
+    id = request.POST.get('eliminar_id')
+    try:
+        registro = RegistroCalificacion.objects.get(id=id)
+        registro.delete()
+        return JsonResponse({'success': True})
+    except RegistroCalificacion.DoesNotExist:
+        return JsonResponse({'success': False})
+
+
 # views.py
 @csrf_exempt
-def editar(request, codigo_barras):
+def editar(request,id , codigo_barras):
     programas_data = []  # Lista para almacenar los datos
     try:
+        registro_calificacion = RegistroCalificacion.objects.get(id=id)
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
         registro_calificaciones = RegistroCalificacion.objects.filter(codigo_barras=maestro_cintas)
 
         if request.method == 'POST':
-            print('Datos POST:', request.POST)
-            eliminar_id = request.POST.get('eliminar_id')  # Obtén el ID del programa a eliminar
-            if eliminar_id is not None:
-                try:
-                    programa_a_eliminar = RegistroCalificacion.objects.get(id=eliminar_id)
-                    programa_a_eliminar.delete()
-                    # Redirige de nuevo a la página de edición después de eliminar
-                    return JsonResponse({'success': True})
-                
-                except RegistroCalificacion.DoesNotExist:
-                    return JsonResponse({'success': False, 'error': 'No se encontró el programa a eliminar.'})
 
             # Resto de la lógica para procesar los formularios de edición
-            formulario_principal = FormularioCombinado(request.POST)
+            formulario_principal = FormularioCombinadoEditar(request.POST)
+            
             if formulario_principal.is_valid():
                 # Actualizar los datos en MaestroCintas
                 maestro_cintas.form_clave = formulario_principal.cleaned_data['form_clave']
@@ -226,11 +221,14 @@ def editar(request, codigo_barras):
                 # Actualizar otros campos si es necesario
                 registro.save()
 
-            formulario_descripcion = Descripcion(request.POST, instance=registro_calificaciones[0])
-            formulario_mapa = Mapa(request.POST, instance=registro_calificaciones[0])
-            formulario_realizacion = Realizacion(request.POST, instance=registro_calificaciones[0])
-            formulario_tecnicas = Tecnicas(request.POST, instance=registro_calificaciones[0])
-            
+                formulario_descripcion = Descripcion(request.POST, instance=registro_calificaciones[0])
+                formulario_mapa = Mapa(request.POST, instance=registro_calificaciones[0])
+                formulario_realizacion = Realizacion(request.POST, instance=registro_calificaciones[0])
+                formulario_tecnicas = Tecnicas(request.POST, instance=registro_calificaciones[0])
+            else:
+                print(formulario_principal.errors)
+                return JsonResponse({'success': False, 'message': 'El formulario no es válido.'})
+                
             
             if (formulario_principal.is_valid() and formulario_descripcion.is_valid() and
                 formulario_mapa.is_valid() and formulario_realizacion.is_valid() and
@@ -246,7 +244,8 @@ def editar(request, codigo_barras):
                 return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
 
         else:
-            formulario_principal = FormularioCombinado(initial={
+            formulario_principal = FormularioCombinadoEditar(initial={
+                'registro_id': registro_calificacion.id,  # Usar registro_calificacion.id en lugar de registro_calificacion.registro_id
                 'codigo_barras': maestro_cintas.video_cbarras,
                 'form_clave': maestro_cintas.form_clave,
                 'tipo_id': maestro_cintas.tipo_id,

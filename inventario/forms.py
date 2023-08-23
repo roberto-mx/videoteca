@@ -68,6 +68,29 @@ class MaestrosCintasForm(forms.ModelForm):
         choices=((0, 'No'), (1, 'Yes')),
         widget=forms.Select(attrs={'readonly': True})
     )
+    
+    
+    
+class FormularioCombinadoEditar(forms.Form):
+    registro_id = forms.IntegerField(widget=forms.HiddenInput()) 
+    
+    codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
+    fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True) 
+    productor = forms.CharField(max_length=60, required=True)
+    coordinador = forms.CharField(max_length=40, required=True)
+    video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
+    duracion = forms.CharField(max_length=11, required=True)
+    video_codificacion = forms.CharField(max_length=20, required=True)
+    video_estatus = forms.CharField(max_length=20, required=True)
+    video_observaciones = forms.CharField(max_length=20, required=True)
+    origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    form_clave = forms.ModelChoiceField(queryset=FormatosCintas.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    widgets = {
+            'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
+            'video_id': forms.HiddenInput(),
+    }
 
 class FormularioCombinado(forms.Form):
     codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
