@@ -161,57 +161,57 @@
 
 <script>
 
-$(document).ready(function() {
-  $('#datatable').DataTable({
-    // Configuración del DataTable
-    ...len
+  $(document).ready(function() {
+    $('#datatable').DataTable({
+      // Configuración del DataTable
+      ...len
+    });
   });
-});
 
-const eliminarFila = (id) => {
-  Swal.fire({
-      // ... (misma confirmación)
-      title: '¿Estás seguro?',
-      text: 'Esta acción eliminará el programa de la base de datos',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-  }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`/calificaciones/eliminar/${id}/`, {  // Agrega la barra diagonal al final
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
-            'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
-        },
-          body: new URLSearchParams({
-              eliminar_id: id  // Envía el ID del programa a eliminar
-          })
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-              Swal.fire(
-                'Eliminado!',
-                'Se eliminó exitosamente el registro.',
-                'success'
-              ).then(() => {
-                location.reload(); // Realizar un recarga de la página después de eliminar
-              });
-          } else {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text: 'No se pudo eliminar el registro',
-              });
-          }
-        });
-      }
-  });
-}
+  const eliminarFila = (id) => {
+    Swal.fire({
+        // ... (misma confirmación)
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el programa de la base de datos',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/calificaciones/eliminar/${id}/`, {  // Agrega la barra diagonal al final
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+              'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
+          },
+            body: new URLSearchParams({
+                eliminar_id: id  // Envía el ID del programa a eliminar
+            })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+                Swal.fire(
+                  'Eliminado!',
+                  'Se eliminó exitosamente el registro.',
+                  'success'
+                ).then(() => {
+                  location.reload(); // Realizar un recarga de la página después de eliminar
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo eliminar el registro',
+                });
+            }
+          });
+        }
+    });
+  }
 
 </script>
 

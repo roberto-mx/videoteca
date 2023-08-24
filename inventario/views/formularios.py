@@ -174,7 +174,6 @@ def consultaFormulario(request):
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 
-
 def eliminar(request, id):
     id = request.POST.get('eliminar_id')
     try:
@@ -187,113 +186,96 @@ def eliminar(request, id):
 
 # views.py
 @csrf_exempt
-def editar(request,id , codigo_barras):
-    programas_data = []  # Lista para almacenar los datos
+def editar(request, id, codigo_barras):
     try:
-        registro_calificacion = RegistroCalificacion.objects.get(id=id)
+        # Obtener el registro de calificación y el maestro de cintas asociado
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
-        registro_calificaciones = RegistroCalificacion.objects.filter(codigo_barras=maestro_cintas)
+        registro_calificacion = RegistroCalificacion.objects.get(id=id, codigo_barras=maestro_cintas)
 
         if request.method == 'POST':
-
-            # Resto de la lógica para procesar los formularios de edición
-            formulario_principal = FormularioCombinadoEditar(request.POST)
+            # Procesar el formulario personalizado de edición
+            formulario_combinado = FormularioCombinadoEditar(request.POST)
             
-            if formulario_principal.is_valid():
-                # Actualizar los datos en MaestroCintas
-                maestro_cintas.form_clave = formulario_principal.cleaned_data['form_clave']
-                maestro_cintas.tipo_id = formulario_principal.cleaned_data['tipo_id']
-                maestro_cintas.video_tipo = formulario_principal.cleaned_data['video_tipo']
-                maestro_cintas.origen_id = formulario_principal.cleaned_data['origen_id']
-                maestro_cintas.video_observaciones = formulario_principal.cleaned_data['video_observaciones']
-                maestro_cintas.video_estatus = formulario_principal.cleaned_data['video_estatus']
-                maestro_cintas.video_codificacion = formulario_principal.cleaned_data['video_codificacion']
-                maestro_cintas.video_anoproduccion = formulario_principal.cleaned_data['video_anoproduccion']
-                # Actualizar otros campos si es necesario
-                maestro_cintas.save()
-                
+            if formulario_combinado.is_valid():
                 # Actualizar los datos en RegistroCalificacion
-                registro = registro_calificaciones[0]
-                registro.fecha_calificacion = formulario_principal.cleaned_data['fecha_calificacion']
-                registro.productor = formulario_principal.cleaned_data['productor']
-                registro.coordinador = formulario_principal.cleaned_data['coordinador']
-                registro.duracion = formulario_principal.cleaned_data['duracion']
+                # registro_calificacion.codigo_barras = formulario_combinado.cleaned_data['codigo_barras']
+                registro_calificacion.codigo_barras = maestro_cintas  # Aquí debes asignar la instancia
+                registro_calificacion.fecha_calificacion = formulario_combinado.cleaned_data['fecha_calificacion']
+                registro_calificacion.productor = formulario_combinado.cleaned_data['productor']
+                registro_calificacion.coordinador = formulario_combinado.cleaned_data['coordinador']
+                maestro_cintas.video_anoproduccion = formulario_combinado.cleaned_data['video_anoproduccion']
+                registro_calificacion.duracion = formulario_combinado.cleaned_data['duracion']
+                maestro_cintas.video_codificacion = formulario_combinado.cleaned_data['video_codificacion']
+                maestro_cintas.video_estatus = formulario_combinado.cleaned_data['video_estatus']
+                maestro_cintas.video_observaciones = formulario_combinado.cleaned_data['video_observaciones']
+                maestro_cintas.origen_id = formulario_combinado.cleaned_data['origen_id']
+                maestro_cintas.video_tipo = formulario_combinado.cleaned_data['video_tipo']
+                maestro_cintas.form_clave = formulario_combinado.cleaned_data['form_clave']
+                maestro_cintas.tipo_id = formulario_combinado.cleaned_data['tipo_id']
                 # Actualizar otros campos si es necesario
-                registro.save()
-
-                formulario_descripcion = Descripcion(request.POST, instance=registro_calificaciones[0])
-                formulario_mapa = Mapa(request.POST, instance=registro_calificaciones[0])
-                formulario_realizacion = Realizacion(request.POST, instance=registro_calificaciones[0])
-                formulario_tecnicas = Tecnicas(request.POST, instance=registro_calificaciones[0])
-            else:
-                print(formulario_principal.errors)
-                return JsonResponse({'success': False, 'message': 'El formulario no es válido.'})
+                registro_calificacion.save()
                 
-            
-            if (formulario_principal.is_valid() and formulario_descripcion.is_valid() and
-                formulario_mapa.is_valid() and formulario_realizacion.is_valid() and
-                formulario_tecnicas.is_valid()):
-                # Guardar los cambios en los modelos
-                # formulario_principal.save()
-                formulario_descripcion.save()
-                formulario_mapa.save()
-                formulario_realizacion.save()
-                formulario_tecnicas.save()
-
-                # Redirigir a la página de consulta o a donde desees después de la edición exitosa
-                return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
-
+                # Procesar los demás formularios y guardar los cambios en los modelos relacionados
+                formulario_descripcion = Descripcion(request.POST, instance=registro_calificacion)
+                formulario_mapa = Mapa(request.POST, instance=registro_calificacion)
+                formulario_tecnicas = Tecnicas(request.POST, instance=registro_calificacion)
+                formulario_realizacion = Realizacion(request.POST, instance=registro_calificacion)
+                
+                if (formulario_descripcion.is_valid() and formulario_mapa.is_valid() and
+                    formulario_tecnicas.is_valid() and formulario_realizacion.is_valid()):
+                    formulario_descripcion.save()#
+                    formulario_mapa.save()
+                    formulario_tecnicas.save()
+                    formulario_realizacion.save()
+                    return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
+                else:
+                    errors = {
+                        'formulario_descripcion': formulario_descripcion.errors,
+                        'formulario_mapa': formulario_mapa.errors,
+                        'formulario_tecnicas': formulario_tecnicas.errors,
+                        'formulario_realizacion': formulario_realizacion.errors,
+                    }
+                    return JsonResponse({'success': False, 'message': 'El formulario no es válido.', 'errors': errors})
+            else:
+                errors = {
+                    'formulario_combinado': formulario_combinado.errors,
+                }
+                return JsonResponse({'success': False, 'message': 'El formulario no es válido.', 'errors': errors})
         else:
-            formulario_principal = FormularioCombinadoEditar(initial={
-                'registro_id': registro_calificacion.id,  # Usar registro_calificacion.id en lugar de registro_calificacion.registro_id
-                'codigo_barras': maestro_cintas.video_cbarras,
+            # Preparar los formularios con los datos actuales
+            formulario_combinado = FormularioCombinadoEditar(initial={
+                'registro_id': registro_calificacion.id,  
+                'codigo_barras': registro_calificacion.codigo_barras,
+                'fecha_calificacion': registro_calificacion.fecha_calificacion,
+                'productor': registro_calificacion.productor,
+                'coordinador': registro_calificacion.coordinador,
+                'video_anoproduccion': maestro_cintas.video_anoproduccion,
+                'duracion': registro_calificacion.duracion,
+                'video_codificacion': maestro_cintas.video_codificacion,
+                'video_estatus': maestro_cintas.video_estatus,
+                'video_observaciones': maestro_cintas.video_observaciones,
+                'origen_id': maestro_cintas.origen_id,
+                'video_tipo': maestro_cintas.video_tipo,
                 'form_clave': maestro_cintas.form_clave,
                 'tipo_id': maestro_cintas.tipo_id,
-                'video_tipo': maestro_cintas.video_tipo,
-                'origen_id': maestro_cintas.origen_id,
-                'video_observaciones': maestro_cintas.video_observaciones,
-                'video_estatus': maestro_cintas.video_estatus,
-                'video_codificacion': maestro_cintas.video_codificacion,
-                'video_anoproduccion': maestro_cintas.video_anoproduccion,
-                'fecha_calificacion': registro_calificaciones[0].fecha_calificacion,
-                'productor': registro_calificaciones[0].productor,
-                'coordinador': registro_calificaciones[0].coordinador,
-                'duracion': registro_calificaciones[0].duracion,  # Agregamos la duración
+            })
+            formulario_descripcion = Descripcion(instance=registro_calificacion)
+            formulario_mapa = Mapa(instance=registro_calificacion)
+            formulario_tecnicas = Tecnicas(instance=registro_calificacion)
+            formulario_realizacion = Realizacion(instance=registro_calificacion)
+
+            # Renderizar la página de edición con los formularios y datos
+            return render(request, 'calificaForm/editar.html', {
+                'formulario_combinado': formulario_combinado,
+                'formulario_descripcion': formulario_descripcion,
+                'formulario_mapa': formulario_mapa,
+                'formulario_tecnicas': formulario_tecnicas,
+                'formulario_realizacion': formulario_realizacion,
+                'codigo_barras': codigo_barras,
             })
 
-            # Obtener datos de la tabla de programas, creando un arreglo vacio para despues insertar ahi los datos
-            
-            for registro in registro_calificaciones:
-                programas_data.append({
-                    'id': registro.id,
-                    'programa': registro.programa,
-                    'serie': registro.serie,
-                    'programaSubtitulo': registro.subtitulo_programa,
-                    'serieSubtitulo': registro.subtitserie,
-                    'axo_produccion': registro.axo_produccion,
-                    'duracion': registro.duracion,
-                    'productor': registro.productor,
-                    'coordinador': registro.coordinador,
-                    'sinopsis': registro.sinopsis,
-                    'participantes': registro.participantes,
-                    'personajes': registro.personajes,
-                })
+    except (RegistroCalificacion.DoesNotExist, MaestroCintas.DoesNotExist):
+        # Manejar el caso cuando no se encuentra el objeto
+        return JsonResponse({'error': "No se encontró el registro con el código de barras proporcionado."})
 
-            formulario_descripcion = Descripcion(instance=registro_calificaciones[0])
-            formulario_mapa = Mapa(instance=registro_calificaciones[0])
-            formulario_realizacion = Realizacion(instance=registro_calificaciones[0])
-            formulario_tecnicas = Tecnicas(instance=registro_calificaciones[0])
 
-    except (MaestroCintas.DoesNotExist, RegistroCalificacion.DoesNotExist):
-    # Manejar el caso cuando no se encuentra el objeto
-            return JsonResponse({'error': "No se encontró el registro con el código de barras proporcionado."})
-    
-    return render(request, 'calificaForm/editar.html', {
-        'formulario_principal': formulario_principal,
-        'formulario_descripcion': formulario_descripcion,
-        'formulario_mapa': formulario_mapa,
-        'formulario_tecnicas': formulario_tecnicas,
-        'formulario_realizacion': formulario_realizacion,
-        'programas_data': programas_data,
-        'codigo_barras': codigo_barras,  # Agregamos los datos de la tabla de programas al contexto
-    })

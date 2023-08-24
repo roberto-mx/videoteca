@@ -75,10 +75,10 @@
                 <div class="collapse" id="collapseDatosGenerales">
                   <div class="card card-body ">
                     <h2> Datos Generales </h2>
-                    <form method="post" id="formulario_principal">
+                    <form method="post" id="formulario_combinado">
                         {% csrf_token %}
                         <div class="row mt-4">
-                          {% for field in formulario_principal %}
+                          {% for field in formulario_combinado %}
                           <div class="col-md-4 mb-2">
                             <div class="mb-1">
                               {% if field.name == 'video_anoproduccion' %}
@@ -295,31 +295,29 @@
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-          const id = $('#registro_id').val();  // Usar el ID correcto
+          const id = $('#registro_id').val();
           const codigo_barras = $('#codigo_barras').val();
-    
-          console.log({id, codigo_barras})
-    
+          
           const form_data = new FormData();
-          form_data.append('registro_id', id);  // Cambiar a 'registro_id'
+          form_data.append('registro_id', id);
           form_data.append('codigo_barras', codigo_barras);
-    
-          const formularios = {
-            formulario_principal: 'formulario_principal',
-            formulario_descripcion: 'formulario_descripcion',
-            formulario_mapa: 'formulario_mapa',
-            formulario_tecnicas: 'formulario_tecnicas',
-            formulario_realizacion: 'formulario_realizacion',
-          };
-    
-          Object.values(formularios).forEach(formId => {
+          
+          const formularios = [
+            'formulario_combinado',
+            'formulario_descripcion',
+            'formulario_mapa',
+            'formulario_tecnicas',
+            'formulario_realizacion',
+          ];
+          
+          formularios.forEach(formId => {
             const formData = new FormData(document.getElementById(formId));
             for (const [name, value] of formData.entries()) {
               form_data.append(name, value);
             }
           });
-    
-          fetch(`/calificaciones/editar/${id}/${codigo_barras}/`, {  // Cambiar 'id_registro' a 'id'
+          
+          fetch(`/calificaciones/editar/${id}/${codigo_barras}/`, {
             method: 'POST',
             headers: {
               'X-CSRFToken': '{{ csrf_token }}'
@@ -328,22 +326,22 @@
           })
           .then(response => response.json())
           .then(data => {
-              if (data.success) {
-                  alertMessage('success', data.message, 'Genial!');
-              } else {
-                  alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
-              }
-              console.log({data})
+            if (data.success) {
+              messageAlerta('success', data.message, 'Genial!', '#18463b');
+
+              //location.reload(2000); 
+            } else {
+              alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+            }
           })
           .catch(error => {
-              console.error('Error:', error);
+            console.error('Error:', error);
           });
         }
       });
     });
-    
+       
   })
-
 
 </script>
 
