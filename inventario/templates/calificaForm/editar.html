@@ -129,8 +129,59 @@
                           </div>
                         {% endfor %}
                         </div>
+                        <div class="d-flex justify-content-center">
+                          <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#0F9B97;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
+                            <i class="fa-solid fa-circle-plus" style="color:white;"></i>
+                              <span style="color: white;">Añadir Programa</span>
+                          </button>
+                        </div>
                     </form>
-                  </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="editTablePrograma" >
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Código Barras</th>
+                                    <th>Programa</th>
+                                    <th>Serie</th>
+                                    <th>Subtítulo del Programa</th>
+                                    <th>Subtítulo de la Serie</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% for programa in programas_data %}
+                                <tr>
+                                    <td>{{ programa.id }}</td>
+                                    <td>{{ programa.codigo_barras }}</td>
+                                    <td>{{ programa.programa }}</td>
+                                    <td>{{ programa.serie }}</td>
+                                    <td>{{ programa.programaSubtitulo }}</td>
+                                    <td>{{ programa.serieSubtitulo }}</td>
+                                    <td>
+                                        <button class="btn btn-editar btn-sm text-white" style="background-color:#1F5E49;" title="Editar"
+                                            data-id="eliminar-{{ programa.id }}"  
+                                            onclick="EditarFila('{{ programa.id }}')">
+                                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                              <i class='fas fa-edit'></i>
+                                            </div>
+                                        </button>
+
+                                        <button class="btn btn-eliminar btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
+                                            data-id="eliminar-{{ programa.id }}"  
+                                            onclick="eliminarFila('{{ programa.id }}')">
+                                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                                <i class="fa-sharp fa-solid fa-trash"></i>
+                                            </div>
+                                        </button>   
+                                    </td>
+                                </tr>
+                              {% endfor %}                                
+                            </tbody>
+                        </table>
+                      </div>
+                    </div>
                 </div>
      
                 <div class="collapse" id="collapseDescripcion">
@@ -273,6 +324,37 @@
   </div>
 </div>
 
+<div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header text-center" style="background-color:#13322B;">
+        <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
+        <input id="codigoId" disabled style="color:white;" value ="{{programa.codigo_barras}}"></input>
+      </div>
+      <div class="modal-body">
+        <form id="formularioPrograma" method="post" action="{% url 'formulario' %}"  >
+          {% csrf_token %}
+          {% for field in modal_form %}
+            {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' %}
+              <div class="mb-3">
+                <!-- Asignamos un id al campo -->
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-agregar" style="background-color:#13322B" id="agregarProgramaSerie" >
+          <span class="text" style="color: white;">Agregar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 
 
@@ -327,7 +409,7 @@
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              messageAlerta('success', data.message, 'Genial!', '#18463b');
+              messageAlerta('success', data.message, '¡Genial!', '#18463b');
 
               //location.reload(2000); 
             } else {
@@ -342,6 +424,71 @@
     });
        
   })
+
+const eliminarFila = (id) => {
+  Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción eliminará el programa de la base de datos',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+  }).then((result) => {
+      if (result.isConfirmed) {
+        // Enviar solicitud POST para eliminar
+        fetch(`/calificaciones/eliminar/${id}/`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+              'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
+          },
+          body: new URLSearchParams({
+              eliminar_id: id // Envía el ID del programa a eliminar
+          })
+      })
+        .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          console.log({response});
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+              Swal.fire(
+                'Eliminado!',
+                'Se elimino exitosamente su registro.',
+                'success'
+              ).then(() => {
+                location.reload(); // Realizar un reload de la página después del OK
+              });
+              
+          } else {
+              // Manejar el caso de error si es necesario
+              Swal.fire({
+                  icon:   'error',
+                  title:  'Error 404',
+                  text:   'No se pudo eliminar el programa',
+              });
+          }
+        });
+      }
+  });
+}
+
+//document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
+//  const programa = document.getElementById('programa').value;
+//  const serie = document.getElementById('serie').value;
+//  const programaSubtitulo = document.getElementById('subtitulo_programa').value;
+//  const serieSubtitulo = document.getElementById('subtitulo_serie').value;
+//  const codigoBarrasValor = document.getElementById('codigo_barras').value;
+//  $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
+//
+//
+// 
+//});
 
 </script>
 

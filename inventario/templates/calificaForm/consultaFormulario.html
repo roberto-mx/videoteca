@@ -34,30 +34,13 @@
         <thead>
           <tr>
             <th>Id</th>
-            <th>codigo_barras</th>
-            <th>Fecha Calificación</th>
-            <th>Año Producción</th>
-            <th>Productor</th>
-            <th>Coordinador</th>
-            <th>Serie</th>
-            <th>Subtítulo Serie</th>
-            <th>Programa</th>
-            <th>Subtítulo Programa</th>
-            <th>Duracion</th>
-            <th>Guionista</th>
-            <th>Calificador</th>
-            <th>Tema</th>
-            <th>Ejetematico</th>
+            <th>Código de Barras</th>
+            <th>Duración</th>
+            <th>Observaciones</th>
             <th>Institucion Productora</th>
-            <th>Derecho Patrimonial</th>
-            <th>Idioma Original</th>
-            <th>Elenco</th>
-            <th>Conductor</th>
-            <th>Locutor</th>
-            <th>Investigador</th>
-            <th>Tiempodur</th>
-            <th>Orientacion</th>
-            <th>Estatus</th>
+            <th>Fecha Calificación</th> 
+            <th>Estatus</th> 
+            {% comment %} <td>Estatus de Calificación</td>            {% endcomment %}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -65,43 +48,31 @@
           {% for data in formulario %}
           <tr>
             <td>{{ data.id }}</td>+
-            {% comment %} <td>{{ data.codigo_barras }}</td> {% endcomment %}
             <td>{{ data.codigo_barras }}</td>
-            <td>{{ data.fecha_calificacion }}</td>
-            <td>{{ data.axo_produccion }}</td>
-            <td>{{ data.productor }}</td>
-            <td>{{ data.coordinador }}</td>
-            <td>{{ data.serie }}</td>
-            <td>{{ data.subtitserie }}</td>
-            <td>{{ data.programa }}</td>
-            <td>
-              {%if data.subtitulo_programa == ""%}
-                No tiene datos
-              {%else%}
-                {{ data.subtitulo_programa }}
-              {% endif %}
-            </td>
             <td>{{ data.duracion }}</td>
-            <td>{{ data.guionista }}</td>
-            <td>{{ data.calificador_modificacion }}</td>
-            <td>{{ data.tema }}</td>
-            <td>{{ data.eje_tematico }}</td>
-            <td>{{ data.institucion_productora }}</td>
-            <td>{{ data.derecho_patrimonial }}</td>
-            <td>{{ data.idioma_original }}</td>
-            <td>{{ data.elenco }}</td>
-            <td>{{ data.conductor }}</td>
-            <td>{{ data.locutor }}</td>
-            <td>{{ data.investigador }}</td>
-            <td>{{ data.tiempodur }}</td>
-            <td>{{ data.orientacion }}</td>
+            <td>
+              {%if data.observaciones == None %}
+                Sin información
+              {%else%}
+                {{ data.observaciones }}
+              {%endif%}
+            </td>
+            <td>
+              {%if data.institucion_productora == None %}              
+                Sin información
+              {%else%}
+                {{ data.institucion_productora }}
+              {%endif%}
+            </td>
+            <td>{{ data.fecha_calificacion }}</td>
             <td>
               {% if data.estatusCalif == 'P' %}
-              Pendiente
-              {% elif data.estatusCalif == 'R' %}
-              Revisado
+                  Pendiente
+              {% else %}
+                  Revisado
               {% endif %}
-            </td>
+          </td>
+            {% comment %} <td>{{ data.estatusCalif }}</td> {% endcomment %}
             <td class="d-flex justify-content-center">
 
               <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"

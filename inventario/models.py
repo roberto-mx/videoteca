@@ -59,8 +59,7 @@ class TipoSerie(models.Model):
                     
     def __str__(self):
         return self.tipo
-
-
+        
 class MaestroCintas(models.Model):
     video_id = models.IntegerField("Id")
     # video_cbarras = models.CharField("Código de barras", max_length=12, primary_key=True)
@@ -95,6 +94,18 @@ class MaestroCintas(models.Model):
         
     def __str__(self):
         return self.video_cbarras
+    
+class ProgramaSeries(models.Model):
+    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, max_length=12)
+    codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
+    programa = models.CharField("Programa",max_length=50, blank=True, null=True)
+    serie = models.CharField("Serie",max_length=50, blank=True, null=True)
+    subtitulo_programa = models.CharField("Subtitulo de Programa",max_length=50, blank=True, null=True)
+    subtitulo_serie = models.CharField("Subtitulo de Serie",max_length=50, blank=True, null=True)
+    
+    class Meta:
+        db_table = 'programas_series'
+        verbose_name = 'Programas y Series'
 
 class DetalleProgramas(models.Model):
     vp_id = models.IntegerField("Id", primary_key=True)
@@ -508,8 +519,8 @@ class Recupera(models.Model):
 
 class RegistroCalificacion(models.Model):
     codigo_original = models.CharField(max_length=15, blank=True, null=True)
-    # codigo_barras = models.CharField(max_length=12) 
-    codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, max_length=12)
+    codigo_barras = models.CharField(max_length=12) 
+    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     serie = models.TextField(blank=True, null=True)
     programa = models.TextField(blank=True, null=True)
     subtitulo_programa = models.TextField(blank=True, null=True)

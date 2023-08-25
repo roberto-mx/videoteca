@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm, FormularioCombinadoEditar
-from ..models import MaestroCintas, RegistroCalificacion
+from ..models import MaestroCintas, RegistroCalificacion, ProgramaSeries
 from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -106,12 +106,19 @@ def formulario(request):
                     conductor=datos_formulario_realizacion['conductor'],
                     institucion_productora=datos_formulario_realizacion['institucion_productora'],
                     #Obtengo los datos del objeto de el front
+                )
+                registro_calificacion.save()
+
+                registro_programas = ProgramaSeries(
+                    codigo_barras=maestro_cintas,
                     programa=programa,
                     serie=serie,
                     subtitulo_programa=programaSubtitulo,
-                    subtitserie=serieSubtitulo,
+                    subtitulo_serie=serieSubtitulo,
                 )
-                registro_calificacion.save()
+                registro_programas.save()
+
+
 
             response_data = {
                 'message': 'Los datos se guardaron exitosamente.',
@@ -141,56 +148,40 @@ def consultaFormulario(request):
     # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'P' o 'R'
     calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).order_by('-id').values(
         'id',
-        'codigo_barras',  # Acceso a través de la relación
-        'fecha_calificacion',
-        'axo_produccion',
-        'productor',
-        'coordinador',
-        'serie',
-        'programa',
-        'subtitulo_programa',
+        'codigo_barras',
         'duracion',
-        'guionista',
         'observaciones',
-        'subtitserie',
-        'estatusCalif',
-        'tema',
-        'eje_tematico',
         'institucion_productora',
-        'derecho_patrimonial',
-        'idioma_original',
-        'elenco',
-        'conductor',
-        'locutor',
-        'investigador',
-        'tiempodur',
-        'orientacion',
+        'fecha_calificacion',
+        'estatusCalif'
     )
 
-    consultaForm = {
-        'formulario': calificaciones,
-        
-    }
+
+    consultaForm = { 'formulario': calificaciones }
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 
 def eliminar(request, id):
     id = request.POST.get('eliminar_id')
     try:
-        registro = RegistroCalificacion.objects.get(id=id)
+        registro = ProgramaSeries.objects.get(id=id)
         registro.delete()
         return JsonResponse({'success': True})
-    except RegistroCalificacion.DoesNotExist:
+    except ProgramaSeries.DoesNotExist:
         return JsonResponse({'success': False})
 
 
 # views.py
 @csrf_exempt
 def editar(request, id, codigo_barras):
+    programas_data = []
     try:
         # Obtener el registro de calificación y el maestro de cintas asociado
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
         registro_calificacion = RegistroCalificacion.objects.get(id=id, codigo_barras=maestro_cintas)
+        registro_programas = ProgramaSeries.objects.filter(codigo_barras=maestro_cintas)
+    
+
 
         if request.method == 'POST':
             # Procesar el formulario personalizado de edición
@@ -198,8 +189,7 @@ def editar(request, id, codigo_barras):
             
             if formulario_combinado.is_valid():
                 # Actualizar los datos en RegistroCalificacion
-                # registro_calificacion.codigo_barras = formulario_combinado.cleaned_data['codigo_barras']
-                registro_calificacion.codigo_barras = maestro_cintas  # Aquí debes asignar la instancia
+                registro_calificacion.codigo_barras = maestro_cintas.video_cbarras
                 registro_calificacion.fecha_calificacion = formulario_combinado.cleaned_data['fecha_calificacion']
                 registro_calificacion.productor = formulario_combinado.cleaned_data['productor']
                 registro_calificacion.coordinador = formulario_combinado.cleaned_data['coordinador']
@@ -259,6 +249,17 @@ def editar(request, id, codigo_barras):
                 'form_clave': maestro_cintas.form_clave,
                 'tipo_id': maestro_cintas.tipo_id,
             })
+
+            for registro in registro_programas:
+                programas_data.append({
+                    'id': registro.id,
+                    'codigo_barras': registro.codigo_barras,
+                    'programa': registro.programa,
+                    'serie': registro.serie,
+                    'programaSubtitulo': registro.subtitulo_programa,
+                    'serieSubtitulo': registro.subtitulo_serie,
+                })
+
             formulario_descripcion = Descripcion(instance=registro_calificacion)
             formulario_mapa = Mapa(instance=registro_calificacion)
             formulario_tecnicas = Tecnicas(instance=registro_calificacion)
@@ -272,6 +273,8 @@ def editar(request, id, codigo_barras):
                 'formulario_tecnicas': formulario_tecnicas,
                 'formulario_realizacion': formulario_realizacion,
                 'codigo_barras': codigo_barras,
+                'programas_data': programas_data,
+
             })
 
     except (RegistroCalificacion.DoesNotExist, MaestroCintas.DoesNotExist):

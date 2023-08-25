@@ -9,7 +9,8 @@ from .models import (
         FormatosCintas,
         CatStatus,
         TipoSerie,
-        OrigenSerie
+        OrigenSerie,
+        ProgramaSeries
 )
 
 from django.forms.models import inlineformset_factory
@@ -113,15 +114,8 @@ class FormularioCombinado(forms.Form):
 
 class ModalForm(forms.ModelForm):
     class Meta:
-        model = RegistroCalificacion
-        fields = [
-            'codigo_barras',
-            'programa',
-            'serie',
-            'subtitulo_programa',
-            'subtitserie',
-            
-        ]
+        model = ProgramaSeries
+        fields = ['codigo_barras','programa','serie','subtitulo_programa','subtitulo_serie']
   
 class Descripcion(forms.ModelForm):
     class Meta:
