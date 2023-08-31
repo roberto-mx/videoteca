@@ -36,7 +36,7 @@ from inventario.views import (
     consultaFormulario,
     editar,
     editar_programa,
-    
+    agregarProgramaEdit,
     eliminarProgramaSerie,
     eliminarRegistro,
     formulario
@@ -64,6 +64,7 @@ urlpatterns = [
     path('calificaciones/consultaFormulario', consultaFormulario, name='consultaFormulario'),
     path('calificaciones/formulario', formulario, name='formulario'),
 
+    path('calificaciones/agregar/programa/<str:codigo_barras>/', agregarProgramaEdit, name='agregarProgramaEdit'),
     path('calificaciones/editar/<int:id>/<str:codigo_barras>/', editar, name='editar'),
     path('calificaciones/editar/programa/<int:programa_id>/', editar_programa, name='editar_programa'),
     path('calificaciones/eliminar/<int:id>/', eliminarProgramaSerie, name='eliminar'),

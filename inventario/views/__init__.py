@@ -32,6 +32,7 @@ from .formularios import (
     eliminarProgramaSerie,
     consultaFormulario,
     editar_programa,
+    agregarProgramaEdit,
     eliminarRegistro
     # formularioPrograma
 )

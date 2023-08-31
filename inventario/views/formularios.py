@@ -178,18 +178,54 @@ def eliminarRegistro(request, id):
         return JsonResponse({'success': True})
     except RegistroCalificacion.DoesNotExist:
         return JsonResponse({'success': False})
- 
+    
+def agregarProgramaEdit(request, codigo_barras):
+    try:
+        maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
+        
+        if request.method == 'POST':
+            datos_modal_form = json.loads(request.body)
+            
+            for item in datos_modal_form:
+                programa = item.get('programa')
+                serie = item.get('serie')
+                programaSubtitulo = item.get('programaSubtitulo')
+                serieSubtitulo = item.get('serieSubtitulo')
+                
+                programa_nuevo = ProgramaSeries(
+                    codigo_barras=maestro_cintas,
+                    programa=programa,
+                    serie=serie,
+                    subtitulo_programa=programaSubtitulo,
+                    subtitulo_serie=serieSubtitulo,
+                )
+                programa_nuevo.save()
+                
+            response_data = {
+                'success': True,
+                'message': 'Los programas se agregaron exitosamente.',
+            }
+        else:
+            response_data = {
+                'success': False,
+                'message': 'Método no permitido.',
+            }
+    except MaestroCintas.DoesNotExist:
+        response_data = {
+            'success': False,
+            'message': 'No se encontró el código de barras proporcionado.',
+        }
+    
+    return JsonResponse(response_data)
+
 
 def editar_programa(request, programa_id):
     try:
         programa = ProgramaSeries.objects.get(id=programa_id)
         if request.method == 'POST':
+            #Se obtienen los datos del front con json.loads(request.body)
             edited_data = json.loads(request.body)['edited_data']
-            
-            # Obtener los campos que no deben ser editados
-            programa_subtitulo_programa = programa.subtitulo_programa
-            programa_subtitulo_serie = programa.subtitulo_serie
-            
+     
             # Actualizar los campos que deben ser editados
             programa.programa = edited_data['programa']
             programa.serie = edited_data['serie']
@@ -212,12 +248,10 @@ def editar_programa(request, programa_id):
     except ProgramaSeries.DoesNotExist:
         return JsonResponse({'error': 'No se encontró el programa proporcionado.'})
 
-
-
-
 @csrf_exempt
 def editar(request, id, codigo_barras):
     programas_data = []
+    
     try:
         # Obtener el registro de calificación y el maestro de cintas asociado
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
@@ -246,7 +280,7 @@ def editar(request, id, codigo_barras):
                 maestro_cintas.tipo_id = formulario_combinado.cleaned_data['tipo_id']
                 # Actualizar otros campos si es necesario
                 registro_calificacion.save()
-                
+
                 # Procesar los demás formularios y guardar los cambios en los modelos relacionados
                 formulario_descripcion = Descripcion(request.POST, instance=registro_calificacion)
                 formulario_mapa = Mapa(request.POST, instance=registro_calificacion)

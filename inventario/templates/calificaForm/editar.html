@@ -130,7 +130,7 @@
                         {% endfor %}
                         </div>
                         <div class="d-flex justify-content-center">
-                          <button type="button" id="agregaPrograma" class="btn btn-agregar btn-sm active text-white mt-3" style="background-color:#0F9B97;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
+                          <button type="button" id="agregaPrograma" class="btn btn-agregar btn-sm active text-white mt-3" style="background-color:#136A1D;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
                             <i class="fa-solid fa-circle-plus" style="color:white;"></i>
                               <span style="color: white;">Añadir Programa</span>
                           </button>
@@ -329,20 +329,27 @@
     <div class="modal-content">
       <div class="modal-header text-center" style="background-color:#13322B;">
         <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
-        <input id="codigoId" disabled style="color:white;" value ="{{programa.codigo_barras}}"></input>
+        <input id="codigoId" disabled style="color:white;"></input>
       </div>
       <div class="modal-body">
-        <form id="formularioPrograma" method="post" action="{% url 'formulario' %}"  >
+        <form id="formularioPrograma"{{ programa.id }} method="post" action="{% url 'formulario' %}"  >
           {% csrf_token %}
-          {% for field in modal_form %}
-            {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' %}
-              <div class="mb-3">
-                <!-- Asignamos un id al campo -->
-                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
-              </div>
-            {% endif %}
-          {% endfor %}
+          <div class="mb-3">
+              <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+              <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control" value="{{ programa.programa }}">
+          </div>
+          <div class="mb-3">
+              <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+              <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control" value="{{ programa.serie }}">
+          </div>
+          <div class="mb-3">
+              <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+              <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" class="form-control" value="{{ programa.programaSubtitulo }}">
+          </div>
+          <div class="mb-3">
+              <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de la Serie</label>
+              <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control" value="{{ programa.serieSubtitulo }}">
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -362,7 +369,6 @@
         <div class="modal-content">
             <div class="modal-header" style="background:#13322B">
                 <h5 class="modal-title" id="editarModalLabel{{ programa.id }}" style="color:white;">Editar Programa</h5>
-                 
             </div>
             <div class="modal-body">
                 {% comment %} <form id="formularioEditar{{ programa.id }}" method="post" > {% endcomment %}
@@ -384,7 +390,6 @@
                         <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de la Serie</label>
                         <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control" value="{{ programa.serieSubtitulo }}">
                     </div>
-                    <!-- Agrega otros campos de formulario según sea necesario -->
                 </form>
             </div>
             <div class="modal-footer">
@@ -397,7 +402,6 @@
     </div>
 </div>
 {% endfor %}
-
 
 <script>
 
@@ -416,13 +420,6 @@
         const programaSubtitulo = modal.find('[name="programaSubtitulo"]').val();
         const serieSubtitulo = modal.find('[name="serieSubtitulo"]').val();
 
-        console.log("programa_id:", programa_id); // Cambio aquí
-        console.log("codigoBarras:", codigoBarras);
-        console.log("programa:", programa);
-        console.log("serie:", serie);
-        console.log("programaSubtitulo:", programaSubtitulo);
-        console.log("serieSubtitulo:", serieSubtitulo);
-    
         Swal.fire({
             title: '¿Estás seguro de guardar los cambios?',
             text: 'Esta acción actualizará la base de datos',
@@ -434,41 +431,37 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
+              const edited_data = {
+                  programa: programa,
+                  serie: serie,
+                  programaSubtitulo: programaSubtitulo,
+                  serieSubtitulo: serieSubtitulo,  
+              };
 
-                const edited_data = {
-                    programa: programa,
-                    serie: serie,
-                    programaSubtitulo: programaSubtitulo,
-                    serieSubtitulo: serieSubtitulo,  
-                };
-
-                console.log({data: edited_data})
-    
-                const requestData = {
-                  edited_data: edited_data,
-                  programa_id: programa_id, // Usar programa_id en lugar de id
-                  codigoBarras: codigoBarras
-                };
-              
-                //console.log({requestData});
-    
-                fetch(`/calificaciones/editar/programa/${programa_id}/`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                  },
-                  body: JSON.stringify(requestData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.success) {
-                    //actualizarTabla(data.actualizaciones); // Llamada a la función para actualizar la tabla
-                    messageAlerta('success', 'Bien', '¡Genial!', '#18463b');
-                  }else {
-                    alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
-                  }
-                });
+              const requestData = {
+                edited_data: edited_data,
+                programa_id: programa_id, // Usar programa_id en lugar de id
+                codigoBarras: codigoBarras
+              };
+            
+              fetch(`/calificaciones/editar/programa/${programa_id}/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(requestData)
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  //actualizarTabla(data.actualizaciones); // Llamada a la función para actualizar la tabla
+                  //document.getElementById("edited_data").innerHTML = "200";
+                  messageAlerta('success', data.message, '¡Genial!', '#18463b');
+                }else {
+                  alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+                }
+              });
             }
         });
       });
@@ -561,7 +554,7 @@
             body: new URLSearchParams({
                 eliminar_id: id // Envía el ID del programa a eliminar
             })
-        })
+          })
           .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -591,6 +584,72 @@
         }
     });
   }
+
+  let programasYSeries = [];
+
+  const limpiarFormulario = () => {
+    const formulario = document.getElementById('formularioPrograma');
+    formulario.reset();
+  }
+
+  const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, codigoBarras) => {
+    if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
+      return false; // Alguno de los campos está vacío
+    }
+    return true; // Todos los campos están llenos
+  }
+
+    // Agrega el evento click al botón "Agregar Programa/Serie"
+    document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
+      
+      const programa = document.getElementById('programa').value;
+      const serie = document.getElementById('serie').value;
+      const programaSubtitulo = document.getElementById('programaSubtitulo').value;
+      const serieSubtitulo = document.getElementById('serieSubtitulo').value;
+      const codigoBarrasValor = document.getElementById('codigo_barras').value;
+      $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
+    
+    console.log({
+      programa:programa,
+      serie:serie,
+      programaSubtitulo:programaSubtitulo,
+      serieSubtitulo:serieSubtitulo,
+      codigoBarrasValor:codigoBarrasValor
+    })
+    
+    programasYSeries.push({
+      programa: programa,
+      serie: serie,
+      programaSubtitulo: programaSubtitulo,
+      serieSubtitulo: serieSubtitulo,
+      codigoBarras: codigoBarrasValor,
+    });
+  
+    console.log(`Valores del objeto, programasYSeries: ${programasYSeries}`)
+
+    fetch(`/calificaciones/agregar/programa/${codigoBarrasValor}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify(programasYSeries)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        //actualizarTabla(data.actualizaciones); // Llamada a la función para actualizar la tabla
+        //document.getElementById("edited_data").innerHTML = "200";
+        messageAlerta('success', data.message, '¡Genial!', '#18463b');
+        limpiarFormulario()
+      }else {
+        alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+      }
+    });
+  })
+    
+     
+  
   
 </script>  
 {% endblock %}
