@@ -141,7 +141,6 @@
 
   const eliminarFila = (id) => {
     Swal.fire({
-        // ... (misma confirmación)
         title: '¿Estás seguro?',
         text: 'Esta acción eliminará el programa de la base de datos',
         icon: 'warning',
@@ -152,10 +151,10 @@
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-          fetch(`/calificaciones/eliminar/${id}/`, {  // Agrega la barra diagonal al final
+          fetch(`/calificaciones/eliminarRegistro/${id}/`, {  // Agrega la barra diagonal al final
             method: 'POST',
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+              //'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
               'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
           },
             body: new URLSearchParams({

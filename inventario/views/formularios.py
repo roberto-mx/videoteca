@@ -1,15 +1,14 @@
 from django.shortcuts import render, redirect
-from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm, FormularioCombinadoEditar
+from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm, FormularioCombinadoEditar, ModalFormEdit
 from ..models import MaestroCintas, RegistroCalificacion, ProgramaSeries
 from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from django.utils import timezone
-from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
-
-
+# from django.http import HttpResponse
+from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 
 @csrf_exempt
 def formulario(request):
@@ -145,23 +144,24 @@ def formulario(request):
     })
 
 def consultaFormulario(request):
-    # Obtener todos los registros de la tabla RegistroCalificacion con estatusCalif igual a 'P' o 'R'
-    calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).order_by('-id').values(
-        'id',
-        'codigo_barras',
-        'duracion',
-        'observaciones',
-        'institucion_productora',
-        'fecha_calificacion',
-        'estatusCalif'
-    )
+    # Obtener registros únicos por código de barras con estatusCalif igual a 'P' o 'R'
+    calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
+        'codigo_barras'
+    ).annotate(
+        id=Max('id'),  # Obtén el ID máximo para cada código de barras
+        duracion=Max('duracion'),  # Obtén la duración máxima para cada código de barras
+        observaciones=Max('observaciones'),  # Obtén las observaciones máximas para cada código de barras
+        institucion_productora=Max('institucion_productora'),  # Obtén la institución productora máxima para cada código de barras
+        fecha_calificacion=Max('fecha_calificacion'),  # Obtén la fecha de calificación máxima para cada código de barras
+        estatusCalif=Max('estatusCalif')  # Obtén el estatus de calificación máximo para cada código de barras
+    ).order_by('-id')
 
-
-    consultaForm = { 'formulario': calificaciones }
+    consultaForm = {'formulario': calificaciones}
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 
-def eliminar(request, id):
+
+def eliminarProgramaSerie(request, id):
     id = request.POST.get('eliminar_id')
     try:
         registro = ProgramaSeries.objects.get(id=id)
@@ -169,9 +169,52 @@ def eliminar(request, id):
         return JsonResponse({'success': True})
     except ProgramaSeries.DoesNotExist:
         return JsonResponse({'success': False})
+    
+def eliminarRegistro(request, id):
+    eliminar_id = request.POST.get('eliminar_id')
+    try:
+        registro = get_object_or_404(RegistroCalificacion, id=eliminar_id)
+        registro.delete()
+        return JsonResponse({'success': True})
+    except RegistroCalificacion.DoesNotExist:
+        return JsonResponse({'success': False})
+ 
+
+def editar_programa(request, programa_id):
+    try:
+        programa = ProgramaSeries.objects.get(id=programa_id)
+        if request.method == 'POST':
+            edited_data = json.loads(request.body)['edited_data']
+            
+            # Obtener los campos que no deben ser editados
+            programa_subtitulo_programa = programa.subtitulo_programa
+            programa_subtitulo_serie = programa.subtitulo_serie
+            
+            # Actualizar los campos que deben ser editados
+            programa.programa = edited_data['programa']
+            programa.serie = edited_data['serie']
+            
+            # Actualizar solo si los campos existen en edited_data
+            if 'programaSubtitulo' in edited_data:
+                programa_subtitulo_programa = edited_data['programaSubtitulo']
+            if 'serieSubtitulo' in edited_data:
+                programa_subtitulo_serie = edited_data['serieSubtitulo']
+            
+            programa.subtitulo_programa = programa_subtitulo_programa
+            programa.subtitulo_serie = programa_subtitulo_serie
+            
+            programa.save()
+            
+            return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
+        else:
+            errors = programa.errors
+            return JsonResponse({'success': False, 'message': 'El formulario no es válido.', 'errors': errors})
+    except ProgramaSeries.DoesNotExist:
+        return JsonResponse({'error': 'No se encontró el programa proporcionado.'})
 
 
-# views.py
+
+
 @csrf_exempt
 def editar(request, id, codigo_barras):
     programas_data = []
@@ -180,10 +223,9 @@ def editar(request, id, codigo_barras):
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
         registro_calificacion = RegistroCalificacion.objects.get(id=id, codigo_barras=maestro_cintas)
         registro_programas = ProgramaSeries.objects.filter(codigo_barras=maestro_cintas)
-    
-
 
         if request.method == 'POST':
+
             # Procesar el formulario personalizado de edición
             formulario_combinado = FormularioCombinadoEditar(request.POST)
             
@@ -277,8 +319,6 @@ def editar(request, id, codigo_barras):
 
             })
 
-    except (RegistroCalificacion.DoesNotExist, MaestroCintas.DoesNotExist):
+    except (RegistroCalificacion.DoesNotExist, MaestroCintas.DoesNotExist, ProgramaSeries.DoesNotExist):
         # Manejar el caso cuando no se encuentra el objeto
         return JsonResponse({'error': "No se encontró el registro con el código de barras proporcionado."})
-
-

@@ -29,8 +29,10 @@ from .maestrocintas import (
 from .formularios import (
     formulario,
     editar,
-    eliminar,
+    eliminarProgramaSerie,
     consultaFormulario,
+    editar_programa,
+    eliminarRegistro
     # formularioPrograma
 )
 

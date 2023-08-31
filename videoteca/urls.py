@@ -35,7 +35,10 @@ from inventario.views import (
     GetFilePdf,
     consultaFormulario,
     editar,
-    eliminar,
+    editar_programa,
+    
+    eliminarProgramaSerie,
+    eliminarRegistro,
     formulario
 )
 from django.contrib.auth import(
@@ -62,7 +65,9 @@ urlpatterns = [
     path('calificaciones/formulario', formulario, name='formulario'),
 
     path('calificaciones/editar/<int:id>/<str:codigo_barras>/', editar, name='editar'),
-    path('calificaciones/eliminar/<int:id>/', eliminar, name='eliminar'),
+    path('calificaciones/editar/programa/<int:programa_id>/', editar_programa, name='editar_programa'),
+    path('calificaciones/eliminar/<int:id>/', eliminarProgramaSerie, name='eliminar'),
+    path('calificaciones/eliminarRegistro/<int:id>/', eliminarRegistro, name='eliminarRegistro'),
 
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),

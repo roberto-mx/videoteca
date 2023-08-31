@@ -130,7 +130,7 @@
                         {% endfor %}
                         </div>
                         <div class="d-flex justify-content-center">
-                          <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#0F9B97;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
+                          <button type="button" id="agregaPrograma" class="btn btn-agregar btn-sm active text-white mt-3" style="background-color:#0F9B97;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
                             <i class="fa-solid fa-circle-plus" style="color:white;"></i>
                               <span style="color: white;">Añadir Programa</span>
                           </button>
@@ -160,13 +160,6 @@
                                     <td>{{ programa.programaSubtitulo }}</td>
                                     <td>{{ programa.serieSubtitulo }}</td>
                                     <td>
-                                        <button class="btn btn-editar btn-sm text-white" style="background-color:#1F5E49;" title="Editar"
-                                            data-id="eliminar-{{ programa.id }}"  
-                                            onclick="EditarFila('{{ programa.id }}')">
-                                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                              <i class='fas fa-edit'></i>
-                                            </div>
-                                        </button>
 
                                         <button class="btn btn-eliminar btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
                                             data-id="eliminar-{{ programa.id }}"  
@@ -175,8 +168,15 @@
                                                 <i class="fa-sharp fa-solid fa-trash"></i>
                                             </div>
                                         </button>   
+
+                                        <button class="btn btn-editar btn-sm text-white" style="background-color:#1F5E49;" title="Editar"
+                                            data-bs-toggle="modal" data-bs-target="#modalEditar{{ programa.id }}" data-id="{{ programa.id }}" >
+                                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                                <i class='fas fa-edit'></i>
+                                            </div>
+                                        </button>
                                     </td>
-                                </tr>
+                                 </tr>
                               {% endfor %}                                
                             </tbody>
                         </table>
@@ -354,142 +354,243 @@
     </div>
   </div>
 </div>
+{% comment %} Modaal Edit {% endcomment %}
+{% for programa in programas_data %}
+<!-- Modal de edición para el programa {{ programa.id }} -->
+<div class="modal fade" id="modalEditar{{ programa.id }}" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel{{ programa.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#13322B">
+                <h5 class="modal-title" id="editarModalLabel{{ programa.id }}" style="color:white;">Editar Programa</h5>
+                 
+            </div>
+            <div class="modal-body">
+                {% comment %} <form id="formularioEditar{{ programa.id }}" method="post" > {% endcomment %}
+                <form id="formularioEditar{{ programa.id }}" method="post" action="">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+                        <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control" value="{{ programa.programa }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+                        <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control" value="{{ programa.serie }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+                        <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" class="form-control" value="{{ programa.programaSubtitulo }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de la Serie</label>
+                        <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control" value="{{ programa.serieSubtitulo }}">
+                    </div>
+                    <!-- Agrega otros campos de formulario según sea necesario -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
+                {% comment %} <button type="button" class="btn btn-primary guardarCambiosBtn" data-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>  {% endcomment %}
+                <button type="button" class="btn btn-primary guardarCambiosBtn" data-programa-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 
 <script>
 
-
   $(document).ready(function() {
-    $('#editTablePrograma').DataTable({
-      ...len
-    });
 
-    $("#btnEdit").click(function(event) {
-      event.preventDefault();
+      $(document).on("click", ".guardarCambiosBtn", function(event) {
+        event.preventDefault();
+        
+        const programa_id = $(this).data("programa-id"); // Usar programa_id en lugar de id
+        const codigoBarras = $(this).data("codigo-barras");
+
+        // Obtener los valores de los campos del formulario
+        const modal = $(this).closest('.modal');
+        const programa = modal.find('[name="programa"]').val();
+        const serie = modal.find('[name="serie"]').val();
+        const programaSubtitulo = modal.find('[name="programaSubtitulo"]').val();
+        const serieSubtitulo = modal.find('[name="serieSubtitulo"]').val();
+
+        console.log("programa_id:", programa_id); // Cambio aquí
+        console.log("codigoBarras:", codigoBarras);
+        console.log("programa:", programa);
+        console.log("serie:", serie);
+        console.log("programaSubtitulo:", programaSubtitulo);
+        console.log("serieSubtitulo:", serieSubtitulo);
     
-      Swal.fire({
-        title: '¿Estás seguro de guardar los cambios?',
-        text: 'Esta acción actualizará la base de datos',
+        Swal.fire({
+            title: '¿Estás seguro de guardar los cambios?',
+            text: 'Esta acción actualizará la base de datos',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const edited_data = {
+                    programa: programa,
+                    serie: serie,
+                    programaSubtitulo: programaSubtitulo,
+                    serieSubtitulo: serieSubtitulo,  
+                };
+
+                console.log({data: edited_data})
+    
+                const requestData = {
+                  edited_data: edited_data,
+                  programa_id: programa_id, // Usar programa_id en lugar de id
+                  codigoBarras: codigoBarras
+                };
+              
+                //console.log({requestData});
+    
+                fetch(`/calificaciones/editar/programa/${programa_id}/`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify(requestData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    //actualizarTabla(data.actualizaciones); // Llamada a la función para actualizar la tabla
+                    messageAlerta('success', 'Bien', '¡Genial!', '#18463b');
+                  }else {
+                    alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+                  }
+                });
+            }
+        });
+      });
+
+      $('#editTablePrograma').DataTable({
+        ...len,
+      });
+
+      $("#btnEdit").click(function(event) {
+        event.preventDefault();
+      
+        Swal.fire({
+          title: '¿Estás seguro de guardar los cambios?',
+          text: 'Esta acción actualizará la base de datos',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, guardar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const id = $('#registro_id').val();
+            const codigo_barras = $('#codigo_barras').val();
+
+            console.log({1:id,2:codigo_barras})
+            
+            const form_data = new FormData();
+            form_data.append('registro_id', id);
+            form_data.append('codigo_barras', codigo_barras);
+            
+            const formularios = [
+              'formulario_combinado',
+              'formulario_descripcion',
+              'formulario_mapa',
+              'formulario_tecnicas',
+              'formulario_realizacion',
+            ];
+            
+            formularios.forEach(formId => {
+              const formData = new FormData(document.getElementById(formId));
+              for (const [name, value] of formData.entries()) {
+                form_data.append(name, value);
+              }
+            });
+            
+            fetch(`/calificaciones/editar/${id}/${codigo_barras}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: form_data
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                messageAlerta('success', data.message, '¡Genial!', '#18463b');
+                //location.reload(2000); 
+              } else {
+                alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+          }
+        });
+      });
+  });
+
+  const eliminarFila = (id) => {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el programa de la base de datos',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, guardar',
+        confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
-      }).then((result) => {
+    }).then((result) => {
         if (result.isConfirmed) {
-          const id = $('#registro_id').val();
-          const codigo_barras = $('#codigo_barras').val();
-          
-          const form_data = new FormData();
-          form_data.append('registro_id', id);
-          form_data.append('codigo_barras', codigo_barras);
-          
-          const formularios = [
-            'formulario_combinado',
-            'formulario_descripcion',
-            'formulario_mapa',
-            'formulario_tecnicas',
-            'formulario_realizacion',
-          ];
-          
-          formularios.forEach(formId => {
-            const formData = new FormData(document.getElementById(formId));
-            for (const [name, value] of formData.entries()) {
-              form_data.append(name, value);
-            }
-          });
-          
-          fetch(`/calificaciones/editar/${id}/${codigo_barras}/`, {
+          // Enviar solicitud POST para eliminar
+          fetch(`/calificaciones/eliminar/${id}/`, {
             method: 'POST',
             headers: {
-              'X-CSRFToken': '{{ csrf_token }}'
+                'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+                'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
             },
-            body: form_data
+            body: new URLSearchParams({
+                eliminar_id: id // Envía el ID del programa a eliminar
+            })
+        })
+          .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log({response});
+            return response.json();
           })
-          .then(response => response.json())
           .then(data => {
             if (data.success) {
-              messageAlerta('success', data.message, '¡Genial!', '#18463b');
-
-              //location.reload(2000); 
+                Swal.fire(
+                  'Eliminado!',
+                  'Se elimino exitosamente su registro.',
+                  'success'
+                ).then(() => {
+                  location.reload(); // Realizar un reload de la página después del OK
+                });
+                
             } else {
-              alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+                // Manejar el caso de error si es necesario
+                Swal.fire({
+                    icon:   'error',
+                    title:  'Error 404',
+                    text:   'No se pudo eliminar el programa',
+                });
             }
-          })
-          .catch(error => {
-            console.error('Error:', error);
           });
         }
-      });
     });
-       
-  })
-
-const eliminarFila = (id) => {
-  Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Esta acción eliminará el programa de la base de datos',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-  }).then((result) => {
-      if (result.isConfirmed) {
-        // Enviar solicitud POST para eliminar
-        fetch(`/calificaciones/eliminar/${id}/`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
-              'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
-          },
-          body: new URLSearchParams({
-              eliminar_id: id // Envía el ID del programa a eliminar
-          })
-      })
-        .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          console.log({response});
-          return response.json();
-        })
-        .then(data => {
-          if (data.success) {
-              Swal.fire(
-                'Eliminado!',
-                'Se elimino exitosamente su registro.',
-                'success'
-              ).then(() => {
-                location.reload(); // Realizar un reload de la página después del OK
-              });
-              
-          } else {
-              // Manejar el caso de error si es necesario
-              Swal.fire({
-                  icon:   'error',
-                  title:  'Error 404',
-                  text:   'No se pudo eliminar el programa',
-              });
-          }
-        });
-      }
-  });
-}
-
-//document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
-//  const programa = document.getElementById('programa').value;
-//  const serie = document.getElementById('serie').value;
-//  const programaSubtitulo = document.getElementById('subtitulo_programa').value;
-//  const serieSubtitulo = document.getElementById('subtitulo_serie').value;
-//  const codigoBarrasValor = document.getElementById('codigo_barras').value;
-//  $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
-//
-//
-// 
-//});
-
-</script>
-
+  }
+  
+</script>  
 {% endblock %}
