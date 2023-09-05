@@ -44,3 +44,22 @@
 .btn-button i {
   color: #ffffff; /* Color del texto e icono */
 }
+
+/* Estilo para los enlaces del header */
+.navbar a {
+  color: #ffffff; /* Cambia el color de los enlaces a blanco */
+  text-decoration: none; /* Quita el subrayado por defecto */
+  margin: 10px; /* Espaciado entre los enlaces */
+}
+
+/* Estilo para el icono de búsqueda */
+.navbar a i.fas.fa-search {
+  font-size: 20px; /* Tamaño del icono */
+  margin-right: 5px; /* Espacio a la derecha del icono */
+}
+
+/* Estilo para los enlaces del menú de Gobierno y Trámites */
+.navbar a span {
+  color: #ffffff; /* Cambia el color del texto a blanco */
+}
+

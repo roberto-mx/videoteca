@@ -117,8 +117,6 @@ def formulario(request):
                 )
                 registro_programas.save()
 
-
-
             response_data = {
                 'message': 'Los datos se guardaron exitosamente.',
                 'datos_modal_form': datos_modal_form  # Agrega los datos aquí 
@@ -142,6 +140,7 @@ def formulario(request):
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
     })
+
 
 def consultaFormulario(request):
     # Obtener registros únicos por código de barras con estatusCalif igual a 'P' o 'R'
@@ -200,10 +199,19 @@ def agregarProgramaEdit(request, codigo_barras):
                     subtitulo_serie=serieSubtitulo,
                 )
                 programa_nuevo.save()
+
+                nuevo_id = programa_nuevo.id
+
+                print(nuevo_id)
+
                 
             response_data = {
                 'success': True,
                 'message': 'Los programas se agregaron exitosamente.',
+                'nuevo_id': nuevo_id,
+                'datos_modal_form': datos_modal_form
+
+
             }
         else:
             response_data = {

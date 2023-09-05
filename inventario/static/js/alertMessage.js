@@ -9,7 +9,7 @@ const alertMessage = (type, message, title, button) => {
 
 const messageAlerta = (type, message, title, button) => {
   Swal.fire({
-    position: 'top-center',
+    //position: 'top-center',
     icon: type,
     title: title,
     text: message,
