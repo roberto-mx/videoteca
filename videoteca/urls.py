@@ -34,14 +34,12 @@ from inventario.views import (
     EndInVideoteca,
     GetFilePdf,
     consultaFormulario,
-    datosGenerales,
-    descripcion,
-    mapa,
-    realizacion,
-    tecnicas,
     editar,
-
- 
+    editar_programa,
+    agregarProgramaEdit,
+    eliminarProgramaSerie,
+    eliminarRegistro,
+    formulario
 )
 from django.contrib.auth import(
     views
@@ -62,14 +60,15 @@ urlpatterns = [
     path('prestamos/generate_pdf', generar_pdf, name='generar_pdf'),
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
     path('prestamos/person_people', obtenerPeoplePerson, name='obtenerPeoplePerson'),
-
+    # Form
     path('calificaciones/consultaFormulario', consultaFormulario, name='consultaFormulario'),
-    path('calificaciones/datosGenerales', datosGenerales, name='datosGenerales'),
-    path('calificaciones/descripcion', descripcion, name='descripcion'),
-    path('calificaciones/mapa', mapa, name='mapa'),
-    path('calificaciones/realizacion', realizacion, name='realizacion'),
-    path('calificaciones/tecnicas', tecnicas, name='tecnicas'),
-    path('calificaciones/editar/<int:id>', editar, name='editar'),
+    path('calificaciones/formulario', formulario, name='formulario'),
+
+    path('calificaciones/agregar/programa/<str:codigo_barras>/', agregarProgramaEdit, name='agregarProgramaEdit'),
+    path('calificaciones/editar/<int:id>/<str:codigo_barras>/', editar, name='editar'),
+    path('calificaciones/editar/programa/<int:programa_id>/', editar_programa, name='editar_programa'),
+    path('calificaciones/eliminar/<int:id>/', eliminarProgramaSerie, name='eliminar'),
+    path('calificaciones/eliminarRegistro/<int:id>/', eliminarRegistro, name='eliminarRegistro'),
 
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
@@ -81,7 +80,4 @@ urlpatterns = [
     path('end_in/', EndInVideoteca,  name="finalizar_entrada_videoteca"),
     path('get_report/', GetFilePdf,  name="get_pdf"),
 
-
-    
-    
 ]

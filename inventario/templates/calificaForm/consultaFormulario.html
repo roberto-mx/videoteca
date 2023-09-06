@@ -5,11 +5,11 @@
 {% block Contenido %}
 
 <div class="card col-12 mt-5">
-  <div class="card-header text-center" style="background-color:rgb(234, 240, 241)">
+  <div class="card-header text-center" style="background-color:#F1F7F8;">
     <strong>Consulta formulario</strong>
     <div class="d-flex justify-content-between">
       <div>
-        <a name="" id="" class="btn btn-form" href="{% url 'datosGenerales' %}" style="background:#9D2449" role="button">
+        <a name="" id="" class="btn btn-form" href="{% url 'formulario' %}" style="background:#9D2449" role="button">
           <div style="display: flex; flex-direction: column; align-items: center;">
             <span style="color: white;">Llenar formulario</span>
             <i class='fab fa-wpforms' style="color:white;"></i>
@@ -34,43 +34,65 @@
         <thead>
           <tr>
             <th>Id</th>
-            <th>Fecha Calificación</th>
-            <th>Año Producción</th>
-            <th>Productor</th>
-            <th>Programa</th>
-            <th>Institución Calificadora</th>
-            <th>Fecha modificacion</th>
-            <th>Estatus</th>
+            <th>Código de Barras</th>
+            <th>Duración</th>
+            <th>Observaciones</th>
+            <th>Institucion Productora</th>
+            <th>Fecha Calificación</th> 
+            <th>Estatus</th> 
+            {% comment %} <td>Estatus de Calificación</td>            {% endcomment %}
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {% for data in formulario %}
           <tr>
-            <td>{{ data.id }}</td>
-            <td>{{ data.fecha_calificacion }}</td>
-            <td>{{ data.axo_produccion }}</td>
-            <td>{{ data.productor }}</td>
-            <td>{{ data.programa }}</td>
-            <td>{{ data.institucion_productora }}</td>
-            <td>{{ data.fecha_modificacion }}</td>
+            <td>{{ data.id }}</td>+
+            <td>{{ data.codigo_barras }}</td>
+            <td>{{ data.duracion }}</td>
             <td>
-              {% if data.estatusCalif == 'P' %}
-              Pendiente
-              {% elif data.estatusCalif == 'R' %}
-              Revisado
-              {% endif %}
+              {%if data.observaciones == None %}
+                Sin información
+              {%else%}
+                {{ data.observaciones }}
+              {%endif%}
             </td>
             <td>
+              {%if data.institucion_productora == None %}              
+                Sin información
+              {%else%}
+                {{ data.institucion_productora }}
+              {%endif%}
+            </td>
+            <td>{{ data.fecha_calificacion }}</td>
+            <td>
+              {% if data.estatusCalif == 'P' %}
+                  Pendiente
+              {% else %}
+                  Revisado
+              {% endif %}
+          </td>
+            {% comment %} <td>{{ data.estatusCalif }}</td> {% endcomment %}
+            <td class="d-flex justify-content-center">
+
+              <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
+                  data-id="eliminar-{{ data.id }}"  
+                  onclick="eliminarFila('{{ data.id }}', '{{ codigo_barras }}')">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <i class="fa-sharp fa-solid fa-trash"></i>
+                </div>
+              </button>
+          
               <!-- Editar -->
-              <a href="{% url 'editar' data.id %}" class="btn btn-editar btn-sm active text-white" style="background-color:#9D2449;" title="Editar">
+              <a href="{% url 'editar' data.id data.codigo_barras %}" class="btn btn-editar btn-sm active text-white" style="background-color:#b38e5d;" title="Editar">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class="fas fa-edit"></i>
                   <span></span>
                 </div>
               </a>
+              
               <!-- Ver -->
-              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#b38e5d;" data-bs-toggle="modal" data-bs-target="#exampleModal{{ data.id }}" title="Observaciones"> 
+              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#13322B;" data-bs-toggle="modal" data-bs-target="#modalObservacion{{ data.id }}" title="Observaciones"> 
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class='far fa-eye'></i>
                   <span></span>
@@ -79,7 +101,7 @@
             </td>
           </tr>
           {% empty %}
-          {% endfor %}
+          {% endfor %}  
         </tbody>
       </table>
     </div>
@@ -88,11 +110,11 @@
 
 {% for data in formulario %}
 <!-- Modal de Observaciones -->
-<div class="modal fade" id="exampleModal{{ data.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalObservacion{{ data.id }}" tabindex="-1" aria-labelledby="modalObservacionLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header" style="background-color:#18463b;">
-        <h4 class="modal-title fs-5" id="exampleModalLabel" style="color: white;">*** Observaciones de calificación ***</h4>
+        <h4 class="modal-title fs-5" id="modalObservacionLabel" style="color: white;">*** Observaciones de calificación ***</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -109,12 +131,58 @@
 {% endfor %}
 
 <script>
+
   $(document).ready(function() {
     $('#datatable').DataTable({
       // Configuración del DataTable
       ...len
     });
   });
+
+  const eliminarFila = (id) => {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el programa de la base de datos',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/calificaciones/eliminarRegistro/${id}/`, {  // Agrega la barra diagonal al final
+            method: 'POST',
+            headers: {
+              //'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+              'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
+          },
+            body: new URLSearchParams({
+                eliminar_id: id  // Envía el ID del programa a eliminar
+            })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+                Swal.fire(
+                  'Eliminado!',
+                  'Se eliminó exitosamente el registro.',
+                  'success'
+                ).then(() => {
+                  location.reload(); // Realizar un recarga de la página después de eliminar
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo eliminar el registro',
+                });
+            }
+          });
+        }
+    });
+  }
+
 </script>
 
 {% endblock %}

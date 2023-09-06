@@ -26,17 +26,16 @@ from .maestrocintas import (
     
 )
 
-from .viewCalificacion import (
+from .formularios import (
+    formulario,
+    editar,
+    eliminarProgramaSerie,
     consultaFormulario,
-    datosGenerales,
-    descripcion,
-    mapa,
-    realizacion,
-    tecnicas,
-    editar
-
+    editar_programa,
+    agregarProgramaEdit,
+    eliminarRegistro
+    # formularioPrograma
 )
-
 
 from .prestamos import (
     PrestamosListView,

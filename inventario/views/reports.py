@@ -277,7 +277,14 @@ def generar_pdf_modal(request):
     q = int(request.GET.get("q"))
     queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo_id', 'pres_fecha_devolucion', 'usuario_devuelve', 'usuario_recibe','depr_estatus')
     detalle_prestamos = queryset.last() if queryset else None 
-  
+
+    nombres = ''
+    apellido1 = ''
+    apellido2 = ''
+    puesto = ''
+    email_institucional = ''
+    extension_telefonica = ''
+
     if detalle_prestamos:
         usuario_devuelve = detalle_prestamos['usuario_devuelve']
         usuario_recibe = detalle_prestamos['usuario_recibe']
@@ -288,57 +295,55 @@ def generar_pdf_modal(request):
         if detalle_matricula is not None:
             matricula_data = {
                 "UsuarioDevuelve": detalle_matricula.usuario_devuelve,
-                "UsuarioRecibe"  : detalle_matricula.usuario_recibe
+                "UsuarioRecibe": detalle_matricula.usuario_recibe
             }
             muestraData.append(matricula_data)
             if muestraData:
                 usuario_devuelve = muestraData[0]["UsuarioDevuelve"]
-                usuario_recibe   = muestraData[0]["UsuarioRecibe"]
+                usuario_recibe = muestraData[0]["UsuarioRecibe"]
 
-        # print(usuario_devuelve,usuario_recibe)
         cursor = connections['users'].cursor()
         cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_devuelve] )
         row = cursor.fetchone() 
-     
+
         if row is not None:
-            nombres                 = row[0]
-            apellido1               = row[1]
-            apellido2               = row[2]
-            puesto                  = row[3] 
-            email_institucional     = row[4]
-            extension_telefonica    = row[5]
+            nombres = row[0]
+            apellido1 = row[1]
+            apellido2 = row[2]
+            puesto = row[3] 
+            email_institucional = row[4]
+            extension_telefonica = row[5]
 
         nombre_completo = f"{nombres} {apellido1} {apellido2}"  
-        
+
         MatriculaDevuelve = {
-            'Devuelve'              : nombre_completo,
-            'Puesto'                : puesto,
-            'Email'                 : email_institucional,
-            'Extension'             : extension_telefonica, 
-            'Matricula'             : usuario_devuelve,
+            'Devuelve': nombre_completo,
+            'Puesto': puesto,
+            'Email': email_institucional,
+            'Extension': extension_telefonica, 
+            'Matricula': usuario_devuelve,
         }
 
         cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [usuario_recibe])
         row = cursor.fetchone()
 
         if row is not None:
-            nombres                 = row[0]
-            apellido1               = row[1]
-            apellido2               = row[2]
-            puesto                  = row[3]
-            email_institucional     = row[4]
-            extension_telefonica    = row[5]
-            
+            nombres = row[0]
+            apellido1 = row[1]
+            apellido2 = row[2]
+            puesto = row[3]
+            email_institucional = row[4]
+            extension_telefonica = row[5]
+
         nombre_completo2 = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
         MatriculaRecibe = {
-            'Recibe'            : nombre_completo2,
-            'Puesto'            : puesto,
-            'Email'             : email_institucional,
-            'Extension'         : extension_telefonica, 
-            'Matricula'         : usuario_recibe,
+            'Recibe': nombre_completo2,
+            'Puesto': puesto,
+            'Email': email_institucional,
+            'Extension': extension_telefonica, 
+            'Matricula': usuario_recibe,
         }
 
-        global devolucion, userRecibe
         devolucion = MatriculaDevuelve
         userRecibe = MatriculaRecibe
 
@@ -349,6 +354,7 @@ def generar_pdf_modal(request):
     pdf.generate_Table(queryset)
     response.write(pdf.output(dest='S').encode('latin1'))
     return response
+
 # ---------------------------------------------------------------------------------------------------------------------------#
 
 class PDF_FOLIO(FPDF):
