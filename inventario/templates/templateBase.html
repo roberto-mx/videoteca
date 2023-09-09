@@ -21,7 +21,6 @@
     <script src="{% static 'js/alertMessage.js' %}"></script>
     <script src="{% static 'js/LengujeDatatable.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {% comment %} <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet"> {% endcomment %}
 </head>
 
 <body>
@@ -37,20 +36,20 @@
               </div>
             </div>
             
-            <div class="d-flex justify-content-end">
-              <a href="/inventario">
+            <div class="d-flex justify-content-end ">
+              <a href="/inventario" class="btn-button"  title="Inventario">
                 <span> Inventario </span>
               </a>                  
-              <a href="{% url 'prestamos_list' %}">
+              <a href="{% url 'prestamos_list' %}" class="btn-button" title="Préstamo">
                 <span> Préstamo </span>
               </a>   
-              <a href="https://www.gob.mx/gobierno">
+              <a href="https://www.gob.mx/gobierno" class="btn-button" title="Gobierno">
                 <span> Gobierno </span>
               </a>                  
-              <a href="https://www.gob.mx/tramites">
+              <a href="https://www.gob.mx/tramites" class="btn-button" title="Tramites">
                 <span> Tramites </span>
               </a>                  
-              <a href="https://www.gob.mx/busqueda">
+              <a href="https://www.gob.mx/busqueda" title="Búsqueda">
                 <i class="fas fa-search" style="color:white;"></i>
               </a>                  
             </div>

@@ -21,18 +21,20 @@
   #editTablePrograma td {
     white-space:inherit;
   }
-  
 
-  
-  /* Estilos para centrar el título */
-  .centered-title {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 0; /* Para quitar el espacio inferior */
-  }
+/* Estilos para centrar el título */
+.centered-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0; /* Para quitar el espacio inferior */
+}
 
-/* estilos.css */
+.input-error {
+  border-color: red; /* Cambia el borde del campo a rojo cuando está vacío */
+  background-color: #ffcccc; /* Cambia el fondo del campo a un color claro cuando está vacío */
+}
+
 
 /* Cambia el color del texto e icono del botón al pasar el mouse */
 .btn-button:hover {
@@ -62,4 +64,12 @@
 .navbar a span {
   color: #ffffff; /* Cambia el color del texto a blanco */
 }
+/* Inputs form validate */
 
+/* Estilo para resaltar campos vacíos */
+.input-error {
+  background-color: #FFCCCC; /* Cambia el color de fondo a rojo */
+}
+
+
+ 

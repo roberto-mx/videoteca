@@ -159,7 +159,6 @@ def consultaFormulario(request):
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 
-
 def eliminarProgramaSerie(request, id):
     id = request.POST.get('eliminar_id')
     try:
@@ -178,6 +177,7 @@ def eliminarRegistro(request, id):
     except RegistroCalificacion.DoesNotExist:
         return JsonResponse({'success': False})
     
+ 
 def agregarProgramaEdit(request, codigo_barras):
     try:
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
@@ -202,16 +202,11 @@ def agregarProgramaEdit(request, codigo_barras):
 
                 nuevo_id = programa_nuevo.id
 
-                print(nuevo_id)
-
-                
             response_data = {
                 'success': True,
                 'message': 'Los programas se agregaron exitosamente.',
                 'nuevo_id': nuevo_id,
                 'datos_modal_form': datos_modal_form
-
-
             }
         else:
             response_data = {
@@ -225,7 +220,6 @@ def agregarProgramaEdit(request, codigo_barras):
         }
     
     return JsonResponse(response_data)
-
 
 def editar_programa(request, programa_id):
     try:
@@ -255,7 +249,7 @@ def editar_programa(request, programa_id):
             return JsonResponse({'success': False, 'message': 'El formulario no es válido.', 'errors': errors})
     except ProgramaSeries.DoesNotExist:
         return JsonResponse({'error': 'No se encontró el programa proporcionado.'})
-
+    
 @csrf_exempt
 def editar(request, id, codigo_barras):
     programas_data = []
@@ -286,8 +280,12 @@ def editar(request, id, codigo_barras):
                 maestro_cintas.video_tipo = formulario_combinado.cleaned_data['video_tipo']
                 maestro_cintas.form_clave = formulario_combinado.cleaned_data['form_clave']
                 maestro_cintas.tipo_id = formulario_combinado.cleaned_data['tipo_id']
+
+                 # Cambiar el valor de estatusCalif de 'P' a 'R'
+                #registro_calificacion.estatusCalif = 'R'
                 # Actualizar otros campos si es necesario
                 registro_calificacion.save()
+                maestro_cintas.save()
 
                 # Procesar los demás formularios y guardar los cambios en los modelos relacionados
                 formulario_descripcion = Descripcion(request.POST, instance=registro_calificacion)
@@ -358,9 +356,23 @@ def editar(request, id, codigo_barras):
                 'formulario_realizacion': formulario_realizacion,
                 'codigo_barras': codigo_barras,
                 'programas_data': programas_data,
-
             })
 
     except (RegistroCalificacion.DoesNotExist, MaestroCintas.DoesNotExist, ProgramaSeries.DoesNotExist):
         # Manejar el caso cuando no se encuentra el objeto
         return JsonResponse({'error': "No se encontró el registro con el código de barras proporcionado."})
+
+@csrf_exempt
+def cambiarEstatusCalificacion(request, id):
+    try:
+        if request.method == 'POST':
+            registro = RegistroCalificacion.objects.get(pk=id)
+            # Cambiar el valor de estatusCalif de 'P' a 'R'
+            registro.estatusCalif = 'R'
+            registro.save()
+
+            estatus_calif = registro.estatusCalif
+
+        return JsonResponse({'success': True, 'message': "¡Calificado! Se a cerrado la revición.",'estatusCalif': estatus_calif})  # Cambia 'pagina_de_exito' al nombre de tu página de éxito
+    except RegistroCalificacion.DoesNotExist:
+        return JsonResponse({'error': True, 'message': 'A ocurrido un error al realizar el cambio de estatus, favor de contactar al área de Desarrollo e Innovación.'})

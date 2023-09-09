@@ -411,7 +411,6 @@
 <script>
 
   $(document).ready(function() {
-
       $('#editTablePrograma').DataTable({
         ...len,
       
@@ -476,19 +475,41 @@
 
       $("#btnAceptado").click(function(event) {
         event.preventDefault();
-
+      
         Swal.fire({
           title: '¡Alto!',
-          text: 'Esta acción, cerrara el estatus de pendiente y pasara a revisado.',
+          text: 'Esta acción cerrará el estatus de pendiente y pasará a revisado.',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#18463b',
           cancelButtonColor: '#8E1313',
           confirmButtonText: 'Sí, guardar',
           cancelButtonText: 'Cancelar'
-        })
-      })
-    
+        }).then((resultado) => {
+          if (resultado.isConfirmed) {
+            const id = $('#registro_id').val();
+            const codigo_barras = $('#codigo_barras').val();
+
+            // Cambiar el valor de estatusCalif de 'P' a 'R'
+            $.ajax({
+              url: `/calificaciones/cambiarEstatusCalificacion/${id}/`, 
+              method: 'POST',
+              data: { estatusCalif: 'R' },
+              success: function(response) {
+                if (response.success) {
+                  messageAlerta('success', `${response.message}`, '¡Genial!', '#18463b');
+                }else {
+                  messageAlerta('error', '¡Algo salio mal!\n Comunicate con el área de Desarrollo e Innovación.', '¡Ya valio!', '#18463b')
+                }
+              },
+              error: function(error) {
+                messageAlerta('error', '¡Algo salio mal! Algo salio mal al conectarnos al servidot.', '¡Ya valio!\n Error 500', '#18463b')
+              }
+            });
+          }
+        });
+      });
+      
       $("#btnEdit").click(function(event) {
         event.preventDefault();
       
@@ -505,7 +526,7 @@
           if (result.isConfirmed) {
             const id = $('#registro_id').val();
             const codigo_barras = $('#codigo_barras').val();
-            //console.log({1:id,2:codigo_barras})
+            
             const form_data = new FormData();
             form_data.append('registro_id', id);
             form_data.append('codigo_barras', codigo_barras);
@@ -542,7 +563,7 @@
               }
             })
             .catch(error => {
-              console.error('Error:', error);
+              messageAlerta('error', 'Algo salio mal en el servidor, comunicate con el área de Desarrollo e Innovación.', 'Ya valio!', '#18463b');
             });
           }
         });
@@ -576,7 +597,6 @@
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            console.log({response});
             return response.json();
           })
           .then(data => {
@@ -634,7 +654,6 @@
         codigoBarras: codigoBarrasValor,
       });
   
-    
       fetch(`/calificaciones/agregar/programa/${codigoBarrasValor}/`, {
         method: 'POST',
         headers: {
@@ -662,7 +681,6 @@
 
     tableBody.innerHTML = ''; // Limpia el contenido actual de la tabla
     $("#editTablePrograma").show();
-
     // Itera a través de los datos almacenados en programasYSeries
     programasYSeries.forEach(function(datos, index) {
         const newRow = tableBody.insertRow();

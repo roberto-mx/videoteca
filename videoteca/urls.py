@@ -39,6 +39,7 @@ from inventario.views import (
     agregarProgramaEdit,
     eliminarProgramaSerie,
     eliminarRegistro,
+    cambiarEstatusCalificacion,
     formulario
 )
 from django.contrib.auth import(
@@ -69,6 +70,7 @@ urlpatterns = [
     path('calificaciones/editar/programa/<int:programa_id>/', editar_programa, name='editar_programa'),
     path('calificaciones/eliminar/<int:id>/', eliminarProgramaSerie, name='eliminar'),
     path('calificaciones/eliminarRegistro/<int:id>/', eliminarRegistro, name='eliminarRegistro'),
+    path('calificaciones/cambiarEstatusCalificacion/<int:id>/', cambiarEstatusCalificacion, name='cambiarEstatusCalificacion'),
 
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
