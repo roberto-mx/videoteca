@@ -1,0 +1,343 @@
+<!-- Formulario principal con todos los formularios ocultos -->
+<form id="form-container" enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+
+  <!-- Formulario Generales -->
+  <div class="formulario" id="formulario1">
+      {% for field in formulario %}
+          <div class="mb-3">
+              {% if field.name == 'axo_produccion' %}
+                  <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
+                  <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="Año de producción">
+              {% else %}
+                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+              {% endif %}
+              {{ field.errors }}
+              {% if field.name == 'fecha_calificacion' %}
+                  <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+              {% elif field.name == 'observaciones' %}
+                  <textarea name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
+              {% else %}
+                  {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                  {% endif %}
+              {% endif %}
+          </div>
+      {% endfor %}
+  </div>
+
+  <!-- Formulario Descripcion -->
+    <div class="formulario" id="formulario2">
+      {% for field in formulario2 %}
+        <div class="mb-3">
+            {% if field.name == 'axo_produccion' %}
+                <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
+                <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="Año de producción">
+            {% else %}
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {% endif %}
+            {{ field.errors }}
+            {% if field.name == 'fecha_calificacion' %}
+                <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+            {% elif field.name == 'observaciones' %}
+                <textarea name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
+            {% else %}
+                {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                {% endif %}
+            {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+  <!-- Formulario Mapa -->
+    <div class="formulario" id="formulario3">
+        {% for field in formulario3 %}
+        <div class="mb-3">
+            {% if field.name == 'axo_produccion' %}
+            <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
+            <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="Año de producción">
+            {% else %}
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {% endif %}
+            {{ field.errors }}
+            {% if field.name == 'fecha_calificacion' %}
+            <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+            {% elif field.name == 'observaciones' %}
+            <textarea name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
+            {% else %}
+            {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+  <!-- Formulario Realizacion -->
+  <div class="formulario" id="formulario4">
+    {% for field in formulario4 %}
+    <div class="mb-3">
+      {% if field.name == 'axo_produccion' %}
+          <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
+          <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="Año de producción">
+      {% else %}
+          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+      {% endif %}
+      {{ field.errors }}
+      {% if field.name == 'fecha_calificacion' %}
+          <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+      {% elif field.name == 'observaciones' %}
+          <textarea name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
+      {% else %}
+          {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+              <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+          {% endif %}
+      {% endif %}
+  </div>
+    {% endfor %}
+  </div>
+
+  <!-- Formulario Tecnicas -->
+  <div class="formulario" id="formulario5">
+    {% for field in formulario5 %}
+    <div class="mb-3">
+      {% if field.name == 'axo_produccion' %}
+          <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
+          <input type="text" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="Año de producción">
+      {% else %}
+          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+      {% endif %}
+      {{ field.errors }}
+      {% if field.name == 'fecha_calificacion' %}
+          <input type="date" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+      {% elif field.name == 'observaciones' %}
+          <textarea name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">{{ field.value|default_if_none:'' }}</textarea>
+      {% else %}
+          {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+              <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+          {% endif %}
+      {% endif %}
+  </div>
+    {% endfor %}
+  </div>
+  
+  <div class="d-flex justify-content-center">
+    <div>
+        <!-- Botón "Atrás" -->
+        <a id="atrasBtn" class="btn btn-atras btn-sm active" style="background-color:#9D2449;" href="#" role="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color: white;">Atrás</span>
+                <i class="fas fa-hand-point-left mt-1" style="color: white;"></i>
+            </div>
+        </a>
+
+        <button id="siguienteBtn" name="siguiente_btn" class="btn btn-siguiente btn-sm active" style="background-color:#b38e5d;" type="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color: white;">Siguiente</span>
+                <i class="fas fa-hand-point-right mt-1" style="color: white;"></i>
+            </div>
+        </button>
+
+        <!-- Botón "Guardar para revisión" -->
+        <button id="guardarBtn" name="guardar_btn" class="btn btn-siguiente btn-sm active" style="background-color:#18463b;" type="submit" role="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color: white;">Guardar para revisión</span>
+                <i class="fas fa-save mt-1" style="color: white;"></i>
+            </div>
+        </button>
+
+        <!-- Botón "Revisado y Aceptado" -->
+        <button id="aceptaForm" name="aceptaForm" class="btn btn-acepta btn-sm active" style="background-color:#b38e5d" type="submit">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color:white;">Revisado y Aceptado</span>
+                <i class="fas fa-check-circle mt-1" style="color:white;"></i>
+            </div>
+        </button> 
+    </div>
+</div>  
+</form>
+
+<script>
+  // Ocultar todos los formularios excepto el primero
+  $(".formulario:not(:first)").hide();
+
+  // Función para mostrar el formulario siguiente y ocultar el actual
+  function mostrarSiguienteFormulario() {
+    let formularios = $(".formulario");
+    let formularioActual = $(".formulario:visible");
+    let indiceFormularioActual = formularios.index(formularioActual);
+    let siguienteIndice = (indiceFormularioActual + 1) % formularios.length;
+
+    formularioActual.hide();
+    formularios.eq(siguienteIndice).show();
+  }
+
+  // Función para mostrar el formulario anterior y ocultar el actual
+  function mostrarFormularioAnterior() {
+      let formularios = $(".formulario");
+      let formularioActual = $(".formulario:visible");
+      let indiceFormularioActual = formularios.index(formularioActual);
+      let anteriorIndice = (indiceFormularioActual - 1 + formularios.length) % formularios.length;
+
+      formularioActual.hide();
+      formularios.eq(anteriorIndice).show();
+  }
+
+  // Mostrar el botón "Atrás" y "Revisado y Aceptado" solo cuando corresponda
+  $("#atrasBtn").hide();
+  $("#aceptaForm").hide();
+  $("#guardarBtn").hide();
+
+  // Event listener para el botón "Siguiente"
+  $("#siguienteBtn").click(function() {
+      mostrarSiguienteFormulario();
+      let formularioActual = $(".formulario:visible");
+      let indiceFormularioActual = $(".formulario").index(formularioActual);
+
+      // Mostrar/ocultar los botones "Siguiente" y "Atrás" según el formulario actual
+      if (indiceFormularioActual === 0) {
+          $("#atrasBtn").hide();
+          $("#siguienteBtn").show();
+          $("#aceptaForm").hide();
+          $("#guardarBtn").hide();
+      } else if (indiceFormularioActual === 4) {
+          $("#atrasBtn").show();
+          $("#siguienteBtn").hide();
+          $("#aceptaForm").show();
+          $("#guardarBtn").show();
+      } else {
+          $("#atrasBtn").show();
+          $("#siguienteBtn").show();
+          $("#aceptaForm").hide();
+          $("#guardarBtn").hide();
+      }
+  });
+
+  // Event listener para el botón "Atrás"
+  $("#atrasBtn").click(function() {
+      mostrarFormularioAnterior();
+      let formularioActual = $(".formulario:visible");
+      let indiceFormularioActual = $(".formulario").index(formularioActual);
+
+      // Mostrar/ocultar los botones "Siguiente" y "Atrás" según el formulario actual
+      if (indiceFormularioActual === 0) {
+          $("#atrasBtn").hide();
+          $("#siguienteBtn").show();
+          $("#guardarBtn").hide();
+          $("#aceptaForm").hide();
+      } else if (indiceFormularioActual === 5) {
+          $("#atrasBtn").show();
+          $("#siguienteBtn").hide();
+          $("#aceptaForm").show();
+      } else {
+          $("#atrasBtn").show();
+          $("#siguienteBtn").show();
+          $("#aceptaForm").hide();
+      }
+  });
+
+  $("#guardarBtn").click(function(event) {
+    event.preventDefault(); // Evitar el envío de formulario por defecto
+  
+    let formData = new FormData(document.querySelector('form'));
+    let isEmptyForm = false;
+  
+    Swal.fire({
+      title: '¿Deseas enviar este formulario a revisión?',
+      text: 'No podrás revertir esta acción.',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#18463b',
+      cancelButtonColor: '#9D2449',
+      confirmButtonText: 'Sí, continuar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Realizar la petición AJAX para guardar los datos
+        $.ajax({
+          url: '{% url "tecnicas" %}',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            alertMessage('success', 'Su formulario fue registrado y se encuentra en calificación.', '¡Se ha registrado exitosamente!', '#18463b');
+            atrasBtn.style.display     = 'none';  // Oculta el botón de "Atrás"
+            revicionForm.style.display = 'none'; // Oculta el botón de "Guardar para revisión"
+            aceptaForm.style.display   = 'none'; // Oculta el botón de "Guardar para revisión"
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            // Manejar el error de la petición AJAX si es necesario
+            console.log(xhr.status);
+            console.log(thrownError);
+          }
+        });
+      }
+    });
+  });
+  
+//aceptaForm.addEventListener('click', function(event) {
+//aceptaForm.addEventListener('click', function(event) {
+$("#aceptaForm").click(function(event) {
+  event.preventDefault(); // Evitar el envío de formulario por defecto
+
+  let formData = new FormData(document.querySelector('form'));
+  let isEmptyForm = false;
+
+  // Verifico que el formulario esté vacío
+  formData.forEach((value) => {
+    if (value.trim() == "") {
+      isEmptyForm = true;
+      return;
+    }
+  });
+
+  if (isEmptyForm) {
+    Swal.fire({
+      title: 'Formulario vacío',
+      text: 'Por favor, completa todos los campos antes de enviar el formulario a revisión.',
+      icon: 'warning',
+      confirmButtonColor: '#18463b',
+      confirmButtonText: 'Aceptar'
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: '¿Aceptas los cambios de este formulario?',
+    text: '¡Quedará con un estatus de aprobado y no podrás revertir esta acción!',
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonColor: '#18463b',
+    cancelButtonColor: '#9D2449',
+    confirmButtonText: 'Sí, continuar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // 
+      formData.set('estatusCalif', 'R');
+      console.log(formData)
+
+      // Realizar la petición AJAX para guardar los datos
+      $.ajax({
+        url: '{% url "tecnicas" %}',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          alertMessage('success', 'Su formulario fue revisado y aceptado.', '¡Calificado!', '#18463b');
+          atrasBtn.style.display = 'none';  // Oculta el botón de "Atrás"
+          revicionForm.style.display = 'none'; // Oculta el botón de "Guardar para revisión"
+          aceptaForm.style.display = 'none'; // Oculta el botón de "Guardar para revisión"
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          // Manejar el error de la petición AJAX si es necesario
+          console.log(xhr.status);
+          console.log(thrownError);
+        }
+      });
+    }
+  });
+});
+
+</script>
