@@ -86,15 +86,15 @@
                               <div class="col-md-4 mb-2">
                                 <div class="mb-1">
                                   {% if field.name == 'video_anoproduccion' %}
-                                    <label  class="form-label">Año de producción</label>
+                                    <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
                                     <input type="number"  min="1" max="9" id='ahoProduction' name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="Año de producción">
                                     {{ field.errors }}
                                   {% elif field.name == 'codigo_barras' %}
-                                    <label class="form-label">{{ field.label }}</label>
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                     <input type="text" id="codigo_barras" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
                                     {{ field.errors }}
                                   {% else %}
-                                    <label  class="form-label">{{ field.label }}</label>
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                     {% if field.name == 'fecha_calificacion' %}
                                       <input type="date" name="fecha_calificacion" value="{{ fecha_calificacion_actual }}" class="form-control smaller-input" placeholder="{{ field.label }}">
                                     {{ field.errors }}
@@ -173,15 +173,29 @@
                               {% for campo in formulario_descripcion  %}
                               <div class="col-md-6">
                                   <div class="mb-3">
-                                      <label  class="form-label">{{ campo.label }}</label>
+                                    {%if campo.name == 'tiempodur' %}
+                                    <label for="" class="form-label">Tiempo de duración</label>
                                       <input
                                           type="{{ campo.field.widget.input_type }}"
+                                          class="form-control"
+                                          name="{{ campo.name }}"
+                                          id=" "
+                                          aria-describedby="helpId"
+                                          placeholder="HH:MM:SS"
+                                          step="0.001"
+                                      />
+                                    {% else %}
+                                      <label for="" class="form-label">{{ campo.label }}</label>
+                                      <input
+                                          type="{{ campo.field.widget.input_type }}"
+                                          class="form-control"
                                           name="{{ campo.name }}"
                                           id="inputDescripcion"
-                                          aria-describedby="helpId"  
+                                          aria-describedby="helpId"
+                                          placeholder="{{ campo.label }}"
                                       />
+                                    {% endif %}
                                       {{ field.errors }}
-
                                   </div>
                               </div>
                               {% endfor %}
@@ -296,8 +310,8 @@
                 {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' %}
                   <div class="mb-3">
                     <!-- Asignamos un id al campo -->
-                    <label  class="form-label">{{ field.label }}</label>
-                    <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" placeholder="{{ field.label }}">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
                   </div>
                 {% endif %}
               {% endfor %}
@@ -422,29 +436,17 @@ const inputRealizacion = document.getElementById('inputRealizacion');
 
 $("#revicionForm").click(function(event) {
   event.preventDefault(); // Evitar el envío de formulario por defecto
-
-  const formularios = [
-    formularioDatosGenerales,
-    formularioDescripcion,
-    formularioMapa,
-    formTecnicas,
-    formRealizacion
-  ];
-
-  let formulariosCompletos = true;
-
-  formularios.forEach(formulario => {
-    if (!verificarCamposRequeridos(formulario)) {
-      formulariosCompletos = false;
-    }
-  });
-
-  if (!formulariosCompletos) {
-    // Mostrar mensaje de alerta si algún formulario está incompleto
+  // Verificar si los campos requeridos en cada formulario están llenos
+  if (!verificarCamposRequeridos(formularioDatosGenerales) ||
+      !verificarCamposRequeridos(formularioDescripcion) ||
+      !verificarCamposRequeridos(formularioMapa) ||
+      !verificarCamposRequeridos(formTecnicas) ||
+      !verificarCamposRequeridos(formRealizacion)) {
+      // Mostrar mensaje de alerta si algún formulario está incompleto
     messageAlerta('info', 'Completa todos los campos requeridos antes de guardar.', '¡Oops!', '#18463b');
     return;
   }
-
+  
   Swal.fire({
     title: '¿Deseas enviar este formulario a revisión?',
     text: 'No podrás revertir esta acción.',
@@ -492,19 +494,18 @@ $("#revicionForm").click(function(event) {
 
 function verificarCamposRequeridos(formulario) {
   let camposCompletos = true;
-  $(formulario)
-    .find('input[type="text"], input[type="date"], input[type="number"], input[type="checkbox"], select')
-    .each(function() {
-      const valor = $(this).val().trim();
-      if (valor === '') {
-        camposCompletos = false;
-        $(this).addClass('input-error'); // Agregar la clase de estilo para resaltar en rojo
-      } else {
-        $(this).removeClass('input-error'); // Quitar la clase de estilo si el campo está lleno
-      }
-    });
+  $(formulario).find('input[type="text"], input[type="date"], input[type="number"], input[type="checkbox"], select').each(function() {
+    const valor = $(this).val().trim();
+    if (valor === '') {
+      camposCompletos = false;
+      $(this).addClass('input-error'); // Agregar la clase de estilo para resaltar en rojo
+    } else {
+      $(this).removeClass('input-error'); // Quitar la clase de estilo si el campo está lleno
+    }
+  });
   return camposCompletos;
 }
+
 </script>
 
 {% endblock %}
