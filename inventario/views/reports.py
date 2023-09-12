@@ -271,7 +271,8 @@ class GENERATE(FPDF):
                 self.cell(25, 10, "En prestamo", 1)
 
             self.ln(10)
-            
+
+       
 def generar_pdf_modal(request):
 
     q = int(request.GET.get("q"))
@@ -344,8 +345,13 @@ def generar_pdf_modal(request):
             'Matricula': usuario_recibe,
         }
 
-        devolucion = MatriculaDevuelve
+        # devolucion = MatriculaDevuelve
+        # userRecibe = MatriculaRecibe
+
+        global userRecibe, devolucion 
         userRecibe = MatriculaRecibe
+        devolucion = MatriculaDevuelve
+            
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'

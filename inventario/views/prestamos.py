@@ -23,40 +23,52 @@ from django.db import connections
     # ---------------------------
     # Prestamos
     # ---------------------------
+
+
 def Filtrar_prestamos(request):
     q = request.GET.get('q')
-
     prestamos_data = []
-
     if q:
         try:
-            q = str(q)  # Convertir a número entero
+            # Convertir a número entero
+            q = str(q)
+            
+            # Obtener el primer día de enero de 2023
+            fecha_inicio = datetime(2023, 1, 1)
+            
+            # Obtener el último día de enero de 2023
+            fecha_fin = datetime(2023, 1, 31, 23, 59, 59)
+            
             prestamos = DetallePrestamos.objects.filter(
-                # Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
-                Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
+                Q(pres_folio=q) |
+                Q(vide_codigo=q) |
+                Q(pres_folio__usua_clave=q),
+                pres_fechahora__gte=fecha_inicio,
+                pres_fechahora__lte=fecha_fin
             )
 
             for prestamo in prestamos:
                 prestamo_data = {
                     "pres_folio": prestamo.pres_folio.pres_folio,
                     "usua_clave": prestamo.pres_folio.usua_clave,
-                    "pres_fechahora": prestamo.pres_folio.pres_fechahora,
+                    "pres_fechahora": prestamo.pres_fechahora,
                     "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
                     "pres_estatus": prestamo.pres_folio.pres_estatus
                 }
                 prestamos_data.append(prestamo_data)
 
-           # Corregido: imprimir prestamos_data en lugar de prestamo_data
         except ValueError:
             pass
 
     return JsonResponse(prestamos_data, safe=False)
+
 
 @method_decorator(login_required, name='dispatch')
 
 class PrestamosListView(ListView):
     def get(self, request):
         current_year = datetime.now().year
+        print('Año actual', current_year)
         queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year).order_by('-pres_fechahora')
         context = {
             'prestamos': queryset,
@@ -323,7 +335,6 @@ def ValidateOutVideoteca(request):
                                 "successMessage": "Listo para préstamo",
                                 "fechaVencimiento": fecha_vencimiento
                             }
-
                 else:
                     registro_data = {
                         "error": True,
