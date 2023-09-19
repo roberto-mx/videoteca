@@ -342,7 +342,7 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
           },
           
         success: function(response) {
-        $('#inputVencimiento').val(`Entrega estimada - ${response.vencioElDia}`).attr('disabled', true);
+        $('#inputVencimiento').val(`Fecha vencimiento - ${response.vencioElDia}`).attr('disabled', true);
         let hoy = new Date();
         let day = hoy.getDate();
         let month = hoy.getMonth() + 1;
@@ -553,7 +553,7 @@ function finalizarEntrada(usuario, codigoBarras) {
         $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
         Swal.fire({
-          title: '¡Exportado!',
+          title:'¡Exportado!',
           text: 'Su archivo ha sido exportado.',
           icon: 'success',
          
@@ -712,7 +712,7 @@ function addItemOut() {
               $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.successMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
               $("#continuarPrestamo").show();
             } else {
-              alertMessage('success', 'Mensaje de éxito no proporcionado en la respuesta.', '¡Alto!');
+              alertMessage('error', 'Mensaje de éxito no proporcionado en la respuesta.', '¡Alto!');
               
             }
           }

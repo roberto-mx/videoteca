@@ -57,12 +57,11 @@ def Filtrar_prestamos(request):
 class PrestamosListView(ListView):
     def get(self, request):
         current_year = datetime.now().year
-        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year).order_by('-pres_fechahora')
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year)
         context = {
             'prestamos': queryset,
         }
         return render(request, 'prestamos/prestamos_list.html', context)
-    
 
 #vista detalle    
 @csrf_exempt
@@ -144,7 +143,13 @@ def obtenerPeoplePerson(request):
 @csrf_exempt
 def PrestamoDetalle(request):
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo_id', 'pres_fecha_devolucion','usuario_devuelve','usuario_recibe','depr_estatus')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values(
+        'vide_codigo_id',
+        'pres_fecha_devolucion',
+        'usuario_devuelve',
+        'usuario_recibe',
+        'depr_estatus'
+    )
     context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
 
@@ -287,6 +292,7 @@ def ValidateOutVideoteca(request):
                          
                     ).values('pres_folio').distinct()  # Obtengo el valor del Folio a través del modelo
 
+                    print('foliosVenncidos',folios_vencidos)
 
                     for folio in folios_vencidos:
                         cintas_pendientes = DetallePrestamos.objects.filter(

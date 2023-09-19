@@ -574,7 +574,6 @@ def GetFilePdf(request):
     else:
         print('Report not generated!')
   
-
 def CreateJsonInReport(row, codes, user):
     data = {}
     i = 0
