@@ -3,15 +3,28 @@ from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnica
 from ..models import MaestroCintas, RegistroCalificacion, ProgramaSeries
 from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.http import JsonResponse
 import json
 from django.utils import timezone
 # from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+from django.contrib import messages 
 
+
+def is_videote_user(user):
+    if user: 
+        return user.groups.filter(name='videotecaPermission').count() == 0
+    return  False
+
+@login_required
 @csrf_exempt
 def formulario(request):
+    if not is_videote_user(request.user):
+        messages.error(request, "Solo los de calificación pueden acceder a esta acción.")
+        return redirect('prestamos_list')  # Redirige al usuario a otra página
+
     formulario_principal = FormularioCombinado()
     formulario_descripcion = Descripcion()
     formulario_mapa = Mapa()
@@ -140,7 +153,6 @@ def formulario(request):
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
     })
-
 
 def consultaFormulario(request):
     # Obtener registros únicos por código de barras con estatusCalif igual a 'P' o 'R'
