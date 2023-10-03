@@ -98,10 +98,10 @@ class MaestroCintas(models.Model):
 class ProgramaSeries(models.Model):
     # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, max_length=12)
     codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
-    programa = models.CharField("Programa",max_length=50, blank=True, null=True)
-    serie = models.CharField("Serie",max_length=50, blank=True, null=True)
-    subtitulo_programa = models.CharField("Subtitulo de Programa",max_length=50, blank=True, null=True)
-    subtitulo_serie = models.CharField("Subtitulo de Serie",max_length=50, blank=True, null=True)
+    programa = models.CharField("Programa",max_length=150, blank=True, null=True)
+    serie = models.CharField("Serie",max_length=150, blank=True, null=True)
+    subtitulo_programa = models.CharField("Subtitulo de Programa",max_length=150, blank=True, null=True)
+    subtitulo_serie = models.CharField("Subtitulo de Serie",max_length=150, blank=True, null=True)
     
     class Meta:
         db_table = 'programas_series'
