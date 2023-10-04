@@ -14,7 +14,7 @@ import os
 import io
 from pathlib import Path
 from django.db.models import Q
-from PyPDF2 import PdfWriter
+# from PyPDF2 import PdfWriter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.pagesizes import letter, landscape
 from django.db import connections
