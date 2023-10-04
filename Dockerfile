@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Puerto en el que se ejecutará la aplicación
-EXPOSE 8087
+EXPOSE 8086
 
 # Comando para ejecutar la aplicación (ajusta según tu proyecto)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8087"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8086"]
