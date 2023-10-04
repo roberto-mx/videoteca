@@ -75,24 +75,45 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'videoteca',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     },
+#     'users': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'recursos_humanos',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         'HOST': 'localhost',
+#         'PORT': '5450'
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'videoteca',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'PASSWORD': 'postgres',
+        'HOST': '172.16.110.29',  # Cambia esto al nombre o dirección IP de tu servidor
+        'PORT': '5432',  # Cambia esto al puerto de tu base de datos si es diferente
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'recursos_humanos',
+        'NAME': 'recursoshumanos',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5450'
+        'PASSWORD': 'postgres',
+        'HOST': '172.16.110.29',  # Cambia esto al nombre o dirección IP de tu servidor
+        'PORT': '5432',  # Cambia esto al puerto de tu base de datos si es diferente
     }
 }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
