@@ -6,16 +6,15 @@ services:
       context: .
       dockerfile: Dockerfile
     image: django:latest
-    command: python3 manage.py runserver 0.0.0.0:8086 
+    command: python manage.py runserver 0.0.0.0:8086
     volumes:
-    - ./app:/opt/videoteca
-  
+      - ./app:/opt/videoteca  # Esto está bien si deseas montar el directorio local ./app en /opt/videoteca en el contenedor
     ports:
       - "8086:8086"
     depends_on:
       - db
     environment:
-      - DEBUG=False  # Cambia DEBUG a False para modo de producción
+      - DEBUG=False
     networks:
       - mynetwork
 
