@@ -8,7 +8,7 @@ services:
     image: django:latest
     command: python manage.py runserver 0.0.0.0:8086
     volumes:
-      - ./app:/opt/videoteca  # Esto está bien si deseas montar el directorio local ./app en /opt/videoteca en el contenedor
+      - ./:/opt/videoteca  # Cambia la ruta aquí
     ports:
       - "8086:8086"
     depends_on:
