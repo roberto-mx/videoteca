@@ -14,7 +14,7 @@ services:
     depends_on:
       - postgres  # Cambia "db" a "postgres"
     environment:
-      - DEBUG=True
+      - DEBUG=False
     networks:
       - mynetwork
 
