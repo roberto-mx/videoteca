@@ -9,6 +9,9 @@ COPY requirements.txt .
 # Instala las dependencias de Python
 RUN pip install -r requirements.txt
 
+# Copia el contenido de tu proyecto (incluyendo manage.py) al contenedor
+COPY . .
+
 # Expone el puerto en el que se ejecutará la aplicación
 EXPOSE 8086
 
