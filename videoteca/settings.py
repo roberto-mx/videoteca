@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-%kq5yuqph!gf@38qp1yg+!ghk34cr4&5x2krhy3bx)uyfy@tej
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'videoteca.aprende.gob.mx', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['172.16.110.29', 'videoteca.aprende.gob.mx', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -100,7 +100,7 @@ DATABASES = {
         'NAME': 'videoteca',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '172.27.0.1',  
+        'HOST': 'localhost',  
         'PORT': '5432',   
     },
     'users': {
@@ -108,7 +108,7 @@ DATABASES = {
         'NAME': 'recursoshumanos',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '172.27.0.1', 
+        'HOST': 'localhost', 
         'PORT': '5432',  
     }
 }
