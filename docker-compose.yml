@@ -18,8 +18,8 @@ services:
     networks:
       - mynetwork
 
-  postgresql:
-    container_name: postgresql
+  db:
+    container_name: db
     image: postgres:14
     environment:
       - POSTGRES_DB=videoteca
