@@ -1,7 +1,9 @@
 FROM python:3.9
 
 # Establece el directorio de trabajo en el contenedor
-WORKDIR /opt/videoteca
+# WORKDIR /opt/videoteca
+
+WORKDIR /app
 
 # Copia el archivo de requisitos al contenedor
 COPY requirements.txt .

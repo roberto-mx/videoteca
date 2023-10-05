@@ -8,7 +8,7 @@ services:
     image: django:latest
     command: python manage.py runserver 0.0.0.0:8086
     volumes:
-      - .:/opt/videoteca  # Monta el proyecto en la ubicación correcta
+      - .:/app
     ports:
       - "8086:8086"
     depends_on:
