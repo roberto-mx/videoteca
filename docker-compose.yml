@@ -26,19 +26,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-    networks:
-      - mynetwork
-
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
-    depends_on:
-      - web
-    networks:
-      - mynetwork
 
 networks:
   mynetwork:
