@@ -12,14 +12,13 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      - db
+      - postgres  # Cambia "db" a "postgres"
     environment:
       - DEBUG=True
     networks:
       - mynetwork
 
-  db:
-   
+  postgres:  # Cambia el nombre del servicio de "db" a "postgres"
     image: postgres:14
     environment:
       - POSTGRES_DB=videoteca
