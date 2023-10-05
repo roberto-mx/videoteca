@@ -1,20 +1,21 @@
-# Usa una imagen base de Python
+# Use the official Python image as the base image
 FROM python:3.9
 
-# Establece el directorio de trabajo en /app
-WORKDIR /app
+# Set the working directory in the container
+WORKDIR /opt/videoteca
 
-# Copia los archivos de requerimientos al contenedor
+# Copy the requirements file into the container
 COPY requirements.txt .
 
-# Instala las dependencias
+# Install Python dependencies
 RUN pip install -r requirements.txt
 
-# Copia el contenido de la aplicación al contenedor
+# Copy the rest of the application code into the container
 COPY . .
 
-# Puerto en el que se ejecutará la aplicación
+# Expose the port the application will run on
 EXPOSE 8086
 
-# Comando para ejecutar la aplicación (ajusta según tu proyecto)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8086"]
+# Start the Django application with a specific IP and port
+CMD ["python", "manage.py", "runserver", "172.16.110.29:8086"]
+

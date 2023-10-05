@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     image: django:latest
-    command: python3 manage.py runserver 0.0.0.0:8086
+    command: python3 manage.py runserver 0.0.0.0:8086 
     volumes:
-      - ./videoteca:/app  
+      - ./app  
     ports:
       - "8086:8086"
     depends_on:
