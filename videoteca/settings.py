@@ -100,7 +100,7 @@ DATABASES = {
         'NAME': 'videoteca',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '172.28.0.2',  
+        'HOST': '172.16.110.29',  
         'PORT': '5432',   
     },
     'users': {
@@ -108,7 +108,7 @@ DATABASES = {
         'NAME': 'recursoshumanos',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '172.28.0.2', 
+        'HOST': '172.16.110.29', 
         'PORT': '5432',  
     }
 }
