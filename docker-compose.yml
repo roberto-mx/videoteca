@@ -8,7 +8,8 @@ services:
     image: django:latest
     command: python3 manage.py runserver 0.0.0.0:8086 
     volumes:
-      - ./app  
+    - ./app:/opt/videoteca
+  
     ports:
       - "8086:8086"
     depends_on:
