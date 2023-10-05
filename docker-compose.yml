@@ -14,7 +14,7 @@ services:
     depends_on:
       - db
     environment:
-      - DEBUG=False
+      - DEBUG=True
     networks:
       - mynetwork
 
