@@ -8,13 +8,13 @@ services:
     image: django:latest
     command: python3 manage.py runserver 0.0.0.0:8086
     volumes:
-      - ./mydjangoapp:/app
+      - ./videoteca:/app  
     ports:
       - "8086:8086"
     depends_on:
       - db
     environment:
-      - DEBUG=True
+      - DEBUG=False  # Cambia DEBUG a False para modo de producción
     networks:
       - mynetwork
 
