@@ -17,5 +17,5 @@ COPY . .
 EXPOSE 8086
 
 # Start the Django application with a specific IP and port
-CMD ["python", "manage.py", "runserver", "172.16.110.29:8086"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8086"]
 
