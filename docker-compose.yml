@@ -12,16 +12,16 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      - postgres  # Cambia "db" a "postgres"
+      - videoteca  # Cambia "db" a "postgres"
     environment:
       - DEBUG=False
     networks:
       - mynetwork
 
-  postgres:  # Cambia el nombre del servicio de "db" a "postgres"
+  videoteca:  # Cambia el nombre del servicio de "db" a "postgres"
     image: postgres:14
-    ports:
-      - "5433:5432" 
+    # ports:
+      # - "5433:5432" 
     environment:
       - POSTGRES_DB=videoteca
       - POSTGRES_USER=postgres
@@ -32,3 +32,8 @@ services:
 networks:
   mynetwork:
     driver: bridge
+
+volumes:
+  videoteca:
+    driver: local
+
