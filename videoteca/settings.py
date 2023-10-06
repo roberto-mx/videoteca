@@ -81,18 +81,12 @@ DATABASES = {
         'NAME': 'videoteca',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'postgres',  
-        'PORT': '5432',
+        'HOST': 'localhost',  # Puedes usar "localhost" si la base de datos está en la misma máquina
+        'PORT': '5433',  # Cambia el puerto a 5433
     },
-    # 'users': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'recursoshumanos',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'postgres',
-    #     'HOST': 'db',  # Usar el nombre del servicio del contenedor (nombre del servicio en docker-compose.yml)
-    #     'PORT': '5432',
-    # }
+    # ...
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
