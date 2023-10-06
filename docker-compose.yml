@@ -1,14 +1,17 @@
 version: '3.3'
 
 services:
-  db:  # Cambia el nombre del servicio de "db" a "postgres"
-      image: postgres:14
-      environment:
-        - POSTGRES_DB=videoteca
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=postgres
-      # volumes: descartar
-      #   - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=videoteca
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d  # Monta archivos de inicialización
+      - postgres_data:/var/lib/postgresql/data  
+    ports:
+      - "5432:5432" 
 
   web:
     build:
@@ -21,11 +24,9 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      - db  
+      - db
     environment:
       - DEBUG=False
-      
-volumes:
-  db:
-    driver: local
 
+volumes:
+  postgres_data:  # Define un volumen nombrado para los datos de PostgreSQL
