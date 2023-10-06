@@ -12,20 +12,18 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      - videoteca  # Cambia "db" a "postgres"
+      - db  
     environment:
       - DEBUG=False
     networks:
       - mynetwork
 
-  videoteca:  # Cambia el nombre del servicio de "db" a "postgres"
+  db:  # Cambia el nombre del servicio de "db" a "postgres"
     image: postgres:14
-    # ports:
-      # - "5433:5432" 
-    environment:
-      - POSTGRES_DB=videoteca
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    # environment:
+    #   - POSTGRES_DB=videoteca
+    #   - POSTGRES_USER=postgres
+    #   - POSTGRES_PASSWORD=postgres
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
 

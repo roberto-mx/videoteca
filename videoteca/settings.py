@@ -81,8 +81,8 @@ DATABASES = {
         'NAME': 'videoteca',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'videoteca',  # Puedes usar "localhost" si la base de datos está en la misma máquina
-        'PORT': '5433',  # Cambia el puerto a 5433
+        'HOST': 'db',  # Puedes usar "localhost" si la base de datos está en la misma máquina
+        'PORT': '5432',  # Cambia el puerto a 5433
     },
     # ...
 }
