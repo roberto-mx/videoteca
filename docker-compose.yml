@@ -7,8 +7,8 @@ services:
         - POSTGRES_DB=videoteca
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=postgres
-      volumes:
-        - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+      # volumes: descartar
+      #   - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
 
   web:
     build:
