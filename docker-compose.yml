@@ -10,8 +10,8 @@ services:
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d  # Monta archivos de inicialización
       - postgres_data:/var/lib/postgresql/data  
-    ports:
-      - "5433:5432" 
+    # ports:
+    #   - "5433:5432" 
 
   web:
     build:
