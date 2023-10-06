@@ -1,6 +1,15 @@
 version: '3.3'
 
 services:
+  db:  # Cambia el nombre del servicio de "db" a "postgres"
+      image: postgres:14
+      environment:
+        - POSTGRES_DB=videoteca
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      volumes:
+        - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+
   web:
     build:
       context: .
@@ -18,20 +27,12 @@ services:
     networks:
       - mynetwork
 
-  db:  # Cambia el nombre del servicio de "db" a "postgres"
-    image: postgres:14
-    # environment:
-    #   - POSTGRES_DB=videoteca
-    #   - POSTGRES_USER=postgres
-    #   - POSTGRES_PASSWORD=postgres
-    volumes:
-      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-
+  
 networks:
   mynetwork:
     driver: bridge
 
 volumes:
-  videoteca:
+  db:
     driver: local
 
