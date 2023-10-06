@@ -24,10 +24,7 @@ services:
       - db  
     environment:
       - DEBUG=False
-    networks:
-      - mynetwork
-
-
+      
 volumes:
   db:
     driver: local
