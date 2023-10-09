@@ -25,7 +25,7 @@ services:
       - db
     environment:
       - DEBUG=False
-    restart: always  # Esta línea asegura que el contenedor web se reinicie automáticamente en caso de fallo
+    restart: always  
 
 volumes:
   postgres_data:
