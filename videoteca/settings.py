@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'inventario.middleware.GroupRedirectMiddleware', 
 ]
 
 ROOT_URLCONF = 'videoteca.urls'
@@ -74,6 +75,25 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'videoteca',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     },
+#     'users': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'recursos_humanos',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     }
+# }
 
 DATABASES = {
     'default': {

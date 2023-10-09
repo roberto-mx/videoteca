@@ -77,7 +77,7 @@
                         {% else %}
 
                           <a href="{% url 'login' %}" class="header__login d-flex flex-column align-items-center justify-content-center h-100 text-gray-light">
-                            <img src="{% static 'src/img/candado-cerrado.svg' %}" alt="Inicia sesión" class="mb-2 svg svg-currentcolor">
+                            {% comment %} <img src="{% static 'src/img/candado-cerrado.svg' %}" alt="Inicia sesión" class="mb-2 svg svg-currentcolor"> {% endcomment %}
                             <p class="font-weight-bold text-sm text-uppercase m-0">Ingresar</p>
                           </a>
                         {% endif %}

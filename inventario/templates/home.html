@@ -4,10 +4,10 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <p><a href="{% url 'logout' %}">Log Out</a></p>
+  Hola {{ user.username }}!
+  <p><a href="{% url 'logout' %}">Cerrar Sesión</a></p>
 {% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">Log In</a>
+  <p>Usted no se ha identificado</p>
+  <a href="{% url 'login' %}">Iniciar Sesion</a>
 {% endif %}
 {% endblock %}
