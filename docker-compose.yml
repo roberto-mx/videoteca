@@ -8,10 +8,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d  # Monta archivos de inicialización
+      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data  
-    # ports:
-    #   - "5433:5432" 
 
   web:
     build:
@@ -27,6 +25,7 @@ services:
       - db
     environment:
       - DEBUG=False
+    restart: always  # Esta línea asegura que el contenedor web se reinicie automáticamente en caso de fallo
 
 volumes:
-  postgres_data:  # Define un volumen nombrado para los datos de PostgreSQL
+  postgres_data:
