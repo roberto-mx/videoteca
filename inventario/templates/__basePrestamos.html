@@ -67,7 +67,7 @@
                   <ul class="list-unstyled">
                          {% if user.is_authenticated %}
                           <li>
-                            <a type="submit"  class="btn btn-default btn-block " href="{% url 'logout' %}"><strong> Logout <i class="fas fa-sign-out-alt"></i> </strong> </a> 
+                            <a type="submit"  class="btn btn-default btn-block " href="{% url 'logout' %}"><strong> Cerrar sesion <i class="fas fa-sign-out-alt"></i> </strong> </a> 
                           </li>
                         {% else %}
                           <a href="{% url 'login' %}" class="header__login d-flex flex-column align-items-center justify-content-center h-100 text-gray-light">

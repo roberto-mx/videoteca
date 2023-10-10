@@ -25,6 +25,7 @@
 
 <body>
     <header class="navbar navbar-expand" style="background-color:#13322B;">
+ 
         <div class="container">
             <div class="navbar-brand">
               <a href="https://www.gob.mx/">
@@ -48,18 +49,31 @@
               </a>                  
               <a href="https://www.gob.mx/tramites" class="btn-button" title="Tramites">
                 <span> Tramites </span>
-              </a>                  
+              </a>        
+       
+              <a href="{% url 'logout' %}" class="btn-button" title="Cerrar sesión">
+                  
+                  <i class="fas fa-sign-out-alt"></i>
+              </a>   
+             
               <a href="https://www.gob.mx/busqueda" title="Búsqueda">
                 <i class="fas fa-search" style="color:white;"></i>
-              </a>                  
+              </a>
             </div>
-        </div>
+            <div class="card-header text-center" style="background-color:#1B473D;">
+              <div class="card-body text-right">
+                  <h4 class="card-title" style="color:white;">Bienvenid@, {{ user.get_username }}</h4>
+                  <p class="card-text" style="color:white;"> {{ user.first_name }} {{ user.last_name }}</p>
+              </div>
+            </div>
+          </div>
     </header>
-    
+
     <div class="container">
         <div class="row">
             <div class="col-12">
                 {% block Contenido %} {% endblock %}
+                <p class="card-text" style="color:white;">Sesion: {{ user.email }}</p>
             </div>
         </div>
     </div>
