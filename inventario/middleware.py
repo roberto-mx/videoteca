@@ -6,14 +6,25 @@ class GroupRedirectMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Verificamos si el usuario está autenticado
+       
         if request.user.is_authenticated:
-            # Verificamos si el usuario pertenece al grupo 'videotecaPermission'
+            
             if request.user.groups.filter(name='videotecaPermission').exists():
                 # Si el usuario intenta acceder a una ruta diferente a 'prestamos_list',
-            
-                if request.path != reverse('prestamos_list'):
+                if (
+                    request.path != reverse('prestamos_list') and
+                    not request.path.startswith('/prestamos/') and
+                    not request.path.startswith('/prestamos/detalles_list/') and
+                    not request.path.startswith('/prestamos/detalles/') and
+                    not request.path.startswith('/prestamos/detalles/filter/') and
+                    not request.path.startswith('/prestamos/generate_pdf/') and
+                    not request.path.startswith('/prestamos/generate_pdf_modal/') and
+                    not request.path.startswith('/prestamos/person_people/') and
+                    not request.path.startswith('/calificaciones/cambiarEstatusCalificacion/') and
+                    not request.path.startswith(reverse('logout'))
+                ):
                     return redirect('prestamos_list')
+
             # Verificamos si el usuario pertenece al grupo 'calificacion'
             elif request.user.groups.filter(name='calificacion').exists():
                 # si el usuario accede a otra ruta que no sea de calificaciones se le redirige a consulta formulario
@@ -24,12 +35,11 @@ class GroupRedirectMiddleware:
                     not request.path.startswith('/calificaciones/eliminar/') and
                     not request.path.startswith('/calificaciones/eliminarRegistro/') and
                     not request.path.startswith('/calificaciones/cambiarEstatusCalificacion/') and
-                    request.path != reverse('formulario')
+                    request.path != reverse('formulario') and
+                    not request.path.startswith(reverse('logout'))
                 ):
                     return redirect('consultaFormulario')
 
-        # Si el usuario no cumple ninguna de las condiciones anteriores,
-        # pasamos la solicitud al siguiente middleware
         response = self.get_response(request)
         return response
 
