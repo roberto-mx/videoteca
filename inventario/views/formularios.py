@@ -12,7 +12,6 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib import messages 
 
-
 def is_videote_user(user):
     if user: 
         return user.groups.filter(name='videotecaPermission').count() == 0
@@ -153,18 +152,23 @@ def formulario(request):
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
     })
+#  is_videoteca = user.groups.filter(name='Videoteca Users').exists()
+# print(f"El usuario {user.username} pertenece al grupo 'Videoteca Users': {is_videoteca}, 'grupo Califica': {is_califi}")
 
+def is_videoteca_user(user):
+    if user: 
+        return user.groups.filter(name='videotecaPermission').count() == 0
+    return  False
+
+@login_required
 def consultaFormulario(request):
-    # Obtener registros únicos por código de barras con estatusCalif igual a 'P' o 'R'
+    if not is_videoteca_user(request.user):
+        messages.error(request, "Solo los de calificación pueden acceder a esta acción.")
+        return redirect('prestamos_list')  # Redirige al usuario a otra página
+    
+    
     calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
-        'codigo_barras'
-    ).annotate(
-        id=Max('id'),  # Obtén el ID máximo para cada código de barras
-        duracion=Max('duracion'),  # Obtén la duración máxima para cada código de barras
-        observaciones=Max('observaciones'),  # Obtén las observaciones máximas para cada código de barras
-        institucion_productora=Max('institucion_productora'),  # Obtén la institución productora máxima para cada código de barras
-        fecha_calificacion=Max('fecha_calificacion'),  # Obtén la fecha de calificación máxima para cada código de barras
-        estatusCalif=Max('estatusCalif')  # Obtén el estatus de calificación máximo para cada código de barras
+        # ... (tu consulta)
     ).order_by('-id')
 
     consultaForm = {'formulario': calificaciones}

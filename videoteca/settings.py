@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'inventario.middleware.GroupRedirectMiddleware', 
+    'inventario.middleware.GroupRedirectMiddleware', 
 ]
 
 ROOT_URLCONF = 'videoteca.urls'
@@ -102,11 +102,18 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'db',  # Puedes usar "localhost" si la base de datos está en la misma máquina
-        'PORT': '5432',  # Cambia el puerto a 5433
+        'PORT': '5432',  
     },
-    # ...
+    # 'users': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'recursos_humanos',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'admin',
+    #     'HOST': 'localhost',
+    #     'PORT': '5450'
+    # }
+    
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
