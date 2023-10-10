@@ -32,7 +32,7 @@
             <th>Id</th>
             <th>Código de Barras</th>
             <th>Duración</th>
-            <th>Observaciones</th>
+            <th>Sinopsis</th>
             <th>Institucion Productora</th>
             <th>Fecha Calificación</th> 
             <th>Estatus</th> 
@@ -46,13 +46,7 @@
             <td>{{ data.id }}</td>+
             <td>{{ data.codigo_barras }}</td>
             <td>{{ data.duracion }}</td>
-            <td>
-              {%if data.observaciones == None %}
-                Sin información
-              {%else%}
-                {{ data.observaciones }}
-              {%endif%}
-            </td>
+            <td>{{ data.sinopsis }}</td>
             <td>
               {%if data.institucion_productora == None %}              
                 Sin información
