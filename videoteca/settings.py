@@ -76,44 +76,44 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'videoteca',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',
-#         'PORT': '5432'
-#     },
-#     'users': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'recursos_humanos',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',
-#         'PORT': '5450'
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'videoteca',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',  # Puedes usar "localhost" si la base de datos está en la misma máquina
-        'PORT': '5432',  
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5432'
     },
-    # 'users': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'recursos_humanos',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'admin',
-    #     'HOST': 'localhost',
-    #     'PORT': '5450'
-    # }
-    
+    'users': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'recursos_humanos',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5450'
+    }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'videoteca',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'db',  # Puedes usar "localhost" si la base de datos está en la misma máquina
+#         'PORT': '5432',  
+#     },
+#     # 'users': {
+#     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#     #     'NAME': 'recursos_humanos',
+#     #     'USER': 'postgres',
+#     #     'PASSWORD': 'admin',
+#     #     'HOST': 'localhost',
+#     #     'PORT': '5450'
+#     # }
+    
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
