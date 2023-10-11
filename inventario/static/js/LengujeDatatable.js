@@ -1,5 +1,5 @@
 const len = {
-"lengthMenu": [[5, 10, 25, 50, 100, 150,200, -1], [5,10,  25, 50 ,100 ,150,200, "Todo"]],
+"lengthMenu": [[ 5, 10, 25, 50, 100, 150,200, -1], [5, 10,  25, 50 ,100 ,150,200, "Todo"]],
 "order": [[ 0, "asc" ]], 
 
     "language": {
@@ -24,8 +24,7 @@ const len = {
         "oAria": {
             "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-        }
+        },
     }            
 }
-
 

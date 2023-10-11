@@ -2,21 +2,22 @@
 
 {% block breadcrumb %}
                 <li><a href="#"><i class="icon icon-user"></i></a></li>
-                <li class="active">Iniciar sesi&oacute;n</li>
+                <li class="active">Iniciar sesión</li>
 {% endblock %}
 
 {% block content %}
 
   {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
+    <p>Su nombre de usuario y contraseña no coinciden. Inténtalo de nuevo.</p>
   {% endif %}
 
   {% if next %}
     {% if user.is_authenticated %}
-      <p>Your account doesn't have access to this page. To proceed,
-      please login with an account that has access.</p>
+      <p>
+        Su cuenta no tiene acceso a esta página. Para proceder,
+        por favor inicie sesión con una cuenta que tenga acceso.</p>
     {% else %}
-      <p>Please login to see this page.</p>
+      <p>Por favor inicia sesión para ver esta página.</p>
     {% endif %}
   {% endif %}
             <form action="#" role="form" method="POST">

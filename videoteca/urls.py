@@ -16,9 +16,38 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from inventario.views import login, PrestamosListView, PrestamoDetalle,Filtrar_prestamos, generar_pdf, generar_pdf_modal, GetFolioPrestamo, GetFolioDetail, RegisterInVideoteca, ValidateOutVideoteca, RegisterOutVideoteca, EndInVideoteca
-from django.contrib.auth import views
-from django.views.generic import TemplateView
+from inventario.views import (
+    login,
+    PrestamosListView,
+    DetallesListView,
+    obtenerPeoplePerson,
+    PrestamoDetalle,
+    Filtrar_prestamos,
+    generar_pdf,
+    generar_pdf_modal,
+    generate_pdf_resgister_folio,
+    GetFolioPrestamo,
+    GetFolioDetail,
+    RegisterInVideoteca,
+    ValidateOutVideoteca,
+    RegisterOutVideoteca,
+    EndInVideoteca,
+    GetFilePdf,
+    consultaFormulario,
+    editar,
+    editar_programa,
+    agregarProgramaEdit,
+    eliminarProgramaSerie,
+    eliminarRegistro,
+    cambiarEstatusCalificacion,
+    formulario
+)
+from django.contrib.auth import(
+    views
+) 
+from django.views.generic import(
+    TemplateView
+) 
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
@@ -26,18 +55,31 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('inventario/', include('inventario.urls'), name="inventario_list"),
     path('prestamos/', PrestamosListView.as_view(), name='prestamos_list' ),
+    path('prestamos/detalles_list/', DetallesListView, name='detalles_list' ),
     path('prestamos/detalles/', PrestamoDetalle, name='prestamos_detalles' ),
     path('prestamos/detalles/filter', Filtrar_prestamos, name='prestamos_filter' ),
     path('prestamos/generate_pdf', generar_pdf, name='generar_pdf'),
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
+    path('prestamos/person_people', obtenerPeoplePerson, name='obtenerPeoplePerson'),
+    # Form
+    path('calificaciones/consultaFormulario', consultaFormulario, name='consultaFormulario'),
+    path('calificaciones/formulario', formulario, name='formulario'),
+
+    path('calificaciones/agregar/programa/<str:codigo_barras>/', agregarProgramaEdit, name='agregarProgramaEdit'),
+    path('calificaciones/editar/<int:id>/<str:codigo_barras>/', editar, name='editar'),
+    path('calificaciones/editar/programa/<int:programa_id>/', editar_programa, name='editar_programa'),
+    path('calificaciones/eliminar/<int:id>/', eliminarProgramaSerie, name='eliminar'),
+    path('calificaciones/eliminarRegistro/<int:id>/', eliminarRegistro, name='eliminarRegistro'),
+    path('calificaciones/cambiarEstatusCalificacion/<int:id>/', cambiarEstatusCalificacion, name='cambiarEstatusCalificacion'),
+
+    # Aquí ira el tercer pdf
+    path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),
     path('detail_folio/<int:pk>', GetFolioDetail, name='search_folio_detail'),
     path('register_in/', RegisterInVideoteca,  name="registro_entrada_videoteca"),
     path('validate_out/', ValidateOutVideoteca,  name="validacion_salida_videoteca"),
     path('register_out/', RegisterOutVideoteca,  name="registro_salida_videoteca"),
     path('end_in/', EndInVideoteca,  name="finalizar_entrada_videoteca"),
+    path('get_report/', GetFilePdf,  name="get_pdf"),
 
-
-    
-    
 ]

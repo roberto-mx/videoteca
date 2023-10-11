@@ -8,4 +8,5 @@ videoteca/__pycache__/urls.cpython-38.pyc
 videoteca/__pycache__/wsgi.cpython-38.pyc
 inventario/migrations/__pycache__/__init__.cpython-38.pyc
 inventario/migrations/
+videoteca/settings/
 myvenv/

@@ -1,96 +1,157 @@
 from django.views.generic import ListView
 from ..models import Prestamos, DetallePrestamos, MaestroCintas, DetalleProgramas, Videos
 from ..forms import PrestamoInlineFormset
+from .reports import json_to_pdf
 from django.shortcuts import render
 from functools import reduce
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-import textwrap, operator, base64, json, datetime
+import textwrap, operator, base64, json
 from django.template.loader import get_template
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.db.models import F
-from django.shortcuts import get_object_or_404
 import tempfile
+import os
+# from businesstimedelta import Businesstimedelta
+
+# from django.utils import timezone
+from datetime import datetime, timedelta, date
+# from django.utils import timezone
+from django.db import connections
 
     # ---------------------------
     # Prestamos
     # ---------------------------
-
-
 def Filtrar_prestamos(request):
     q = request.GET.get('q')
 
     prestamos_data = []
 
     if q:
-        prestamos = DetallePrestamos.objects.filter(
-            Q(pres_folio=q) | Q(vide_codigo=q)
-        )
+        try:
+            q = str(q)  # Convertir a número entero
+            prestamos = DetallePrestamos.objects.filter(
+                # Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
+                Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
+            )
 
-        for prestamo in prestamos:
-            prestamo_data = {
-                "pres_folio": prestamo.pres_folio.pres_folio,
-                "usua_clave": prestamo.pres_folio.usua_clave,
-                "pres_fechahora": prestamo.pres_folio.pres_fechahora,
-                "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
-                "pres_estatus": prestamo.pres_folio.pres_estatus
-            }
-            prestamos_data.append(prestamo_data)
+            for prestamo in prestamos:
+                prestamo_data = {
+                    "pres_folio": prestamo.pres_folio.pres_folio,
+                    "usua_clave": prestamo.pres_folio.usua_clave,
+                    "pres_fechahora": prestamo.pres_folio.pres_fechahora,
+                    "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
+                    "pres_estatus": prestamo.pres_folio.pres_estatus
+                }
+                prestamos_data.append(prestamo_data)
+
+           # Corregido: imprimir prestamos_data en lugar de prestamo_data
+        except ValueError:
+            pass
 
     return JsonResponse(prestamos_data, safe=False)
 
-# def Filtrar_pres_Folio(request):
-#     q = request.GET.get('q')
-
-#     # Obtener los pres_folio que coinciden con el vide_codigo
-#     pres_folios = DetallePrestamos.objects.filter(pres_folio_id=q).values_list('pres_folio_id', flat=True)
-
-#     # Crear una lista para almacenar los datos de prestamos
-#     prestamos_data = []
-
-#     # Obtener los datos de Prestamos para cada pres_folio encontrado
-#     for pres_folio_id in pres_folios:
-#         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
-#         if prestamo:
-#             # Acceder a los datos de Prestamos
-#             prestamo_data = {
-#                 "pres_folio": prestamo.pres_folio,
-#                 "usua_clave": prestamo.usua_clave,
-#                 "pres_fechahora": prestamo.pres_fechahora,  
-#                 "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-#                 "pres_estatus": prestamo.pres_estatus
-#             }
-            
-#             prestamos_data.append(prestamo_data)
-
-#     # Retornar los datos de prestamos en formato JSON
-#     return JsonResponse(prestamos_data, safe=False)
-
 @method_decorator(login_required, name='dispatch')
+
 class PrestamosListView(ListView):
     def get(self, request):
-        queryset = Prestamos.objects.filter(Q(pres_fecha_prestamo__year='2022')).order_by('-pres_fechahora')
+        current_year = datetime.now().year
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year)
         context = {
             'prestamos': queryset,
         }
         return render(request, 'prestamos/prestamos_list.html', context)
-    
+
+#vista detalle    
+@csrf_exempt
+def DetallesListView(request):
+    a = request.GET.get('a')
+
+    # Obtener la información del préstamo
+    prestamo = Prestamos.objects.filter(pres_folio=a).values('pres_fecha_prestamo', 'pres_estatus').first()
+    fecha_prestamo = prestamo['pres_fecha_prestamo'].date()
+    estatusPrestamo = prestamo['pres_estatus']
+
+    dias_habiles_encontrados = 0
+    desplazamiento = timedelta(days=1)
+
+    fecha_actual = fecha_prestamo
+
+    while dias_habiles_encontrados < 7:
+        # Calcular la fecha de vencimiento sumando 1 día a la vez
+        fecha_actual += desplazamiento
+        
+        # Verificar si la fecha actual es un día hábil (de lunes a viernes)
+        if fecha_actual.weekday() < 5:
+            dias_habiles_encontrados += 1
+
+    fecha_vencimiento = fecha_actual
+
+    template_detalle = {
+        'vencioElDia': fecha_vencimiento.strftime('%d-%m-%Y'),
+        'estatusPrestamo': estatusPrestamo
+    }
+
+    return JsonResponse(template_detalle, safe=False)
+
+@csrf_exempt
+def obtenerPeoplePerson(request):
+    fecha_actual = datetime.now().date()
+    fecha_actual_formato = fecha_actual.strftime('%d-%m-%Y')
+    hace_siete_dias = fecha_actual - timedelta(days=7)
+
+    q = request.GET.get('q')
+    prestamo = Prestamos.objects.filter(pres_folio=q).values('usua_clave', 'pres_fecha_prestamo').first()
+
+    matri = None
+    if prestamo is not None:
+        matri = prestamo['usua_clave']
+        fechaPrestamo = prestamo['pres_fecha_prestamo'].strftime('%d-%m-%Y')
+
+    if matri is not None:
+        cursor = connections['users'].cursor()
+        cursor.execute("select nombres, apellido1, apellido2, puesto, email_institucional, extension_telefonica from people_person where matricula = %s", [matri])
+
+        row = cursor.fetchone()
+
+        MatriculaObPrestamo = {}
+
+        if row is not None:
+            nombres = row[0]
+            apellido1 = row[1]
+            apellido2 = row[2]
+            puesto = row[3]
+            email_institucional = row[4]
+            extension_telefonica = row[5]
+
+            nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+            MatriculaObPrestamo = {
+                'Obtiene': nombre_completo,
+                'Puesto': puesto,
+                'Email': email_institucional,
+                'Extension': extension_telefonica,
+                'Matricula': matri,
+                'PrestamoFecha': fechaPrestamo,
+                'fechaActual': fecha_actual_formato,
+                'tiempoDevolucion': hace_siete_dias,
+            }
+
+    # Respuesta JSON movida al final de la vista
+    return JsonResponse(MatriculaObPrestamo, safe=False)
 
 @csrf_exempt
 def PrestamoDetalle(request):
     q = int(request.GET.get("q"))
-    queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
+    queryset = DetallePrestamos.objects.filter(pres_folio=q).values(
+        'vide_codigo_id',
+        'pres_fecha_devolucion',
+        'usuario_devuelve',
+        'usuario_recibe',
+        'depr_estatus'
+    )
     context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
-
-    # q = int(request.GET.get("q"))
-    # queryset = DetallePrestamos.objects.filter(pres_folio=q).values('vide_codigo', 'pres_fecha_devolucion')
-    # prestamo = list(queryset)  # convertimos el queryset en una lista
-    # return JsonResponse({'prestamo': prestamo})
-
-
 
 @csrf_exempt
 def GetFolioPrestamo(request):
@@ -103,11 +164,6 @@ def GetFolioPrestamo(request):
         else:
             query = (Q(pres_folio__usua_clave__icontains=q) ) 
         queryset = queryset.filter(query)    
-
-    #list = []  
-    #for comp in querysetComp:
-        #consulta=Compensaciones.objects.filter(Q(compensacion = comp))
-       # list.append(CompToShow(comp.nombre + " (" + str(comp.numero -consulta.count()) +")", comp.pk ))    
 
     t = get_template('prestamos/folio_search.html')
     content = t.render(
@@ -122,8 +178,7 @@ def GetFolioPrestamo(request):
 def GetFolioDetail(request):
     id=request.POST.get("id").strip()
     detailPrestamo =DetallePrestamos.objects.get(pres_folio = id)
-    #videoDetail = MaestroCintas.objects.get(video_id =detailPrestamo.vide_clave )
-    # programaDetail = DetalleProgramas.objects.filter(video_cbarras=videoDetail.video_cbarras)
+
     t = get_template('prestamos/detalle_prestamos.html')
     content = t.render(
     {
@@ -133,115 +188,229 @@ def GetFolioDetail(request):
     })
     return HttpResponse(content)
 
-
-
-@csrf_exempt      
+@csrf_exempt
 def RegisterInVideoteca(request):
-    # usuario = request.POST['matricula']
-    # admin = request.user
-    # from django.db import connections
-    # cursor = connections['users'].cursor()
-    # cursor.execute("select nombres, apellido1, apellido2, activo from people_person where matricula = '"+ usuario + "'")
-    # row = cursor.fetchall()
-    # print(row[0][3])    
-    if request.method == 'POST':
-        print(request.POST['codigoBarras'])
-        now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
-        #datetime.datetime.now()
-        codigoBarras = request.POST['codigoBarras']
-        try:
-            error="Código no encontrado"
-            maestroCinta = MaestroCintas.objects.get(pk = codigoBarras)
-            error= "Busqueda en Maestro Cintas"
-           
-            error= "Busqueda en Videos"
-            detallesPrestamo = DetallePrestamos.objects.filter( Q(vide_clave = maestroCinta.video_id) )
-            detallesPrestamoMaster = DetallePrestamos.objects.filter(Q(vide_codigo = codigoBarras ))
-            #& Q(depr_estatus ='A')
-            error= "No se encontro en Prestamos"
-            if detallesPrestamo.count() > 0:
-                detallePrestamo = detallesPrestamo.latest('pres_folio')
-            elif detallesPrestamoMaster.count() > 0:
-                detallePrestamo = detallesPrestamoMaster.latest('pres_folio')
-            else:
-                print("Hay que revisar los registros de esté codigo de barras")
-                registro_data={"error": True, "errorMessage":"Hay que revisar los registros de esté codigo de barras"}
-                return JsonResponse(registro_data,safe=True)
-            
-            prestamo = Prestamos.objects.get(pres_folio= detallePrestamo.pres_folio_id)
+    usuario = request.POST['matricula']
+    admin = request.user
 
-            detallePrestamo.depr_estatus='I'
+    if request.method == 'POST':
+        codigoBarras = request.POST['codigoBarras']
+        now = datetime.now()
+
+        # Llamar a la función ValidateOutVideoteca para comprobar si hay cintas faltantes
+        validate_result = ValidateOutVideoteca(request)
+        if validate_result.get('error', False):
+            return JsonResponse(validate_result, safe=True)
+
+        try:
+            maestroCinta = MaestroCintas.objects.get(video_cbarras=codigoBarras)
+
+            detallesPrestamo = DetallePrestamos.objects.filter(
+                Q(vide_clave=maestroCinta.video_id) | Q(vide_codigo=codigoBarras)
+            )
+
+            if detallesPrestamo.exists():
+                detallePrestamo = detallesPrestamo.latest('pres_folio')
+            else:
+                print("Hay que revisar los registros de este código de barras")
+                registro_data = {
+                    "error": True,
+                    "errorMessage": "Hay que revisar los registros de este código de barras"
+                }
+                return JsonResponse(registro_data, safe=True)
+
+            prestamo = Prestamos.objects.get(pres_folio=detallePrestamo.pres_folio_id)
+
+            detallePrestamo.depr_estatus = 'I'
             detallePrestamo.pres_fecha_devolucion = now
-            # detallePrestamo.usuario_devuelve = usuario
-            detallePrestamo.usuario_recibe = 'M090077'
+            detallePrestamo.usuario_devuelve = usuario
+            detallePrestamo.usuario_recibe = admin.username
             detallePrestamo.save()
-            maestroCinta.video_estatus='En Videoteca'
+
+            maestroCinta.video_estatus = 'En Videoteca'
             maestroCinta.save()
 
-            prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id = prestamo.pk) & Q(depr_estatus ='A'))
-            if prestamosActivos.count == 0:
-                #VALIDAR SI AUN HAY PRESTAMOS ACTIVOS 
-                prestamo.pres_estatus ='I'
+            prestamosActivos = DetallePrestamos.objects.filter(Q(pres_folio_id=prestamo.pk) & Q(depr_estatus='X'))
+            if prestamosActivos.count() == 0:
+                prestamo.pres_estatus = 'I'
                 prestamo.pres_fecha_devolucion = now
                 prestamo.save()
 
-            registro_data={"error":False,"errorMessage":" Registro Exitoso!"}
+            registro_data = {
+                "error": False,
+                "errorMessage": "Registro Exitoso!"
+            }
+        except MaestroCintas.DoesNotExist:
+            print("El código de barras no existe en Maestro Cintas")
+            registro_data = {
+                "error": True,
+                "errorMessage": "El código de barras no existe en Maestro Cintas"
+            }
         except Exception as e:
-            registro_data={"error":True,"errorMessage":" No se dio de alta correctamente el reingreso: "+ error}
-           
-    return JsonResponse(registro_data,safe=True)
+            print("Error:", str(e))
+            registro_data = {
+                "error": True,
+                "errorMessage": "Ocurrió un error inesperado: " + str(e)
+            }
+        
+    return JsonResponse(registro_data, safe=True)
 
 @csrf_exempt  
 def ValidateOutVideoteca(request):
     if request.method == 'POST':
-        print(request.POST['codigoBarras'])
-        codigoBarras = request.POST['codigoBarras']
-        try:
-            maestroCinta = MaestroCintas.objects.get(pk = codigoBarras)
-            if maestroCinta.video_estatus =='En Videoteca':
-                registro_data={"error":False,"errorMessage":"Listo para prestamo"}
-            else:
-                registro_data={"error":True,"errorMessage":"El material solicitado se encuentra registrado con estatus: " + maestroCinta.video_estatus}
-        except Exception as e:
-            registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
-    return JsonResponse(registro_data,safe=True)
+        codigoBarras = request.POST.get('codigoBarras', '')
+        usuario = request.POST.get('usuario', '')
+
+        if not usuario or not codigoBarras:
+            registro_data = {
+                "error": True,
+                "errorMessage": "Debes ingresar un usuario y un código de barras"
+            }
+        else:
+            try:
+                maestroCinta = MaestroCintas.objects.get(pk=codigoBarras)
+                if maestroCinta.video_estatus == 'En Videoteca':
+                    fecha_actual = datetime.now().date()
+                    dias_habiles_encontrados = 0
+                    desplazamiento = timedelta(days=1)
+
+                    # Itero la fecha de los días hábiles tomando en cuenta los 7 días de la semana.
+                    while dias_habiles_encontrados < 7:
+                        fecha_actual -= desplazamiento
+                        # Hago el desplazamiento de los días para no tomar en cuenta los fines de semana. 
+                        if fecha_actual.weekday() < 5:
+                            dias_habiles_encontrados += 1
+
+                    # Convierto la fecha en formato legible.
+                    fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d')
+
+                    # Hago la consulta para validar los folios vencidos, haciendo
+                    # la comparación de pres_fecha_prestamo__lt a la fecha límite del préstamo.
+                    folios_vencidos = Prestamos.objects.filter(
+                        usua_clave=usuario,
+                        pres_fecha_prestamo__lt=fecha_vencimiento,
+                         
+                    ).values('pres_folio').distinct()  # Obtengo el valor del Folio a través del modelo
+
+                    print('foliosVenncidos',folios_vencidos)
+
+                    for folio in folios_vencidos:
+                        cintas_pendientes = DetallePrestamos.objects.filter(
+                            pres_folio_id=folio['pres_folio'],
+                            depr_estatus='X'
+                        ).values_list('vide_codigo_id', flat=True)
+
+                        cintas_faltantes = list(set(cintas_pendientes) - set([codigoBarras]))
+                
+                        if cintas_faltantes:
+                            registro_data = {
+                                "error": True,
+                                "errorMessage": "El usuario debe devolver las cintas faltantes antes de solicitar nuevos préstamos",
+                                "cintasFaltantes": cintas_faltantes
+                            }
+                            break
+                    else:
+                        # Verificar cintas pendientes por devolver
+                        cintas_pendientes = DetallePrestamos.objects.filter(
+                            depr_estatus='X',
+                            pres_fecha_devolucion__isnull=True,
+                            pres_folio__usua_clave=usuario
+                        ).values_list('vide_codigo__pk', flat=True)
+
+                        if codigoBarras in cintas_pendientes:
+                            registro_data = {
+                                "error": True,
+                                "errorMessage": "El usuario debe devolver todas las cintas pendientes antes de solicitar un nuevo préstamo",
+                                "cintasPendientes": list(cintas_pendientes)
+                            }
+                        else:
+                            registro_data = {
+                                "error": False,
+                                "successMessage": "Listo para préstamo",
+                                "fechaVencimiento": fecha_vencimiento
+                            }
+
+                else:
+                    registro_data = {
+                        "error": True,
+                        "errorMessage": "El código de barras no está disponible",
+                        'codigoBarras': codigoBarras
+                    }
+            except MaestroCintas.DoesNotExist:
+                registro_data = {
+                    "error": True,
+                    "errorMessage": "No se encontró el código de barras"
+                }
+    else:
+        registro_data = {
+            "error": True,
+            "errorMessage": "Solicitud inválida"
+        }
+
+    return JsonResponse(registro_data)
 
 @csrf_exempt      
 def RegisterOutVideoteca(request):
-    now = datetime.datetime(2022, 12, 29, 00, 00, 00, 0) 
-    #datetime.datetime.now()
+    now = datetime.now()
+
     if request.method == 'POST':
         usuario = request.POST['usuario']
+        admin = request.user
         data = json.loads(request.POST['codigos'])
-        for codigo in data:
-            maestroCinta = MaestroCintas.objects.get(pk = codigo)
 
-            prestamo = Prestamos()
-            prestamo.usua_clave = usuario
-            prestamo.pres_fechahora = now
-            prestamo.pres_fecha_prestamo = now
-            prestamo.pres_fecha_devolucion = now
-            prestamo.pres_estatus = 'X'
-            prestamo.save()
+        prestamo = Prestamos()
+        prestamo.usua_clave = usuario
+        prestamo.usvi_clave = admin 
+        prestamo.pres_fechahora = now
+        prestamo.pres_fecha_prestamo = now
+        prestamo.pres_fecha_devolucion = None
+        # prestamo.pres_fecha_devolucion = now + timedelta(days=7)
+        prestamo.pres_estatus = 'X'
+        prestamo.save()
+
+        pintaFolio = prestamo.pres_folio
+        
+        for codigo in data:
+            try:
+                maestroCinta = MaestroCintas.objects.get(pk=codigo)
+            except MaestroCintas.DoesNotExist:
+                return JsonResponse({'error': True, 'errorMessage': 'No se encontró el código de barras'}, safe=True)
 
             detPrestamos = DetallePrestamos()
             detPrestamos.pres_folio = prestamo
-            # detPrestamos.vide_clave = videos
             detPrestamos.depr_estatus = 'X'
+            detPrestamos.pres_fecha_devolucion = None
+            detPrestamos.usuario_devuelve = None
+            detPrestamos.usuario_recibe = None
+            detPrestamos.vide_codigo = maestroCinta
             detPrestamos.save()
-
+    
             maestroCinta.video_estatus = 'X'
             maestroCinta.save()
 
-        registro_data={"error":True,"errorMessage":"No se encontro el codigo de barras"}    
-    return JsonResponse(registro_data,safe=True)
+        registro_data = {"error": False, "errorMessage": "Listo para préstamo", 'Folio': pintaFolio}
+        return JsonResponse(registro_data, safe=True)
 
+    return JsonResponse({}, safe=True)
+
+@csrf_exempt   
 def EndInVideoteca(request):
-    usuario = request.POST['usuario']
-    data = json.loads(request.POST['codigos'])
+    usuario = request.POST.get('usuario')
+    data = request.POST.get('codigos') 
+
     from django.db import connections
     cursor = connections['users'].cursor()
-    cursor.execute("select a.nombres, a.apellido1, a.apellido2, a.extension_telefonica, a.email_institucional, b.nombre as Area, c.nombre as contratacion, a.activo from people_person as a join people_areaorganigrama as b  on a.cat_area_org_id = b.id  join people_contratacion as c on a.cat_contratacion_id = c.id where a.matricula = '"+ usuario + "'")
+    cursor.execute("select a.nombres, a.apellido1, a.apellido2, a.extension_telefonica, a.email_institucional, b.nombre as Area, c.nombre as contratacion, a.activo from people_person as a join people_areaorganigrama as b  on a.cat_area_org_id = b.id  join people_contratacion as c on a.cat_contratacion_id = c.id where a.matricula = %s", [usuario])
+
     row = cursor.fetchall()
-    print(row[0][3])   
-         
+    if row:
+        file = json_to_pdf(request, row, data, usuario)
+        if file:
+            registro_data = {"error": False, "file": file}
+        else:
+            registro_data = {"error": True, "errorMessage": "Error al generar archivo de devolución"}
+    else:
+        registro_data = {"error": True, "errorMessage": "No se encontraron registros para el usuario"}
+
+    return JsonResponse(registro_data, safe=True)
+

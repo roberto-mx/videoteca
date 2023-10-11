@@ -25,7 +25,7 @@ class CatStatus(models.Model):
 
 
 class FormatosCintas(models.Model):
-    form_clave = models.IntegerField('Formato de cinta', primary_key=True)
+    form_clave = models.IntegerField('Formato de cinta', primary_key=True)  
     form_descripcion = models.CharField('Formato de la cinta', max_length=25)
     form_duracion = models.CharField(max_length=10, blank=True, null=True)
     form_prefijo = models.CharField(max_length=15, blank=True, null=True)
@@ -59,10 +59,10 @@ class TipoSerie(models.Model):
                     
     def __str__(self):
         return self.tipo
-
-
+        
 class MaestroCintas(models.Model):
     video_id = models.IntegerField("Id")
+    # video_cbarras = models.CharField("Código de barras", max_length=12, primary_key=True)
     video_cbarras = models.CharField("Código de barras", max_length=12, primary_key=True)
     form_clave = models.ForeignKey(FormatosCintas, null=True, on_delete=models.SET_NULL)
     video_idproduccion = models.IntegerField("Id producción", blank=True, null=True)
@@ -91,10 +91,21 @@ class MaestroCintas(models.Model):
         db_table = 'maestro_cintas'
         verbose_name = 'Material videograbado'
         verbose_name_plural = 'Material videograbado'
-
+        
     def __str__(self):
         return self.video_cbarras
-
+    
+class ProgramaSeries(models.Model):
+    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, max_length=12)
+    codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
+    programa = models.CharField("Programa",max_length=150, blank=True, null=True)
+    serie = models.CharField("Serie",max_length=150, blank=True, null=True)
+    subtitulo_programa = models.CharField("Subtitulo de Programa",max_length=150, blank=True, null=True)
+    subtitulo_serie = models.CharField("Subtitulo de Serie",max_length=150, blank=True, null=True)
+    
+    class Meta:
+        db_table = 'programas_series'
+        verbose_name = 'Programas y Series'
 
 class DetalleProgramas(models.Model):
     vp_id = models.IntegerField("Id", primary_key=True)
@@ -196,7 +207,6 @@ class CalBloques(models.Model):
     class Meta:
         db_table = 'cal_bloques'
 
-
 class CalContenido(models.Model):
     vp_id = models.IntegerField()
     id_segmento = models.IntegerField()
@@ -236,7 +246,6 @@ class CalFichatec(models.Model):
     class Meta:
         db_table = 'cal_fichatec'
 
-
 class CargaMat(models.Model):
     folio_cb = models.CharField(primary_key=True, max_length=12)
     noproduccion = models.IntegerField()
@@ -251,7 +260,6 @@ class CargaMat(models.Model):
 
     class Meta:
         db_table = 'carga_mat'
-
 
 class CatArea(models.Model):
     id_area = models.IntegerField()
@@ -468,7 +476,7 @@ class PorIngresar(models.Model):
     fch_captura = models.DateTimeField()
 
     class Meta:
-        db_table = 'por_ingresar'
+        db_table = 'por_ingresar'   
 
 
 class Prestamos(models.Model):
@@ -477,7 +485,7 @@ class Prestamos(models.Model):
     usua_clave = models.CharField(max_length=10)
     pres_fechahora = models.DateTimeField()
     pres_fecha_prestamo = models.DateTimeField()
-    pres_fecha_devolucion = models.DateTimeField()
+    pres_fecha_devolucion = models.DateTimeField(null=True)
     pres_estatus = models.CharField(max_length=1)
 
     class Meta:
@@ -498,7 +506,7 @@ class DetallePrestamos(models.Model):
         db_table = 'detalle_prestamos'
 
 class Recupera(models.Model):
-    video_clave = models.CharField(max_length=10)
+    video_clave = models.CharField(max_length=10)   
     matricula = models.IntegerField()
     foliopres = models.IntegerField()
     fechapres = models.DateTimeField()
@@ -509,10 +517,10 @@ class Recupera(models.Model):
     class Meta:
         db_table = 'recupera'
 
-
 class RegistroCalificacion(models.Model):
     codigo_original = models.CharField(max_length=15, blank=True, null=True)
-    codigo_barras = models.CharField(max_length=12)
+    codigo_barras = models.CharField(max_length=12) 
+    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     serie = models.TextField(blank=True, null=True)
     programa = models.TextField(blank=True, null=True)
     subtitulo_programa = models.TextField(blank=True, null=True)
@@ -562,11 +570,11 @@ class RegistroCalificacion(models.Model):
     tiempodur = models.CharField(max_length=11, blank=True, null=True)
     orientacion = models.CharField(max_length=60, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
+    estatusCalif = models.CharField(max_length=1, blank=True)
 
     class Meta:
         db_table = 'registro_calificacion'
-
-
+        
 class RegistroStock(models.Model):
     codificiacion = models.CharField(max_length=15, blank=True, null=True)
     codigo_barras = models.CharField(max_length=12)
