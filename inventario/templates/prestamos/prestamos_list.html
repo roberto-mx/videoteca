@@ -69,54 +69,53 @@
     </div>
   </div>
 </div>
-  
-{% comment %} Modal Listar Cintas {% endcomment %}
-
-<div class="modal fade" id="modalCintas" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
+ 
+<!-- Modal -->
+<div class="modal fade" id="modalCintas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
-      <div class="modal-header text-center" style="background-color:#13322B;">
+      <div class="modal-header text-center" style="background-color:#245B40;">
         <h5 class="modal-title" id="modalAgregarLabel" style="color: white;"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i></h5>
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex justify-content-end">
-            <input type="text" id="inputDetalles" disabled>
-            <input type="text" id="inputEstatus"  size="15" disabled >
-            <input type="text" id="inputVencimiento"  size="28" disabled >
+            <input type="text" style="background:#FCFCFC" id="inputDetalles" disabled>
+            <input type="text" style="background:#FCFCFC" id="inputEstatus"  size="15" disabled >
+            <input type="text" style="background:#FCFCFC" id="inputVencimiento"  size="28" disabled >
           </div>
         </div>
+        {% comment %} <button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close"></button> {% endcomment %}
       </div>
-      
-      <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
-        <div class="modal-body" id="muestraData">
-          <table class="table table-bordered" id="muestraDataTable" name="DataTable">
-            <thead>
-              <tr>
-                {% comment %} Esta tabla se pinta en el jQuery {% endcomment %}
-              </tr>
-            </thead>
-            <tbody>
-              {% comment %} Aquí no va nada, todo lo puse en mi JavaScript {% endcomment %}
-            </tbody>
-          </table>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm active"  data-bs-dismiss="modal">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-              <span>Salir</span>
-              <i class="fa fa-reply-all" style="color: white;"></i>
-            </div>
-          </button>
-          <button type="button" class="btn btn-button btn-sm"  style="background: #9D2449" id="btn-descargar-pdf">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-              <span  style="color: white;">Exportar</span>
-              <i class="fas fa-file-pdf"  style="color: white;"></i> 
-            </div>
-          </button>
-        </div>
+      <div class="modal-body" id="muestraData">
+        <table class="table table-bordered"  name="DataTable">
+          <thead>
+            <tr>
+              {% comment %} Esta tabla se pinta en el jQuery {% endcomment %}
+            </tr>
+          </thead>
+          <tbody>
+            {% comment %} Aquí no va nada, todo lo puse en mi JavaScript {% endcomment %}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm active"  data-bs-dismiss="modal">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span>Salir</span>
+            <i class="fa fa-reply-all" style="color: white;"></i>
+          </div>
+        </button>
+        <button type="button" class="btn btn-button btn-sm"  style="background: #9D2449" id="btn-descargar-pdf">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span  style="color: white;">Exportar</span>
+            <i class="fas fa-file-pdf"  style="color: white;"></i> 
+          </div>
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+{% comment %}  {% endcomment %}
 
 {% comment %}  {% endcomment %}
 <div class="modal fade"  id="modalIn">
@@ -135,12 +134,6 @@
             </div>
           </div>
           <div class="modal-footer">
-            {% comment %} <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModalReturn">
-              <div style="display: flex; flex-direction: column; align-items: center;">
-                <span>Cerrar</span>
-                <i class="fa fa-reply-all"></i>
-              </div>
-            </button> {% endcomment %}
 
             <button type="button" class="btn btn-secondary btn-sm active" data-bs-dismiss="modal">
               <div style="display: flex; flex-direction: column; align-items: center;">
@@ -167,7 +160,6 @@
           </div>
           <div class="form-group">
               <div class="alert alert-success" id="ins_success" style="display:none">
-
               </div>
                <div class="alert alert-danger" id="ins_error" style="display:none">
 
@@ -213,14 +205,13 @@
             </button> 
             
             <table id="resultTableOut">
+              
             </table>
           </div>
           <div class="form-group">
               <div class="alert alert-success" id="out_success" style="display:none">
-
               </div>
                <div class="alert alert-danger" id="out_error" style="display:none">
-
               </div>
           </div>  
         </div><!-- /.modal-content -->
@@ -326,7 +317,7 @@ $(document).ready(function() {
       });
     }
   });
-  
+
 });
 
 $('#datatablePrestamos').on('click', '.ver-detalle', function() {
@@ -462,7 +453,6 @@ $("#closeModalOut").click(function(){
    cleanTableOut(); 
 });
 
-
 $("#continuarPrestamo").hide();
 
 $("#continuarPrestamo").click(function() {
@@ -528,7 +518,6 @@ function guardarRegistro(usuario, codigoBarras) {
     }
   });
 }
-
 //Boton de entrega
 
 $("#endReturn").click(function() {
@@ -723,16 +712,14 @@ function addItemOut() {
                 '<td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td>' +
                 '<td>Código: ' + codigoBarras + '</td>' +
                 '<td>Resultado: ' + response.successMessage + '</td>' +
-                '<td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td>' +
+                '<td><button class="btn btn-default btn-sm eliminar" style="background:#9D2449" type="button"><span style="color:white;" class="glyphicon glyphicon-remove" aria-hidden="true">Eliminar</span></button></td>' +
                 '</tr>';
-              $('#resultTableOut').append(successRow); // Utiliza .append() en lugar de .prepend()
-              console.error(1)
+              $('#resultTableOut').append(successRow); 
               $("#continuarPrestamo").show();
-            } else {
+            } 
+            else {
               alertMessage('error', 'Mensaje de éxito no proporcionado en la respuesta.', '¡Alto!');
             }
-            
-
           }
           $('#searchBarCodeOut').val("").focus();
         }
@@ -751,7 +738,6 @@ function addItemOut() {
 }
 
 //Acaba validacion
-
 function f_valida_repetido(codigoBarras){
   var v_valor = 0;
   if ($('#resultTableOut tbody tr').length > 0){
@@ -770,7 +756,7 @@ function get_data(table){
   //'#resultTableOut tbody tr'
   if ($(table).length > 0){
     $(table).each(function(){
-              data.push($(this).find('input.codbarras').val());
+      data.push($(this).find('input.codbarras').val());
     });
   }           
   return data;      
@@ -808,15 +794,9 @@ $(document).on("click",".eliminar",function(){
     var id =this_html.parent().parent().children().eq(0).text();
     //console.log(this_html.parent().parent().children().eq(0).text());
     this_html.parent().parent().remove();
-    /* var opcion = confirm("Se va a dar eliminar la Compensacion registrada al empleado: "+ empleado +". ¿Es correcto?");
-    if (opcion == true) {
-    }*/
+
 });    
 
 </script>
-<style>
-  .detalle ul{
-    display:none;
-  }
-</style>
+
 {% endblock %}
