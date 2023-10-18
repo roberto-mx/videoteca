@@ -46,7 +46,7 @@
             </div>
             
             <div class="d-flex justify-content-end ">
-              <a href="/inventario" class="btn-button"  title="Inventario">
+              <a href="{% url 'consultaInventario' %}" class="btn-button"  title="Inventario">
                 <span> Inventario </span>
               </a>                  
               <a href="{% url 'prestamos_list' %}" class="btn-button" title="Préstamo">
@@ -57,7 +57,15 @@
               </a>                  
               <a href="https://www.gob.mx/tramites" class="btn-button" title="Tramites">
                 <span> Tramites </span>
-              </a>        
+              </a>    
+
+              <a href="{% url 'consultaFormulario' %}" class="btn-button" title="Calificación">
+                <span> Calificacion </span>
+              </a>   
+
+              {% comment %} <a href="{% url 'inventarioRegistro' %}" class="btn-button" title="Inventario2">
+                <span> Inventario2 </span>
+              </a>         {% endcomment %}
        
               <a href="{% url 'logout' %}" class="btn-button" title="Cerrar sesión">
                   

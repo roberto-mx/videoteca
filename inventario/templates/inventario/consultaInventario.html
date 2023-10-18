@@ -1,0 +1,130 @@
+{% extends 'templateBase.html' %}
+
+{% block titulo %} Calificación {% endblock %}
+
+{% block Contenido %}
+
+<div class="card col-12 mt-5">
+  <div class="card-header text-center" style="background-color:#F1F7F8;">
+    <strong>Consulta Inventario</strong>
+    <div class="d-flex justify-content-between">
+      <div>
+        <a name="" id="" class="btn btn-form btn-sm" href="{% url 'inventarioRegistro' %}" style="background:#9D2449" role="button">
+          <i class="fa-solid fa-circle-plus" style="color:white;"></i>
+          <span style="color: white;">Agregar Cintas</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <form role="form" class="mt-3 d-flex justify-content-center" id="" >
+    <div class="row">
+      <div class="col-md-2">
+          <input type="text" id="q" name="q" value="{{request.GET.q}}" class="form-control" placeholder="Código de barras">
+      </div>
+      <div class="col-md-2">
+        <select class="form-control" id="formato" name="formato">
+          <option value="">-- Formato --</option>
+          {% for formato in formatos_list %}
+            {% if formato_filter == formato.form_clave %}
+              <option value="{{ formato.form_clave }}" selected="selected">{{ formato.form_descripcion }}</option>
+            {% else %}
+              <option value="{{ formato.form_clave }}">{{ formato.form_descripcion }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-control" name="tipo">
+          <option value="">-- Tipo --</option>
+          {% for tipo in tipo_list %}
+            {% if tipo_filter == tipo.id_status %}
+              <option value="{{ tipo.id_status }}" selected="selected">{{ tipo.status }}</option>
+            {% else %}
+              <option value="{{ tipo.id_status }}">{{ tipo.status }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+
+        <select class="form-control" name="status">
+          <option value="">-- Estatus --</option>
+          <option value="1" {%if status_filter == '1' %} selected="selected"{%endif%}>En Videoteca</option>
+          <option value="2" {%if status_filter == '2' %} selected="selected"{%endif%}>En Calificacion</option>
+          <option value="3" {%if status_filter == '3' %} selected="selected"{%endif%}>Cinta Extraviada</option>
+          <option value="4" {%if status_filter == '4' %} selected="selected"{%endif%}>Baja por Daño</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input type="number" name="anio" class="form-control" placeholder="Año ingreso" value="{{anio_filter}}">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-default btn-sm active" style="background:#18463b" type="submit">
+          <span style="color:white">Buscar</span>
+          <i class='fas fa-search' style="color: white"></i>
+        </button>
+        <button class="btn btn-default btn-sm active" style="background:#6A7D83" type="submit" id="cleanInventari">
+          <span style="color:white">Limpiar</span>
+          <i class="fas fa-eraser" style="color: white;"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div class="card-body">
+    <div class="table-responsive"> 
+      <table class="table table-hover mt-2" id="tableMaestroCintas">
+        <thead>
+          <tr>
+            <th>Código de barras</th>
+            <th>Formato de la cinta</th>
+            <th>Tipo de video</th>
+            <th>Estatus</th>
+            <th>Fecha ingreso</th>
+            
+          </tr>
+        </thead>
+        {% if mcintas_list %}
+        <tbody>
+          {% for cinta in mcintas_list %}
+          <tr>
+            <td><a href="/inventario/cintas/{{cinta.video_cbarras}}/">{{ cinta.video_cbarras }}</a></td>
+            <td>{{ cinta.video_codificacion }}</td>
+            <td>{{ cinta.video_tipo|default:"" }}</td>
+            <td>{{ cinta.video_estatus|default:"" }}</td>
+            <td>{{ cinta.video_fingreso|default_if_none:"" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+           
+<script>
+$(document).ready(function () {
+    $("#cleanInventari").on("click", function (e) {
+        e.preventDefault(); // Evita que se envíe el formulario
+
+        // Limpiar los campos de búsqueda
+        $("#q").val("");
+        $("#formato").val("");
+        $("#tipo").val("");
+        $("#status").val("");
+        $("#anio").val("");
+
+        window.location.href = "{% url 'consultaInventario' %}";
+    });
+
+    $('#tableMaestroCintas').DataTable({
+        searching: false,
+        ...tableInventario
+        
+    });
+});
+</script>
+
+
+
+{% endblock %}

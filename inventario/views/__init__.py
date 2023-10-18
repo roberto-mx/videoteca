@@ -26,6 +26,11 @@ from .maestrocintas import (
     
 )
 
+from.inventarioTemplate import(
+    inventarioRegistro,
+    consultaInventario
+)
+
 from .formularios import (
     formulario,
     editar,

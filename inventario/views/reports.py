@@ -261,7 +261,11 @@ class GENERATE(FPDF):
     def generate_Table(self, data):
         for row in data:
             self.cell(60, 10, str(row['vide_codigo_id']), 1)
-            fecha_devolucion = row['pres_fecha_devolucion'].strftime('%d-%m-%Y')
+            fecha_devolucion = row['pres_fecha_devolucion']
+            if fecha_devolucion is not None:
+                fecha_devolucion = fecha_devolucion.strftime('%d-%m-%Y')
+            else:
+                fecha_devolucion = "Fecha no definida"
             self.cell(60, 10, str(row['usuario_devuelve']), 1)
             self.cell(60, 10, fecha_devolucion, 1)
             self.cell(60, 10, str(row['usuario_recibe']), 1)
@@ -510,7 +514,8 @@ def generate_pdf_resgister_folio(request):
         return response
 
     # Agregar una respuesta HttpResponse adicional para manejar el caso en que matri sea None
-    return HttpResponse("No se encontró la matrícula correspondiente.")
+    return JsonResponse("No se encontró la matrícula correspondiente.")
+    #return HttpResponse("No se encontró la matrícula correspondiente.")
 
  # ---------------------------------------------------------------------------------------------------------------------------#
 
