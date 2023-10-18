@@ -19,22 +19,24 @@ const messageAlerta = (type, message, title, button) => {
   });
 };
 
-const alertMessageContent = (title, text, icon, showCancelButton, confirmButtonColor, cancelButtonColor) => {
+const alertMessageContent = (type, message, title, confirmButtonColor, cancelButtonColor) => {
   Swal.fire({
+    icon: type,
+    text: message,
     title: title,
-    text: text,
-    icon: icon,
-    showCancelButton: showCancelButton,
     confirmButtonColor: confirmButtonColor,
     cancelButtonColor: cancelButtonColor,
-    confirmButtonText: 'Si, continuar!'
+    showCancelButton: true, // Mostrar el botón de cancelar
+    confirmButtonText: 'Si, continuar!',
+    cancelButtonText: 'Cancelar', // Texto del botón de cancelar
   }).then((result) => {
     if (result.isConfirmed) {
-      Swal.fire(
-        'Exportado!',
-        'Su archivo a sido exportado.',
-        'success'
-      )
+      Swal.fire({
+        icon: 'success',
+        title: '¡Muy bien!',
+        text: 'Se inserto una nueva cinta.',
+      })
     }
   });
 };
+
