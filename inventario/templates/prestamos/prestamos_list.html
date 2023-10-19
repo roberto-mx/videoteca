@@ -13,7 +13,7 @@
             </div>
           </a>
 
-          <a type="button" class="btn btn-default btn-sm" style="background: #13322B" id="buttonIn" {{'url'}} data-bs-toggle="modal" data-bs-target="#modalIn">
+          <a type="button" class="btn btn-default btn-sm" style="background: #13322B" data-bs-toggle="modal" data-bs-target="#modalIn">
             <div style="display: flex; flex-direction: column; align-items: center;">
               <span style="color: white;">Devolución con Código de Barras</span>
             </div>
@@ -204,7 +204,7 @@
               </div>
             </button> 
             
-            <table id="resultTableOut">
+            <table id="resultTableOut" >
               
             </table>
           </div>
@@ -227,7 +227,7 @@ $(document).ready(function() {
     const pres_folio = busquedaVal; 
 
     if (busquedaVal === '') {
-      alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', 'Oops!', 'swal-wide');
+      alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', '¡Ups!', 'swal-wide');
       return; 
     }
 
@@ -237,7 +237,7 @@ $(document).ready(function() {
       dataType: 'json',
       success: function(res) {
         if (res.length === 0) {
-          alertMessage('warning', 'El código de barras o número de folio ingresado no existe.', 'Oops!', 'swal-wide');
+          alertMessage('warning', 'El código de barras o número de folio ingresado no existe.', '¡Ups!', 'swal-wide');
           return;
         }
 
@@ -372,7 +372,7 @@ $('#datatablePrestamos').on('click', '.ver-detalle', function() {
           let tbody = $('<tbody>');
 
           if ($('li', data).length == 0) {
-            alertMessage('info', 'Solo hay esa cinta!', 'Oops!');
+            alertMessage('info', 'Solo hay esa cinta!', '¡Ups!');
             $("#modalCintas").modal('hide');
           }
 
@@ -420,11 +420,6 @@ $('#searchFolio').keyup(function(e){
     }
 });
 
-$("#buttonIn").click(function(){
-  setTimeout(function() { $('#searchUsuarioIn').val("").focus() }, 1000);
-  
-});
-
 $("#buttonOut").click(function(){
  
   setTimeout(function() { $('#searchUsuarioOut').val("").focus() }, 1000);
@@ -470,19 +465,19 @@ $("#continuarPrestamo").click(function() {
     confirmButtonText: 'Sí, continuar'
   }).then((result) => {
     if (result.isConfirmed) {
-      guardarRegistro(usuario, codigoBarras);
-      $button.hide(); // Oculta el botón utilizando la referencia guardada
+      guardarRegistro(usuario, codigoBarras, $button);
     }
   });
 });
 
 function guardarRegistro(usuario, codigoBarras) {
+  const dataToSend = JSON.stringify(get_data('#resultTableOut'));
+
   $.ajax({
-    data: {'usuario': usuario, 'codigos': JSON.stringify(get_data('#resultTableOut tbody tr'))},
+    data: {'usuario': usuario, 'codigos': dataToSend},
     url: "{% url 'registro_salida_videoteca' %}",
     type: 'POST',
     success: function(data) {
-   
       // Verificar si existe el error
       if (data.error) {
         $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
@@ -518,6 +513,7 @@ function guardarRegistro(usuario, codigoBarras) {
     }
   });
 }
+
 //Boton de entrega
 
 $("#endReturn").click(function() {
@@ -671,6 +667,7 @@ $(document).on("click",".glyphicon-plus",function(){
 
 //Validación de prestamos
 function addItemOut() {
+  console.log('Evento keyup disparado');
   const codigoBarras = $('#searchBarCodeOut').val();
   const usuario = $('#searchUsuarioOut').val();
 
@@ -708,17 +705,11 @@ function addItemOut() {
           } else {
             // Registro exitoso
             if (response.successMessage) {
-              const successRow = '<tr class="alert alert-success">' +
-                '<td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td>' +
-                '<td>Código: ' + codigoBarras + '</td>' +
-                '<td>Resultado: ' + response.successMessage + '</td>' +
-                '<td><button class="btn btn-default btn-sm eliminar" style="background:#9D2449" type="button"><span style="color:white;" class="glyphicon glyphicon-remove" aria-hidden="true">Eliminar</span></button></td>' +
-                '</tr>';
-              $('#resultTableOut').append(successRow); 
+              $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.successMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
               $("#continuarPrestamo").show();
-            } 
-            else {
+            } else {
               alertMessage('error', 'Mensaje de éxito no proporcionado en la respuesta.', '¡Alto!');
+              
             }
           }
           $('#searchBarCodeOut').val("").focus();
@@ -744,7 +735,7 @@ function f_valida_repetido(codigoBarras){
    
       $('#resultTableOut tbody tr').each(function(){
         if ($(this).find('input.codbarras').val() == codigoBarras) {
-          alertMessage('info', `Ya se a registrado ${codigoBarras}.`, 'Oops!');
+          alertMessage('info', `Ya se a registrado ${codigoBarras}.`, '¡Ups!');
           v_valor = 1;
         }
       });

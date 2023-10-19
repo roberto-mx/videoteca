@@ -14,7 +14,7 @@ import os
 import io
 from pathlib import Path
 from django.db.models import Q
-# from PyPDF2 import PdfWriter
+from PyPDF2 import PdfWriter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.pagesizes import letter, landscape
 from django.db import connections
@@ -261,20 +261,32 @@ class GENERATE(FPDF):
     def generate_Table(self, data):
         for row in data:
             self.cell(60, 10, str(row['vide_codigo_id']), 1)
-            fecha_devolucion = row['pres_fecha_devolucion']
-            if fecha_devolucion is not None:
-                fecha_devolucion = fecha_devolucion.strftime('%d-%m-%Y')
+              # Comprueba si pres_fecha_devolucion no es None 
+            if row['pres_fecha_devolucion']:
+                fecha_devolucion = row['pres_fecha_devolucion'].strftime('%d-%m-%Y')
             else:
-                fecha_devolucion = "Fecha no definida"
+                fecha_devolucion = ""  # Maneja el caso en que sea None
+            
             self.cell(60, 10, str(row['usuario_devuelve']), 1)
             self.cell(60, 10, fecha_devolucion, 1)
             self.cell(60, 10, str(row['usuario_recibe']), 1)
+            
             if row['depr_estatus'] == 'I':
                 self.cell(25, 10, "Entregado", 1)
             else:
-                self.cell(25, 10, "En prestamo", 1)
+                self.cell(25, 10, "En préstamo", 1)
 
             self.ln(10)
+            # fecha_devolucion = row['pres_fecha_devolucion'].strftime('%d-%m-%Y')
+            # self.cell(60, 10, str(row['usuario_devuelve']), 1)
+            # self.cell(60, 10, fecha_devolucion, 1)
+            # self.cell(60, 10, str(row['usuario_recibe']), 1)
+            # if row['depr_estatus'] == 'I':
+            #     self.cell(25, 10, "Entregado", 1)
+            # else:
+            #     self.cell(25, 10, "En prestamo", 1)
+
+            # self.ln(10)
 
        
 def generar_pdf_modal(request):
@@ -514,8 +526,7 @@ def generate_pdf_resgister_folio(request):
         return response
 
     # Agregar una respuesta HttpResponse adicional para manejar el caso en que matri sea None
-    return JsonResponse("No se encontró la matrícula correspondiente.")
-    #return HttpResponse("No se encontró la matrícula correspondiente.")
+    return HttpResponse("No se encontró la matrícula correspondiente.")
 
  # ---------------------------------------------------------------------------------------------------------------------------#
 
