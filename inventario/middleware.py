@@ -29,7 +29,7 @@ class GroupRedirectMiddleware:
             elif request.user.groups.filter(name='calificacion').exists():
                 # si el usuario accede a otra ruta que no sea de calificaciones se le redirige a consulta formulario
                 if (
-                    request.path != reverse('consultaFormulario') and
+                  #  request.path != reverse('consultaFormulario') and
                     not request.path.startswith('/calificaciones/agregar/') and
                     not request.path.startswith('/calificaciones/editar/') and
                     not request.path.startswith('/calificaciones/eliminar/') and
