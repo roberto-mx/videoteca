@@ -18,7 +18,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+      # - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+      - /var/lib/postgresql/backups/recursoshumanos.sql:/docker-entrypoint-initdb.d/recursoshumanos.sql
       - postgres_data:/var/lib/postgresql/data  
 
   web:
