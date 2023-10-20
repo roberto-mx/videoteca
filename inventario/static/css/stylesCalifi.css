@@ -2,14 +2,65 @@
   background-color: #18463b; /* Color de fondo de las celdas de encabezado */
   color: white; /* añadido para cambiar el color de las letras */
   }
+  
   #datatable td {
     white-space:inherit;
+  }
+
+#muestraData th {
+  background-color: #18463b; /* Color de fondo de las celdas de encabezado */
+  color: white; /* añadido para cambiar el color de las letras */
+  }
+
+  #muestraData td {
+    white-space:inherit;
+  }
+  
+#tableMaestroCintas th {
+  background-color: #1d5248; /* Color de fondo de las celdas de encabezado */
+  color: rgb(255, 246, 246); /* añadido para cambiar el color de las letras */
+}
+
+#tableMaestroCintas td {
+    white-space:inherit;
+}
+  
+#datatablePrestamos th {
+  background-color: #18463b; /* Color de fondo de las celdas de encabezado */
+  color: white; /* añadido para cambiar el color de las letras */
+  }
+  #datatablePrestamos td {
+    white-space:inherit;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  .dataTable {
+    padding: 0;
+
+  }
+
+  td {
+    padding: 0;
+    border: none;
+  }
+
+  .estatus-alert {
+    margin: 2;
+    padding: 10px;
+  }
+
+
+  th, td {
+    border-right: 1px solid #dddddd;
   }
   
   #tablePrograma th {
   background-color: #18463b; /* Color de fondo de las celdas de encabezado */
   color: white; /* añadido para cambiar el color de las letras */
   }
+
   #tablePrograma td {
     white-space:inherit;
   }
@@ -18,6 +69,7 @@
   background-color: #18463b; /* Color de fondo de las celdas de encabezado */
   color: white; /* añadido para cambiar el color de las letras */
   }
+
   #editTablePrograma td {
     white-space:inherit;
   }
