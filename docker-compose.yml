@@ -14,12 +14,12 @@ services:
   rh:
     image: postgres:14
     environment:
-      - POSTGRES_DB=recursosHumanos
+      - POSTGRES_DB=recursos_humanos
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
       # - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - /var/lib/postgresql/backups/recuhum100923.backup:/docker-entrypoint-initdb.d/recuhum100923.backup
+      - /var/lib/postgresql/backups/recursos_humanos.backup:/docker-entrypoint-initdb.d/recursos_humanos.backup
       - postgres_data:/var/lib/postgresql/data  
 
   web:
