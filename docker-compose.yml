@@ -23,7 +23,7 @@ services:
       - "5433:5432"
     volumes:
       # - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - /var/lib/postgresql/backups/recursoshumanos.backup:/docker-entrypoint-initdb.d/recursoshumanos.backup
+      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data  
   web:
     build:
