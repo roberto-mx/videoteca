@@ -390,11 +390,12 @@ $('#datatablePrestamos').on('click', '.ver-detalle', function() {
               ? row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>')
               : row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>')
             tbody.append(row);
+            
           });
           tabla.append(thead).append(tbody);
           $('#muestraData').html(tabla);
           tabla.DataTable({
-            ...len
+             
           });
         },
       });

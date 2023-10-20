@@ -78,8 +78,6 @@ urlpatterns = [
     path('cintas/inventarioRegistro/', inventarioRegistro, name='inventarioRegistro'),
     path('cintas/consultaInventario/', consultaInventario, name='consultaInventario'),
 
-
-
     # Aquí ira el tercer pdf
     path('prestamos/generate_pdf_register', generate_pdf_resgister_folio, name='generate_pdf_resgister_folio'),
     path('search_folio/<int:pk>', GetFolioPrestamo, name='search_folio_prestamo'),
