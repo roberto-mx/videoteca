@@ -1,25 +1,15 @@
-import textwrap, operator, base64, json, datetime
+import  json, datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from pyreportjasper import PyReportJasper
-from django.core import serializers
 from fpdf import FPDF
-from io import BytesIO
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
 from ..models import Prestamos, DetallePrestamos, MaestroCintas, DetalleProgramas, Videos
 from django.http.response import HttpResponse, JsonResponse
 import os
-import io
-from pathlib import Path
 from django.db.models import Q
-from PyPDF2 import PdfWriter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.pagesizes import letter, landscape
 from django.db import connections
 import json
-from django.http import JsonResponse
 from datetime import datetime
 from django.db import connections
 
