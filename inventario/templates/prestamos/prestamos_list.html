@@ -1,127 +1,128 @@
-{% extends '__basePrestamos.html' %}
+{% extends 'templateBase.html' %}
 
-{% block content %}
-<div class="card">
-  <nav class="navbar bg-body-tertiary">
-    <form class="container-fluid justify-content-start">
-      <a type="button" class="btn btn-default btn-sm" id="buttonOut" data-toggle="modal" data-target="#modalOut">
-        <div style="display: flex; flex-direction: column; align-items: center;">
-          <span>Préstamo con Código de Barras</span>
-          <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
-        </div>
-      </a>
+{% block Contenido %}
 
-      <a type = "button" class="btn btn-danger btn-sm"  id="buttonIn" {{'url'}} data-toggle="modal" data-target="#modalIn">
-        <div style="display: flex; flex-direction: column; align-items: center;">
-          <span>Devolución con Código de Barras</span>
-          <i class="fa fa-barcode" style="font-size:18px;color:black"></i>
-        </div>
-      </a>
-      
-      <button id = "btn-generar-pdf" class="btn btn-primary btn-sm"  type = "button">
-        <div style="display: flex; flex-direction: column; align-items: center;">
-          <span>Exportar Tabla PDF</span>
-          <i class="fas fa-file-pdf" style="font-size:18px;"></i>
-        </div>
-      </button>
-    </form>
-  </nav>
-</div>
-
-<div class="search-container" style="display: flex; justify-content: flex-end;">
-  <input type="text" required="" class="form-control ms-auto search-input" placeholder="Buscar" id="busqueda">
-</div>
-
-<table  class="table table-striped" id="TablePrestamo">
-  <thead>
-    <tr>
-      <th>Detalles</th>
-      <th>Folio Préstamo</th>
-      <th>Usuario</th>
-      <th>Fecha-Hora-Préstamo</th>
-      <th>Devolución</th>
-      <th>Estatus</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for data in prestamos   %} 
-      <tr>
-          <td></td>
-          <td>{{ data.pres_folio }} </td>
-          <td>{{ data.usua_clave }} </td>
-          <td>{{ data.pres_fechahora }} </td>
-          <td>
-            {% if data.pres_fecha_devolucion %}
-              {{ data.pres_fecha_devolucion }}
-            {% else %}
-              No ha habido devolución
-            {% endif %}
-          </td>
-          <td>{{ data.pres_estatus }}</td>
-      </tr>
-      {% empty %}
-    {% endfor %}
-  </tbody> 
-</table>
-
-{% comment %} Modal Listar Cintas {% endcomment %}
-
-<div class="modal fade" id="modalCintas">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title mb-3" style="margin-bottom: 0;">
-          <div style="display: flex; flex-direction: column; align-items: center;">
-            <span>Lista de Cintas</span>
-            <div style="margin-top: 10px;">
-              <i class="fa-sharp fa-solid fa-photo-film"></i>
+<div class="card mt-3">
+  <div class="card-header text-center" style="background: #F1F7F8">
+    <div class="d-flex justify-content-between">
+      <div>
+        <form class="container-fluid justify-content-start">
+          <a type="button" class="btn btn-default btn-sm" style="background: #b38e5d" id="buttonOut" data-bs-toggle="modal" data-bs-target="#modalOut">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Préstamo con Código de Barras</span>
             </div>
-          </div>
-        </h4>
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="d-flex justify-content-end">
-            <input type="text" id="inputDetalles" disabled>
-            <input type="text" id="inputEstatus"  size="15" disabled >
-            <input type="text" id="inputVencimiento"  size="28" disabled >
-             
-          </div>
-          <div class="d-flex justify-content-end">
-          </div> 
-        </div>
+          </a>
+
+          <a type="button" class="btn btn-default btn-sm" style="background: #13322B" data-bs-toggle="modal" data-bs-target="#modalIn">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Devolución con Código de Barras</span>
+            </div>
+          </a>
+
+          <button id="btn-generar-pdf" class="btn btn-button btn-sm" type="button" style="background: #9D2449">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Exportar Tabla PDF</span>
+              
+            </div>
+          </button>
+        </form>
       </div>
-      
-      <div class="modal-body" style="overflow-y: auto; max-height: 500px;">
-        <div class="modal-body" id="muestraData">
-          <table class="table table-bordered" id="muestraDataTable" name="DataTable">
+    </div>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title text-center">*** Préstamos ***</h4>
+    <div class="card-body">
+      <div class="col-md-12">
+          <input type="text" required="" class="form-control ms-auto search-input" placeholder="Buscar" id="busqueda">
+          <table class="table table-striped" id="datatablePrestamos">
             <thead>
               <tr>
-                {% comment %} Esta tabla se pinta en el jQuery {% endcomment %}
+                <th>Detalles</th>
+                <th>Folio Préstamo</th>
+                <th>Usuario</th>
+                <th>Fecha-Hora-Préstamo</th>
+                <th>Devolución</th>
+                <th>Estatus</th>
               </tr>
             </thead>
             <tbody>
-              {% comment %} Aquí no va nada, todo lo puse en mi JavaScript {% endcomment %}
+              {% for data in prestamos %}
+              <tr>
+                <td></td>
+                <td>{{ data.pres_folio }}</td>
+                <td>{{ data.usua_clave }}</td>
+                <td>{{ data.pres_fechahora }}</td>
+                <td>
+                  {% if data.pres_fecha_devolucion %}
+                  {{ data.pres_fecha_devolucion }}
+                  {% else %}
+                  No ha habido devolución
+                  {% endif %}
+                </td>
+                <td>{{ data.pres_estatus }}</td>
+              </tr>
+              {% empty %}
+              {% endfor %}
             </tbody>
           </table>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal -->
+<div class="modal fade" id="modalCintas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header text-center" style="background-color:#245B40;">
+        <h5 class="modal-title" id="modalAgregarLabel" style="color: white;"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i></h5>
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex justify-content-end">
+            <input type="text" style="background:#FCFCFC" id="inputDetalles" disabled>
+            <input type="text" style="background:#FCFCFC" id="inputEstatus"  size="15" disabled >
+            <input type="text" style="background:#FCFCFC" id="inputVencimiento"  size="28" disabled >
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModal">
-            <i class="fa fa-reply-all"></i> Salir
-          </button>
-          <button type="button" class="btn btn-primary btn-sm active" id="btn-descargar-pdf">
-            <i class="fas fa-file-pdf"></i> Exportar a PDF
-          </button>
-        </div>
+        {% comment %} <button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close"></button> {% endcomment %}
+      </div>
+      <div class="modal-body" id="muestraData">
+        <table class="table table-bordered"  name="DataTable">
+          <thead>
+            <tr>
+              {% comment %} Esta tabla se pinta en el jQuery {% endcomment %}
+            </tr>
+          </thead>
+          <tbody>
+            {% comment %} Aquí no va nada, todo lo puse en mi JavaScript {% endcomment %}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm active"  data-bs-dismiss="modal">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span>Salir</span>
+            <i class="fa fa-reply-all" style="color: white;"></i>
+          </div>
+        </button>
+        <button type="button" class="btn btn-button btn-sm"  style="background: #9D2449" id="btn-descargar-pdf">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span  style="color: white;">Exportar</span>
+            <i class="fas fa-file-pdf"  style="color: white;"></i> 
+          </div>
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 {% comment %}  {% endcomment %}
+
+{% comment %}  {% endcomment %}
 <div class="modal fade"  id="modalIn">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Ingresar Devolución por Código de Barras</h4>
+          <div class="modal-header text-center" style="background-color:#13322B;">
+            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Devolución <i class='fas fa-hand-holding'></i></h5>
           </div>
           
           <div class="modal-body">
@@ -133,32 +134,32 @@
             </div>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-danger btn-sm active"  id="cleanTableReturn">
+
+            <button type="button" class="btn btn-secondary btn-sm active" data-bs-dismiss="modal">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span>Cerrar</span>
+                <i class="fa fa-reply-all" style="color: white;"></i>
+              </div>
+            </button>
+
+              <button type="button" class="btn btn-default btn-sm" style="background: #41ADCD"  id="cleanTableReturn">
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                  <span>Limpiar</span>
-                  <i class="fas fa-eraser"></i>
+                  <span style="color: white;">Limpiar</span>
+                  <i class="fas fa-eraser" style="color: white;"></i>
                 </div>
               </button>
 
-              <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModalReturn">
+              <button type="button" class="btn btn-primary btn-sm active" id="endReturn"   style="background: #13322B">
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                  <span>Cerrar</span>
-                  <i class="fa fa-reply-all"></i>
+                  <span style="color: white;">Finalizar Entrega</span>
+                  <i class='fas fa-hand-holding' style="color: white;"></i>
                 </div>
               </button>
-
-              <button type="button" class="btn btn-primary btn-sm active" id="endReturn">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                  <span>Finalizar Entrega</span>
-                  <i class='fas fa-hand-holding'></i>
-                </div>
-              </button>
-            <table id="resultTableIn" class="modal-footer">
+            <table id="resultTableIn">
             </table>
           </div>
           <div class="form-group">
               <div class="alert alert-success" id="ins_success" style="display:none">
-
               </div>
                <div class="alert alert-danger" id="ins_error" style="display:none">
 
@@ -167,11 +168,11 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-    <div class="modal fade"  id="modalOut">
-      <div class="modal-dialog">
+    <div class="modal fade"  id="modalOut" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Préstamo por Código de Barras</h4>
+          <div class="modal-header text-center" style="background-color:#13322B;">
+            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Préstamo  <i class="fa-sharp fa-solid fa-handshake"></i></h5>
           </div>
           <div class="modal-body">
             <div id="buscarUsuario">
@@ -182,36 +183,35 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default btn-sm active" data-dismiss="modal" id="closeModalOut"> 
+            <button type="button" class="btn btn-secondary btn-sm active"  data-bs-dismiss="modal">
               <div style="display: flex; flex-direction: column; align-items: center;">
                 <span>Salir</span>
                 <i class="fa fa-reply-all"></i>  
               </div>
             </button>
 
-            <button type="button" class="btn btn-danger btn-sm active"  id="cleanTableOut">
+            <button type="button" class="btn btn-default btn-sm" style="background:#41ADCD"  id="cleanTableReturn">
               <div style="display: flex; flex-direction: column; align-items: center;">
-                <span>Limpiar</span>
-                <i class='fas fa-eraser'></i> 
+                <span style="color: white;">Limpiar</span>
+                <i class="fas fa-eraser" style="color: white;"></i>
               </div>
             </button>
             
-            <button type="button" class="btn btn-primary btn-sm active" id="continuarPrestamo">  
+            <button type="button" class="btn btn-default btn-sm active" style="background:#194239" id="continuarPrestamo">  
               <div style="display: flex; flex-direction: column; align-items: center;">
-                <span>Continuar</span>
-                <i class='fas fa-arrow-circle-right'></i>
+                <span style="color:white;">Continuar</span>
+                <i class='fas fa-arrow-circle-right' style="color:white;"></i>
               </div>
             </button> 
             
-            <table id="resultTableOut" class="modal-footer">
+            <table id="resultTableOut" >
+              
             </table>
           </div>
           <div class="form-group">
               <div class="alert alert-success" id="out_success" style="display:none">
-
               </div>
                <div class="alert alert-danger" id="out_error" style="display:none">
-
               </div>
           </div>  
         </div><!-- /.modal-content -->
@@ -227,7 +227,7 @@ $(document).ready(function() {
     const pres_folio = busquedaVal; 
 
     if (busquedaVal === '') {
-      alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', 'Oops!', 'swal-wide');
+      alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', '¡Ups!', 'swal-wide');
       return; 
     }
 
@@ -237,7 +237,7 @@ $(document).ready(function() {
       dataType: 'json',
       success: function(res) {
         if (res.length === 0) {
-          alertMessage('warning', 'El código de barras o número de folio ingresado no existe.', 'Oops!', 'swal-wide');
+          alertMessage('warning', 'El código de barras o número de folio ingresado no existe.', '¡Ups!', 'swal-wide');
           return;
         }
 
@@ -254,14 +254,14 @@ $(document).ready(function() {
 });
    
 $(document).ready(function() {
-  $('#TablePrestamo').DataTable({
+  $('#datatablePrestamos').DataTable({
     searching: false,
     ...len,
     columns: [ 
     {
         "data": "pres_folio",
         "render": function(data, type, row, meta) {
-          return "<a class= 'ver-detalle' id='verDetalle' data-toggle='modal' data-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>"   
+          return "<a class= 'ver-detalle' id='verDetalle' data-bs-toggle='modal' data-bs-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>"   
         }
       },
       {"data": "pres_folio"},
@@ -276,8 +276,8 @@ $(document).ready(function() {
       }
   });
 
-  const tablaOriginal = $('#TablePrestamo').DataTable().data().toArray();
-  const tablaOriginal2 = $('#TablePrestamo').DataTable().data().toArray();
+  const tablaOriginal = $('#datatablePrestamos').DataTable().data().toArray();
+  const tablaOriginal2 = $('#datatablePrestamos').DataTable().data().toArray();
   
   $('#busqueda').on('keyup', function() {
     const valorInput = $(this).val();
@@ -287,8 +287,8 @@ $(document).ready(function() {
   
     if (vide_codigo == '' && pres_folio == '' && usua_clave == '') {
       // Mostrar la tabla original si todos los inputs están vacíos
-      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal).draw();
-      $('#TablePrestamo').DataTable().clear().rows.add(tablaOriginal2).draw();
+      $('#datatablePrestamos').DataTable().clear().rows.add(tablaOriginal).draw();
+      $('#datatablePrestamos').DataTable().clear().rows.add(tablaOriginal2).draw();
     } else {
       $.ajax({
         url: '{% url "prestamos_filter" %}',
@@ -312,15 +312,15 @@ $(document).ready(function() {
             }
           }
           // Actualizar los datos de la tabla existente con los resultados filtrados
-          $('#TablePrestamo').DataTable().clear().rows.add(prestamosUnicos).draw();
+          $('#datatablePrestamos').DataTable().clear().rows.add(prestamosUnicos).draw();
         }
       });
     }
   });
-  
+
 });
 
-$('#TablePrestamo').on('click', '.ver-detalle', function() {
+$('#datatablePrestamos').on('click', '.ver-detalle', function() {
     const detalles = $(this).data('detalles');
     const pres_folio = $(this).closest('tr').data('folio');
     
@@ -372,7 +372,7 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
           let tbody = $('<tbody>');
 
           if ($('li', data).length == 0) {
-            alertMessage('info', 'Solo hay esa cinta!', 'Oops!');
+            alertMessage('info', 'Solo hay esa cinta!', '¡Ups!');
             $("#modalCintas").modal('hide');
           }
 
@@ -390,11 +390,12 @@ $('#TablePrestamo').on('click', '.ver-detalle', function() {
               ? row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>')
               : row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>')
             tbody.append(row);
+            
           });
           tabla.append(thead).append(tbody);
           $('#muestraData').html(tabla);
           tabla.DataTable({
-            ...len
+             
           });
         },
       });
@@ -418,11 +419,6 @@ $('#searchFolio').keyup(function(e){
     else {
         $(this).data('timer', setTimeout(search, 500));
     }
-});
-
-$("#buttonIn").click(function(){
-  setTimeout(function() { $('#searchUsuarioIn').val("").focus() }, 1000);
-  
 });
 
 $("#buttonOut").click(function(){
@@ -453,7 +449,6 @@ $("#closeModalOut").click(function(){
    cleanTableOut(); 
 });
 
-
 $("#continuarPrestamo").hide();
 
 $("#continuarPrestamo").click(function() {
@@ -471,15 +466,16 @@ $("#continuarPrestamo").click(function() {
     confirmButtonText: 'Sí, continuar'
   }).then((result) => {
     if (result.isConfirmed) {
-      guardarRegistro(usuario, codigoBarras);
-      $button.hide(); // Oculta el botón utilizando la referencia guardada
+      guardarRegistro(usuario, codigoBarras, $button);
     }
   });
 });
 
 function guardarRegistro(usuario, codigoBarras) {
+  const dataToSend = JSON.stringify(get_data('#resultTableOut'));
+
   $.ajax({
-    data: {'usuario': usuario, 'codigos': JSON.stringify(get_data('#resultTableOut tbody tr'))},
+    data: {'usuario': usuario, 'codigos': dataToSend},
     url: "{% url 'registro_salida_videoteca' %}",
     type: 'POST',
     success: function(data) {
@@ -672,6 +668,7 @@ $(document).on("click",".glyphicon-plus",function(){
 
 //Validación de prestamos
 function addItemOut() {
+  console.log('Evento keyup disparado');
   const codigoBarras = $('#searchBarCodeOut').val();
   const usuario = $('#searchUsuarioOut').val();
 
@@ -733,14 +730,13 @@ function addItemOut() {
 }
 
 //Acaba validacion
-
 function f_valida_repetido(codigoBarras){
   var v_valor = 0;
   if ($('#resultTableOut tbody tr').length > 0){
    
       $('#resultTableOut tbody tr').each(function(){
         if ($(this).find('input.codbarras').val() == codigoBarras) {
-          alertMessage('info', `Ya se a registrado ${codigoBarras}.`, 'Oops!');
+          alertMessage('info', `Ya se a registrado ${codigoBarras}.`, '¡Ups!');
           v_valor = 1;
         }
       });
@@ -752,7 +748,7 @@ function get_data(table){
   //'#resultTableOut tbody tr'
   if ($(table).length > 0){
     $(table).each(function(){
-              data.push($(this).find('input.codbarras').val());
+      data.push($(this).find('input.codbarras').val());
     });
   }           
   return data;      
@@ -790,15 +786,9 @@ $(document).on("click",".eliminar",function(){
     var id =this_html.parent().parent().children().eq(0).text();
     //console.log(this_html.parent().parent().children().eq(0).text());
     this_html.parent().parent().remove();
-    /* var opcion = confirm("Se va a dar eliminar la Compensacion registrada al empleado: "+ empleado +". ¿Es correcto?");
-    if (opcion == true) {
-    }*/
+
 });    
 
 </script>
-<style>
-  .detalle ul{
-    display:none;
-  }
-</style>
+
 {% endblock %}

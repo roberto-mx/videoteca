@@ -173,10 +173,6 @@ class MaestroCintasListView(ListView):
 #     form_class = MaestrosCintasForm
 #     success_url = reverse_lazy('inventario:cintas-list')
 
-
-
-
-
 class MaestroCintasCreateView(CreateView):
     model = MaestroCintas
     template_name = 'inventario/maestrocintas_create.html'
@@ -193,7 +189,6 @@ class MaestroCintasCreateView(CreateView):
             'data': {
                 'id': self.object.id,
                 'video_cbarras': self.object.video_cbarras,
-                
             }
         }
         
@@ -213,7 +208,6 @@ class MaestroCintasDetailView(DetailView):
         context = super(MaestroCintasDetailView, self).get_context_data(**kwargs)
         context['programas'] = DetalleProgramas.objects.filter(video_cbarras=self.object.video_cbarras)
         return context
-
 
 #@method_decorator(login_required, name='dispatch')
 class MaestroCintasUpdateView(UpdateView):

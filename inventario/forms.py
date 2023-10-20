@@ -48,13 +48,13 @@ class MaestroCintasFilter(forms.Form):
 class MaestrosCintasForm(forms.ModelForm):
     class Meta:
         model = MaestroCintas
-        fields = ['video_id', 'video_cbarras', 'form_clave', 'video_codificacion',
+        fields = [ 'video_cbarras', 'form_clave', 'video_codificacion',
                   'video_tipo', 'video_fingreso', 'video_inventario', 'video_estatus',
                   'video_rack', 'video_nivel', 'video_anoproduccion', 'video_productor',
                   'video_coordinador', 'video_fechamov','video_observaciones', 'usua_clave',
                   'video_fchcal', 'video_target', 'tipo_id', 'origen_id']
         widgets = {
-            'video_id': forms.HiddenInput(),
+            # 'video_id': forms.HiddenInput(),
             'video_fechamov': forms.TextInput(),
             'video_cbarras': forms.TextInput(attrs={'placeholder': 'Código de barras'}),
             'video_observaciones': forms.Textarea(),
