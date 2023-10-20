@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'inventario.middleware.GroupRedirectMiddleware', 
+   # 'inventario.middleware.GroupRedirectMiddleware', 
 ]
 
 ROOT_URLCONF = 'videoteca.urls'
