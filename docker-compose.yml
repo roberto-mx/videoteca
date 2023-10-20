@@ -33,6 +33,7 @@ services:
       - "8085:8085"
     depends_on:
       - db
+      - rh
     environment:
       - DEBUG=False
     restart: always  
