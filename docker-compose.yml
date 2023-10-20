@@ -19,7 +19,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       # - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - /var/lib/postgresql/backups/recursoshumanos.sql:/docker-entrypoint-initdb.d/recursoshumanos.sql
+      - /var/lib/postgresql/backups/recuhum100923.backup:/docker-entrypoint-initdb.d/recuhum100923.backup
       - postgres_data:/var/lib/postgresql/data  
 
   web:
