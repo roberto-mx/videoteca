@@ -17,11 +17,12 @@ services:
       - POSTGRES_DB=recursos_humanos
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"
     volumes:
       # - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
       - /var/lib/postgresql/backups/recursos_humanos.backup:/docker-entrypoint-initdb.d/recursos_humanos.backup
       - postgres_data:/var/lib/postgresql/data  
-
   web:
     build:
       context: .
