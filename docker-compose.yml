@@ -14,7 +14,7 @@ services:
   rh:
     image: postgres:14
     environment:
-      - POSTGRES_DB=recursoshumanos
+      - POSTGRES_DB=recursosHumanos
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
