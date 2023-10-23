@@ -71,11 +71,11 @@
 </div>
  
 <!-- Modal -->
-<div class="modal fade" id="modalCintas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalCintas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
-      <div class="modal-header text-center" style="background-color:#245B40;">
-        <h5 class="modal-title" id="modalAgregarLabel" style="color: white;"> Lista de Cintas <i class="fa-sharp fa-solid fa-photo-film"></i></h5>
+      <div class="modal-header  text-center" style="background-color:#13322B;">
+        <h5 class="modal-title" id="modalCintasLabel" id="modalAgregarLabel" style="color: white;">Lista de Cintas<i class="fa-sharp fa-solid fa-photo-film"></i></h5>
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex justify-content-end">
             <input type="text" style="background:#FCFCFC" id="inputDetalles" disabled>
@@ -83,7 +83,6 @@
             <input type="text" style="background:#FCFCFC" id="inputVencimiento"  size="28" disabled >
           </div>
         </div>
-        {% comment %} <button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close"></button> {% endcomment %}
       </div>
       <div class="modal-body" id="muestraData">
         <table class="table table-bordered"  name="DataTable">
@@ -114,8 +113,6 @@
     </div>
   </div>
 </div>
-
-{% comment %}  {% endcomment %}
 
 {% comment %}  {% endcomment %}
 <div class="modal fade"  id="modalIn">
@@ -395,7 +392,10 @@ $('#datatablePrestamos').on('click', '.ver-detalle', function() {
           tabla.append(thead).append(tbody);
           $('#muestraData').html(tabla);
           tabla.DataTable({
-             
+            ...tableInventario
+          });
+          $('#modalCintas').on('hidden.bs.modal', function (e) {
+            e.preventDefault();
           });
         },
       });
