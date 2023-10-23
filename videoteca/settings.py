@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'inventario.middleware.GroupRedirectMiddleware', 
+   # 'inventario.middleware.GroupRedirectMiddleware', 
 ]
 
 ROOT_URLCONF = 'videoteca.urls'
@@ -76,7 +76,30 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+<<<<<<< HEAD
 #base host servidor 172.16.110.29/
+=======
+# base host servidor 172.16.110.29/
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'videoteca',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': '5432'
+    },
+    'users': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'recursoshumanos',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'rh',
+        'PORT': '5432'
+    }
+}
+
+>>>>>>> 432e67f7f612ed4d59ebd0f5f4eebdb6996a6656
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
