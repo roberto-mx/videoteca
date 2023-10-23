@@ -30,7 +30,7 @@ const len = {
 }
 
 const tableInventario = {
-"lengthMenu": [[ 10, 25, 50, 100, 150,200, -1], [ 10,  25, 50 ,100 ,150,200, "Todo"]],
+"lengthMenu": [[ 5, 25, 50, 100, 150,200, -1], [ 5,  25, 50 ,100 ,150,200, "Todo"]],
 "order": [[ 0, "asc" ]], 
 
     "language": {
