@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-#base host servidor 172.16.110.29/
+# base host servidor 172.16.110.29/
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
