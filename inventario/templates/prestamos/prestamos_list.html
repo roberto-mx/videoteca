@@ -13,7 +13,7 @@
             </div>
           </a>
 
-          <a type="button" class="btn btn-default btn-sm" style="background: #13322B" data-bs-toggle="modal" data-bs-target="#modalIn">
+          <a type="button" class="btn btn-default btn-sm" style="background: #13322B"  id="buttonIn" {{'url'}} data-bs-toggle="modal" data-bs-target="#modalIn">
             <div style="display: flex; flex-direction: column; align-items: center;">
               <span style="color: white;">Devolución con Código de Barras</span>
             </div>
@@ -421,6 +421,11 @@ $('#searchFolio').keyup(function(e){
     }
 });
 
+$("#buttonIn").click(function(){
+  setTimeout(function() { $('#searchUsuarioIn').val("").focus() }, 1000);
+  
+});
+
 $("#buttonOut").click(function(){
  
   setTimeout(function() { $('#searchUsuarioOut').val("").focus() }, 1000);
@@ -466,27 +471,30 @@ $("#continuarPrestamo").click(function() {
     confirmButtonText: 'Sí, continuar'
   }).then((result) => {
     if (result.isConfirmed) {
-      guardarRegistro(usuario, codigoBarras, $button);
+      guardarRegistro(usuario, codigoBarras);
+      $button.hide(); 
     }
   });
 });
 
 function guardarRegistro(usuario, codigoBarras) {
-  const dataToSend = JSON.stringify(get_data('#resultTableOut'));
+  //const dataToSend = JSON.stringify(get_data('#resultTableOut'));
+  let codigosTable = JSON.stringify(get_data('#resultTableOut tr'));
+  console.log(codigosTable)
 
   $.ajax({
-    data: {'usuario': usuario, 'codigos': dataToSend},
+    data: {'usuario': usuario, 'codigos':codigosTable},
     url: "{% url 'registro_salida_videoteca' %}",
     type: 'POST',
     success: function(data) {
       // Verificar si existe el error
       if (data.error) {
-        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+        $('#resultTableOut').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
-        $('#resultTableIn').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
-        $("#resultTableIn tr").remove(); 
+        $('#resultTableOut').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+        $("#resultTableOut tr").remove(); 
       }
-      $('#searchBarCodeIn').val("").focus();
+      $('#searchBarCodeOut').val("").focus();
 
       const muestraFolio = data.Folio;
 
