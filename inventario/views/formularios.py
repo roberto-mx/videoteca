@@ -62,7 +62,6 @@ def formulario(request):
                 origen_id=datos_formulario_principal['origen_id'],
                 video_observaciones=datos_formulario_principal['video_observaciones'],
                 video_estatus=datos_formulario_principal['video_estatus'],
-                video_codificacion=datos_formulario_principal['video_codificacion'],
                 video_anoproduccion=datos_formulario_principal['video_anoproduccion'],
             )
             maestro_cintas.save()
@@ -95,11 +94,13 @@ def formulario(request):
                     participantes=datos_formulario_descripcion['participantes'],
                     personajes=datos_formulario_descripcion['personajes'],
                     derecho_patrimonial=datos_formulario_descripcion['derecho_patrimonial'],
-                    asignatura_materia=datos_formulario_descripcion['asignatura_materia'],
-                    grado=datos_formulario_descripcion['grado'],
-                    orientacion=datos_formulario_descripcion['orientacion'],
-
+                    tiempoin=datos_formulario_descripcion['tiempoin'],
+                    tiempoout=datos_formulario_descripcion['tiempoout'],
+                   
                     # Form Mapa
+                    asignatura_materia=datos_formulario_mapa['asignatura_materia'],
+                    grado=datos_formulario_mapa['grado'],
+                    orientacion=datos_formulario_mapa['orientacion'],
                     area_de_conocimiento=datos_formulario_mapa['area_de_conocimiento'],
                     eje_tematico=datos_formulario_mapa['eje_tematico'],
                     nivel_educativo=datos_formulario_mapa['nivel_educativo'],
@@ -289,7 +290,6 @@ def editar(request, id, codigo_barras):
                 registro_calificacion.coordinador = formulario_combinado.cleaned_data['coordinador']
                 maestro_cintas.video_anoproduccion = formulario_combinado.cleaned_data['video_anoproduccion']
                 registro_calificacion.duracion = formulario_combinado.cleaned_data['duracion']
-                maestro_cintas.video_codificacion = formulario_combinado.cleaned_data['video_codificacion']
                 maestro_cintas.video_estatus = formulario_combinado.cleaned_data['video_estatus']
                 maestro_cintas.video_observaciones = formulario_combinado.cleaned_data['video_observaciones']
                 maestro_cintas.origen_id = formulario_combinado.cleaned_data['origen_id']
@@ -298,7 +298,7 @@ def editar(request, id, codigo_barras):
                 maestro_cintas.tipo_id = formulario_combinado.cleaned_data['tipo_id']
 
                  # Cambiar el valor de estatusCalif de 'P' a 'R'
-                #registro_calificacion.estatusCalif = 'R'
+                # registro_calificacion.estatusCalif = 'R'
                 # Actualizar otros campos si es necesario
                 registro_calificacion.save()
                 maestro_cintas.save()
@@ -339,7 +339,6 @@ def editar(request, id, codigo_barras):
                 'coordinador': registro_calificacion.coordinador,
                 'video_anoproduccion': maestro_cintas.video_anoproduccion,
                 'duracion': registro_calificacion.duracion,
-                'video_codificacion': maestro_cintas.video_codificacion,
                 'video_estatus': maestro_cintas.video_estatus,
                 'video_observaciones': maestro_cintas.video_observaciones,
                 'origen_id': maestro_cintas.origen_id,

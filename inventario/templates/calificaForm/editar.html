@@ -42,9 +42,6 @@
                         </div>
                       </button>
                     
-  
-                    <!-- Repite este patrón para otros botones -->
-                    
                       <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescripcion" aria-expanded="false" aria-controls="collapseDescripcion">
                           <div style="display: flex; flex-direction: column; align-items: center;">
                               <span> Descripción </span>
@@ -52,7 +49,7 @@
                           </div>
                       </button>
                     
-                    <!-- Repite este patrón para otros botones -->
+
                     
                       <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapa" aria-expanded="false" aria-controls="collapseMapa">
                         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -60,7 +57,7 @@
                             <i class='fas fa-map'></i>
                         </div>
                       </button>                                          
-                    <!-- Repite este patrón para otros botones -->                     
+                     
                       <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTecnicas" aria-expanded="false" aria-controls="collapseTecnicas">
                         <div style="display: flex; flex-direction: column; align-items: center;">
                           <span> Técnicas </span>
@@ -88,11 +85,11 @@
                             <div class="mb-1">
                               {% if field.name == 'video_anoproduccion' %}
                                 <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
-                                <input type="number"  min="1" max="9" id='ahoProduction' name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="Año de producción">
+                                <input type="number"  min="1" max="9" id='ahoProduction' name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-inputs" placeholder="Año de producción">
                                 
                               {% elif field.name == 'codigo_barras' %}
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                <input type="text" id="codigo_barras" disabled name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
+                                <input type="text" id="codigo_barras" disabled name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-inputs" placeholder="{{ field.label }}">
 
                               {% elif field.name == 'registro_id' %}
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
@@ -101,15 +98,15 @@
                               {% else %}
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                 {% if field.name == 'fecha_calificacion' %}
-                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                <input type="text" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
+                                {% comment %} <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label> {% endcomment %}
+                                <input type="text" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d' }}" class="form-control smaller-inputs" placeholder="{{ field.label }}">
                                 
-                                {% elif field.name == 'observaciones' %}
-                                  <textarea name="{{ field.name }}" class="form-control smaller-input" placeholder="{{ field.label }}" rows="3">{{ field.value|default_if_none:'' }}</textarea>
+                                {% elif field.name == 'video_observaciones' %}
+                                  <textarea name="{{ field.name }}" class="form-control smaller-inputs" placeholder="{{ field.label }}" rows="3">{{ field.value|default_if_none:'' }}</textarea>
 
                                   {% else %}
                                   {% if field.field.widget.input_type == 'select' %}
-                                    <select name="{{ field.name }}" class="form-control smaller-input">
+                                    <select name="{{ field.name }}" class="form-control smaller-inputs">
                                       {% for choice in field.field.choices %}
                                         {% if field.value|stringformat:'s' == choice.0|stringformat:'s' %}
                                           <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
@@ -121,7 +118,7 @@
                                     </select>
                                   {% else %}
                                     {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
-                                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
+                                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-inputs" placeholder="{{ field.label }}">
                                       
                                     {% endif %}
                                   {% endif %}

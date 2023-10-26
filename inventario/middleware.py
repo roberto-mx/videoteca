@@ -26,6 +26,9 @@ class GroupRedirectMiddleware:
                     not request.path.startswith('/register_out/') and
                     not request.path.startswith('/end_in/') and
                     not request.path.startswith('/get_report/') and
+                    not request.path.startswith('/cintas/inventarioRegistro/') and
+                    not request.path.startswith('/cintas/consultaInventario/') and
+                    not request.path.startswith('') and
                     not request.path.startswith(reverse('logout'))
                 ):
                     return redirect('prestamos_list')
@@ -33,6 +36,8 @@ class GroupRedirectMiddleware:
                 # Redireccionar si no coincide con rutas específicas
                 if (
                     request.path != reverse('consultaFormulario') and
+                    # not request.path.startswith('/calificaciones/formulario/') and
+                    not request.path.startswith('/calificaciones/formulario/') and
                     not request.path.startswith('/calificaciones/agregar/programa/') and
                     not request.path.startswith('/calificaciones/editar/') and
                     not request.path.startswith('/calificaciones/editar/programa/') and

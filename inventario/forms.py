@@ -81,7 +81,6 @@ class FormularioCombinadoEditar(forms.Form):
     coordinador = forms.CharField(max_length=40, required=True)
     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
     duracion = forms.CharField(max_length=11, required=True)
-    video_codificacion = forms.CharField(max_length=20, required=True)
     video_estatus = forms.CharField(max_length=20, required=True)
     video_observaciones = forms.CharField(max_length=20, required=True)
     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
@@ -100,7 +99,6 @@ class FormularioCombinado(forms.Form):
     coordinador = forms.CharField(max_length=40, required=True)
     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
     duracion = forms.CharField(max_length=11, required=True)
-    video_codificacion = forms.CharField(max_length=20, required=True)
     video_estatus = forms.CharField(max_length=20, required=True)
     video_observaciones = forms.CharField(max_length=20, required=True)
     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
@@ -131,19 +129,22 @@ class Descripcion(forms.ModelForm):
         model = RegistroCalificacion
         fields = [
             'sinopsis',
-            'tiempodur',
+            'tiempoin',
             'participantes',
+            'tiempoout',
             'personajes',
+            'tiempodur',           
             'derecho_patrimonial',
-            'asignatura_materia',
-            'grado',
-            'orientacion',
+            
         ]
 
 class Mapa(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
         fields = [
+            'asignatura_materia',
+            'grado',
+            'orientacion',
             'area_de_conocimiento',
             'eje_tematico',
             'nivel_educativo',
