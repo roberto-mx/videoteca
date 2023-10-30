@@ -344,49 +344,55 @@
           <div class="modal-body">
             <form id="formularioPrograma"{{ programa.id }} method="post" action="{% url 'formulario' %}"  >
               {% csrf_token %}
-              <div class="mb-3">
-                  <label for="programa{{ programa.id }}" class="form-label">Programa</label>
-                  <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control" placeholder="Programa" value="{{ programa.programa }}">
-              </div>
+              <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+                      <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" placeholder = "Programa" value="{{ programa.programa }}">
+                    </div>
 
-              <div class="mb-3">
-                  <label for="serie{{ programa.id }}" class="form-label">Serie</label>
-                  <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control" value="{{ programa.serie }}" placeholder="Serie">
-              </div>
+                    <div class="mb-3">
+                        <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+                        <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" placeholder = "Serie" value="{{ programa.serie }}">
+                    </div>
 
-              <div class="mb-3">
-                  <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
-                  <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" name="Programa Subtitulo" placeholder="Serie" class="form-control" value="{{ programa.programaSubtitulo }}">
-              </div>
+                    <div class="mb-3">
+                        <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+                        <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" class="form-control form-control-sm" placeholder = "Subtítulo del Programa" value="{{ programa.programaSubtitulo }}">
+                    </div>
 
-              <div class="mb-3">
-                  <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
-                  <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" placeholder="Serie Subtitulo" class="form-control" value="{{ programa.serieSubtitulo }}">
-              </div>
+                    <div class="mb-3">
+                        <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
+                        <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control form-control-sm" placeholder = "Subtítulo de Serie" value="{{ programa.serieSubtitulo }}">
+                    </div>
+                </div>
 
-              <div class="mb-3">
-                <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
-                <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control" placeholder="Sinopsis" value="{{ programa.sinopsis }}">
-              </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
+                    <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" placeholder = "Sinopsis" value="{{ programa.sinopsis }}">
+                  </div>
 
-              <div class="mb-3">
-                  <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
-                  <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control" placeholder="Tiempo de Inicio" value="{{ programa.tiempoin }}">
-              </div>
+                  <div class="mb-3">
+                      <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
+                      <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" placeholder = "Tiempo inicio" value="{{ programa.tiempoin }}">
+                  </div>
 
-              <div class="mb-3">
-                  <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
-                  <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control" placeholder="Tiempo Final" value="{{ programa.tiempoout }}">
-              </div>
+                  <div class="mb-3">
+                      <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
+                      <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" placeholder = "Tiempo Final" value="{{ programa.tiempoout }}">
+                  </div>
 
-              <div class="mb-3">
-                  <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
-                  <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control" placeholder="Duración" value="{{ programa.tiempodur }}">
-              </div>
+                  <div class="mb-3">
+                      <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
+                      <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" placeholder = "Duración" value="{{ programa.tiempodur }}">
+                  </div>
 
-              <div class="mb-3">
-                  <label for="programaObservaciones{{ programa.id }}" class="form-label">Observaciones</label>
-                  <input type="text" id="programaObservaciones{{ programa.id }}" name="programaObservaciones" placeholder="Observaciones" class="form-control" value="{{ programa.programaObservaciones }}">
+                  <div class="mb-3">
+                      <label for="programaObservaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                      <textarea id="programaObservaciones{{ programa.id }}" name="programaObservaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.programaObservaciones }}</textarea>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
