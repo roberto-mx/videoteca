@@ -153,6 +153,11 @@
                                     <th>Programa</th>
                                     <th>Subtitulo Programa</th>
                                     <th>Subtitulo Serie</th>
+                                    <th>Sinopsis</th>
+                                    <th>Tiempo Inicio</th>
+                                    <th>Tiempo Final</th>
+                                    <th>Duración</th>
+                                    <th>Observaciones</th>
                                     <th>Acciones</th>
                                   </tr>
                                 </thead>
@@ -324,36 +329,48 @@
     </div>
     
     <div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content">
-          <div class="modal-header text-center" style="background-color:#13322B;">
+          <div class="modal-header text-center" style="background-color: #13322B;">
             <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
-            <input id="codigoId" disabled style="color:white;"></input>
+            <input id="codigoId" disabled style="color: white;"></input>
           </div>
           <div class="modal-body">
-            <form id="formularioPrograma" method="post" action="{% url 'formulario' %}"  >
+            <form id="formularioPrograma" method="post" action="{% url 'formulario' %}">
               {% csrf_token %}
-              {% for field in modal_form %}
-                {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' %}
-                  <div class="mb-3">
-                    <!-- Asignamos un id al campo -->
-                    <label  class="form-label">{{ field.label }}</label>
-                    <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
+              <div class="row mt-4">
+                {% for field in modal_form %}
+                <div class="col-md-4 mb-2">
+                  <div class="mb-1">
+                      {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' or field.name == 'sinopsis' or field.name == 'tiempoin' or field.name == 'tiempoout' or field.name == 'tiempodur' or field.name == 'programaObservaciones' %}
+                        <div class="mb-3">
+                          {% if field.name == 'programaObservaciones' %}
+                            <label class="form-label">{{ field.label }}</label>
+                            <textarea type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control little-input" placeholder="{{ field.label }}" ></textarea>
+                            {{ field.errors }}
+                          {% else %}
+                            <label class="form-label">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
+                          {% endif %} 
+                          {% comment %} <label class="form-label">{{ field.label }}</label>
+                          <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}"> {% endcomment %} 
+                        </div>
+                      {% endif %}
                   </div>
-                {% endif %}
-              {% endfor %}
+                </div>
+                {% endfor %}
+              </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-agregar" style="background-color:#13322B" id="agregarProgramaSerie" >
+            <button type="button" class="btn btn-secondary" style="background-color: #9D2449" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-agregar" style="background-color: #13322B" id="agregarProgramaSerie">
               <span class="text" style="color: white;">Agregar</span>
             </button>
           </div>
         </div>
       </div>
-    </div>
-    {% comment %}  {% endcomment %}
+    </div>    
   </div>
 </div>
 
@@ -375,7 +392,7 @@
     }
   }
 
-  const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, codigoBarras) => {
+  const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, sinopsis, tiempoin, tiempoout, tiempodur, programaObservaciones, codigoBarras) => {
     if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
       return false; // Alguno de los campos está vacío
     }
@@ -388,30 +405,52 @@
     const serie = document.getElementById('serie').value;
     const programaSubtitulo = document.getElementById('subtitulo_programa').value;
     const serieSubtitulo = document.getElementById('subtitulo_serie').value;
+    const sinopsis = document.getElementById('sinopsis').value;
+    const tiempoin = document.getElementById('tiempoin').value;
+    const tiempoout = document.getElementById('tiempoout').value;
+    const tiempodur = document.getElementById('tiempodur').value;
+    const programaObservaciones = document.getElementById('programaObservaciones').value;
     const codigoBarrasValor = document.getElementById('codigo_barras').value;
     $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
 
-      if(codigoBarrasValor.length>12){
-        messageAlerta('info','El código de barras, no puede tener más de 12 digitos,\n favor de revisar los datos ingresados.','¡Oops!', '#18463b')
-      }
+    if(codigoBarrasValor.length>12){
+      messageAlerta('info','El código de barras, no puede tener más de 12 digitos,\n favor de revisar los datos ingresados.','¡Oops!', '#18463b')
+    }
 
-      if (!validarCampos(programa, serie, programaSubtitulo, serieSubtitulo, codigoBarrasValor)) {
+    if (!validarCampos(
+          programa,
+          serie,
+          programaSubtitulo,
+          serieSubtitulo,
+          sinopsis,
+          tiempoin,
+          tiempoout,
+          tiempodur,
+          programaObservaciones,
+          codigoBarrasValor
+        )) 
+      {
         messageAlerta('info', 'Completa los campos solicitados para agregar un programa.', '¡Oops!', '#18463b');
         return;
       }
-      else if (codigoBarrasValor.trim() === '') {
-        messageAlerta('info', 'No ingresaste un Código de Barras.', '¡Oops!', '#18463b');
-        return;
-      }
+    else if (codigoBarrasValor.trim() === '') {
+      messageAlerta('info', 'No ingresaste un Código de Barras.', '¡Oops!', '#18463b');
+      return;
+    }
   
       // Agregar los datos a la lista de programas y series
       programasYSeries.push({
-        id: programasYSeries.length + 1,
-        programa: programa,
-        serie: serie,
-        programaSubtitulo: programaSubtitulo,
-        serieSubtitulo: serieSubtitulo,
-        codigoBarras: codigoBarrasValor,
+        id:                    programasYSeries.length + 1,
+        programa:              programa,
+        serie:                 serie,
+        programaSubtitulo:     programaSubtitulo,
+        serieSubtitulo:        serieSubtitulo,
+        sinopsis:              sinopsis,
+        tiempoin:              tiempoin,
+        tiempoout:             tiempoout,
+        tiempodur:             tiempodur,
+        programaObservaciones: programaObservaciones,
+        codigoBarras:          codigoBarrasValor,
       });
 
       actualizarTablaPrograma();
@@ -432,7 +471,12 @@
       const cellPrograma = newRow.insertCell(3);
       const cellSub_Programa = newRow.insertCell(4);
       const cellSub_Serie = newRow.insertCell(5);
-      const cellAcciones = newRow.insertCell(6);
+      const cellSub_Sinopsis = newRow.insertCell(6);
+      const cellSub_TiemIni = newRow.insertCell(7);
+      const cellSub_TiemFin = newRow.insertCell(8);
+      const cellSub_Dura = newRow.insertCell(9);
+      const cellSub_Observacion = newRow.insertCell(10);
+      const cellAcciones = newRow.insertCell(11);
   
       cellId.innerHTML = datos.id;
       cellCodigoBarras.innerHTML = datos.codigoBarras;
@@ -440,6 +484,11 @@
       cellPrograma.innerHTML = datos.programa;
       cellSub_Programa.innerHTML = datos.programaSubtitulo;
       cellSub_Serie.innerHTML = datos.serieSubtitulo;
+      cellSub_Sinopsis.innerHTML = datos.sinopsis;
+      cellSub_TiemIni.innerHTML = datos.tiempoin;
+      cellSub_TiemFin.innerHTML = datos.tiempoout;
+      cellSub_Dura.innerHTML = datos.tiempodur;
+      cellSub_Observacion.innerHTML = datos.programaObservaciones;
       cellAcciones.innerHTML = `
         <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${datos.id}" onclick="eliminarFila(${datos.id})">
           <div style="display: flex; flex-direction: column; align-items: center;">
@@ -473,19 +522,6 @@ $("#revicionForm").click(function(event) {
   //  messageAlerta('info', 'Completa todos los campos requeridos antes de guardar.', '¡Oops!', '#18463b');
   //  return;
   //}
-
-  let verificaForms = {
-    formularioDatosGenerales: formularioDatosGenerales,
-    formularioDescripcion: formularioDescripcion,
-    formularioMapa: formularioMapa,
-    formTecnicas: formTecnicas,
-    formRealizacion: formRealizacion,
-  }
-  
-  if( verificaForms == '' ) {
-    messageAlerta('info', 'No pueden enviar un formulario vacio.', '¡Alto!', '#18463b');
-  }
-
 
   Swal.fire({
     title: '¿Deseas enviar este formulario a revisión?',

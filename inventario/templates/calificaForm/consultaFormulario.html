@@ -32,11 +32,10 @@
             <th>Id</th>
             <th>Código de Barras</th>
             <th>Duración</th>
-            <th>Sinopsis</th>
+            {% comment %} <th>Sinopsis</th> {% endcomment %}
             <th>Institucion Productora</th>
             <th>Fecha Calificación</th> 
             <th>Estatus</th> 
-            {% comment %} <td>Estatus de Calificación</td>            {% endcomment %}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -46,7 +45,7 @@
             <td>{{ data.id }}</td>+
             <td>{{ data.codigo_barras }}</td>
             <td>{{ data.duracion }}</td>
-            <td>{{ data.sinopsis }}</td>
+            {% comment %} <td>{{ data.sinopsis }}</td> {% endcomment %}
             <td>
               {%if data.institucion_productora == None %}              
                 Sin información
@@ -59,7 +58,7 @@
               {% if data.estatusCalif == 'P' %}
                   En Calificación
               {% else %}
-                  Calificado
+                  En Videoteca
               {% endif %}
           </td>
             {% comment %} <td>{{ data.estatusCalif }}</td> {% endcomment %}
