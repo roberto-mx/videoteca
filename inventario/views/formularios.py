@@ -178,7 +178,9 @@ def consultaFormulario(request):
         # ... (tu consulta)
     ).order_by('-id')
 
-    consultaForm = {'formulario': calificaciones}
+    consultaProgramAndSeries = ProgramaSeries.objects.all().order_by('-id').values()
+
+    consultaForm = {'formulario': calificaciones, 'consulta': consultaProgramAndSeries }
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 

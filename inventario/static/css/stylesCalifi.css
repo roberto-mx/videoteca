@@ -24,6 +24,15 @@
 #tableMaestroCintas td {
     white-space:inherit;
 }
+
+#tableMuestraPrograma th {
+  background-color: #18463b; 
+  color: rgb(255, 253, 253); 
+}
+
+#tableMuestraPrograma td {
+    white-space:inherit;
+}
   
 #datatablePrestamos th {
   background-color: #18463b; /* Color de fondo de las celdas de encabezado */
@@ -79,12 +88,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 0; /* Para quitar el espacio inferior */
+  margin-bottom: 0; 
 }
 
 .input-error {
-  border-color: red; /* Cambia el borde del campo a rojo cuando está vacío */
-  background-color: #ffcccc; /* Cambia el fondo del campo a un color claro cuando está vacío */
+  border-color: red; 
+  background-color: #ffcccc; 
 }
 
 
@@ -96,48 +105,41 @@
 /* Estilo para el color del texto e icono del botón */
 .btn-button span,
 .btn-button i {
-  color: #ffffff; /* Color del texto e icono */
+  color: #ffffff;
 }
 
 /* Estilo para los enlaces del header */
 .navbar a {
-  color: #ffffff; /* Cambia el color de los enlaces a blanco */
-  text-decoration: none; /* Quita el subrayado por defecto */
-  margin: 10px; /* Espaciado entre los enlaces */
+  color: #ffffff; 
+  text-decoration: none; 
+  margin: 10px; 
 }
 
 /* Estilo para el icono de búsqueda */
 .navbar a i.fas.fa-search {
-  font-size: 20px; /* Tamaño del icono */
-  margin-right: 5px; /* Espacio a la derecha del icono */
+  font-size: 20px;
+  margin-right: 5px; 
 }
 
 /* Estilo para los enlaces del menú de Gobierno y Trámites */
 .navbar a span {
-  color: #ffffff; /* Cambia el color del texto a blanco */
+  color: #ffffff; 
 }
-/* Inputs form validate */
+
 
 /* Estilo para resaltar campos vacíos */
 .input-error {
-  background-color: #FFCCCC; /* Cambia el color de fondo a rojo */
+  background-color: #FFCCCC; 
 }
 
 /* Este es para datos generales */
 .little-input {
-  width: 100%; /* Ajusta el ancho según tus necesidades */
-  max-width: 100%; /* Ajusta según tus necesidades */
-  height: 10px; /* Ajusta la altura según tus necesidades */
-  /* resize: none; Evita que el usuario redimensione el textarea */
+  width: 100%; 
+  max-width: 100%; 
+  height: 10px; 
+  
 }
 
-/* Este sera para el modal de programas */
 
-/* .modal-programs{
-  width: ;
-  max-width: ;
-  height: ;
-}
-  */
 
  
