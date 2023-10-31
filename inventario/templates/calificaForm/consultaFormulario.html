@@ -4,9 +4,6 @@
 
 {% block Contenido %}
 
-
-
-
 <div class="card col-12 mt-3">
   <div class="card-header text-center" style="background-color:#F1F7F8;">
     <strong>Consulta formulario</strong>
@@ -31,12 +28,10 @@
           <tr>
             <th>Id</th>
             <th>Código de Barras</th>
-            <th>Duración</th>
-            <th>Sinopsis</th>
+            <th>Productor</th>
             <th>Institucion Productora</th>
             <th>Fecha Calificación</th> 
             <th>Estatus</th> 
-            {% comment %} <td>Estatus de Calificación</td>            {% endcomment %}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -45,8 +40,8 @@
           <tr>
             <td>{{ data.id }}</td>+
             <td>{{ data.codigo_barras }}</td>
-            <td>{{ data.duracion }}</td>
-            <td>{{ data.sinopsis }}</td>
+            <td>{{ data.productor }}</td>
+            {% comment %} <td>{{ data.sinopsis }}</td> {% endcomment %}
             <td>
               {%if data.institucion_productora == None %}              
                 Sin información
@@ -59,11 +54,26 @@
               {% if data.estatusCalif == 'P' %}
                   En Calificación
               {% else %}
-                  Calificado
+                  En Videoteca
               {% endif %}
           </td>
             {% comment %} <td>{{ data.estatusCalif }}</td> {% endcomment %}
             <td class="d-flex justify-content-center">
+              <!-- Editar -->
+              <a href="{% url 'editar' data.id data.codigo_barras %}" class="btn btn-editar btn-sm active text-white" style="background-color:#13322B;" title="Editar">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <i class="fas fa-edit"></i>
+                  <span></span>
+                </div>
+              </a>
+
+              <!-- Ver -->
+              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#6E6F6F;" data-bs-toggle="modal" data-bs-target="#modalViewProgramAndSeries{{ data.codigo_barras }}" title="Ver programas"> 
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <i class='far fa-eye'></i>
+                  <span></span>
+                </div>
+              </a>
 
               <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
                   data-id="eliminar-{{ data.id }}"  
@@ -72,22 +82,6 @@
                     <i class="fa-sharp fa-solid fa-trash"></i>
                 </div>
               </button>
-          
-              <!-- Editar -->
-              <a href="{% url 'editar' data.id data.codigo_barras %}" class="btn btn-editar btn-sm active text-white" style="background-color:#b38e5d;" title="Editar">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                  <i class="fas fa-edit"></i>
-                  <span></span>
-                </div>
-              </a>
-              
-              <!-- Ver -->
-              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#13322B;" data-bs-toggle="modal" data-bs-target="#modalObservacion{{ data.id }}" title="Observaciones"> 
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                  <i class='far fa-eye'></i>
-                  <span></span>
-                </div>
-              </a>
             </td>
           </tr>
           {% empty %}
@@ -100,16 +94,48 @@
 
 {% for data in formulario %}
 <!-- Modal de Observaciones -->
-<div class="modal fade" id="modalObservacion{{ data.id }}" tabindex="-1" aria-labelledby="modalObservacionLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+<div class="modal fade" id="modalViewProgramAndSeries{{ data.codigo_barras }}" tabindex="-1" aria-labelledby="modalViewProgramAndSeriesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header" style="background-color:#18463b;">
-        <h4 class="modal-title fs-5" id="modalObservacionLabel" style="color: white;">*** Observaciones de calificación ***</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h4 class="modal-title fs-5" id="modalViewProgramAndSeriesLabel" style="color: white;">Programas y series de la cinta ( {{data.codigo_barras}} ) </h4>
       </div>
       <div class="modal-body">
-        <div style="max-height: 300px; overflow-y: auto">
-          {{ data.observaciones }}
+        <div class="table-responsive">
+          <table class="table table-striped table-hover"  name="tableMuestraPrograma" id="tableMuestraPrograma">
+            <thead>
+              <tr>
+                <th>Código Barras</th>
+                <th>Programa</th> 
+                <th>Serie</th>
+                <th>Subtítulo Programa</th>
+                <th>Subtítulo Serie</th>
+                <th>Programa Observaciones</th> 
+                <th>Sinopsis</th>
+                <th>Tiempo Duración</th>
+                <th>Tiempo Inicio</th>
+                <th>Tiempo Final</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for program_series in consulta %}
+              {% if program_series.codigo_barras.video_cbarras == data.codigo_barras %}
+              <tr>
+                <td>{{program_series.codigo_barras.video_cbarras}}</td>
+                <td>{{program_series.programa}}</td>
+                <td>{{program_series.serie}}</td>
+                <td>{{program_series.subtitulo_programa}}</td>
+                <td>{{program_series.subtitulo_serie}}</td>
+                <td>{{program_series.programaObservaciones}}</td>
+                <td>{{program_series.sinopsis}}</td>
+                <td>{{program_series.tiempodur}}</td>
+                <td>{{program_series.tiempoin}}</td>
+                <td>{{program_series.tiempoout}}</td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
       <div class="modal-footer">
@@ -124,6 +150,10 @@
 
   $(document).ready(function() {
     $('#datatable').DataTable({
+      // Configuración del DataTable
+      ...len
+    });
+    $('#tableMuestraPrograma').DataTable({
       // Configuración del DataTable
       ...len
     });
