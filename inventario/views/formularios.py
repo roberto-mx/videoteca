@@ -11,6 +11,8 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib import messages 
+from django.db.utils import IntegrityError
+
 
 def is_videote_user(user):
     if user: 
@@ -120,6 +122,7 @@ def formulario(request):
                     institucion_productora=datos_formulario_realizacion['institucion_productora'],
                     #Obtengo los datos del objeto de el front
                 )
+                
                 registro_calificacion.save()
 
                 registro_programas = ProgramaSeries(
@@ -159,31 +162,28 @@ def formulario(request):
         'formulario_realizacion': formulario_realizacion,
         'modal_form': modal_form,
     })
-#  is_videoteca = user.groups.filter(name='Videoteca Users').exists()
-# print(f"El usuario {user.username} pertenece al grupo 'Videoteca Users': {is_videoteca}, 'grupo Califica': {is_califi}")
 
 def is_videoteca_user(user):
     if user: 
         return user.groups.filter(name='videotecaPermission').count() == 0
     return  False
 
+
 @login_required
 def consultaFormulario(request):
     if not is_videoteca_user(request.user):
         messages.error(request, "Solo los de calificación pueden acceder a esta acción.")
         return redirect('prestamos_list')  # Redirige al usuario a otra página
-    
-    
+
     calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
         # ... (tu consulta)
     ).order_by('-id')
 
-    consultaProgramAndSeries = ProgramaSeries.objects.all().order_by('-id').values()
+    programas_series = ProgramaSeries.objects.all()  # Obtén todos los datos de ProgramaSeries
 
-    consultaForm = {'formulario': calificaciones, 'consulta': consultaProgramAndSeries }
+    consultaForm = {'formulario': calificaciones, 'consulta': programas_series}  # Pasa ambos conjuntos de datos
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
-
 def eliminarProgramaSerie(request, id):
     id = request.POST.get('eliminar_id')
     try:

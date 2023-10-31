@@ -414,7 +414,7 @@
     $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
 
     if(codigoBarrasValor.length>12){
-      messageAlerta('info','El código de barras, no puede tener más de 12 digitos,\n favor de revisar los datos ingresados.','¡Oops!', '#18463b')
+      return messageAlerta('error','El código de barras, no puede tener más de 12 digitos,\n favor de revisar los datos ingresados.','¡Oops!', '#18463b')
     }
 
     if (!validarCampos(
@@ -512,16 +512,8 @@ const formRealizacion = document.getElementById('formRealizacion');
 
 $("#revicionForm").click(function(event) {
   event.preventDefault(); // Evitar el envío de formulario por defecto
-  // Verificar si los campos requeridos en cada formulario están llenos
-  //if (!verificarCamposRequeridos(formularioDatosGenerales) ||
-  //    !verificarCamposRequeridos(formularioDescripcion) ||
-  //    !verificarCamposRequeridos(formularioMapa) ||
-  //    !verificarCamposRequeridos(formTecnicas) ||
-  //    !verificarCamposRequeridos(formRealizacion)) {
-  //    // Mostrar mensaje de alerta si algún formulario está incompleto
-  //  messageAlerta('info', 'Completa todos los campos requeridos antes de guardar.', '¡Oops!', '#18463b');
-  //  return;
-  //}
+  const codigoBarras = document.getElementById('codigo_barras').value;
+  console.log(`Al enviar los datos se debe ver el código barras. ${codigoBarras}`);
 
   Swal.fire({
     title: '¿Deseas enviar este formulario a revisión?',
@@ -551,6 +543,7 @@ $("#revicionForm").click(function(event) {
         type: 'POST',
         data: formData,
         success: function(response) {
+          console.log(response, 'recibo');
           Swal.fire(
             'Registrado',
             'Su formulario ha sido registrado y se encuentra en calificación.',

@@ -68,7 +68,7 @@
               </a>
 
               <!-- Ver -->
-              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#6E6F6F;" data-bs-toggle="modal" data-bs-target="#modalViewProgramAndSeries{{ data.id }}" title="Ver programas"> 
+              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#6E6F6F;" data-bs-toggle="modal" data-bs-target="#modalViewProgramAndSeries{{ data.codigo_barras }}" title="Ver programas"> 
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class='far fa-eye'></i>
                   <span></span>
@@ -95,7 +95,7 @@
 
 {% for data in formulario %}
 <!-- Modal de Observaciones -->
-<div class="modal fade" id="modalViewProgramAndSeries{{ data.id }}" tabindex="-1" aria-labelledby="modalViewProgramAndSeriesLabel" aria-hidden="true">
+<div class="modal fade" id="modalViewProgramAndSeries{{ data.codigo_barras }}" tabindex="-1" aria-labelledby="modalViewProgramAndSeriesLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header" style="background-color:#18463b;">
@@ -107,10 +107,10 @@
             <thead>
               <tr>
                 <th>Código Barras</th>
+                <th>Programa</th> 
                 <th>Serie</th>
                 <th>Subtítulo Programa</th>
                 <th>Subtítulo Serie</th>
-                <th>Programa</th> 
                 <th>Programa Observaciones</th> 
                 <th>Sinopsis</th>
                 <th>Tiempo Duración</th>
@@ -119,20 +119,21 @@
               </tr>
             </thead>
             <tbody>
-              {% for data in consulta %} 
+              {% for program_series in consulta %}
+              {% if program_series.codigo_barras.video_cbarras == data.codigo_barras %}
               <tr>
-                <td>{{data.codigo_barras_id}}</td>
-                <td>{{data.serie}}</td>
-                <td>{{data.subtitulo_programa}}</td>
-                <td>{{data.subtitulo_serie}}</td>
-                <td>{{data.programa}}</td>
-                <td>{{data.programaObservaciones}}</td>
-                <td>{{data.sinopsis}}</td>
-                <td>{{data.tiempodur}}</td>
-                <td>{{data.tiempoin}}</td>
-                <td>{{data.tiempoout}}</td>
+                <td>{{program_series.codigo_barras.video_cbarras}}</td>
+                <td>{{program_series.programa}}</td>
+                <td>{{program_series.serie}}</td>
+                <td>{{program_series.subtitulo_programa}}</td>
+                <td>{{program_series.subtitulo_serie}}</td>
+                <td>{{program_series.programaObservaciones}}</td>
+                <td>{{program_series.sinopsis}}</td>
+                <td>{{program_series.tiempodur}}</td>
+                <td>{{program_series.tiempoin}}</td>
+                <td>{{program_series.tiempoout}}</td>
               </tr>
-              {% empty %}
+              {% endif %}
               {% endfor %}
             </tbody>
           </table>
