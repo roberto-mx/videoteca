@@ -2,7 +2,7 @@ import  json, datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from pyreportjasper import PyReportJasper
-from pyreportjasper import JasperGenerator
+# from pyreportjasper import JasperGenerator
 from fpdf import FPDF
 from ..models import Prestamos, DetallePrestamos
 from django.http.response import HttpResponse  
