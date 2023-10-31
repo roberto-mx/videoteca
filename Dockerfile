@@ -1,7 +1,4 @@
-FROM python:3.9
-
-# Instala OpenJDK
-RUN apt-get update && apt-get install -y openjdk-11-jre
+FROM python:3.9-slim
 
 WORKDIR /app
 
