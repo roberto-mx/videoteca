@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required, permission_required, 
 from django.http import JsonResponse
 import json
 from django.utils import timezone
-# from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib import messages 
