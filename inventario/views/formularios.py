@@ -179,7 +179,6 @@ def consultaFormulario(request):
     ).order_by('-id')
 
     programas_series = ProgramaSeries.objects.all()  # Obtén todos los datos de ProgramaSeries
-
     consultaForm = {'formulario': calificaciones, 'consulta': programas_series}  # Pasa ambos conjuntos de datos
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)

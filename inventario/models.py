@@ -96,7 +96,6 @@ class MaestroCintas(models.Model):
         return self.video_cbarras
     
 class ProgramaSeries(models.Model):
-    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, max_length=12)
     codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     programa = models.CharField("Programa",max_length=250, blank=True, null=True)
     serie = models.CharField("Serie",max_length=250, blank=True, null=True)
