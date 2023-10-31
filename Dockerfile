@@ -1,8 +1,9 @@
-FROM python:3.9-slim
-
-RUN apt-get update && apt-get install -y libpq-dev
+FROM python:3.9
 
 WORKDIR /app
+
+# Instala Jav
+# RUN apt-get update && apt-get install -y openjdk-11-jre
 
 COPY requirements.txt .
 
@@ -13,3 +14,4 @@ COPY . .
 EXPOSE 8085
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8085"]
+    
