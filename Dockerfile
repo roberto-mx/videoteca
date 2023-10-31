@@ -2,7 +2,7 @@ FROM python:3.9
 
 WORKDIR /app
 
-# Instala Java
+# Instala Jav
 RUN apt-get update && apt-get install -y openjdk-11-jre
 
 COPY requirements.txt .
