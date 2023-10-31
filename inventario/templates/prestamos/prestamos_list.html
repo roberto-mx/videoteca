@@ -740,9 +740,9 @@ function addItemOut() {
 //Acaba validacion
 function f_valida_repetido(codigoBarras){
   var v_valor = 0;
-  if ($('#resultTableOut tbody tr').length > 0){
+  if ($('#resultTableOut tr').length > 0){
    
-      $('#resultTableOut tbody tr').each(function(){
+      $('#resultTableOut tr').each(function(){
         if ($(this).find('input.codbarras').val() == codigoBarras) {
           alertMessage('info', `Ya se a registrado ${codigoBarras}.`, '¡Ups!');
           v_valor = 1;
