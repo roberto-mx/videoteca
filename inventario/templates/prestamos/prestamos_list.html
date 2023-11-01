@@ -548,7 +548,7 @@ function finalizarEntrada(usuario, codigoBarras) {
   $.ajax({
     data: {
       'usuario': usuario,
-      'codigos': JSON.stringify(get_data('#resultTableIn tr'))
+      'codigos': JSON.stringify(get_data('#resultTableIn tbody tr'))
     },
     url: "{% url 'finalizar_entrada_videoteca' %}",
     type: 'POST',
