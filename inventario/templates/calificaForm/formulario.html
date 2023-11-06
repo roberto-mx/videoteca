@@ -341,9 +341,9 @@
                 {% for field in modal_form %}
                 <div class="col-md-4 mb-2">
                   <div class="mb-1">
-                      {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' or field.name == 'sinopsis' or field.name == 'tiempoin' or field.name == 'tiempoout' or field.name == 'tiempodur' or field.name == 'programaObservaciones' %}
+                      {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' or field.name == 'sinopsis' or field.name == 'tiempoin' or field.name == 'tiempoout' or field.name == 'tiempodur' or field.name == 'observaciones' %}
                         <div class="mb-3">
-                          {% if field.name == 'programaObservaciones' %}
+                          {% if field.name == 'observaciones' %}
                             <label class="form-label">{{ field.label }}</label>
                             <textarea type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control little-input" placeholder="{{ field.label }}" ></textarea>
                             {{ field.errors }}
@@ -391,7 +391,7 @@
     }
   }
 
-  const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, sinopsis, tiempoin, tiempoout, tiempodur, programaObservaciones, codigoBarras) => {
+  const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, sinopsis, tiempoin, tiempoout, tiempodur, observaciones, codigoBarras) => {
     if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '') {
       return false; // Alguno de los campos está vacío
     }
@@ -408,7 +408,7 @@
     const tiempoin = document.getElementById('tiempoin').value;
     const tiempoout = document.getElementById('tiempoout').value;
     const tiempodur = document.getElementById('tiempodur').value;
-    const programaObservaciones = document.getElementById('programaObservaciones').value;
+    const observaciones = document.getElementById('observaciones').value;
     const codigoBarrasValor = document.getElementById('codigo_barras').value;
     $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
 
@@ -425,7 +425,7 @@
           tiempoin,
           tiempoout,
           tiempodur,
-          programaObservaciones,
+          observaciones,
           codigoBarrasValor
         )) 
       {
@@ -448,7 +448,7 @@
         tiempoin:              tiempoin,
         tiempoout:             tiempoout,
         tiempodur:             tiempodur,
-        programaObservaciones: programaObservaciones,
+        observaciones: observaciones,
         codigoBarras:          codigoBarrasValor,
       });
 
@@ -487,7 +487,7 @@
       cellSub_TiemIni.innerHTML = datos.tiempoin;
       cellSub_TiemFin.innerHTML = datos.tiempoout;
       cellSub_Dura.innerHTML = datos.tiempodur;
-      cellSub_Observacion.innerHTML = datos.programaObservaciones;
+      cellSub_Observacion.innerHTML = datos.observaciones;
       cellAcciones.innerHTML = `
         <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${datos.id}" onclick="eliminarFila(${datos.id})">
           <div style="display: flex; flex-direction: column; align-items: center;">
