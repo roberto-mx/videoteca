@@ -558,7 +558,6 @@ def json_to_pdf(request, row, codes, user):
     pyreportjasper.process_report()
     return output_file  # Return the file path
    
-  
 def GetFilePdf(request):
     file = request.GET.get('q')
     if os.path.isfile(file):
