@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm, FormularioCombinadoEditar, ModalFormEdit
+from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm, FormularioCombinadoEditar
 from ..models import MaestroCintas, RegistroCalificacion, ProgramaSeries
 from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
