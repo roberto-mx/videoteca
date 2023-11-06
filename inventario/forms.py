@@ -126,11 +126,11 @@ class ModalForm(forms.ModelForm):
         exclude = ['codigo_barras']  # Excluye el campo código_barras del formulario
 
 
-class ModalFormEdit(forms.ModelForm):
-    class Meta:
-        model = ProgramaSeries
-        fields = ['programa', 'serie', 'subtitulo_programa', 'subtitulo_serie']
-        exclude = ['codigo_barras']  # Excluye el campo código_barras del formulario
+# class ModalFormEdit(forms.ModelForm):
+#     class Meta:
+#         model = ProgramaSeries
+#         fields = ['programa', 'serie', 'subtitulo_programa', 'subtitulo_serie']
+#         exclude = ['codigo_barras']  # Excluye el campo código_barras del formulario
 
   
 class Descripcion(forms.ModelForm):
