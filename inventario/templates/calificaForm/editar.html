@@ -166,7 +166,7 @@
                                         <td>{{ programa.tiempoin }}</td>
                                         <td>{{ programa.tiempoout }}</td>
                                         <td>{{ programa.tiempodur }}</td>
-                                        <td>{{ programa.programaObservaciones }}</td>
+                                        <td>{{ programa.observaciones }}</td>
                                         <td>
                                           
                                           <button class="btn btn-editar btn-sm text-white" style="background-color:#1F5E49;" title="Editar"
@@ -388,8 +388,8 @@
                   </div>
 
                   <div class="mb-3">
-                      <label for="programaObservaciones{{ programa.id }}" class="form-label">Observaciones</label>
-                      <textarea id="programaObservaciones{{ programa.id }}" name="programaObservaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.programaObservaciones }}</textarea>
+                      <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                      <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.observaciones }}</textarea>
                   </div>
                 </div>
               </div>
@@ -462,8 +462,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="programaObservaciones{{ programa.id }}" class="form-label">Observaciones</label>
-                            <textarea id="programaObservaciones{{ programa.id }}" name="programaObservaciones" class="form-control form-control-sm little-input" rows="4">{{ programa.programaObservaciones }}</textarea>
+                            <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                            <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" rows="4">{{ programa.observaciones }}</textarea>
                         </div>
                       </div>
                     </div>
@@ -504,7 +504,7 @@
         const tiempoin                = modal.find('[name="tiempoin"]').val();
         const tiempoout               = modal.find('[name="tiempoout"]').val();
         const tiempodur               = modal.find('[name="tiempodur"]').val();
-        const programaObservaciones   = modal.find('[name="programaObservaciones"]').val();
+        const observaciones   = modal.find('[name="observaciones"]').val();
 
         Swal.fire({
             title: '¿Estás seguro de guardar los cambios?',
@@ -526,7 +526,7 @@
                   tiempoin:               tiempoin,  
                   tiempoout:              tiempoout,  
                   tiempodur:              tiempodur,  
-                  programaObservaciones:  programaObservaciones,  
+                  observaciones:  observaciones,  
               };
 
               console.log(`Datos editados: ${JSON.stringify(edited_data)}`);
@@ -712,8 +712,8 @@
       formulario.reset();
     }
 
-    //const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, sinopsis, tiempoin, tiempoout, tiempodur, programaObservaciones, codigoBarras) => {
-    //  if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '' || sinopsis.trm() === '' || tiempoin.trm() === '' || tiempoout.trm() === '' || tiempodur.trm() === '' || programaObservaciones) {
+    //const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, sinopsis, tiempoin, tiempoout, tiempodur, observaciones, codigoBarras) => {
+    //  if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '' || sinopsis.trm() === '' || tiempoin.trm() === '' || tiempoout.trm() === '' || tiempodur.trm() === '' || observaciones) {
     //    return false; // Alguno de los campos está vacío
     //  }
     //  return true; // Todos los campos están llenos
@@ -730,7 +730,7 @@
       const tiempoin = document.getElementById('tiempoin').value;
       const tiempoout = document.getElementById('tiempoout').value;
       const tiempodur = document.getElementById('tiempodur').value;
-      const programaObservaciones = document.getElementById('programaObservaciones').value;
+      const observaciones = document.getElementById('observaciones').value;
       const codigoBarrasValor = document.getElementById('codigo_barras').value;
       $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
 
@@ -743,7 +743,7 @@
         tiempoin:               tiempoin,
         tiempoout:              tiempoout,
         tiempodur:              tiempodur,
-        programaObservaciones:  programaObservaciones,
+        observaciones:  observaciones,
         codigoBarras:           codigoBarrasValor,
       });
   
@@ -796,7 +796,7 @@
         newRow.insertCell().textContent = datos.tiempoin;
         newRow.insertCell().textContent = datos.tiempoout;
         newRow.insertCell().textContent = datos.tiempodur;
-        newRow.insertCell().textContent = datos.programaObservaciones;
+        newRow.insertCell().textContent = datos.observaciones;
         
         const cellAcciones = newRow.insertCell();
         cellAcciones.innerHTML = `

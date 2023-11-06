@@ -9,3 +9,4 @@ pyreportjasper
 django-ajax-datatable
 fpdf
 reportlab
+# pyreportjasper==0.6.2

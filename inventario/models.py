@@ -105,7 +105,7 @@ class ProgramaSeries(models.Model):
     tiempoin = models.CharField("Tiempo Inicio", max_length=11, blank=True, null=True)
     tiempoout = models.CharField("Tiempo Final",max_length=11, blank=True, null=True)
     tiempodur = models.CharField("Duración",max_length=11, blank=True, null=True)
-    programaObservaciones = models.CharField("Observaciones", max_length=350, blank=True, null=True)
+    observaciones = models.CharField("Observaciones", max_length=350, blank=True, null=True)
 
     class Meta:
         db_table = 'programas_series'

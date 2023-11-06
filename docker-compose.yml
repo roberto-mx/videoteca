@@ -2,6 +2,8 @@ version: '3.3'
 
 services:
   db:
+    networks:
+        - videoteca_default-network
     image: postgres:14
     environment:
       - POSTGRES_DB=videoteca
@@ -11,9 +13,11 @@ services:
       - "5434:5432"
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data  
+      - postgres_data:/var/lib/postgresql/data
 
   rh:
+    networks:
+      - videoteca_default-network
     image: postgres:14
     environment:
       - POSTGRES_DB=recursoshumanos
@@ -22,10 +26,12 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      # - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data  
+      - postgres_data:/var/lib/postgresql/data
+
   web:
+    networks:
+      - videoteca_default-network
     build:
       context: .
       dockerfile: Dockerfile
@@ -40,7 +46,11 @@ services:
       - rh
     environment:
       - DEBUG=False
-    restart: always  
-
+    restart: always
+    
 volumes:
   postgres_data:
+
+networks:
+  videoteca_default-network:
+    driver: bridge

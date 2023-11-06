@@ -1,0 +1,38 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  th, td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background-color: #18463b;
+    color: white; /* añadido para cambiar el color de las letras */
+  }
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  .dataTable {
+    padding: 0;
+
+  }
+
+  td {
+    padding: 0;
+    border: none;
+  }
+
+  .estatus-alert {
+    margin: 2;
+    padding: 10px;
+  }
+
+
+  th, td {
+    border-right: 1px solid #dddddd;
+  }
+  

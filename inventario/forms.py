@@ -80,6 +80,8 @@ class FormularioCombinadoEditar(forms.Form):
     productor = forms.CharField(max_length=60, required=True)
     coordinador = forms.CharField(max_length=40, required=True)
     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
+    duracion = forms.CharField(max_length=11, required=True)
+    video_codificacion = forms.CharField(max_length=20, required=True)
     video_estatus = forms.CharField(max_length=20, required=True)
     video_observaciones = forms.CharField(max_length=20, required=True)
     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
@@ -97,6 +99,8 @@ class FormularioCombinado(forms.Form):
     productor = forms.CharField(max_length=60, required=True)
     coordinador = forms.CharField(max_length=40, required=True)
     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
+    duracion = forms.CharField(max_length=11, required=True)
+    video_codificacion = forms.CharField(max_length=20, required=True)
     video_estatus = forms.CharField(max_length=20, required=True)
     video_observaciones = forms.CharField(max_length=20, required=True)
     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
@@ -111,18 +115,7 @@ class FormularioCombinado(forms.Form):
 class ModalForm(forms.ModelForm):
     class Meta:
         model = ProgramaSeries
-        fields = [
-            'programa',
-            'serie',
-            'subtitulo_programa',
-            'subtitulo_serie',
-            'sinopsis',
-            'tiempoin',
-            'tiempoout',
-            'tiempodur',
-            'programaObservaciones',
-
-        ]
+        fields = ['programa','serie','subtitulo_programa','subtitulo_serie']
         exclude = ['codigo_barras']  # Excluye el campo código_barras del formulario
 
 
@@ -138,22 +131,19 @@ class Descripcion(forms.ModelForm):
         model = RegistroCalificacion
         fields = [
             'sinopsis',
-            # 'tiempoin',
+            'tiempodur',
             'participantes',
-            # 'tiempoout',
             'personajes',
-            # 'tiempodur',           
             'derecho_patrimonial',
-            
+            'asignatura_materia',
+            'grado',
+            'orientacion',
         ]
 
 class Mapa(forms.ModelForm):
     class Meta:
         model = RegistroCalificacion
         fields = [
-            'asignatura_materia',
-            'grado',
-            'orientacion',
             'area_de_conocimiento',
             'eje_tematico',
             'nivel_educativo',
