@@ -82,7 +82,7 @@ def formulario(request):
                 tiempoin              = item.get('tiempoin')
                 tiempoout             = item.get('tiempoout')
                 tiempodur             = item.get('tiempodur')
-                programaObservaciones = item.get('programaObservaciones')
+                observaciones         = item.get('observaciones')
                 
                 # Crear instancia de RegistroCalificacion para cada programa y serie
                 registro_calificacion = RegistroCalificacion(
@@ -134,7 +134,7 @@ def formulario(request):
                     tiempoin              = tiempoin,
                     tiempoout             = tiempoout,
                     tiempodur             = tiempodur,
-                    programaObservaciones = programaObservaciones
+                    observaciones = observaciones
                 )
                 registro_programas.save()
 
@@ -217,7 +217,7 @@ def agregarProgramaEdit(request, codigo_barras):
                 tiempoin              = item.get('tiempoin')
                 tiempoout             = item.get('tiempoout')
                 tiempodur             = item.get('tiempodur')
-                programaObservaciones = item.get('programaObservaciones')
+                observaciones = item.get('observaciones')
                 
                 programa_nuevo = ProgramaSeries(
                     codigo_barras=maestro_cintas,
@@ -229,7 +229,7 @@ def agregarProgramaEdit(request, codigo_barras):
                     tiempoin=tiempoin,
                     tiempoout=tiempoout,
                     tiempodur=tiempodur,
-                    programaObservaciones=programaObservaciones,
+                    observaciones=observaciones,
             
                 )
                 programa_nuevo.save()
@@ -279,8 +279,8 @@ def editar_programa(request, programa_id):
                 tiempoout = edited_data['tiempoout']
             if 'tiempodur' in edited_data:
                 tiempodur = edited_data['tiempodur']
-            if 'programaObservaciones' in edited_data:
-                programaObservaciones = edited_data['programaObservaciones']
+            if 'observaciones' in edited_data:
+                observaciones = edited_data['observaciones']
              
             programa.subtitulo_programa    = programa_subtitulo_programa
             programa.subtitulo_serie       = programa_subtitulo_serie
@@ -288,7 +288,7 @@ def editar_programa(request, programa_id):
             programa.tiempoin              = tiempoin
             programa.tiempoout             = tiempoout
             programa.tiempodur             = tiempodur
-            programa.programaObservaciones = programaObservaciones
+            programa.observaciones = observaciones
             programa.save()
             
             return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
@@ -388,7 +388,7 @@ def editar(request, id, codigo_barras):
                     'tiempoin':              registro.tiempoin,
                     'tiempoout':             registro.tiempoout,
                     'tiempodur':             registro.tiempodur,
-                    'programaObservaciones': registro.programaObservaciones
+                    'observaciones': registro.observaciones
                 })
 
             formulario_descripcion = Descripcion(instance=registro_calificacion)
