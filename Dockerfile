@@ -1,22 +1,19 @@
-FROM adoptopenjdk:11-jre-hotspot
+FROM python:3.9
 
-# Instala Python 3.9
-RUN apt-get update && apt-get install -y python3.9
-
-# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos y scripts necesarios
+# Instala OpenJDK 11 (incluyendo JDK)
+RUN apt-get update && apt-get install -y openjdk-11-jdk
+
+# Configura JAVA_HOME
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
+
 COPY requirements.txt .
 
-# Instala las dependencias de Python
 RUN pip install -r requirements.txt
 
-# Copia el resto de tu aplicación
 COPY . .
 
-# Exponer el puerto si es necesario
 EXPOSE 8085
 
-# Comando para iniciar tu aplicación
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8085"]
