@@ -11,7 +11,7 @@ services:
       - "5434:5432"
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data  
+      - postgres_data:/var/lib/postgresql/data
 
   rh:
     image: postgres:14
@@ -23,7 +23,8 @@ services:
       - "5433:5432"
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data  
+      - postgres_data:/var/lib/postgresql/data
+
   web:
     build:
       context: .
@@ -41,10 +42,11 @@ services:
       - DEBUG=False
     restart: always
     networks:
-      - videoteca_default
+      - videoteca_default-network
 
 volumes:
   postgres_data:
 
 networks:
-  videoteca_default:
+  videoteca_default-network:
+    driver: bridge
