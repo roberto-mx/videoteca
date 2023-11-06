@@ -511,8 +511,8 @@ def generate_pdf_resgister_folio(request):
  # ---------------------------------------------------------------------------------------------------------------------------#
 
 def xml_to_pdf():
-   RESOURCES_DIR = os.path.abspath(settings.MEDIA_ROOT)
-   REPORTS_DIR = os.path.abspath(os.path.dirname(__file__))
+#    RESOURCES_DIR = os.path.abspath(settings.MEDIA_ROOT)
+#    REPORTS_DIR = os.path.abspath(os.path.dirname(__file__))
    input_file = settings.MEDIA_ROOT+ '/reports/main.jrxml'
    output_file = settings.MEDIA_ROOT+ '/reports/report'
    data_file = settings.MEDIA_ROOT+ '/reports/contacts.xml'
@@ -526,7 +526,7 @@ def xml_to_pdf():
           'data_file': data_file,
           'xml_xpath': '/',
       }, 
-      resource="C:/Users/Cmalvaez/Documents/"
+      #resource="C:/Users/Cmalvaez/Documents/"
    )
    pyreportjasper.process_report()
    print('Result is the file below.')
@@ -537,8 +537,7 @@ def xml_to_pdf():
 
 @csrf_exempt      
 def json_to_pdf(request, row, codes, user):
-    # RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
-    # RESOURCES_DIR = settings.MEDIA_ROOT + '/usr/lib/jvm/java-11-openjdk-amd64/lib'
+    RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
     input_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.jrxml'
     CreateJsonInReport(row, codes, user)
     output_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.pdf'  # Specific file path
@@ -553,16 +552,17 @@ def json_to_pdf(request, row, codes, user):
         output_file=output_file,
         output_formats=["pdf"],
         db_connection=conn,
-        # resource=RESOURCES_DIR
+        resource=RESOURCES_DIR
     )
     pyreportjasper.process_report()
     return output_file  # Return the file path
    
+  
 def GetFilePdf(request):
     file = request.GET.get('q')
     if os.path.isfile(file):
-        print('Report generated successfully!')
         with open(file, 'rb') as pdf:
+            print('Archivo', file)
             response = HttpResponse(pdf.read(),content_type='application/pdf')
             response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
         return response
