@@ -2,6 +2,8 @@ version: '3.3'
 
 services:
   db:
+    networks:
+        - videoteca_default
     image: postgres:14
     environment:
       - POSTGRES_DB=videoteca
@@ -14,6 +16,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   rh:
+    networks:
+      - videoteca_default
     image: postgres:14
     environment:
       - POSTGRES_DB=recursoshumanos
@@ -26,6 +30,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   web:
+    networks:
+      - videoteca_default
     build:
       context: .
       dockerfile: Dockerfile
@@ -41,9 +47,7 @@ services:
     environment:
       - DEBUG=False
     restart: always
-    networks:
-      - videoteca_default-network
-
+    
 volumes:
   postgres_data:
 
