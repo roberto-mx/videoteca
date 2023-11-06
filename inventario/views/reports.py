@@ -537,7 +537,8 @@ def xml_to_pdf():
 
 @csrf_exempt      
 def json_to_pdf(request, row, codes, user):
-    RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
+    # RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
+    RESOURCES_DIR = settings.MEDIA_ROOT + '/usr/lib/jvm/java-11-openjdk-amd64/lib'
     input_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.jrxml'
     CreateJsonInReport(row, codes, user)
     output_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.pdf'  # Specific file path
