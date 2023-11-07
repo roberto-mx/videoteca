@@ -26,7 +26,7 @@
 			<staticText>
 				<reportElement x="345" y="25" width="220" height="30" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="d89755a1-090f-4e95-bceb-11c8b13aaad8"/>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Formato de Devolución]]></text>
 			</staticText>
@@ -37,7 +37,7 @@
 			<staticText>
 				<reportElement x="345" y="5" width="220" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="68419cb5-311f-4c0d-88ef-0f8783d81ec8"/>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dirección General @prende.mx]]></text>
 			</staticText>
@@ -52,7 +52,7 @@
 			<staticText>
 				<reportElement x="165" y="0" width="220" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="1f1e523e-dc02-4df8-85c6-369a1d62b24c"/>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Devolución de Material]]></text>
 			</staticText>
@@ -61,7 +61,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{FechaDev}]]></textFieldExpression>
 			</textField>
@@ -73,7 +73,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
 			</textField>
@@ -85,7 +85,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Direccion}]]></textFieldExpression>
 			</textField>
@@ -97,7 +97,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Puesto}]]></textFieldExpression>
 			</textField>
@@ -106,7 +106,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Extension}]]></textFieldExpression>
 			</textField>
@@ -118,7 +118,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Correo}]]></textFieldExpression>
 			</textField>
@@ -127,7 +127,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
@@ -136,7 +136,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dirección]]></text>
 			</staticText>
@@ -145,7 +145,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Puesto]]></text>
 			</staticText>
@@ -154,7 +154,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha de Devolución]]></text>
 			</staticText>
@@ -163,7 +163,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Extensión]]></text>
 			</staticText>
@@ -172,7 +172,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Montserrat" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Correo]]></text>
 			</staticText>
@@ -185,7 +185,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<text><![CDATA[CONSECUTIVO]]></text>
 			</staticText>
@@ -194,7 +194,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<text><![CDATA[CÓDIGO]]></text>
 			</staticText>
@@ -203,7 +203,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<text><![CDATA[CÓDIGO BARRAS]]></text>
 			</staticText>
@@ -216,7 +216,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Codigo}]]></textFieldExpression>
 			</textField>
@@ -225,7 +225,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2f371429-a94f-4dec-9e02-76487587c95f"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Consecutivo}]]></textFieldExpression>
 			</textField>
@@ -242,14 +242,14 @@
 			<staticText>
 				<reportElement x="30" y="0" width="100" height="30" uuid="ca6183a1-36ba-450a-89b4-4e840903332d"/>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<text><![CDATA[Recibe]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="420" y="0" width="100" height="30" uuid="d82c797a-824b-43ec-afbd-6ab06ca2f45a"/>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<text><![CDATA[Entrega]]></text>
 			</staticText>
@@ -270,14 +270,14 @@
 			<textField>
 				<reportElement x="373" y="-32" width="181" height="30" uuid="3be59b7b-633d-4a3d-bb3c-6d25d78db118"/>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="-31" width="181" height="30" uuid="64dc5eac-2870-4587-82db-6d58ec7f31fd"/>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="10"/>
+					<font fontName="Montserrat" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Recibe}]]></textFieldExpression>
 			</textField>
