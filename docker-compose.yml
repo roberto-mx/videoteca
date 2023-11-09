@@ -12,8 +12,8 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - videoteca_postgres_data:/var/lib/postgresql/data
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+      - videoteca_postgres_data:/var/lib/postgresql/data
 
   rh:
     networks:
@@ -26,8 +26,8 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - rh_postgres_data:/var/lib/postgresql/data
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+      - rh_postgres_data:/var/lib/postgresql/data
 
   web:
     networks:
