@@ -12,7 +12,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
+      - /var/lib/postgresql/backups:/docker-docker-compose-initdb.d
       - videoteca_postgres_data:/var/lib/postgresql/data
 
   rh:
@@ -20,14 +20,14 @@ services:
       - videoteca_default-network
     image: postgres:14
     environment:
-      - POSTGRES_DB=recursos_humanos
+      - POSTGRES_DB=recursoshumanos
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5434:5432"
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - recursos_humanos_postgres_data:/var/lib/postgresql/data
+      - recursoshumanos_postgres_data:/var/lib/postgresql/data
 
   web:
     networks:
@@ -50,7 +50,7 @@ services:
 
 volumes:
   videoteca_postgres_data:
-  recursos_humanos_postgres_data:
+  recursoshumanos_postgres_data:
 
 networks:
   videoteca_default-network:
