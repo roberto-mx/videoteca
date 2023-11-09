@@ -27,7 +27,7 @@ services:
       - "5434:5432"
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - rh_postgres_data:/var/lib/postgresql/data
+      - recursos_humanos_postgres_data:/var/lib/postgresql/data
 
   web:
     networks:
@@ -50,7 +50,7 @@ services:
 
 volumes:
   videoteca_postgres_data:
-  rh_postgres_data:
+  recursos_humanos_postgres_data:
 
 networks:
   videoteca_default-network:
