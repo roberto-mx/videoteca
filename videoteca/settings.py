@@ -88,7 +88,7 @@ DATABASES = {
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'recursoshumanos',
+        'NAME': 'recursos_humanos',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'rh',
