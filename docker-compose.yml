@@ -20,7 +20,7 @@ services:
       - videoteca_default-network
     image: postgres:14
     environment:
-      - POSTGRES_DB=recursoshumanos
+      - POSTGRES_DB=recursos_humanos
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
