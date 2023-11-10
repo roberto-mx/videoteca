@@ -3,17 +3,17 @@ version: '3.3'
 services:
   db:
     networks:
-      - videoteca_default-network
+        - videoteca_default-network
     image: postgres:14
     environment:
       - POSTGRES_DB=videoteca
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - videoteca_postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   rh:
     networks:
@@ -24,10 +24,10 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5434:5432"
+      - "5433:5432"
     volumes:
       - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - recursoshumanos_postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   web:
     networks:
@@ -47,10 +47,9 @@ services:
     environment:
       - DEBUG=False
     restart: always
-
+    
 volumes:
-  videoteca_postgres_data:
-  recursoshumanos_postgres_data:
+  postgres_data:
 
 networks:
   videoteca_default-network:
