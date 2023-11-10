@@ -10,7 +10,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5432:5432"
+      - "5431:5432"
     volumes:
       - /var/lib/postgresql/backupsVideoteca:/docker-entrypoint-initdb.d
       - videoteca-data:/var/lib/postgresql/data
