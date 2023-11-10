@@ -36,8 +36,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: django:latest
-    # command: python manage.py runserver 0.0.0.0:8085
-    command: ["./wait-for-it.sh", "db:5433", "rh:5434", "python", "manage.py", "runserver", "0.0.0.0:8085"]
+    command: python manage.py runserver 0.0.0.0:8085
+    #command: ["./wait-for-it.sh", "db:5433", "rh:5434", "python", "manage.py", "runserver", "0.0.0.0:8085"]
     volumes:
       - .:/app
     ports:
