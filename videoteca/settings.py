@@ -84,7 +84,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'db',
-        'PORT': '5432'  # Puerto correcto es 5432
+        'PORT': '5433'
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -92,9 +92,10 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'rh',
-        'PORT': '5432'  # Puerto correcto es 5432
+        'PORT': '5434'
     }
 }
+
 
 
 # DATABASES = {
