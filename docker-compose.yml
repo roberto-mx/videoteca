@@ -10,7 +10,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5431:5432"
+      - "5433:5432"
     volumes:
       - /var/lib/postgresql/backupsVideoteca:/docker-entrypoint-initdb.d
       - videoteca-data:/var/lib/postgresql/data
@@ -24,7 +24,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5430:5432"
+      - "5434:5432"
     volumes:
       - /var/lib/postgresql/backupsRh:/docker-entrypoint-initdb.d
       - recursos-humanos-data:/var/lib/postgresql/data
@@ -36,7 +36,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: django:latest
-    command: python manage.py runserver 0.0.0.0:8085
+    # command: python manage.py runserver 0.0.0.0:8085
+    command: ["./wait-for-it.sh", "db:5433", "rh:5434", "python", "manage.py", "runserver", "0.0.0.0:8085"]
     volumes:
       - .:/app
     ports:
