@@ -31,8 +31,8 @@ class PDF(FPDF):
         self.cell(485, 1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
         self.cell(440, 1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
-        self.ln(3)
-        self.cell(525, 1, 'Audiovisual', 0, 20, 'C')
+        # self.ln(3)
+        # self.cell(525, 1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
         self.cell(458, 1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(80)
@@ -179,8 +179,8 @@ class GENERATE(FPDF):
         self.ln(3)
         self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(525,1, 'Audiovisual', 0, 20, 'C')
-        self.ln(3)
+        # self.cell(525,1, 'Audiovisual', 0, 20, 'C')
+        # self.ln(3)
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(80)
 
@@ -378,8 +378,8 @@ class PDF_FOLIO(FPDF):
         self.cell(485,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
         self.cell(440,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
-        self.ln(3)
-        self.cell(525,1, 'Audiovisual', 0, 20, 'C')
+        # self.ln(3)
+        # self.cell(525,1, 'Audiovisual', 0, 20, 'C')
         self.ln(3)
         self.cell(458,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(80)
@@ -510,34 +510,9 @@ def generate_pdf_resgister_folio(request):
 
  # ---------------------------------------------------------------------------------------------------------------------------#
 
-def xml_to_pdf():
-   RESOURCES_DIR = os.path.abspath(settings.MEDIA_ROOT)
-   REPORTS_DIR = os.path.abspath(os.path.dirname(__file__))
-   input_file = settings.MEDIA_ROOT+ '/reports/main.jrxml'
-   output_file = settings.MEDIA_ROOT+ '/reports/report'
-   data_file = settings.MEDIA_ROOT+ '/reports/contacts.xml'
-   pyreportjasper = PyReportJasper()
-   pyreportjasper.config(
-      input_file,
-      output_file,
-      output_formats=["pdf"],
-      db_connection={
-          'driver': 'xml',
-          'data_file': data_file,
-          'xml_xpath': '/',
-      }, 
-      resource="C:/Users/Cmalvaez/Documents/"
-   )
-   pyreportjasper.process_report()
-   print('Result is the file below.')
-   print(output_file + '.pdf')
-
-
-
-
 @csrf_exempt      
 def json_to_pdf(request, row, codes, user):
-    RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
+    #RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
     input_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.jrxml'
     CreateJsonInReport(row, codes, user)
     output_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.pdf'  # Specific file path
@@ -552,7 +527,7 @@ def json_to_pdf(request, row, codes, user):
         output_file=output_file,
         output_formats=["pdf"],
         db_connection=conn,
-        resource=RESOURCES_DIR
+        #resource=RESOURCES_DIR
     )
     pyreportjasper.process_report()
     return output_file  # Return the file path

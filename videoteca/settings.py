@@ -77,13 +77,15 @@ WSGI_APPLICATION = 'videoteca.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 #base host servidor 172.16.110.29/
+# settings.py
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'videoteca',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'db',
+        'HOST': 'db',  # Usar el nombre del servicio definido en Docker Compose
         'PORT': '5432'
     },
     'users': {
@@ -91,10 +93,13 @@ DATABASES = {
         'NAME': 'recursoshumanos',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'rh',
+        'HOST': 'rh',  # Usar el nombre del servicio definido en Docker Compose
         'PORT': '5432'
     }
 }
+
+
+
 
 # DATABASES = {
 #     'default': {

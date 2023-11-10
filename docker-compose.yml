@@ -3,17 +3,17 @@ version: '3.3'
 services:
   db:
     networks:
-        - videoteca_default-network
+      - videoteca_default-network
     image: postgres:14
     environment:
-      - POSTGRES_DB=videoteca
+      - POSTGRES_DB=videoteca  
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5434:5432"
+      - "5433:5432"
     volumes:
-      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data
+      - /var/lib/postgresql/backupsVideoteca:/docker-entrypoint-initdb.d
+      - videoteca-data:/var/lib/postgresql/data
 
   rh:
     networks:
@@ -24,10 +24,10 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
-      - /var/lib/postgresql/backups:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data
+      - /var/lib/postgresql/backupsRh:/docker-entrypoint-initdb.d
+      - recursos-humanos-data:/var/lib/postgresql/data
 
   web:
     networks:
@@ -37,6 +37,7 @@ services:
       dockerfile: Dockerfile
     image: django:latest
     command: python manage.py runserver 0.0.0.0:8085
+    #command: ["./wait-for-it.sh", "db:5433", "rh:5434", "python", "manage.py", "runserver", "0.0.0.0:8085"]
     volumes:
       - .:/app
     ports:
@@ -47,9 +48,10 @@ services:
     environment:
       - DEBUG=False
     restart: always
-    
+
 volumes:
-  postgres_data:
+  videoteca-data:
+  recursos-humanos-data:
 
 networks:
   videoteca_default-network:
