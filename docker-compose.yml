@@ -6,7 +6,7 @@ services:
       - videoteca_default-network
     image: postgres:14
     environment:
-      - POSTGRES_DB=videoteca
+      - POSTGRES_DB=videoteca  
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
