@@ -91,7 +91,13 @@
             <td><a href="/inventario/cintas/{{cinta.video_cbarras}}/">{{ cinta.video_cbarras }}</a></td>
             <td>{{ cinta.video_codificacion }}</td>
             <td>{{ cinta.video_tipo|default:"" }}</td>
-            <td>{{ cinta.video_estatus|default:"" }}</td>
+            <td>
+              {% if cinta.video_estatus == 'X' %}
+                En préstamo
+              {% else %}
+                {{ cinta.video_estatus|default:"" }}
+              {% endif %}
+            </td>
             <td>{{ cinta.video_fingreso|default_if_none:"" }}</td>
           </tr>
           {% endfor %}
