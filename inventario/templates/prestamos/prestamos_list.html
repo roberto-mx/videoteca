@@ -40,6 +40,7 @@
                 <th>Detalles</th>
                 <th>Folio Préstamo</th>
                 <th>Usuario</th>
+                <th>Nombre</th>
                 <th>Fecha-Hora-Préstamo</th>
                 <th>Devolución</th>
                 <th>Estatus</th>
@@ -51,15 +52,30 @@
                 <td></td>
                 <td>{{ data.pres_folio }}</td>
                 <td>{{ data.usua_clave }}</td>
+                <td>
+                  {% for usuario in usuarios %}
+                    {% if data.usua_clave == usuario.matricula %}
+                      {{ usuario.nombre_completo }}
+                    {% endif %}
+                  {% endfor %}
+                </td>
                 <td>{{ data.pres_fechahora }}</td>
                 <td>
                   {% if data.pres_fecha_devolucion %}
-                  {{ data.pres_fecha_devolucion }}
+                    {{ data.pres_fecha_devolucion }}
                   {% else %}
-                  No ha habido devolución
+                    No ha habido devolución
                   {% endif %}
                 </td>
-                <td>{{ data.pres_estatus }}</td>
+                <td>
+                  {% if data.pres_estatus == 'X' %}
+                    En préstamo
+                  {% elif data.pres_estatus == 'I' %}
+                    En Videoteca
+                  {% else %}
+                    {{ data.pres_estatus }}
+                  {% endif %}
+                </td>
               </tr>
               {% empty %}
               {% endfor %}
@@ -263,6 +279,7 @@ $(document).ready(function() {
       },
       {"data": "pres_folio"},
       {"data": "usua_clave"},
+      {"data": "usuario.nombre_completo"},  
       {"data": "pres_fechahora"},
       {"data": "pres_fecha_devolucion"},
       {"data": "pres_estatus"},

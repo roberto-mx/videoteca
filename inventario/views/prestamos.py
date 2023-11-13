@@ -13,6 +13,9 @@ from django.http.response import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 import tempfile
 import os
+from django.views import View
+from django.db import connections
+from datetime import datetime
 # from businesstimedelta import Businesstimedelta
 
 # from django.utils import timezone
@@ -54,14 +57,45 @@ def Filtrar_prestamos(request):
 
 @method_decorator(login_required, name='dispatch')
 
-class PrestamosListView(ListView):
-    def get(self, request):
+
+
+class PrestamosListView(View):
+    template_name = 'prestamos/prestamos_list.html'
+
+    def get(self, request, *args, **kwargs):
         current_year = datetime.now().year
+
+        # Obtener los préstamos filtrados por el año actual
         queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year)
-        context = {
-            'prestamos': queryset,
-        }
-        return render(request, 'prestamos/prestamos_list.html', context)
+
+        # Obtener las matrículas
+        matriculas = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year).values_list('usua_clave', flat=True)
+        matriculas_list = list(matriculas)
+
+        context = {'prestamos': queryset}
+
+        if matriculas_list:
+            cursor = connections['users'].cursor()
+            cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
+
+            users_data = cursor.fetchall()
+
+            # Crear una lista de usuarios en el contexto
+            context['usuarios'] = []
+
+            for row in users_data:
+                matricula, nombres, apellido1, apellido2 = row
+                nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
+
+                # Agregar la información del usuario a la lista de usuarios en el contexto
+                context['usuarios'].append({
+                    'matricula': matricula,
+                    'nombre_completo': nombre_completo,
+                })
+
+                print(context)
+
+        return render(request, self.template_name, context)
 
 #vista detalle    
 @csrf_exempt
