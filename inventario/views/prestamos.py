@@ -23,9 +23,6 @@ from datetime import datetime, timedelta, date
 # from django.utils import timezone
 from django.db import connections
 
-    # ---------------------------
-    # Prestamos
-    # ---------------------------
 def Filtrar_prestamos(request):
     q = request.GET.get('q')
 
@@ -35,30 +32,50 @@ def Filtrar_prestamos(request):
         try:
             q = str(q)  # Convertir a número entero
             prestamos = DetallePrestamos.objects.filter(
-                # Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
                 Q(pres_folio=q) | Q(vide_codigo=q) | Q(pres_folio__usua_clave=q)
             )
 
+            usuarios_dict = obtener_usuarios_dict(prestamos)
+
             for prestamo in prestamos:
+                nombre_completo  = usuarios_dict.get(prestamo.pres_folio.usua_clave, "Nombre no encontrado")
+                estatus = "En préstamo" if prestamo.pres_folio.pres_estatus == 'X' else "En Videoteca" 
+
                 prestamo_data = {
                     "pres_folio": prestamo.pres_folio.pres_folio,
                     "usua_clave": prestamo.pres_folio.usua_clave,
                     "pres_fechahora": prestamo.pres_folio.pres_fechahora,
                     "pres_fecha_devolucion": prestamo.pres_folio.pres_fecha_devolucion,
-                    "pres_estatus": prestamo.pres_folio.pres_estatus
+                    "pres_estatus": estatus,
+                    "usuario": {
+                        "matricula": prestamo.pres_folio.usua_clave,
+                        "nombre_completo": nombre_completo,
+                    }
                 }
                 prestamos_data.append(prestamo_data)
 
-           # Corregido: imprimir prestamos_data en lugar de prestamo_data
         except ValueError:
             pass
 
     return JsonResponse(prestamos_data, safe=False)
 
+def obtener_usuarios_dict(prestamos):
+    matriculas_list = [prestamo.pres_folio.usua_clave for prestamo in prestamos]
+    
+    cursor = connections['users'].cursor()
+
+    if matriculas_list:
+        cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
+        users_data = cursor.fetchall()
+    else:
+        
+        users_data = []
+
+    usuarios_dict = {row[0]: f"{row[1]} {row[2]} {row[3]}" if row[3] else f"{row[1]} {row[2]}" for row in users_data}
+
+    return usuarios_dict
+
 @method_decorator(login_required, name='dispatch')
-
-
-
 class PrestamosListView(View):
     template_name = 'prestamos/prestamos_list.html'
 
@@ -73,11 +90,10 @@ class PrestamosListView(View):
         matriculas_list = list(matriculas)
 
         context = {'prestamos': queryset}
-
+        
         if matriculas_list:
             cursor = connections['users'].cursor()
             cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
-
             users_data = cursor.fetchall()
 
             # Crear una lista de usuarios en el contexto
@@ -92,8 +108,6 @@ class PrestamosListView(View):
                     'matricula': matricula,
                     'nombre_completo': nombre_completo,
                 })
-
-                print(context)
 
         return render(request, self.template_name, context)
 

@@ -284,15 +284,16 @@ $(document).ready(function() {
       {"data": "pres_fechahora"},
       {"data": "pres_fecha_devolucion"},
       {"data": "pres_estatus"},
-      //{},
       ],
       createdRow: function(row, data, dataIndex) {
         $(row).data('folio', data.pres_folio);
       }
   });
 
+
+
   const tablaOriginal = $('#datatablePrestamos').DataTable().data().toArray();
-  const tablaOriginal2 = $('#datatablePrestamos').DataTable().data().toArray();
+  //const tablaOriginal2 = $('#datatablePrestamos').DataTable().data().toArray();
   
   $('#busqueda').on('keyup', function() {
     const valorInput = $(this).val();
@@ -303,7 +304,6 @@ $(document).ready(function() {
     if (vide_codigo == '' && pres_folio == '' && usua_clave == '') {
       // Mostrar la tabla original si todos los inputs están vacíos
       $('#datatablePrestamos').DataTable().clear().rows.add(tablaOriginal).draw();
-      $('#datatablePrestamos').DataTable().clear().rows.add(tablaOriginal2).draw();
     } else {
       $.ajax({
         url: '{% url "prestamos_filter" %}',
@@ -311,27 +311,28 @@ $(document).ready(function() {
           'q': valorInput,
           'vide_codigo': vide_codigo,
           'pres_folio': pres_folio,
-          'usua_clave': usua_clave
+          'usua_clave': usua_clave,
         },
         dataType: 'json',
         success: function(res) {
-          const prestamos = res;
-          // Filtrar los resultados por pres_folio único
           const prestamosUnicos = [];
           const foliosVistos = new Set();
-          for (let i = 0; i < prestamos.length; i++) {
-            const prestamo = prestamos[i];
+          
+          for (let i = 0; i < res.length; i++) {
+            const prestamo = res[i];
+            
             if (!foliosVistos.has(prestamo.pres_folio)) {
               prestamosUnicos.push(prestamo);
+              console.log(`Son los datos ingresados: ${prestamosUnicos}`)
               foliosVistos.add(prestamo.pres_folio);
             }
           }
-          // Actualizar los datos de la tabla existente con los resultados filtrados
           $('#datatablePrestamos').DataTable().clear().rows.add(prestamosUnicos).draw();
         }
       });
     }
-  });
+});
+
 
 });
 
@@ -541,7 +542,6 @@ function guardarRegistro(usuario, codigoBarras) {
   });
 }
 
-//Boton de entrega
 
 $("#endReturn").click(function() {
   let usuario = $('#searchUsuarioIn').val();
