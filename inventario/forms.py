@@ -147,7 +147,10 @@ class Mapa(forms.ModelForm):
             'area_de_conocimiento',
             'eje_tematico',
             'nivel_educativo',
-            'tema'
+            'tema',
+            'asignatura_materia',
+            'grado',
+            'orientacion',
 
         ]
 

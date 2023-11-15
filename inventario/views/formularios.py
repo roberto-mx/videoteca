@@ -100,13 +100,13 @@ def formulario(request):
                     derecho_patrimonial=datos_formulario_descripcion['derecho_patrimonial'],
                    
                     # Form Mapa
-                    asignatura_materia=datos_formulario_mapa['asignatura_materia'],
-                    grado=datos_formulario_mapa['grado'],
-                    orientacion=datos_formulario_mapa['orientacion'],
                     area_de_conocimiento=datos_formulario_mapa['area_de_conocimiento'],
                     eje_tematico=datos_formulario_mapa['eje_tematico'],
                     nivel_educativo=datos_formulario_mapa['nivel_educativo'],
                     tema=datos_formulario_mapa['tema'],
+                    asignatura_materia=datos_formulario_mapa['asignatura_materia'],
+                    grado=datos_formulario_mapa['grado'],
+                    orientacion=datos_formulario_mapa['orientacion'],
 
                     # Form Técnicas
                     idioma_original=datos_formulario_tecnicas['idioma_original'],

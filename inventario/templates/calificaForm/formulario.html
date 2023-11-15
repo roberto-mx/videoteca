@@ -328,48 +328,76 @@
     </div>
     
     <div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header text-center" style="background-color: #13322B;">
+          <div class="modal-header text-center" style="background-color:#13322B;">
             <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
-            <input id="codigoId" disabled style="color: white;"></input>
+            <input id="codigoId" disabled style="color:white;"></input>
           </div>
           <div class="modal-body">
-            <form id="formularioPrograma" method="post" action="{% url 'formulario' %}">
+            <form id="formularioPrograma"{{ programa.id }} method="post" action="{% url 'formulario' %}"  >
               {% csrf_token %}
-              <div class="row mt-4">
-                {% for field in modal_form %}
-                <div class="col-md-4 mb-2">
-                  <div class="mb-1">
-                      {% if field.name == 'programa' or field.name == 'serie' or field.name == 'subtitulo_programa' or field.name == 'subtitulo_serie' or field.name == 'sinopsis' or field.name == 'tiempoin' or field.name == 'tiempoout' or field.name == 'tiempodur' or field.name == 'observaciones' %}
-                        <div class="mb-3">
-                          {% if field.name == 'observaciones' %}
-                            <label class="form-label">{{ field.label }}</label>
-                            <textarea type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control little-input" placeholder="{{ field.label }}" ></textarea>
-                            {{ field.errors }}
-                          {% else %}
-                            <label class="form-label">{{ field.label }}</label>
-                            <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
-                          {% endif %} 
-                          {% comment %} <label class="form-label">{{ field.label }}</label>
-                          <input type="{{ field.field.widget.input_type }}" id="{{ field.name }}" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}"> {% endcomment %} 
-                        </div>
-                      {% endif %}
+              <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+                      <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" placeholder = "Programa" value="{{ programa.programa }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+                        <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" placeholder = "Serie" value="{{ programa.serie }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+                        <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" class="form-control form-control-sm" placeholder = "Subtítulo del Programa" value="{{ programa.subtitulo_programa }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
+                        <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control form-control-sm" placeholder = "Subtítulo de Serie" value="{{ programa.serieSubtitulo }}">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
+                    <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" placeholder = "Sinopsis" value="{{ programa.sinopsis }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
+                      <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" placeholder = "Tiempo inicio" value="{{ programa.tiempoin }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
+                      <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" placeholder = "Tiempo Final" value="{{ programa.tiempoout }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
+                      <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" placeholder = "Duración" value="{{ programa.tiempodur }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                      <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.observaciones }}</textarea>
                   </div>
                 </div>
-                {% endfor %}
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" style="background-color: #9D2449" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-agregar" style="background-color: #13322B" id="agregarProgramaSerie">
+            <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-agregar" style="background-color:#13322B" id="agregarProgramaSerie" >
               <span class="text" style="color: white;">Agregar</span>
             </button>
           </div>
         </div>
       </div>
-    </div>    
+    </div>   
   </div>
 </div>
 
@@ -402,8 +430,8 @@
   document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
     const programa = document.getElementById('programa').value;
     const serie = document.getElementById('serie').value;
-    const programaSubtitulo = document.getElementById('subtitulo_programa').value;
-    const serieSubtitulo = document.getElementById('subtitulo_serie').value;
+    const programaSubtitulo = document.getElementById('programaSubtitulo').value;
+    const serieSubtitulo = document.getElementById('serieSubtitulo').value;
     const sinopsis = document.getElementById('sinopsis').value;
     const tiempoin = document.getElementById('tiempoin').value;
     const tiempoout = document.getElementById('tiempoout').value;
@@ -542,7 +570,7 @@ $("#revicionForm").click(function(event) {
         type: 'POST',
         data: formData,
         success: function(response) {
-          console.log(response, 'recibo');
+         //console.log(response, 'recibo');
           Swal.fire(
             'Registrado',
             'Su formulario ha sido registrado y se encuentra en calificación.',
