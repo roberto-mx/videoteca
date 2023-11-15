@@ -68,9 +68,9 @@ def obtener_usuarios_dict(prestamos):
         cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
         users_data = cursor.fetchall()
     else:
-        
         users_data = []
 
+    # Crear un diccionario para mapear matrículas a nombres completos
     usuarios_dict = {row[0]: f"{row[1]} {row[2]} {row[3]}" if row[3] else f"{row[1]} {row[2]}" for row in users_data}
 
     return usuarios_dict
@@ -91,6 +91,7 @@ class PrestamosListView(View):
 
         context = {'prestamos': queryset}
         
+
         if matriculas_list:
             cursor = connections['users'].cursor()
             cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
@@ -111,22 +112,36 @@ class PrestamosListView(View):
 
         return render(request, self.template_name, context)
 
-#vista detalle    
 @csrf_exempt
 def DetallesListView(request):
     a = request.GET.get('a')
 
     # Obtener la información del préstamo
-    prestamo = Prestamos.objects.filter(pres_folio=a).values('pres_fecha_prestamo', 'pres_estatus').first()
-    fecha_prestamo = prestamo['pres_fecha_prestamo'].date()
-    estatusPrestamo = prestamo['pres_estatus']
+    prestamo = Prestamos.objects.filter(pres_folio=a).values('pres_fecha_prestamo', 'pres_estatus', 'usua_clave').first()
+
+    if prestamo is not None:
+        matricula = prestamo['usua_clave']
+        cursor = connections['users'].cursor()
+        cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula = %s", (matricula,))
+        users_data = cursor.fetchall()
+
+        if users_data:
+            row = users_data[0]
+            nombre_completo = f"{row[1]} {row[2]} {row[3]}" if row[3] else f"{row[1]} {row[2]}"
+        else:
+            nombre_completo = "Nombre no encontrado"
+    else:
+        nombre_completo = "Nombre no encontrado"
+
+    fecha_prestamo = prestamo['pres_fecha_prestamo'].date() if prestamo else None
+    estatusPrestamo = prestamo['pres_estatus'] if prestamo else None
 
     dias_habiles_encontrados = 0
     desplazamiento = timedelta(days=1)
 
-    fecha_actual = fecha_prestamo
+    fecha_actual = fecha_prestamo if fecha_prestamo else None
 
-    while dias_habiles_encontrados < 7:
+    while fecha_actual and dias_habiles_encontrados < 7:
         # Calcular la fecha de vencimiento sumando 1 día a la vez
         fecha_actual += desplazamiento
         
@@ -134,12 +149,15 @@ def DetallesListView(request):
         if fecha_actual.weekday() < 5:
             dias_habiles_encontrados += 1
 
-    fecha_vencimiento = fecha_actual
+    fecha_vencimiento = fecha_actual.strftime('%d-%m-%Y') if fecha_actual else None
 
     template_detalle = {
-        'vencioElDia': fecha_vencimiento.strftime('%d-%m-%Y'),
-        'estatusPrestamo': estatusPrestamo
+        'vencioElDia': fecha_vencimiento,
+        'estatusPrestamo': estatusPrestamo,
+        'nombreCompleto': nombre_completo
     }
+
+    print(template_detalle['nombreCompleto'])
 
     return JsonResponse(template_detalle, safe=False)
 
@@ -196,10 +214,40 @@ def PrestamoDetalle(request):
         'pres_fecha_devolucion',
         'usuario_devuelve',
         'usuario_recibe',
-        'depr_estatus'
+        'depr_estatus',
     )
+
+    usuarios_name = obtener_usuarios_name(queryset)
+
+    for detalle in queryset:
+        detalle['nombre_completo_devuelve'] = usuarios_name.get(detalle['usuario_devuelve'], "Nombre no encontrado")
+        detalle['nombre_completo_recibe'] = usuarios_name.get(detalle['usuario_recibe'], "Nombre no encontrado")
+
     context = { 'detalles': queryset }
     return render(request, 'prestamos/prestamos_detalle_list.html', context)
+
+def obtener_usuarios_name(queryset):
+    
+    usua_claves = set()
+    for detalle in queryset:
+        usua_claves.add(detalle['usuario_devuelve'])
+        usua_claves.add(detalle['usuario_recibe'])
+
+    # Filtra las claves que no son None
+    usua_claves = [claves for claves in usua_claves if claves is not None]
+
+    # Consulta la base de datos para obtener los nombres completos de los usuarios
+    cursor = connections['users'].cursor()
+    if usua_claves:
+        cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(usua_claves),))
+        users_data = cursor.fetchall()
+    else:
+        users_data = []
+
+    # Crea un diccionario para mapear matrículas a nombres completos
+    usuarios_name = {row[0]: f"{row[1]} {row[2]} {row[3]}" if row[3] else f"{row[1]} {row[2]}" for row in users_data}
+
+    return usuarios_name
 
 @csrf_exempt
 def GetFolioPrestamo(request):
