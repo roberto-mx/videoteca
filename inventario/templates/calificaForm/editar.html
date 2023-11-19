@@ -1,0 +1,812 @@
+{% extends 'templateBase.html' %}
+
+{% block titulo %} Calificación {% endblock %}
+
+{% block Contenido %}
+
+<div class="card mt-3" >
+  <div class="card-header text-center" style="background:#F1F7F8">
+    <h4 class="card-title ">*** Editar Formulario ***</h4>
+      <div class="d-flex justify-content-between">
+        <div>
+          <a name="" id="" class="btn btn-form" href="{% url 'consultaFormulario' %}" style="background:#B93158" role="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;"> Regresar a Consulta </span>
+              <i class='fas fa-search' style="color:white;"></i>
+            </div>
+          </a>
+        </div>
+        <div>
+          <a name="" id="" class="btn btn-regresar" style="background:#b38e5d" href="{% url 'prestamos_list' %}" role="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Regresar a Prestamos</span>
+              <i class="fas fa-backspace" style="color:white;"></i>
+            </div>
+          </a>
+        </div>
+      </div>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title text-center"></h4>
+    <div class="card-body">
+      <div class="col-md-12">
+          <div class="card">
+              <div class="card-header" style="background:#13322B" >
+                  <div class="d-flex justify-content-center">
+                    
+                      <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDatosGenerales" aria-expanded="false" aria-controls="collapseDatosGenerales">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                          <span> Datos Generales </span>
+                          <i class='fas fa-database'></i>
+                        </div>
+                      </button>
+                    
+                      <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescripcion" aria-expanded="false" aria-controls="collapseDescripcion">
+                          <div style="display: flex; flex-direction: column; align-items: center;">
+                              <span> Descripción </span>
+                              <i class="fa fa-audio-description"></i>
+                          </div>
+                      </button>
+                    
+
+                    
+                      <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapa" aria-expanded="false" aria-controls="collapseMapa">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span> Mapa </span>
+                            <i class='fas fa-map'></i>
+                        </div>
+                      </button>                                          
+                     
+                      <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTecnicas" aria-expanded="false" aria-controls="collapseTecnicas">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                          <span> Técnicas </span>
+                          <i class="fa-solid fa-language"></i>
+                        </div>
+                      </button>
+                    
+                      <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRealizacionEditar" aria-expanded="false" aria-controls="collapseRealizacionEditar">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span> Realización </span>
+                            <i class='fas fa-clipboard-list'></i>
+                        </div>
+                      </button>
+                </div>
+              </div>
+  
+              <div class="collapse" id="collapseDatosGenerales">
+                  <div class="card card-body ">
+                    <h2> Datos Generales </h2>
+                    <form method="post" id="formulario_combinado">
+                        {% csrf_token %}
+                        <div class="row mt-4">
+                          {% for field in formulario_combinado %}
+                          <div class="col-md-4 mb-2">
+                            <div class="mb-1">
+                              {% if field.name == 'video_anoproduccion' %}
+                                <label for="{{ field.id_for_label }}" class="form-label">Año de producción</label>
+                                <input type="number"  min="1" max="9" id='ahoProduction' name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-inputs" placeholder="Año de producción">
+                                
+                              {% elif field.name == 'codigo_barras' %}
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                <input type="text" id="codigo_barras" disabled name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-inputs" placeholder="{{ field.label }}">
+
+                              {% elif field.name == 'registro_id' %}
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                <input type="text" id="registro_id" disabled name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-input" placeholder="{{ field.label }}">
+                                
+                              {% else %}
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {% if field.name == 'fecha_calificacion' %}
+                                {% comment %} <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label> {% endcomment %}
+                                <input type="text" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d' }}" class="form-control smaller-inputs" placeholder="{{ field.label }}">
+                                
+                                {% elif field.name == 'video_observaciones' %}
+                                  <textarea name="{{ field.name }}" class="form-control smaller-inputs" placeholder="{{ field.label }}" rows="3">{{ field.value|default_if_none:'' }}</textarea>
+
+                                  {% else %}
+                                  {% if field.field.widget.input_type == 'select' %}
+                                    <select name="{{ field.name }}" class="form-control smaller-inputs">
+                                      {% for choice in field.field.choices %}
+                                        {% if field.value|stringformat:'s' == choice.0|stringformat:'s' %}
+                                          <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+                                        {% else %}
+                                          <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                          
+                                          {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                  {% else %}
+                                    {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+                                      <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control smaller-inputs" placeholder="{{ field.label }}">
+                                      
+                                    {% endif %}
+                                  {% endif %}
+                                {% endif %}
+                              {% endif %}
+                            </div>
+                          </div>
+                            {% endfor %}
+                          </div>
+                          <div class="d-flex justify-content-center">
+                              <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#13322B;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
+                                <i class="fa-solid fa-circle-plus" style="color:white;"></i>
+                                  <span style="color: white;">Añadir Programa</span>
+                              </button>
+                          </div>
+                        </form>
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="editTablePrograma" >
+                                <thead>
+                                    <tr>
+                                      <th>Id</th>
+                                      <th>Código de barras</th>
+                                      <th>Serie</th>
+                                      <th>Programa</th>
+                                      <th>Subtitulo Programa</th>
+                                      <th>Subtitulo Serie</th>
+                                      <th>Sinopsis</th>
+                                      <th>Tiempo Inicio</th>
+                                      <th>Tiempo Final</th>
+                                      <th>Duración</th>
+                                      <th>Observaciones</th>
+                                      <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  {% for programa in programas_data %}
+                                    <tr>
+                                        <td>{{ programa.id }}</td>
+                                        <td>{{ programa.codigo_barras }}</td>
+                                        <td>{{ programa.programa }}</td>
+                                        <td>{{ programa.serie }}</td>
+                                        <td>{{ programa.programaSubtitulo }}</td>
+                                        <td>{{ programa.serieSubtitulo }}</td>
+                                        <td>{{ programa.sinopsis }}</td>
+                                        <td>{{ programa.tiempoin }}</td>
+                                        <td>{{ programa.tiempoout }}</td>
+                                        <td>{{ programa.tiempodur }}</td>
+                                        <td>{{ programa.observaciones }}</td>
+                                        <td>
+                                          
+                                          <button class="btn btn-editar btn-sm text-white" style="background-color:#1F5E49;" title="Editar"
+                                          data-bs-toggle="modal" data-bs-target="#modalEditar{{ programa.id }}" data-id="{{ programa.id }}" >
+                                          <div style="display: flex; flex-direction: column; align-items: center;">
+                                            <i class='fas fa-edit'></i>
+                                          </div>
+                                        </button>
+
+                                        <button class="btn btn-eliminar btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
+                                            data-id="eliminar-{{ programa.id }}"  
+                                            onclick="eliminarFila('{{ programa.id }}')">
+                                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                                <i class="fa-sharp fa-solid fa-trash"></i>
+                                            </div>
+                                        </button>   
+                                        </td>
+                                     </tr>
+                                  {% endfor %}                                
+                                </tbody>
+                            </table>
+                          </div>
+                        </div>
+                  </div>
+              </div>
+   
+              <!-- Repite este patrón para otras secciones de formulario -->
+              <div class="collapse" id="collapseDescripcion">
+                <div class="card card-body">
+                    <h2> Descripción </h2>
+                    <form method="post" id="formulario_descripcion">
+                      <div class="row mt-4">
+                        {% for field in formulario_descripcion %}
+                        <div class="col-md-4 mb-2">
+                            <div class="mb-1">
+                                <!-- Etiqueta del campo de formulario -->
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                
+                                <!-- Campo de formulario -->
+                                {% if field.field.widget.input_type == 'select' %}
+                                    <select name="{{ field.name }}" class="form-control">
+                                        {% for choice in field.field.choices %}
+                                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                                {% endif %}
+
+                            </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </form>
+                </div>
+              </div>
+            
+              <!-- Repite este patrón para otras secciones de formulario -->
+              <div class="collapse" id="collapseMapa" >
+                <div class="card card-body">
+                    <h2> Mapa </h2>
+                    <form method="post" id="formulario_mapa">
+                      <div class="row mt-4">
+                        {% for field in formulario_mapa %}
+                        <div class="col-md-4 mb-2">
+                            <div class="mb-1">
+                                <!-- Etiqueta del campo de formulario -->
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                <!-- Campo de formulario -->
+                                {% if field.field.widget.input_type == 'select' %}
+                                    <select name="{{ field.name }}" class="form-control">
+                                        {% for choice in field.field.choices %}
+                                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </form>
+                </div>
+              </div>
+            
+            <!-- Repite este patrón para otras secciones de formulario -->
+            <div class="collapse" id="collapseTecnicas">
+              <div class="card card-body">
+                  <h2> Técnicas </h2>
+                  <form method="post" id="formulario_tecnicas">
+                    <div class="row mt-4">
+                      {% for field in formulario_tecnicas %}
+                      <div class="col-md-4 mb-2">
+                          <div class="mb-1">
+                              <!-- Etiqueta del campo de formulario -->
+                              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                              
+                              <!-- Campo de formulario -->
+                              {% if field.field.widget.input_type == 'select' %}
+                                  <select name="{{ field.name }}" class="form-control">
+                                      {% for choice in field.field.choices %}
+                                          <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                      {% endfor %}
+                                  </select>
+                              {% else %}
+                                  <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                              {% endif %}
+
+                          </div>
+                      </div>
+                      {% endfor %}
+                   </div>
+                  </form>
+              </div>
+            </div>
+  
+            <!-- Repite este patrón para otras secciones de formulario -->
+            <div class="collapse" id="collapseRealizacionEditar">
+              <div class="card card-body">
+                  <h2> Realización </h2>
+                  <form method="post" id="formulario_realizacion">
+                    <div class="row mt-4">
+                      {% for field in formulario_realizacion %}
+                      <div class="col-md-4 mb-2">
+                          <div class="mb-1">
+                              <!-- Etiqueta del campo de formulario -->
+                              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                              
+                              <!-- Campo de formulario -->
+                              {% if field.field.widget.input_type == 'select' %}
+                                  <select name="{{ field.name }}" class="form-control">
+                                      {% for choice in field.field.choices %}
+                                          <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                      {% endfor %}
+                                  </select>
+                              {% else %}
+                                  <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control" placeholder="{{ field.label }}">
+                              {% endif %}
+
+                          </div>
+                      </div>
+                      {% endfor %}
+                  </div>
+                  <div class="d-flex justify-content-center">
+                    <button name="" id="btnEdit" class="btn btn-revicion btn-sm active mt-3" style="background-color:#18463b" href="#" role="button" data-id="{{ id }}">  
+                      <div style="display: flex; flex-direction: column; align-items: center;">
+                        <span style="color: white;">Guardar edición</span>
+                        <i class="fas fa-save mt-1" style="color: white;"></i>
+                      </div> 
+                    </button> 
+             
+                    <button name="" id="btnAceptado" class="btn btn-outline btn-sm active mt-3" style="background-color:#8E1313" href="#" role="button">  
+                      <div style="display: flex; flex-direction: column; align-items: center;">
+                        <span style="color: white;">Aceptado</span>
+                        <i class="fa-solid fa-check" style="color:white"></i>
+                      </div> 
+                    </button> 
+                  </div>
+                  </form>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+  
+    <div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header text-center" style="background-color:#13322B;">
+            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
+            <input id="codigoId" disabled style="color:white;"></input>
+          </div>
+          <div class="modal-body">
+            <form id="formularioPrograma"{{ programa.id }} method="post" action="{% url 'formulario' %}"  >
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+                      <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" placeholder = "Programa" value="{{ programa.programa }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+                        <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" placeholder = "Serie" value="{{ programa.serie }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+                        <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" class="form-control form-control-sm" placeholder = "Subtítulo del Programa" value="{{ programa.programaSubtitulo }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
+                        <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control form-control-sm" placeholder = "Subtítulo de Serie" value="{{ programa.serieSubtitulo }}">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
+                    <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" placeholder = "Sinopsis" value="{{ programa.sinopsis }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
+                      <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" placeholder = "Tiempo inicio" value="{{ programa.tiempoin }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
+                      <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" placeholder = "Tiempo Final" value="{{ programa.tiempoout }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
+                      <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" placeholder = "Duración" value="{{ programa.tiempodur }}">
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                      <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.observaciones }}</textarea>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-agregar" style="background-color:#13322B" id="agregarProgramaSerie" >
+              <span class="text" style="color: white;">Agregar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% comment %}  {% endcomment %}
+</div>
+{% for programa in programas_data %}
+<!-- Modal de edición para el programa {{ programa.id }} -->
+<div class="modal fade" id="modalEditar{{ programa.id }}" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel{{ programa.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#13322B">
+                <h5 class="modal-title" id="editarModalLabel{{ programa.id }}" style="color:white;">Editar Programa</h5>
+            </div>
+            <div class="modal-body">
+                  <form id="formularioEditar{{ programa.id }}" method="post" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+                          <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" value="{{ programa.programa }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+                            <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" value="{{ programa.serie }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+                            <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" class="form-control form-control-sm" value="{{ programa.programaSubtitulo }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
+                            <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control form-control-sm" value="{{ programa.serieSubtitulo }}">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
+                          <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" value="{{ programa.sinopsis }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
+                            <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" value="{{ programa.tiempoin }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
+                            <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" value="{{ programa.tiempoout }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
+                            <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" value="{{ programa.tiempodur }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                            <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" rows="4">{{ programa.observaciones }}</textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </form>     
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
+                {% comment %} <button type="button" class="btn btn-primary guardarCambiosBtn" data-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>  {% endcomment %}
+                <button type="button" class="btn btn-primary guardarCambiosBtn" data-programa-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<script>
+
+  $(document).ready(function() {
+      $('#editTablePrograma').DataTable({
+        ...len,
+      
+      });
+    
+      $(document).on("click", ".guardarCambiosBtn", function(event) {
+        event.preventDefault();
+        
+        const programa_id = $(this).data("programa-id"); // Usar programa_id en lugar de id
+        const codigoBarras = $(this).data("codigo-barras");
+
+        // Obtener los valores de los campos del formulario
+        const modal                   = $(this).closest('.modal');
+        const programa                = modal.find('[name="programa"]').val();
+        const serie                   = modal.find('[name="serie"]').val();
+        const programaSubtitulo       = modal.find('[name="programaSubtitulo"]').val();
+        const serieSubtitulo          = modal.find('[name="serieSubtitulo"]').val();
+        const sinopsis                = modal.find('[name="sinopsis"]').val();
+        const tiempoin                = modal.find('[name="tiempoin"]').val();
+        const tiempoout               = modal.find('[name="tiempoout"]').val();
+        const tiempodur               = modal.find('[name="tiempodur"]').val();
+        const observaciones   = modal.find('[name="observaciones"]').val();
+
+        Swal.fire({
+            title: '¿Estás seguro de guardar los cambios?',
+            text: 'Esta acción actualizará la base de datos',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#18463b',
+            cancelButtonColor: '#8E1313',
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+              const edited_data = {
+                  programa:               programa,
+                  serie:                  serie,
+                  programaSubtitulo:      programaSubtitulo,
+                  serieSubtitulo:         serieSubtitulo,  
+                  sinopsis:               sinopsis,  
+                  tiempoin:               tiempoin,  
+                  tiempoout:              tiempoout,  
+                  tiempodur:              tiempodur,  
+                  observaciones:  observaciones,  
+              };
+
+              console.log(`Datos editados: ${JSON.stringify(edited_data)}`);
+              const requestData = {
+                edited_data:  edited_data,
+                programa_id:  programa_id, // Usar programa_id en lugar de id
+                codigoBarras: codigoBarras
+              };
+            
+              fetch(`/calificaciones/editar/programa/${programa_id}/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(requestData)
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  messageAlerta('success', `${data.message} La tabla actualizara, al terminar de editar los datos`, '¡Genial!', '#18463b');
+                }else {
+                  alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+                }
+              });
+            }
+        });
+      });
+
+      $("#btnAceptado").click(function(event) {
+        event.preventDefault();
+      
+        Swal.fire({
+          title: '¡Alto!',
+          text: 'Esta acción cerrará el estatus de pendiente y pasará a revisado.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#18463b',
+          cancelButtonColor: '#8E1313',
+          confirmButtonText: 'Sí, guardar',
+          cancelButtonText: 'Cancelar'
+        }).then((resultado) => {
+          if (resultado.isConfirmed) {
+            const id = $('#registro_id').val();
+            const codigo_barras = $('#codigo_barras').val();
+
+            // Cambiar el valor de estatusCalif de 'P' a 'R'
+            $.ajax({
+              url: `/calificaciones/cambiarEstatusCalificacion/${id}/`, 
+              method: 'POST',
+              data: { estatusCalif: 'R' },
+              success: function(response) {
+                if (response.success) {
+                  messageAlerta('success', `${response.message}`, '¡Genial!', '#18463b');
+                }else {
+                  messageAlerta('error', '¡Algo salio mal!\n Comunicate con el área de Desarrollo e Innovación.', '¡Ya valio!', '#18463b')
+                }
+              },
+              error: function(error) {
+                messageAlerta('error', '¡Algo salio mal! Algo salio mal al conectarnos al servidot.', '¡Ya valio!\n Error 500', '#18463b')
+              }
+            });
+          }
+        });
+      });
+      
+      $("#btnEdit").click(function(event) {
+        event.preventDefault();
+      
+        Swal.fire({
+          title: '¿Estás seguro de guardar los cambios?',
+          text: 'Esta acción actualizará la base de datos.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#18463b',
+          cancelButtonColor: '#8E1313',
+          confirmButtonText: 'Sí, guardar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const id = $('#registro_id').val();
+            const codigo_barras = $('#codigo_barras').val();
+            
+            const form_data = new FormData();
+            form_data.append('registro_id', id);
+            form_data.append('codigo_barras', codigo_barras);
+            
+            const formularios = [
+              'formulario_combinado',
+              'formulario_descripcion',
+              'formulario_mapa',
+              'formulario_tecnicas',
+              'formulario_realizacion',
+            ];
+            
+            formularios.forEach(formId => {
+              const formData = new FormData(document.getElementById(formId));
+              for (const [name, value] of formData.entries()) {
+                form_data.append(name, value);
+              }
+            });
+            
+            fetch(`/calificaciones/editar/${id}/${codigo_barras}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: form_data
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                messageAlerta('success', data.message, '¡Genial!', '#18463b');
+                //location.reload(2000); 
+              } else {
+                alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+              }
+            })
+            .catch(error => {
+              messageAlerta('error', 'Algo salio mal en el servidor, comunicate con el área de Desarrollo e Innovación.', 'Ya valio!', '#18463b');
+            });
+          }
+        });
+      });
+  });
+
+  const eliminarFila = (id) => {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción, eliminará el programa de la base de datos.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#18463b',
+        cancelButtonColor: '#8E1313',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+          // Enviar solicitud POST para eliminar
+          fetch(`/calificaciones/eliminar/${id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+                'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
+            },
+            body: new URLSearchParams({
+                eliminar_id: id // Envía el ID del programa a eliminar
+            })
+          })
+          .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.success) {
+                Swal.fire(
+                  'Eliminado!',
+                  'Se elimino exitosamente su registro.',
+                  'success'
+                ).then(() => {
+                  location.reload(); // Realizar un reload de la página después del OK
+                });
+                
+            } else {
+                // Manejar el caso de error si es necesario
+                Swal.fire({
+                    icon:   'error',
+                    title:  'Error 404',
+                    text:   'No se pudo eliminar el programa',
+                });
+            }
+          });
+        }
+    });
+  }
+
+  let programasYSeries = [];
+
+    const limpiarFormulario = () => {
+      const formulario = document.getElementById('formularioPrograma');
+      formulario.reset();
+    }
+
+    //const validarCampos = (programa, serie, programaSubtitulo, serieSubtitulo, sinopsis, tiempoin, tiempoout, tiempodur, observaciones, codigoBarras) => {
+    //  if (programa.trim() === '' || serie.trim() === '' || serieSubtitulo.trim() === '' || programaSubtitulo.trim() === '' || sinopsis.trm() === '' || tiempoin.trm() === '' || tiempoout.trm() === '' || tiempodur.trm() === '' || observaciones) {
+    //    return false; // Alguno de los campos está vacío
+    //  }
+    //  return true; // Todos los campos están llenos
+    //}
+
+    // Agrega el evento click al botón "Agregar Programa/Serie"
+    document.getElementById('agregarProgramaSerie').addEventListener('click', function() {
+      
+      const programa = document.getElementById('programa').value;
+      const serie = document.getElementById('serie').value;
+      const programaSubtitulo = document.getElementById('programaSubtitulo').value;
+      const serieSubtitulo = document.getElementById('serieSubtitulo').value;
+      const sinopsis = document.getElementById('sinopsis').value;
+      const tiempoin = document.getElementById('tiempoin').value;
+      const tiempoout = document.getElementById('tiempoout').value;
+      const tiempodur = document.getElementById('tiempodur').value;
+      const observaciones = document.getElementById('observaciones').value;
+      const codigoBarrasValor = document.getElementById('codigo_barras').value;
+      $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
+
+      programasYSeries.push({
+        programa:               programa,
+        serie:                  serie,
+        programaSubtitulo:      programaSubtitulo,
+        serieSubtitulo:         serieSubtitulo,
+        sinopsis:               sinopsis,
+        tiempoin:               tiempoin,
+        tiempoout:              tiempoout,
+        tiempodur:              tiempodur,
+        observaciones:  observaciones,
+        codigoBarras:           codigoBarrasValor,
+      });
+  
+      fetch(`/calificaciones/agregar/programa/${codigoBarrasValor}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(programasYSeries)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+            // Llama a la función para actualizar la tabla
+            actualizarTablaPrograma();
+            limpiarFormulario();
+
+            messageAlerta('success', data.message, '¡Genial!', '#18463b');
+        } else {
+            alertMessage('error', 'Hubo un error al guardar los cambios.', 'Error');
+        }
+      });
+  })
+
+  const actualizarTablaPrograma = (nuevoId) => {
+    const tableBody = document.getElementById('editTablePrograma').getElementsByTagName('tbody')[0];
+
+    tableBody.innerHTML = ''; // Limpia el contenido actual de la tabla
+    $("#editTablePrograma").show();
+    // Itera a través de los datos almacenados en programasYSeries
+    programasYSeries.forEach(function(datos, index) {
+        const newRow = tableBody.insertRow();
+        
+        // Comprueba si estás agregando un nuevo registro o actualizando la tabla
+        if (nuevoId !== undefined) {
+            // No muestra el ID para nuevos registros
+            newRow.insertCell(0);  // Celda vacía para el ID
+        } else {
+            newRow.insertCell().textContent = datos.id;  // Muestra el ID
+        }
+
+        // Inserta las demás celdas con la información relevante
+        newRow.insertCell().textContent = datos.codigoBarras;
+        newRow.insertCell().textContent = datos.programa;
+        newRow.insertCell().textContent = datos.serie;
+        newRow.insertCell().textContent = datos.programaSubtitulo;
+        newRow.insertCell().textContent = datos.serieSubtitulo;
+        newRow.insertCell().textContent = datos.sinopsis;
+        newRow.insertCell().textContent = datos.tiempoin;
+        newRow.insertCell().textContent = datos.tiempoout;
+        newRow.insertCell().textContent = datos.tiempodur;
+        newRow.insertCell().textContent = datos.observaciones;
+        
+        const cellAcciones = newRow.insertCell();
+        cellAcciones.innerHTML = `
+            <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar" data-id="${datos.id}" onclick="eliminarFila(${datos.id})">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <i class="fa-sharp fa-solid fa-trash"></i>
+                </div>
+            </button>`;
+    });
+  }
+
+</script>  
+{% endblock %}

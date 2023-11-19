@@ -1,0 +1,81 @@
+{% extends 'templateBase.html' %}
+
+{% block Contenido %}
+
+<div class="card mt-5">
+    <div class="card-header text-center" style="background-color: #13322B;">
+        <h4 class="card-title" style="color: white;"> * * * Registrar cinta * * *</h4>
+    </div>
+    
+    <div class="card-body">
+        <form enctype="multipart/form-data" method="post" id="registrarCintas">
+            {% csrf_token %}
+            <div class="row">
+                {% for form in formulario %}
+                    <div class="col-md-4 mb-2">
+                        <div class="mb-1">
+                            <label class="form-label">{{ form.label }}</label>
+                            {% if form.field.widget.input_type == 'select' %}
+                                <select name="{{ form.name }}" class="form-control smaller-input">
+                                    {% for choice in form.field.choices %}
+                                        <option value="{{ choice.0 }}" {% if form.value|stringformat:'s' == choice.0|stringformat:'s' %}selected{% endif %}>
+                                            {{ choice.1 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            {% elif form.name == 'observaciones' %}
+                                <textarea name="observaciones" class="form-control smaller-input" placeholder="{{ form.label }}" rows="3">{{ form.value|default_if_none:'' }}</textarea>
+                            {% elif form.name == 'video_fingreso' %}
+                                <input type="date" name="video_fingreso" id="FechaActual" class="form-control smaller-input" placeholder="{{ field.label }}">
+                            {% elif form.name == 'video_fchcal' %}
+                                <input type="date" name="{{ form.name }}"  class="form-control smaller-input" placeholder="{{ field.label }}">
+                            {% else %}
+                                <input
+                                    type="{{ form.field.widget.input_type }}"
+                                    name="{{ form.name }}"
+                                    aria-describedby="helpId"
+                                    class="form-control smaller-input"
+                                    placeholder="{{ form.label }}"
+                                    value="{{ form.value|default_if_none:'' }}"
+                                >
+                            {% endif %}
+                            {{ form.errors }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </form>
+        <div class="d-flex justify-content-center mt-3">
+            <button type="button" class="btn btn-default " onclick="limpiarFormulario()" style="background: #2DA08B" id="clearForm" >
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span style="color: white;">Limpiar</span>
+                </div>
+            </button>
+
+            <button type="button" class="btn btn-default " style="background: #1D5145" id="registrarCinta" rol="button">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span style="color: white;"> Registrar </span>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    //Mostrare la fecha actual en los inputs
+    const fecha = new Date();
+    document.getElementById("FechaActual").value = fecha.toJSON();
+    console.log({'FechaActual': fecha})
+
+    $("#registrarCinta").click(function(event) {
+        alertMessageContent('info', 'Añadirás un nuevo registro de cinta. ¿Deseas continuar con esta acción?', '¡Espera!', '#18463b', '#9D2449');
+        console.log(1)
+    })
+    const limpiarFormulario = () => {
+        document.getElementById("registrarCintas").reset();
+        console.log(2)
+    }
+    limpiarFormulario()
+</script>
+
+{% endblock %}
