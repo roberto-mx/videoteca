@@ -57,8 +57,8 @@
   }
   
   #tablePrograma th {
-  background-color: #18463b; /* Color de fondo de las celdas de encabezado */
-  color: white; /* añadido para cambiar el color de las letras */
+  background-color: rgb(190, 233, 248); /* Color de fondo de las celdas de encabezado */
+  color: rgb(32, 30, 30); /* añadido para cambiar el color de las letras */
   }
 
   #tablePrograma td {
@@ -123,5 +123,31 @@
   background-color: #FFCCCC; /* Cambia el color de fondo a rojo */
 }
 
+.small-text{
+  font-size: 100%;
+  width: 380px;
+  height: 30px;
+}
 
- 
+/* styles.css */
+
+/* Estilos para los inputs con la clase .form-control-sm */
+.form-control-sm {
+  font-size: 80%;
+  width: 200%; /* Utiliza el ancho completo del contenedor */
+  height: 10px;
+  /* Otros estilos que desees aplicar */
+
+  /* Evita que los inputs se extiendan más allá de su contenedor */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+.form-label-s{
+  font-size: 100%;
+  width: 100%; /* Utiliza el ancho completo del contenedor */
+  height: 30px;
+  margin-bottom: 10px; /* Añade un margen inferior opcional para separarlo de los elementos anteriores */
+  margin-left: -247px;
+}

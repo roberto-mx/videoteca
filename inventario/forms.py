@@ -10,7 +10,8 @@ from .models import (
         CatStatus,
         TipoSerie,
         OrigenSerie,
-        ProgramaSeries
+        calificacionRegistro
+        # ProgramaSeries
 )
 
 from django.forms.models import inlineformset_factory
@@ -70,7 +71,50 @@ class MaestrosCintasForm(forms.ModelForm):
         widget=forms.Select(attrs={'readonly': True})
     )
     
-    
+
+class FormularioCombinado(forms.Form):
+    codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
+    fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True) 
+    video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
+    form_clave = forms.ModelChoiceField(queryset=FormatosCintas.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    video_codificacion = forms.CharField(max_length=20, required=True)
+    video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    widgets = {
+            'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
+            'video_id': forms.HiddenInput(),
+    }
+
+class Mapa(forms.ModelForm):
+    class Meta:
+        model = calificacionRegistro
+        fields = [
+            'tema',
+            'areaConocimiento',
+            'ejeTematico',
+            'nivelEducativo',
+            'institucionProductora',
+            'asignaturaMateria',
+        ]
+
+
+# class Tecnicas(forms.ModelForm):
+#     class Meta:
+#         model = RegistroCalificacion
+#         fields = ['idioma_original','observaciones']
+        
+# class Realizacion(forms.ModelForm):
+#     class Meta:
+#         model = RegistroCalificacion
+#         fields = [
+#             'guionista',
+#             'locutor',
+#             'investigador',
+#             'elenco',
+#             'conductor',
+#             'institucion_productora',
+#         ]
     
 class FormularioCombinadoEditar(forms.Form):
     registro_id = forms.IntegerField(widget=forms.HiddenInput()) 
@@ -81,8 +125,8 @@ class FormularioCombinadoEditar(forms.Form):
     coordinador = forms.CharField(max_length=40, required=True)
     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
     duracion = forms.CharField(max_length=11, required=True)
-    video_codificacion = forms.CharField(max_length=20, required=True)
-    video_estatus = forms.CharField(max_length=20, required=True)
+    # video_codificacion = forms.CharField(max_length=20, required=True)
+    # video_estatus = forms.CharField(max_length=20, required=True)
     video_observaciones = forms.CharField(max_length=20, required=True)
     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
@@ -93,83 +137,40 @@ class FormularioCombinadoEditar(forms.Form):
             'video_id': forms.HiddenInput(),
     }
 
-class FormularioCombinado(forms.Form):
-    codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
-    fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True) 
-    productor = forms.CharField(max_length=60, required=True)
-    coordinador = forms.CharField(max_length=40, required=True)
-    video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
-    duracion = forms.CharField(max_length=11, required=True)
-    video_codificacion = forms.CharField(max_length=20, required=True)
-    video_estatus = forms.CharField(max_length=20, required=True)
-    video_observaciones = forms.CharField(max_length=20, required=True)
-    origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
-    video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
-    form_clave = forms.ModelChoiceField(queryset=FormatosCintas.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
-    tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
-    widgets = {
-            'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
-            'video_id': forms.HiddenInput(),
-    }
+# class FormularioCombinado(forms.Form):
+#     codigo_barras = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'placeholder': 'Código de barras'}), required=True)
+#     fecha_calificacion = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True) 
+#     productor = forms.CharField(max_length=60, required=True)
+#     coordinador = forms.CharField(max_length=40, required=True)
+#     video_anoproduccion = forms.CharField(max_length=10, label="Año de producción", required=True)
 
-class ModalForm(forms.ModelForm):
-    class Meta:
-        model = ProgramaSeries
-        fields = ['programa','serie','subtitulo_programa','subtitulo_serie']
-        exclude = ['codigo_barras']  # Excluye el campo código_barras del formulario
+#     video_observaciones = forms.CharField(max_length=20, required=True)
+#     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+#     video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+#     form_clave = forms.ModelChoiceField(queryset=FormatosCintas.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+#     tipo_id = forms.ModelChoiceField(queryset=TipoSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+#     widgets = {
+#             'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
+#             'video_id': forms.HiddenInput(),
+#     }
 
-
-# class ModalFormEdit(forms.ModelForm):
-#     class Meta:
-#         model = ProgramaSeries
-#         fields = ['programa', 'serie', 'subtitulo_programa', 'subtitulo_serie']
-#         exclude = ['codigo_barras']  # Excluye el campo código_barras del formulario
 
   
-class Descripcion(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = [
-            'sinopsis',
-            'tiempodur',
-            'participantes',
-            'personajes',
-            'derecho_patrimonial',
-            'asignatura_materia',
-            'grado',
-            'orientacion',
-        ]
+# class Descripcion(forms.ModelForm):
+#     class Meta:
+#         model = RegistroCalificacion
+#         fields = [
+#             # 'sinopsis',
+#             # 'tiempodur',
+#             'participantes',
+#             'personajes',
+#             'derecho_patrimonial',
+#             'asignatura_materia',
+#             'grado',
+#             'orientacion',
+#         ]
 
-class Mapa(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = [
-            'area_de_conocimiento',
-            'eje_tematico',
-            'nivel_educativo',
-            'tema',
-            'asignatura_materia',
-            'grado',
-            'orientacion',
 
-        ]
-
-class Tecnicas(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = ['idioma_original','observaciones']
-        
-class Realizacion(forms.ModelForm):
-    class Meta:
-        model = RegistroCalificacion
-        fields = [
-            'guionista',
-            'locutor',
-            'investigador',
-            'elenco',
-            'conductor',
-            'institucion_productora',
-        ]
 
 class DetalleProgramasForm(forms.ModelForm):
     class Meta:

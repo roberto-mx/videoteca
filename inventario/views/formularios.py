@@ -1,5 +1,13 @@
 from django.shortcuts import render, redirect
-from ..forms import FormularioCombinado, Descripcion, Mapa, Realizacion, Tecnicas, ModalForm, FormularioCombinadoEditar
+from ..forms import (
+    FormularioCombinado,
+    Mapa,
+    FormularioCombinadoEditar,
+    # Descripcion,
+    # Realizacion,
+    # Tecnicas,
+    # # ModalForm,
+)
 from ..models import MaestroCintas, RegistroCalificacion, ProgramaSeries
 from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
@@ -26,30 +34,22 @@ def formulario(request):
         return redirect('prestamos_list')  # Redirige al usuario a otra página
 
     formulario_principal = FormularioCombinado()
-    formulario_descripcion = Descripcion()
     formulario_mapa = Mapa()
-    formulario_realizacion = Realizacion()
-    formulario_tecnicas = Tecnicas()
-    modal_form = ModalForm()
+    # modal_form = ModalForm()
 
     if request.method == 'POST':
         formulario_principal = FormularioCombinado(request.POST)
-        formulario_descripcion = Descripcion(request.POST)
         formulario_mapa = Mapa(request.POST)
-        formulario_realizacion = Realizacion(request.POST)
-        formulario_tecnicas = Tecnicas(request.POST)
-        modal_form = ModalForm(request.POST)
+
+        # modal_form = ModalForm(request.POST)
         
-        if formulario_principal.is_valid() and formulario_descripcion.is_valid() and formulario_mapa.is_valid() and formulario_realizacion.is_valid() and formulario_tecnicas.is_valid():
+        if formulario_principal.is_valid() and  formulario_mapa.is_valid() :
             # Obtener valores de los formularios
             datos_formulario_principal = formulario_principal.cleaned_data
-            datos_formulario_descripcion = formulario_descripcion.cleaned_data
             datos_formulario_mapa = formulario_mapa.cleaned_data
-            datos_formulario_tecnicas = formulario_tecnicas.cleaned_data
-            datos_formulario_realizacion = formulario_realizacion.cleaned_data
             # datos_modal_form = modal_form.cleaned_data
             fecha_calificacion_actual = timezone.now().strftime('%Y-%m-%d')
-
+        
             # Crear instancia de MaestroCintas
             nuevo_video_id = MaestroCintas.objects.aggregate(Max('video_id'))['video_id__max'] or 0
             nuevo_video_id += 1
@@ -57,13 +57,12 @@ def formulario(request):
             maestro_cintas = MaestroCintas(
                 video_id=nuevo_video_id,
                 video_cbarras=datos_formulario_principal['codigo_barras'],
+                video_anoproduccion=datos_formulario_principal['video_anoproduccion'],
                 form_clave=datos_formulario_principal['form_clave'],
                 tipo_id=datos_formulario_principal['tipo_id'],
                 video_tipo=datos_formulario_principal['video_tipo'],
                 origen_id=datos_formulario_principal['origen_id'],
-                video_observaciones=datos_formulario_principal['video_observaciones'],
-                video_estatus=datos_formulario_principal['video_estatus'],
-                video_anoproduccion=datos_formulario_principal['video_anoproduccion'],
+                
             )
             maestro_cintas.save()
 
@@ -76,65 +75,71 @@ def formulario(request):
             for item in datos_modal_form:
                 programa              = item.get('programa')
                 serie                 = item.get('serie')
-                programaSubtitulo     = item.get('programaSubtitulo')
-                serieSubtitulo        = item.get('serieSubtitulo')
+                subtituloPrograma     = item.get('subtituloPrograma')
+                subtituloSerie        = item.get('subtituloSerie')
                 sinopsis              = item.get('sinopsis')
                 tiempoin              = item.get('tiempoin')
                 tiempoout             = item.get('tiempoout')
                 tiempodur             = item.get('tiempodur')
-                observaciones         = item.get('observaciones')
+                observaciones         = item.get('observaciones')  
+                #----------------------------------------------------------------
+                participantes         = item.get('participantes')    
+                personajes            = item.get('personajes')    
+                derechoPatrimonial    = item.get('derechoPatrimonial')    
+                orientacion           = item.get('orientacion')    
+                grado                 = item.get('grado')    
+                idiomaOriginal        = item.get('idiomaOriginal')   
+                #----------------------------------------------------------------
+                elenco                = item.get('elenco') 
+                conductor             = item.get('conductor') 
+                productor             = item.get('productor') 
+                investigador          = item.get('investigador') 
+                      
+                  
                 
                 # Crear instancia de RegistroCalificacion para cada programa y serie
                 registro_calificacion = RegistroCalificacion(
                     codigo_barras=maestro_cintas,  # Asignar la instancia de MaestroCintas
                     estatusCalif='P',
                     fecha_calificacion=fecha_calificacion_actual,  # Asignar la fecha actual
-                    productor=datos_formulario_principal['productor'],
-                    coordinador=datos_formulario_principal['coordinador'],
+                    # productor=datos_formulario_principal['productor'],
                     axo_produccion=ano_produccion,
 
-                    # Form Descripción
-                    sinopsis=datos_formulario_descripcion['sinopsis'],
-                    participantes=datos_formulario_descripcion['participantes'],
-                    personajes=datos_formulario_descripcion['personajes'],
-                    derecho_patrimonial=datos_formulario_descripcion['derecho_patrimonial'],
-                   
                     # Form Mapa
-                    area_de_conocimiento=datos_formulario_mapa['area_de_conocimiento'],
-                    eje_tematico=datos_formulario_mapa['eje_tematico'],
-                    nivel_educativo=datos_formulario_mapa['nivel_educativo'],
                     tema=datos_formulario_mapa['tema'],
-                    asignatura_materia=datos_formulario_mapa['asignatura_materia'],
-                    grado=datos_formulario_mapa['grado'],
-                    orientacion=datos_formulario_mapa['orientacion'],
-
-                    # Form Técnicas
-                    idioma_original=datos_formulario_tecnicas['idioma_original'],
-                    observaciones=datos_formulario_tecnicas['observaciones'],
-
-                    # Form Realización
-                    guionista=datos_formulario_realizacion['guionista'],
-                    locutor=datos_formulario_realizacion['locutor'],
-                    investigador=datos_formulario_realizacion['investigador'],
-                    elenco=datos_formulario_realizacion['elenco'],
-                    conductor=datos_formulario_realizacion['conductor'],
-                    institucion_productora=datos_formulario_realizacion['institucion_productora'],
-                    #Obtengo los datos del objeto de el front
+                    areaConocimiento=datos_formulario_mapa['areaConocimiento'],
+                    ejeTematico=datos_formulario_mapa['ejeTematico'],
+                    nivelEducativo=datos_formulario_mapa['nivelEducativo'],
+                    institucionProductora=datos_formulario_mapa['institucionProductora'],
+                    asignaturaMateria=datos_formulario_mapa['asignaturaMateria'],
+                    
                 )
                 
                 registro_calificacion.save()
 
                 registro_programas = ProgramaSeries(
-                    codigo_barras         = maestro_cintas,
-                    programa              = programa,
-                    serie                 = serie,
-                    subtitulo_programa    = programaSubtitulo,
-                    subtitulo_serie       = serieSubtitulo,
-                    sinopsis              = sinopsis,
-                    tiempoin              = tiempoin,
-                    tiempoout             = tiempoout,
-                    tiempodur             = tiempodur,
-                    observaciones = observaciones
+                    codigo_barras         =  maestro_cintas,
+                    programa              =  programa,
+                    serie                 =  serie,
+                    subtituloPrograma     =  subtituloPrograma,
+                    subtituloSerie        =  subtituloSerie,
+                    sinopsis              =  sinopsis,
+                    tiempoin              =  tiempoin,
+                    tiempoout             =  tiempoout,
+                    tiempodur             =  tiempodur,
+                    observaciones         =  observaciones,
+                    #----------------------------------------------------------------
+                    participantes         =  participantes,
+                    personajes            =  personajes,
+                    derechoPatrimonial    =  derechoPatrimonial,
+                    orientacion           =  orientacion,
+                    grado                 =  grado,
+                    idiomaOriginal        =  idiomaOriginal,
+                    #----------------------------------
+                    elenco                = elenco,
+                    conductor             = conductor,
+                    productor             = productor,
+                    investigador          = investigador
                 )
                 registro_programas.save()
 
@@ -145,21 +150,15 @@ def formulario(request):
             return JsonResponse(response_data)
 
         else:
-
+            
             formulario_principal = FormularioCombinado()
-            formulario_descripcion = Descripcion()
             formulario_mapa = Mapa()
-            formulario_tecnicas = Tecnicas()
-            formulario_realizacion = Realizacion()
-            modal_form = ModalForm()
+            # modal_form = ModalForm()
 
     return render(request, 'calificaForm/formulario.html', {
         'formulario_principal': formulario_principal,
-        'formulario_descripcion': formulario_descripcion,
         'formulario_mapa': formulario_mapa,
-        'formulario_tecnicas': formulario_tecnicas,
-        'formulario_realizacion': formulario_realizacion,
-        'modal_form': modal_form,
+        # 'modal_form': modal_form,
     })
 
 def is_videoteca_user(user):
@@ -211,8 +210,8 @@ def agregarProgramaEdit(request, codigo_barras):
             for item in datos_modal_form:
                 programa              = item.get('programa')
                 serie                 = item.get('serie')
-                programaSubtitulo     = item.get('programaSubtitulo')
-                serieSubtitulo        = item.get('serieSubtitulo')
+                subtituloPrograma     = item.get('subtituloPrograma')
+                subtituloSerie        = item.get('subtituloSerie')
                 sinopsis              = item.get('sinopsis')
                 tiempoin              = item.get('tiempoin')
                 tiempoout             = item.get('tiempoout')
@@ -223,8 +222,8 @@ def agregarProgramaEdit(request, codigo_barras):
                     codigo_barras=maestro_cintas,
                     programa=programa,
                     serie=serie,
-                    subtitulo_programa=programaSubtitulo,
-                    subtitulo_serie=serieSubtitulo,
+                    subtituloPrograma=subtituloPrograma,
+                    subtituloSerie=subtituloSerie,
                     sinopsis=sinopsis,
                     tiempoin=tiempoin,
                     tiempoout=tiempoout,
@@ -267,10 +266,10 @@ def editar_programa(request, programa_id):
             programa.serie = edited_data['serie']
             
             # Actualizar solo si los campos existen en edited_data
-            if 'programaSubtitulo' in edited_data:
-                programa_subtitulo_programa = edited_data['programaSubtitulo']
-            if 'serieSubtitulo' in edited_data:
-                programa_subtitulo_serie = edited_data['serieSubtitulo']
+            if 'subtituloPrograma' in edited_data:
+                programa_subtituloPrograma = edited_data['subtituloPrograma']
+            if 'subtituloSerie' in edited_data:
+                programa_subtituloSerie = edited_data['subtituloSerie']
             if 'sinopsis' in edited_data:
                 sinopsis = edited_data['sinopsis']
             if 'tiempoin' in edited_data:
@@ -282,8 +281,8 @@ def editar_programa(request, programa_id):
             if 'observaciones' in edited_data:
                 observaciones = edited_data['observaciones']
              
-            programa.subtitulo_programa    = programa_subtitulo_programa
-            programa.subtitulo_serie       = programa_subtitulo_serie
+            programa.subtituloPrograma    = programa_subtituloPrograma
+            programa.subtituloSerie       = programa_subtituloSerie
             programa.sinopsis              = sinopsis
             programa.tiempoin              = tiempoin
             programa.tiempoout             = tiempoout
@@ -382,8 +381,8 @@ def editar(request, id, codigo_barras):
                     'codigo_barras':         registro.codigo_barras,
                     'programa':              registro.programa,
                     'serie':                 registro.serie,
-                    'programaSubtitulo':     registro.subtitulo_programa,
-                    'serieSubtitulo':        registro.subtitulo_serie,
+                    'subtituloPrograma':     registro.subtituloPrograma,
+                    'subtituloSerie':        registro.subtituloSerie,
                     'sinopsis':              registro.sinopsis,
                     'tiempoin':              registro.tiempoin,
                     'tiempoout':             registro.tiempoout,

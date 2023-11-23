@@ -160,8 +160,8 @@
                                         <td>{{ programa.codigo_barras }}</td>
                                         <td>{{ programa.programa }}</td>
                                         <td>{{ programa.serie }}</td>
-                                        <td>{{ programa.programaSubtitulo }}</td>
-                                        <td>{{ programa.serieSubtitulo }}</td>
+                                        <td>{{ programa.subtituloPrograma }}</td>
+                                        <td>{{ programa.subtituloSerie }}</td>
                                         <td>{{ programa.sinopsis }}</td>
                                         <td>{{ programa.tiempoin }}</td>
                                         <td>{{ programa.tiempoout }}</td>
@@ -388,8 +388,8 @@
                   </div>
 
                   <div class="mb-3">
-                      <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
-                      <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.observaciones }}</textarea>
+                      <label for="observaciones{{ programa.id }}" class="form-label-s">Observaciones</label>
+                      <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-s" placeholder="Observaciones" >{{ programa.observaciones }}</textarea>
                   </div>
                 </div>
               </div>
@@ -520,8 +520,8 @@
               const edited_data = {
                   programa:               programa,
                   serie:                  serie,
-                  programaSubtitulo:      programaSubtitulo,
-                  serieSubtitulo:         serieSubtitulo,  
+                  subtituloPrograma:      subtituloPrograma,
+                  subtituloSerie:         subtituloSerie,  
                   sinopsis:               sinopsis,  
                   tiempoin:               tiempoin,  
                   tiempoout:              tiempoout,  
