@@ -11,311 +11,313 @@
           <a name="" id="" class="btn btn-form" href="{% url 'consultaFormulario' %}" style="background:#B93158" role="button">
             <div style="display: flex; flex-direction: column; align-items: center;">
               <span style="color: white;"> Regresar a Consulta </span>
-              <i class='fas fa-search' style="color:white;"></i>
+              <i class="fas fa-search" style="color:white;"></i>
             </div>
           </a>
         </div>
       </div>
   </div>
   <div class="card-body">
-      <h4 class="card-title text-center">*** Formulario Calificación ***</h4>
-      <div class="card-body">
-        {% comment %} <h1>Formulario</h1> {% endcomment %}
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header" style="background:#13322B" >
-                    <div class="d-flex justify-content-center">
-                        <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapa" aria-expanded="false" aria-controls="collapseMapa">
-                          <div style="display: flex; flex-direction: column; align-items: center;">
-                              <span> Mapa </span>
-                              <i class='fas fa-map'></i>
-                          </div>
-                        </button>                                          
-                  </div>
+    <h4 class="card-title text-center">*** Formulario Calificación ***</h4>  
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header" style="background:#13322B" >
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDatosGenerales" aria-expanded="false" aria-controls="collapseDatosGenerales">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span> Datos Generales </span>
+                  <i class='fas fa-database'></i>
                 </div>
-    
-                {% comment %} <div class="collapse" id="collapseDatosGenerales"> {% endcomment %}
-      <div class="card card-body ">
+              </button>
+
+              <button class="btn btn-button btn-sm active" style="background:#b38e5d" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapa" aria-expanded="false" aria-controls="collapseMapa">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span> Mapa </span>
+                    <i class='fas fa-map'></i>
+                </div>
+              </button>
+            </div>
+        </div>
+
+    <div class="collapse" id="collapseDatosGenerales">
+        <div class="card card-body ">
           <h2> Datos Generales </h2>
           <form enctype="multipart/form-data" method="post" id="formularioDatosGenerales">
-              {% csrf_token %}
-              <div class="row mt-4">
-                {% for field in formulario_principal %}
-                <div class="col-md-4 mb-2">
-                  <div class="mb-1">
-                    {% if field.name == 'video_anoproduccion' %}
-                      <label class="form-label">Año de producción</label>
-                      <input type="number"  min="1" max="9" id='ahoProduction' name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control input-samll" placeholder="Año de producción">
-                      {{ field.errors }}
-                    {% elif field.name == 'codigo_barras' %}
-                      <label class="form-label">{{ field.label }}</label>
-                      {% comment %} <input type="text" id="codigo_barras" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control sma-input" placeholder="{{ field.label }}"> {% endcomment %}
-                      <input type="text" id="codigo_barras" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control sma-input" placeholder="{{ field.label }}" oninput="validarInput(this)">
-                      {{ field.errors }}
-                    {% else %}
-                      <label class="form-label">{{ field.label }}</label>
-                      {% if field.name == 'fecha_calificacion' %}
-                        <input type="date" name="fecha_calificacion" value="{{ fecha_calificacion_actual }}" class="form-control input-samll" placeholder="{{ field.label }}">
-                      {{ field.errors }}
-                      {% elif field.name == 'video_observaciones' %}
-                        <textarea name="{{ field.name }}" class="form-control small-text" placeholder="Observaciones" rows="3">{{ field.value|default_if_none:'' }}</textarea>
-                        {% comment %} <textarea name="{{ field.name }}" class="form-control input-samll" placeholder="Observaciones" rows="3">{{ field.value|default_if_none:'' }}</textarea> {% endcomment %}
+            {% csrf_token %}
+            <div class="row mt-4">
+              {% for field in formulario_principal %}
+              <div class="col-md-4 mb-2">
+                <div class="mb-1">
+                  {% if field.name == 'video_anoproduccion' %}
+                    <label class="form-label">Año de producción</label>
+                    <input type="number"  min="1" max="9" id='ahoProduction' name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control sma-input" placeholder="Año de producción">
+                    {{ field.errors }}
+                  {% elif field.name == 'codigo_barras' %}
+                    <label class="form-label">{{ field.label }}</label>
+                    <input type="text" id="codigo_barras" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control sma-input" placeholder="{{ field.label }}" oninput="validarInput(this)">
+                    {{ field.errors }}
+                  {% else %}
+                    <label class="form-label">{{ field.label }}</label>
+                    {% if field.name == 'fecha_calificacion' %}
+                      <input type="date" name="fecha_calificacion" value="{{ fecha_calificacion_actual }}" class="form-control sma-input" placeholder="{{ field.label }}">
+                    {{ field.errors }}
+                    {% elif field.name == 'video_observaciones' %}
+                      <textarea name="{{ field.name }}" class="form-control little-input" placeholder="Observaciones" rows="3">{{ field.value|default_if_none:'' }}</textarea>
+                      {% comment %} <textarea name="{{ field.name }}" class="form-control sma-input" placeholder="Observaciones" rows="3">{{ field.value|default_if_none:'' }}</textarea> {% endcomment %}
 
+                    {{ field.errors }}
+                      {% elif field.name == 'duracion' %}
+                      <div class="time-input-container">
+                        <input type="text" name="duracion" pattern="[0-9]{2}:[0-5][0-9]:[0-5][0-9]" class="form-control time-input" placeholder="HH:MM:SS" >
+                      </div>
                       {{ field.errors }}
-                        {% elif field.name == 'duracion' %}
-                        <div class="time-input-container">
-                          <input type="text" name="duracion" pattern="[0-9]{2}:[0-5][0-9]:[0-5][0-9]" class="form-control time-input" placeholder="HH:MM:SS" >
-                        </div>
-                        {{ field.errors }}
-                        {% else %}
-                        {% if field.field.widget.input_type == 'select' %}
-                          <select name="{{ field.name }}" class="form-control input-samll">
-                            {% for choice in field.field.choices %}
-                              {% if field.value|stringformat:'s' == choice.0|stringformat:'s' %}
-                                <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
-                                {{ field.errors }}
-            
-                              {% else %}
-                                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                                {{ field.errors }}
-                                {% endif %}
-                              {% endfor %}
-                          </select>
-                        {% else %}
-                          {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
-                            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control input-samll" placeholder="{{ field.label }}">
-                            {{ field.errors }}
-                          {% endif %}
+                      {% else %}
+                      {% if field.field.widget.input_type == 'select' %}
+                        <select name="{{ field.name }}" class="form-control sma-input">
+                          {% for choice in field.field.choices %}
+                            {% if field.value|stringformat:'s' == choice.0|stringformat:'s' %}
+                              <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+                              {{ field.errors }}
+
+                            {% else %}
+                              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                              {{ field.errors }}
+                              {% endif %}
+                            {% endfor %}
+                        </select>
+                      {% else %}
+                        {% if field.name != 'axo_produccion' and field.field.widget.input_type != 'hidden' %}
+                          <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default_if_none:'' }}" class="form-control sma-input" placeholder="{{ field.label }}">
+                          {{ field.errors }}
                         {% endif %}
                       {% endif %}
                     {% endif %}
-                  </div>
+                  {% endif %}
                 </div>
-              {% endfor %}
               </div>
+              {% endfor %}
               <div class="d-flex justify-content-center">
                   <button type="button" id="agregaPrograma" class="btn btn-editar btn-sm active text-white mt-3" style="background-color:#13322B;"  data-bs-toggle="modal" data-bs-target="#modalIngresa"> 
                     <i class="fa-solid fa-circle-plus" style="color:white;"></i>
                       <span style="color: white;">Añadir Programa</span>
                   </button>
               </div>
-            </form>
-            <div class="card-body">
-              <div class="table-responsive"> <!-- Agregar esta clase -->
-                <table class="table table-hover" id="tablePrograma">
-                  <!-- ... Código de la tabla ... -->
-                  <thead>
-                    <tr>
-                      <th>Id</th>
-                      <th>Código de barras</th>
-                      <th>Serie</th>
-                      <th>Programa</th>
-                      <th>Subtitulo Programa</th>
-                      <th>Subtitulo Serie</th>
-                      <th>Sinopsis</th>
-                      <th>Tiempo Inicio</th>
-                      <th>Tiempo Final</th>
-                      <th>Duración</th>
-                      <th>Observaciones</th>
-                      <th>Participantes</th>
-                      <th>Personajes</th>
-                      <th>Orientacion</th>
-                      <th>Derecho Patrimonial</th>
-                      <th>Grado</th>
-                      <th>Acciones</th>
-                      <th>Asignatura Materia</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!--lA TABLA SE LLENA DINAMICAMENTE EN EL JAVASCRIPT-->
-                  </tbody>
-                </table>
-              </div> 
-            </div> 
-      </div>
-        
-                <div class="collapse" id="collapseMapa" >
-                  <div class="card card-body">
-                      <h2> Mapa </h2>
-                      <form enctype="multipart/form-data" method="post" id="formularioMapa">
-                          {% csrf_token %}
-                          <div class="row mt-4">
-                              {% for campo in formulario_mapa  %}
-                              <div class="col-md-6">
-                                  <div class="mb-3">
-                                      <label class="form-label">{{ campo.label }}</label>
-                                      <input
-                                          type="{{ campo.field.widget.input_type }}"
-                                          class="form-control"
-                                          name="{{ campo.name }}"
-                                          {% comment %} id="inputMapa" {% endcomment %}
-                                          aria-describedby="helpId"
-                                          placeholder="{{ campo.label }}"
-                                      />
-                                  </div>
-                              </div>
-                              {% endfor %}
-                          </div>
-                          <div class="d-flex justify-content-center">
-                            <button name="" id="revicionForm" class="btn btn-revicion btn-sm active mt-3" style="background-color:#18463b" href="#" role="button">  
-                              <div style="display: flex; flex-direction: column; align-items: center;">
-                                <span style="color: white;">Guardar para revisión</span>
-                                <i class="fas fa-save mt-1" style="color: white;"></i>
-                              </div> 
-                            </button> 
-                          </div>
-                      </form>
-                  </div>
-                </div>
-
-                <div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-scrollable  modal-dialog-centered" >
-                      <div class="modal-content">
-                          <div class="modal-header text-center" style="background-color:#13322B;">
-                              <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
-                              <input id="codigoId" disabled style="color:white;"></input>
-                          </div>
-                          <div class="modal-body">
-                              <form id="formularioPrograma{{ programa.id }}" method="post" action="{% url 'formulario' %}">
-                                  {% csrf_token %}
-                                  <div class="d-grid gap-2">
-                                    <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapsePro" style ="background:#EFF5F3"  aria-expanded="false" aria-controls="collapsePro" >
-                                      <strong style = "color:black;"> Datos programa</strong>
-                                    </button>
-                                  </div>
-
-                                  <div class="collapse" id="collapsePro">
-                                    <div class="row">
-                                        <div class="col-md-6 mt-2">
-                                            <div class="mb-3">
-                                                <label for="programa{{ programa.id }}" class="form-label">Programa</label>
-                                                <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" placeholder="Programa" value="{{ programa.programa }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="serie{{ programa.id }}" class="form-label">Serie</label>
-                                                <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" placeholder="Serie" value="{{ programa.serie }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="subtituloPrograma{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
-                                                <input type="text" id="subtituloPrograma{{ programa.id }}" name="subtituloPrograma" class="form-control form-control-sm" placeholder="Subtítulo del Programa" value="{{ programa.subtituloPrograma }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="subtituloSerie{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
-                                                <input type="text" id="subtituloSerie{{ programa.id }}" name="subtituloSerie" class="form-control form-control-sm" placeholder="Subtítulo de Serie" value="{{ programa.subtituloSerie }}">
-                                            </div>
-                                        </div>
-                                
-                                        <div class="col-md-6 mt-2">
-                                            <div class="mb-3">
-                                                <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
-                                                <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" placeholder="Sinopsis" value="{{ programa.sinopsis }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
-                                                <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" placeholder="Tiempo inicio" value="{{ programa.tiempoin }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
-                                                <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" placeholder="Tiempo Final" value="{{ programa.tiempoout }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
-                                                <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" placeholder="Duración" value="{{ programa.tiempodur }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
-                                                <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.observaciones }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="d-grid gap-2 mt-2">
-                                    <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseDes" style="background:#EFF5F3" aria-expanded="false" aria-controls="collapseDes">
-                                        <strong style="color:black;">Detalle programa</strong>
-                                    </button>
-                                </div>
-                                
-                                <div class="collapse mt-2" id="collapseDes">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-2">
-                                                <label for="participantes{{ programa.id }}" class="form-label">Participantes</label>
-                                                <input type="text" id="participantes{{ programa.id }}" name="participantes" class="form-control form-control-sm" placeholder="Participantes" value="{{ programa.participantes }}">
-                                            </div>
-                                
-                                            <div class="mb-2">
-                                                <label for="personajes{{ programa.id }}" class="form-label">Personajes</label>
-                                                <input type="text" id="personajes{{ programa.id }}" name="personajes" class="form-control form-control-sm" placeholder="Personajes" value="{{ programa.personajes }}">
-                                            </div>
-                                
-                                            <div class="mb-2">
-                                                <label for="derechoPatrimonial{{ programa.id }}" class="form-label">Derecho patrimonial</label>
-                                                <input type="text" id="derechoPatrimonial{{ programa.id }}" name="derechoPatrimonial" class="form-control form-control-sm" placeholder="Derecho patrimonial" value="{{ programa.derechoPatrimonial }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="idiomaOriginal{{ programa.id }}" class="form-label">Idioma Original</label>
-                                                <input type="text" id="idiomaOriginal{{ programa.id }}" name="idiomaOriginal" class="form-control form-control-sm" placeholder="Idioma Original" value="{{ programa.idiomaOriginal }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="elenco{{ programa.id }}" class="form-label">Elenco</label>
-                                                <input type="text" id="elenco{{ programa.id }}" name="elenco" class="form-control form-control-sm" placeholder="Elenco" value="{{ programa.elenco }}">
-                                            </div>
-                                        </div>
-                                
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="orientacion{{ programa.id }}" class="form-label">Orientación</label>
-                                                <input type="text" id="orientacion{{ programa.id }}" name="orientacion" class="form-control form-control-sm" placeholder="Orientación" value="{{ programa.orientacion }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="grado{{ programa.id }}" class="form-label">Grado</label>
-                                                <input type="text" id="grado{{ programa.id }}" name="grado" class="form-control form-control-sm" placeholder="Grado" value="{{ programa.grado }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="conductor{{ programa.id }}" class="form-label">Conductor</label>
-                                                <input type="text" id="conductor{{ programa.id }}" name="conductor" class="form-control form-control-sm" placeholder="Conductor" value="{{ programa.conductor }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="productor{{ programa.id }}" class="form-label">Productor</label>
-                                                <input type="text" id="productor{{ programa.id }}" name="productor" class="form-control form-control-sm" placeholder="Productor" value="{{ programa.productor }}">
-                                            </div>
-                                
-                                            <div class="mb-3">
-                                                <label for="investigador{{ programa.id }}" class="form-label">Investigador</label>
-                                                <input type="text" id="investigador{{ programa.id }}" name="investigador" class="form-control form-control-sm" placeholder="Investigador" value="{{ programa.investigador }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-
-                                  <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
-                                      <button type="button" class="btn btn-agregar" style="background-color:#13322B" id="agregarProgramaSerie">
-                                          <span class="text" style="color: white;">Agregar</span>
-                                      </button>
-                                  </div>
-                              </form>
-                          </div>
-                      </div>
-                  </div>
-                </div>
+          </form>
+        </div>
+    </div>
+      <div class="table-responsive"> <!-- Agregar esta clase -->
+        <table class="table table-hover" id="tablePrograma">
+          <!-- ... Código de la tabla ... -->
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Código de barras</th>
+              <th>Serie</th>
+              <th>Programa</th>
+              <th>Subtitulo Programa</th>
+              <th>Subtitulo Serie</th>
+              <th>Sinopsis</th>
+              <th>Tiempo Inicio</th>
+              <th>Tiempo Final</th>
+              <th>Duración</th>
+              <th>Observaciones</th>
+              <th>Participantes</th>
+              <th>Personajes</th>
+              <th>Derecho Patrimonial</th>
+              <th>Orientacion</th>
+              <th>Grado</th>
+              <th>Idioma Original</th>
+              <th>Elenco</th>
+              <th>Conductor</th>
+              <th>Productor</th>
+              <th>Investigador</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!--lA TABLA SE LLENA DINAMICAMENTE EN EL JAVASCRIPT-->
+          </tbody>
+        </table>
+      </div>  
   </div>
 </div>
+<div class="collapse" id="collapseMapa" >
+  <div class="card card-body">
+      <h2> Mapa </h2>
+      <form enctype="multipart/form-data" method="post" id="formularioMapa">
+          {% csrf_token %}
+          <div class="row mt-4">
+              {% for campo in formulario_mapa  %}
+              <div class="col-md-6">
+                  <div class="mb-3">
+                      <label class="form-label">{{ campo.label }}</label>
+                      <input
+                          type="{{ campo.field.widget.input_type }}"
+                          class="form-control"
+                          name="{{ campo.name }}"
+                          {% comment %} id="inputMapa" {% endcomment %}
+                          aria-describedby="helpId"
+                          placeholder="{{ campo.label }}"
+                      />
+                  </div>
+              </div>
+              {% endfor %}
+          </div>
+          <div class="d-flex justify-content-center">
+            <button name="" id="revicionForm" class="btn btn-revicion btn-sm active mt-3" style="background-color:#18463b" href="#" role="button">  
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color: white;">Guardar para revisión</span>
+                <i class="fas fa-save mt-1" style="color: white;"></i>
+              </div> 
+            </button> 
+          </div>
+      </form>
+  </div>
+</div>
+<div class="modal fade" id="modalIngresa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable  modal-dialog-centered" >
+      <div class="modal-content">
+          <div class="modal-header text-center" style="background-color:#13322B;">
+              <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Añadir Programa <i class="fa-brands fa-bilibili"></i></h5>
+              <input id="codigoId" disabled style="color:white;"></input>
+          </div>
+          <div class="modal-body">
+              <form id="formularioPrograma{{ programa.id }}" method="post" action="{% url 'formulario' %}">
+                  {% csrf_token %}
+                  <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapsePro" style ="background:#EFF5F3"  aria-expanded="false" aria-controls="collapsePro" >
+                      <strong style = "color:black;"> Datos programa</strong>
+                    </button>
+                  </div>
 
+                  <div class="collapse" id="collapsePro">
+                    <div class="row">
+                        <div class="col-md-6 mt-2">
+                            <div class="mb-3">
+                                <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+                                <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" placeholder="Programa" value="{{ programa.programa }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+                                <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" placeholder="Serie" value="{{ programa.serie }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="subtituloPrograma{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+                                <input type="text" id="subtituloPrograma{{ programa.id }}" name="subtituloPrograma" class="form-control form-control-sm" placeholder="Subtítulo del Programa" value="{{ programa.subtituloPrograma }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="subtituloSerie{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
+                                <input type="text" id="subtituloSerie{{ programa.id }}" name="subtituloSerie" class="form-control form-control-sm" placeholder="Subtítulo de Serie" value="{{ programa.subtituloSerie }}">
+                            </div>
+                        </div>
+                
+                        <div class="col-md-6 mt-2">
+                            <div class="mb-3">
+                                <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
+                                <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" placeholder="Sinopsis" value="{{ programa.sinopsis }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
+                                <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" placeholder="Tiempo inicio" value="{{ programa.tiempoin }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
+                                <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" placeholder="Tiempo Final" value="{{ programa.tiempoout }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
+                                <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" placeholder="Duración" value="{{ programa.tiempodur }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                                <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.observaciones }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseDes" style="background:#EFF5F3" aria-expanded="false" aria-controls="collapseDes">
+                        <strong style="color:black;">Detalle programa</strong>
+                    </button>
+                </div>
+                
+                <div class="collapse mt-2" id="collapseDes">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label for="participantes{{ programa.id }}" class="form-label">Participantes</label>
+                                <input type="text" id="participantes{{ programa.id }}" name="participantes" class="form-control form-control-sm" placeholder="Participantes" value="{{ programa.participantes }}">
+                            </div>
+                
+                            <div class="mb-2">
+                                <label for="personajes{{ programa.id }}" class="form-label">Personajes</label>
+                                <input type="text" id="personajes{{ programa.id }}" name="personajes" class="form-control form-control-sm" placeholder="Personajes" value="{{ programa.personajes }}">
+                            </div>
+                
+                            <div class="mb-2">
+                                <label for="derechoPatrimonial{{ programa.id }}" class="form-label">Derecho patrimonial</label>
+                                <input type="text" id="derechoPatrimonial{{ programa.id }}" name="derechoPatrimonial" class="form-control form-control-sm" placeholder="Derecho patrimonial" value="{{ programa.derechoPatrimonial }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="idiomaOriginal{{ programa.id }}" class="form-label">Idioma Original</label>
+                                <input type="text" id="idiomaOriginal{{ programa.id }}" name="idiomaOriginal" class="form-control form-control-sm" placeholder="Idioma Original" value="{{ programa.idiomaOriginal }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="elenco{{ programa.id }}" class="form-label">Elenco</label>
+                                <input type="text" id="elenco{{ programa.id }}" name="elenco" class="form-control form-control-sm" placeholder="Elenco" value="{{ programa.elenco }}">
+                            </div>
+                        </div>
+                
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="orientacion{{ programa.id }}" class="form-label">Orientación</label>
+                                <input type="text" id="orientacion{{ programa.id }}" name="orientacion" class="form-control form-control-sm" placeholder="Orientación" value="{{ programa.orientacion }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="grado{{ programa.id }}" class="form-label">Grado</label>
+                                <input type="text" id="grado{{ programa.id }}" name="grado" class="form-control form-control-sm" placeholder="Grado" value="{{ programa.grado }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="conductor{{ programa.id }}" class="form-label">Conductor</label>
+                                <input type="text" id="conductor{{ programa.id }}" name="conductor" class="form-control form-control-sm" placeholder="Conductor" value="{{ programa.conductor }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="productor{{ programa.id }}" class="form-label">Productor</label>
+                                <input type="text" id="productor{{ programa.id }}" name="productor" class="form-control form-control-sm" placeholder="Productor" value="{{ programa.productor }}">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="investigador{{ programa.id }}" class="form-label">Investigador</label>
+                                <input type="text" id="investigador{{ programa.id }}" name="investigador" class="form-control form-control-sm" placeholder="Investigador" value="{{ programa.investigador }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-agregar" style="background-color:#13322B" id="agregarProgramaSerie">
+                        <span class="text" style="color: white;">Agregar</span>
+                    </button>
+                </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+       
 <script>
 
   let programasYSeries = [];
@@ -377,13 +379,9 @@
     const productor = document.getElementById('productor').value;
     const investigador = document.getElementById('investigador').value;
     const codigoBarrasValor = document.getElementById('codigo_barras').value;
-    
-    
     $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
+    
 
-    if(codigoBarrasValor.length>12){
-      return messageAlerta('error','El código de barras, no puede tener más de 12 digitos,\n favor de revisar los datos ingresados.','¡Oops!', '#18463b')
-    }
 
     if (!validarCampos(
           programa,
@@ -521,56 +519,64 @@ $("#revicionForm").click(function(event) {
   event.preventDefault(); // Evitar el envío de formulario por defecto
   const codigoBarras = document.getElementById('codigo_barras').value;
   //console.log(`Al enviar los datos se debe ver el código barras. ${codigoBarras}`);
+  console.log(`${codigoBarras}`);
 
-  Swal.fire({
-    title: '¿Deseas enviar este formulario a revisión?',
-    text: 'No podrás revertir esta acción.',
-    icon: 'info',
-    showCancelButton: true,
-    confirmButtonColor: '#13322B',
-    cancelButtonColor: '#9D2449',
-    confirmButtonText: 'Sí, continuar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Obtener los datos del formulario
-      let formData = $('form').serialize();
+  if(codigoBarras === ""){
+    messageAlerta('warning', `Es necesario ingresar un código de barras, para haer el registro.`, '¡Alto!', '#18463b');
+    return;
 
-      // Crear una copia de programasYSeries omitiendo el campo "id"
-      const programasYSeriesSinId = programasYSeries.map(item => {
-        const { id, ...rest } = item;
-        return rest;
-      });
-
-      // Agregar los datos de programasYSeries a formData
-      formData += '&programasYSeries=' + JSON.stringify(programasYSeriesSinId);
-
-      // Realizar la petición AJAX para guardar los datos
-      $.ajax({
-        url: '{% url "formulario" %}',
-        type: 'POST',
-        data: formData,
-        success: function(response) {
-          if(response.success == false) {
-            messageAlerta('error', 'Ya existe ese código de barras en calificación, favor de revisar los datos ingresados.', '¡Alto!', '#18463b');
-          }else{
-            Swal.fire(
-              'Registrado',
-              'Su formulario ha sido registrado y se encuentra en calificación.',
-              'success'
-            ).then(() => {
-              location.reload(); // Realizar un reload de la página después del OK
-            });
+  }else{
+    Swal.fire({
+      title: '¿Deseas enviar este formulario a revisión?',
+      text: 'No podrás revertir esta acción.',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#13322B',
+      cancelButtonColor: '#9D2449',
+      confirmButtonText: 'Sí, continuar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Obtener los datos del formulario
+        let formData = $('form').serialize();
+  
+        // Crear una copia de programasYSeries omitiendo el campo "id"
+        const programasYSeriesSinId = programasYSeries.map(item => {
+          const { id, ...rest } = item;
+          return rest;
+        });
+  
+        // Agregar los datos de programasYSeries a formData
+        formData += '&programasYSeries=' + JSON.stringify(programasYSeriesSinId);
+  
+        // Realizar la petición AJAX para guardar los datos
+        $.ajax({
+          url: '{% url "formulario" %}',
+          type: 'POST',
+          data: formData,
+          success: function(response) {
+            console.log({data: response});
+            if(response.success === false) {
+              messageAlerta('error', 'Ya existe ese código de barras en calificación, favor de revisar los datos ingresados.', '¡Alto!', '#18463b');
+            }else{
+              Swal.fire(
+                'Registrado',
+                'Su formulario ha sido registrado y se encuentra en calificación.',
+                'success'
+              ).then(() => {
+                location.reload(); // Realizar un reload de la página después del OK
+              });
+            }
+           
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            // Muestra una alerta genérica
+            console.log(xhr.responseText)
+            messageAlerta('error', 'Hubo un error, comuníquese con el área de Innovación.', '¡Oops!', '#18463b');
           }
-         
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-
-          // Muestra una alerta genérica
-          messageAlerta('error', 'Hubo un error, comuníquese con el área de Innovación.', '¡Oops!', '#18463b');
-        }
-      });
-    }
-  });
+        });
+      }
+    });
+  }
 });
 
 </script>

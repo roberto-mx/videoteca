@@ -57,8 +57,8 @@
   }
   
   #tablePrograma th {
-  background-color: rgb(190, 233, 248); /* Color de fondo de las celdas de encabezado */
-  color: rgb(32, 30, 30); /* añadido para cambiar el color de las letras */
+  background-color: #13322B; /* Color de fondo de las celdas de encabezado */
+  color: rgb(255, 255, 255); /* añadido para cambiar el color de las letras */
   }
 
   #tablePrograma td {

@@ -128,8 +128,6 @@ def formulario(request):
                     )
                     registro_programas.save()
 
-
-
                 response_data = {
                     'message': 'Los datos se guardaron exitosamente.',
                     'datos_modal_form': datos_modal_form
