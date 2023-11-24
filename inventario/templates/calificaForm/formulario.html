@@ -550,21 +550,21 @@ $("#revicionForm").click(function(event) {
         type: 'POST',
         data: formData,
         success: function(response) {
-         console.log(response, 'recibo');
-          Swal.fire(
-            'Registrado',
-            'Su formulario ha sido registrado y se encuentra en calificación.',
-            'success'
-          ).then(() => {
-            location.reload(); // Realizar un reload de la página después del OK
-          });
+          if(response.success == false) {
+            messageAlerta('error', 'Ya existe ese código de barras en calificación, favor de revisar los datos ingresados.', '¡Alto!', '#18463b');
+          }else{
+            Swal.fire(
+              'Registrado',
+              'Su formulario ha sido registrado y se encuentra en calificación.',
+              'success'
+            ).then(() => {
+              location.reload(); // Realizar un reload de la página después del OK
+            });
+          }
+         
         },
         error: function(xhr, ajaxOptions, thrownError) {
-          console.error('XHR Status:', xhr.status);
-          console.error('Error:', thrownError);
-          // Otros detalles del error
-          console.error(xhr.responseText);
-        
+
           // Muestra una alerta genérica
           messageAlerta('error', 'Hubo un error, comuníquese con el área de Innovación.', '¡Oops!', '#18463b');
         }

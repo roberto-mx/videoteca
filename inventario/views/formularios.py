@@ -3,12 +3,14 @@ from ..forms import (
     FormularioCombinado,
     Mapa,
     FormularioCombinadoEditar,
-    # Descripcion,
-    # Realizacion,
-    # Tecnicas,
-    # # ModalForm,
+
 )
-from ..models import MaestroCintas, RegistroCalificacion, ProgramaSeries
+from ..models import( 
+    MaestroCintas, 
+    RegistroCalificacion, 
+    ProgramaSeries, 
+    calificacionRegistro
+)
 from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
@@ -31,135 +33,123 @@ def is_videote_user(user):
 def formulario(request):
     if not is_videote_user(request.user):
         messages.error(request, "Solo los de calificación pueden acceder a esta acción.")
-        return redirect('prestamos_list')  # Redirige al usuario a otra página
+        return redirect('prestamos_list')
 
     formulario_principal = FormularioCombinado()
     formulario_mapa = Mapa()
-    # modal_form = ModalForm()
 
     if request.method == 'POST':
         formulario_principal = FormularioCombinado(request.POST)
         formulario_mapa = Mapa(request.POST)
 
-        # modal_form = ModalForm(request.POST)
-        
-        if formulario_principal.is_valid() and  formulario_mapa.is_valid() :
-            # Obtener valores de los formularios
-            datos_formulario_principal = formulario_principal.cleaned_data
-            datos_formulario_mapa = formulario_mapa.cleaned_data
-            # datos_modal_form = modal_form.cleaned_data
-            fecha_calificacion_actual = timezone.now().strftime('%Y-%m-%d')
-        
-            # Crear instancia de MaestroCintas
-            nuevo_video_id = MaestroCintas.objects.aggregate(Max('video_id'))['video_id__max'] or 0
-            nuevo_video_id += 1
+        if formulario_principal.is_valid() and formulario_mapa.is_valid():
+            try:
+                datos_formulario_principal = formulario_principal.cleaned_data
+                datos_formulario_mapa = formulario_mapa.cleaned_data
+                fecha_calificacion_actual = timezone.now().strftime('%Y-%m-%d')
 
-            maestro_cintas = MaestroCintas(
-                video_id=nuevo_video_id,
-                video_cbarras=datos_formulario_principal['codigo_barras'],
-                video_anoproduccion=datos_formulario_principal['video_anoproduccion'],
-                form_clave=datos_formulario_principal['form_clave'],
-                tipo_id=datos_formulario_principal['tipo_id'],
-                video_tipo=datos_formulario_principal['video_tipo'],
-                origen_id=datos_formulario_principal['origen_id'],
-                
-            )
-            maestro_cintas.save()
+                nuevo_video_id = MaestroCintas.objects.aggregate(Max('video_id'))['video_id__max'] or 0
+                nuevo_video_id += 1
 
-            ano_produccion = maestro_cintas.video_anoproduccion
-
-            # Datos del front-end-convertir json
-            enviaForm = request.POST.get("programasYSeries")
-            datos_modal_form = json.loads(enviaForm)
-              
-            for item in datos_modal_form:
-                programa              = item.get('programa')
-                serie                 = item.get('serie')
-                subtituloPrograma     = item.get('subtituloPrograma')
-                subtituloSerie        = item.get('subtituloSerie')
-                sinopsis              = item.get('sinopsis')
-                tiempoin              = item.get('tiempoin')
-                tiempoout             = item.get('tiempoout')
-                tiempodur             = item.get('tiempodur')
-                observaciones         = item.get('observaciones')  
-                #----------------------------------------------------------------
-                participantes         = item.get('participantes')    
-                personajes            = item.get('personajes')    
-                derechoPatrimonial    = item.get('derechoPatrimonial')    
-                orientacion           = item.get('orientacion')    
-                grado                 = item.get('grado')    
-                idiomaOriginal        = item.get('idiomaOriginal')   
-                #----------------------------------------------------------------
-                elenco                = item.get('elenco') 
-                conductor             = item.get('conductor') 
-                productor             = item.get('productor') 
-                investigador          = item.get('investigador') 
-                      
-                  
-                
-                # Crear instancia de RegistroCalificacion para cada programa y serie
-                registro_calificacion = RegistroCalificacion(
-                    codigo_barras=maestro_cintas,  # Asignar la instancia de MaestroCintas
-                    estatusCalif='P',
-                    fecha_calificacion=fecha_calificacion_actual,  # Asignar la fecha actual
-                    # productor=datos_formulario_principal['productor'],
-                    axo_produccion=ano_produccion,
-
-                    # Form Mapa
-                    tema=datos_formulario_mapa['tema'],
-                    areaConocimiento=datos_formulario_mapa['areaConocimiento'],
-                    ejeTematico=datos_formulario_mapa['ejeTematico'],
-                    nivelEducativo=datos_formulario_mapa['nivelEducativo'],
-                    institucionProductora=datos_formulario_mapa['institucionProductora'],
-                    asignaturaMateria=datos_formulario_mapa['asignaturaMateria'],
-                    
+                maestro_cintas = MaestroCintas(
+                    video_id=nuevo_video_id,
+                    video_cbarras=datos_formulario_principal['codigo_barras'],
+                    video_anoproduccion=datos_formulario_principal['video_anoproduccion'],
+                    form_clave=datos_formulario_principal['form_clave'],
+                    tipo_id=datos_formulario_principal['tipo_id'],
+                    video_tipo=datos_formulario_principal['video_tipo'],
+                    origen_id=datos_formulario_principal['origen_id'],
                 )
-                
+                maestro_cintas.save()
+
+                ano_produccion = maestro_cintas.video_anoproduccion
+
+                registro_calificacion = calificacionRegistro(
+                        codigo_barras=maestro_cintas,
+                        fecha_calificacion=fecha_calificacion_actual,
+                        aho_produccion=ano_produccion,
+                        calificador=datos_formulario_principal['calificador'],
+                        estatusCalif='En Calificación',
+                        tema=datos_formulario_mapa['tema'],
+                        areaConocimiento=datos_formulario_mapa['areaConocimiento'],
+                        ejeTematico=datos_formulario_mapa['ejeTematico'],
+                        nivelEducativo=datos_formulario_mapa['nivelEducativo'],
+                        institucionProductora=datos_formulario_mapa['institucionProductora'],
+                        asignaturaMateria=datos_formulario_mapa['asignaturaMateria'],
+                )
+
                 registro_calificacion.save()
 
-                registro_programas = ProgramaSeries(
-                    codigo_barras         =  maestro_cintas,
-                    programa              =  programa,
-                    serie                 =  serie,
-                    subtituloPrograma     =  subtituloPrograma,
-                    subtituloSerie        =  subtituloSerie,
-                    sinopsis              =  sinopsis,
-                    tiempoin              =  tiempoin,
-                    tiempoout             =  tiempoout,
-                    tiempodur             =  tiempodur,
-                    observaciones         =  observaciones,
-                    #----------------------------------------------------------------
-                    participantes         =  participantes,
-                    personajes            =  personajes,
-                    derechoPatrimonial    =  derechoPatrimonial,
-                    orientacion           =  orientacion,
-                    grado                 =  grado,
-                    idiomaOriginal        =  idiomaOriginal,
-                    #----------------------------------
-                    elenco                = elenco,
-                    conductor             = conductor,
-                    productor             = productor,
-                    investigador          = investigador
-                )
-                registro_programas.save()
+                enviaForm = request.POST.get("programasYSeries")
+                datos_modal_form = json.loads(enviaForm)
 
-            response_data = {
-                'message': 'Los datos se guardaron exitosamente.',
-                'datos_modal_form': datos_modal_form  # Agrega los datos aquí 
-            }
-            return JsonResponse(response_data)
+                for item in datos_modal_form:
+                    programa = item.get('programa')
+                    serie = item.get('serie')
+                    subtituloPrograma = item.get('subtituloPrograma')
+                    subtituloSerie = item.get('subtituloSerie')
+                    sinopsis = item.get('sinopsis')
+                    tiempoin = item.get('tiempoin')
+                    tiempoout = item.get('tiempoout')
+                    tiempodur = item.get('tiempodur')
+                    observaciones = item.get('observaciones')
+                    participantes = item.get('participantes')
+                    personajes = item.get('personajes')
+                    derechoPatrimonial = item.get('derechoPatrimonial')
+                    orientacion = item.get('orientacion')
+                    grado = item.get('grado')
+                    idiomaOriginal = item.get('idiomaOriginal')
+                    elenco = item.get('elenco')
+                    conductor = item.get('conductor')
+                    productor = item.get('productor')
+                    investigador = item.get('investigador')
 
+                    registro_programas = ProgramaSeries(
+                        codigo_barras=maestro_cintas,
+                        programa=programa,
+                        serie=serie,
+                        subtituloPrograma=subtituloPrograma,
+                        subtituloSerie=subtituloSerie,
+                        sinopsis=sinopsis,
+                        tiempoin=tiempoin,
+                        tiempoout=tiempoout,
+                        tiempodur=tiempodur,
+                        observaciones=observaciones,
+                        participantes=participantes,
+                        personajes=personajes,
+                        derechoPatrimonial=derechoPatrimonial,
+                        orientacion=orientacion,
+                        grado=grado,
+                        idiomaOriginal=idiomaOriginal,
+                        elenco=elenco,
+                        conductor=conductor,
+                        productor=productor,
+                        investigador=investigador
+                    )
+                    registro_programas.save()
+
+
+
+                response_data = {
+                    'message': 'Los datos se guardaron exitosamente.',
+                    'datos_modal_form': datos_modal_form
+                }
+                return JsonResponse(response_data)
+            except IntegrityError:
+                response_data = {
+                    'success': False,
+                    'message': 'El código de barras ya existe.'
+                }
+                return JsonResponse(response_data)
         else:
-            
             formulario_principal = FormularioCombinado()
             formulario_mapa = Mapa()
-            # modal_form = ModalForm()
 
     return render(request, 'calificaForm/formulario.html', {
         'formulario_principal': formulario_principal,
         'formulario_mapa': formulario_mapa,
-        # 'modal_form': modal_form,
     })
+
 
 def is_videoteca_user(user):
     if user: 
@@ -173,7 +163,7 @@ def consultaFormulario(request):
         messages.error(request, "Solo los de calificación pueden acceder a esta acción.")
         return redirect('prestamos_list')  # Redirige al usuario a otra página
 
-    calificaciones = RegistroCalificacion.objects.filter(estatusCalif__in=['P', 'R']).values(
+    calificaciones = calificacionRegistro.objects.filter(estatusCalif__in=['P', 'R']).values(
         # ... (tu consulta)
     ).order_by('-id')
 
@@ -193,10 +183,10 @@ def eliminarProgramaSerie(request, id):
 def eliminarRegistro(request, id):
     eliminar_id = request.POST.get('eliminar_id')
     try:
-        registro = get_object_or_404(RegistroCalificacion, id=eliminar_id)
+        registro = get_object_or_404(calificacionRegistro, id=eliminar_id)
         registro.delete()
         return JsonResponse({'success': True})
-    except RegistroCalificacion.DoesNotExist:
+    except calificacionRegistro.DoesNotExist:
         return JsonResponse({'success': False})
     
  
@@ -304,7 +294,7 @@ def editar(request, id, codigo_barras):
     try:
         # Obtener el registro de calificación y el maestro de cintas asociado
         maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
-        registro_calificacion = RegistroCalificacion.objects.get(id=id, codigo_barras=maestro_cintas)
+        registro_calificacion = calificacionRegistro.objects.get(id=id, codigo_barras=maestro_cintas)
         registro_programas = ProgramaSeries.objects.filter(codigo_barras=maestro_cintas)
 
         if request.method == 'POST':
@@ -313,7 +303,7 @@ def editar(request, id, codigo_barras):
             formulario_combinado = FormularioCombinadoEditar(request.POST)
             
             if formulario_combinado.is_valid():
-                # Actualizar los datos en RegistroCalificacion
+                # Actualizar los datos en calificacionRegistro
                 registro_calificacion.codigo_barras = maestro_cintas.video_cbarras
                 registro_calificacion.fecha_calificacion = formulario_combinado.cleaned_data['fecha_calificacion']
                 registro_calificacion.productor = formulario_combinado.cleaned_data['productor']
@@ -406,7 +396,7 @@ def editar(request, id, codigo_barras):
                 'programas_data':           programas_data,
             })
 
-    except (RegistroCalificacion.DoesNotExist, MaestroCintas.DoesNotExist, ProgramaSeries.DoesNotExist):
+    except (calificacionRegistro.DoesNotExist, MaestroCintas.DoesNotExist, ProgramaSeries.DoesNotExist):
         # Manejar el caso cuando no se encuentra el objeto
         return JsonResponse({'error': "No se encontró el registro con el código de barras proporcionado."})
 
@@ -414,7 +404,7 @@ def editar(request, id, codigo_barras):
 def cambiarEstatusCalificacion(request, id):
     try:
         if request.method == 'POST':
-            registro = RegistroCalificacion.objects.get(pk=id)
+            registro = calificacionRegistro.objects.get(pk=id)
             # Cambiar el valor de estatusCalif de 'P' a 'R'
             registro.estatusCalif = 'R'
             registro.save()
@@ -422,5 +412,5 @@ def cambiarEstatusCalificacion(request, id):
             estatus_calif = registro.estatusCalif
 
         return JsonResponse({'success': True, 'message': "¡Calificado! Se a cerrado la revición.",'estatusCalif': estatus_calif})  # Cambia 'pagina_de_exito' al nombre de tu página de éxito
-    except RegistroCalificacion.DoesNotExist:
+    except calificacionRegistro.DoesNotExist:
         return JsonResponse({'error': True, 'message': 'A ocurrido un error al realizar el cambio de estatus, favor de contactar al área de Desarrollo e Innovación.'})

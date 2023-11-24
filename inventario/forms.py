@@ -10,8 +10,8 @@ from .models import (
         CatStatus,
         TipoSerie,
         OrigenSerie,
-        calificacionRegistro
-        # ProgramaSeries
+        calificacionRegistro,
+        ProgramaSeries
 )
 
 from django.forms.models import inlineformset_factory
@@ -81,6 +81,7 @@ class FormularioCombinado(forms.Form):
     video_codificacion = forms.CharField(max_length=20, required=True)
     video_tipo = forms.ModelChoiceField(queryset=CatStatus.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
     origen_id = forms.ModelChoiceField(queryset=OrigenSerie.objects.all(), widget=forms.Select(attrs={'class': 'mi-clase-css'}), required=True)
+    calificador = forms.CharField(max_length=80, required=True)
     widgets = {
             'fecha_calificacion': forms.DateInput(attrs={'type': 'date'}),
             'video_id': forms.HiddenInput(),
@@ -99,22 +100,7 @@ class Mapa(forms.ModelForm):
         ]
 
 
-# class Tecnicas(forms.ModelForm):
-#     class Meta:
-#         model = RegistroCalificacion
-#         fields = ['idioma_original','observaciones']
-        
-# class Realizacion(forms.ModelForm):
-#     class Meta:
-#         model = RegistroCalificacion
-#         fields = [
-#             'guionista',
-#             'locutor',
-#             'investigador',
-#             'elenco',
-#             'conductor',
-#             'institucion_productora',
-#         ]
+
     
 class FormularioCombinadoEditar(forms.Form):
     registro_id = forms.IntegerField(widget=forms.HiddenInput()) 

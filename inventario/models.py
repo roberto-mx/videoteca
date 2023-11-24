@@ -62,8 +62,7 @@ class TipoSerie(models.Model):
         
 class MaestroCintas(models.Model):
     video_id = models.IntegerField("Id")
-    # video_cbarras = models.CharField("Código de barras", max_length=12, primary_key=True)
-    video_cbarras = models.CharField("Código de barras", max_length=12, primary_key=True)
+    video_cbarras = models.CharField("Código de barras", max_length=12, primary_key=True, unique=True)
     form_clave = models.ForeignKey(FormatosCintas, null=True, on_delete=models.SET_NULL)
     video_idproduccion = models.IntegerField("Id producción", blank=True, null=True)
     video_codificacion = models.CharField("Formato de la cinta", max_length=20, blank=True, null=True)
@@ -96,7 +95,8 @@ class MaestroCintas(models.Model):
         return self.video_cbarras
     
 class ProgramaSeries(models.Model):
-    codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
+    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
+    codigo_barras = models.CharField(max_length=12)
     programa = models.CharField("Programa",max_length=250, blank=True, null=True)
     serie = models.CharField("Serie",max_length=250, blank=True, null=True)
     subtituloPrograma = models.CharField("Subtitulo de Programa",max_length=250, blank=True, null=True)
@@ -110,7 +110,6 @@ class ProgramaSeries(models.Model):
     derechoPatrimonial = models.CharField(max_length=300, blank=True, null=True)
     grado = models.TextField(max_length=17, blank=True, null=True)
     idiomaOriginal = models.TextField(blank=True, null=True)
-    # secuencia de apertura
     elenco = models.TextField(blank=True, null=True)
     participantes = models.TextField(blank=True, null=True)
     personajes = models.CharField(max_length=45, blank=True, null=True)
@@ -119,23 +118,23 @@ class ProgramaSeries(models.Model):
     investigador = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = 'programasSeries'
+        db_table = 'programas_y_series'
         verbose_name = 'ProgramasSeries'
 
 class calificacionRegistro(models.Model):
-    
-    programas_series = models.ForeignKey(ProgramaSeries, on_delete=models.CASCADE)
-    codigo_barras = models.CharField(max_length=12) 
+    # Otros campos del modelo
+
+    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras', unique=True)
+    codigo_barras = models.OneToOneField(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     fecha_calificacion = models.DateTimeField(blank=True, null=True)
     aho_produccion = models.CharField(max_length=10, blank=True, null=True)
     calificador = models.CharField(max_length=120, blank=True, null=True)
-# Mapa
     tema = models.CharField("Tema", max_length=120, blank=True, null=True)
     areaConocimiento = models.CharField(max_length=35, blank=True, null=True)
     ejeTematico = models.TextField(blank=True, null=True)
     nivelEducativo = models.CharField(max_length=50, blank=True, null=True)
     institucionProductora = models.TextField(blank=True, null=True)
-    estatusCalif = models.CharField(max_length=1, blank=True)
+    estatusCalif = models.CharField(max_length=30, blank=True)
     asignaturaMateria = models.TextField(blank=True, null=True)
 
 
