@@ -122,9 +122,7 @@ class ProgramaSeries(models.Model):
         verbose_name = 'ProgramasSeries'
 
 class calificacionRegistro(models.Model):
-    # Otros campos del modelo
 
-    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras', unique=True)
     codigo_barras = models.OneToOneField(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     fecha_calificacion = models.DateTimeField(blank=True, null=True)
     aho_produccion = models.CharField(max_length=10, blank=True, null=True)

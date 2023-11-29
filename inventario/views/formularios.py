@@ -58,6 +58,7 @@ def formulario(request):
                     form_clave=datos_formulario_principal['form_clave'],
                     tipo_id=datos_formulario_principal['tipo_id'],
                     video_tipo=datos_formulario_principal['video_tipo'],
+                    video_estatus='En Calificación',
                     origen_id=datos_formulario_principal['origen_id'],
                 )
                 maestro_cintas.save()
@@ -154,19 +155,20 @@ def is_videoteca_user(user):
         return user.groups.filter(name='videotecaPermission').count() == 0
     return  False
 
-
 @login_required
 def consultaFormulario(request):
     if not is_videoteca_user(request.user):
         messages.error(request, "Solo los de calificación pueden acceder a esta acción.")
         return redirect('prestamos_list')  # Redirige al usuario a otra página
 
-    calificaciones = calificacionRegistro.objects.filter(estatusCalif__in=['P', 'R']).values(
-        # ... (tu consulta)
+    calificaciones = calificacionRegistro.objects.filter(estatusCalif__in=['En Calificación', 'En Videoteca']).values(
+
     ).order_by('-id')
+    
 
     programas_series = ProgramaSeries.objects.all()  # Obtén todos los datos de ProgramaSeries
     consultaForm = {'formulario': calificaciones, 'consulta': programas_series}  # Pasa ambos conjuntos de datos
+   
 
     return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 def eliminarProgramaSerie(request, id):
@@ -204,7 +206,17 @@ def agregarProgramaEdit(request, codigo_barras):
                 tiempoin              = item.get('tiempoin')
                 tiempoout             = item.get('tiempoout')
                 tiempodur             = item.get('tiempodur')
-                observaciones = item.get('observaciones')
+                observaciones         = item.get('observaciones')
+                orientacion           = item.get('orientacion')
+                derechoPatrimonial    = item.get('derechoPatrimonial')
+                grado                 = item.get('grado')
+                idiomaOriginal        = item.get('idiomaOriginal')
+                elenco                = item.get('elenco')
+                participantes         = item.get('participantes')
+                personajes            = item.get('personajes')
+                conductor             = item.get('conductor')
+                productor             = item.get('productor')
+                investigador          = item.get('investigador')
                 
                 programa_nuevo = ProgramaSeries(
                     codigo_barras=maestro_cintas,
@@ -217,6 +229,16 @@ def agregarProgramaEdit(request, codigo_barras):
                     tiempoout=tiempoout,
                     tiempodur=tiempodur,
                     observaciones=observaciones,
+                    orientacion=orientacion,
+                    derechoPatrimonial=derechoPatrimonial,
+                    grado=grado,
+                    idiomaOriginal=idiomaOriginal,
+                    elenco=elenco,
+                    participantes=participantes,
+                    personajes=personajes,
+                    conductor=conductor,
+                    productor=productor,
+                    investigador=investigador,
             
                 )
                 programa_nuevo.save()
@@ -268,14 +290,45 @@ def editar_programa(request, programa_id):
                 tiempodur = edited_data['tiempodur']
             if 'observaciones' in edited_data:
                 observaciones = edited_data['observaciones']
-             
-            programa.subtituloPrograma    = programa_subtituloPrograma
-            programa.subtituloSerie       = programa_subtituloSerie
+            if 'orientacion' in edited_data:
+                orientacion = edited_data['orientacion']
+            if 'derechoPatrimonial' in edited_data:
+                derechoPatrimonial = edited_data['derechoPatrimonial']
+            if 'grado' in edited_data:
+                grado = edited_data['grado']
+            if 'idiomaOriginal' in edited_data:
+                idiomaOriginal = edited_data['idiomaOriginal']
+            if 'elenco' in edited_data:
+                elenco = edited_data['elenco']
+            if 'participantes' in edited_data:
+                participantes = edited_data['participantes']
+            if 'personajes' in edited_data:
+                personajes = edited_data['personajes']
+            if 'conductor' in edited_data:
+                conductor = edited_data['conductor']
+            if 'productor' in edited_data:
+                productor = edited_data['productor']
+            if 'investigador' in edited_data:
+                investigador = edited_data['investigador']
+
+            programa.subtituloPrograma     = programa_subtituloPrograma
+            programa.subtituloSerie        = programa_subtituloSerie
             programa.sinopsis              = sinopsis
             programa.tiempoin              = tiempoin
             programa.tiempoout             = tiempoout
             programa.tiempodur             = tiempodur
-            programa.observaciones = observaciones
+            programa.observaciones         = observaciones
+            programa.orientacion           = orientacion
+            programa.derechoPatrimonial    = derechoPatrimonial
+            programa.grado                 = grado
+            programa.idiomaOriginal        = idiomaOriginal
+            programa.elenco                = elenco
+            programa.participantes         = participantes
+            programa.personajes            = personajes
+            programa.conductor             = conductor
+            programa.productor             = productor
+            programa.investigador          = investigador
+            
             programa.save()
             
             return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
@@ -296,71 +349,61 @@ def editar(request, id, codigo_barras):
         registro_programas = ProgramaSeries.objects.filter(codigo_barras=maestro_cintas)
 
         if request.method == 'POST':
-
             # Procesar el formulario personalizado de edición
             formulario_combinado = FormularioCombinadoEditar(request.POST)
             
             if formulario_combinado.is_valid():
                 # Actualizar los datos en calificacionRegistro
-                registro_calificacion.codigo_barras = maestro_cintas.video_cbarras
-                registro_calificacion.fecha_calificacion = formulario_combinado.cleaned_data['fecha_calificacion']
-                registro_calificacion.productor = formulario_combinado.cleaned_data['productor']
-                registro_calificacion.coordinador = formulario_combinado.cleaned_data['coordinador']
-                maestro_cintas.video_anoproduccion = formulario_combinado.cleaned_data['video_anoproduccion']
-                maestro_cintas.video_estatus = formulario_combinado.cleaned_data['video_estatus']
-                maestro_cintas.video_observaciones = formulario_combinado.cleaned_data['video_observaciones']
-                maestro_cintas.origen_id = formulario_combinado.cleaned_data['origen_id']
-                maestro_cintas.video_tipo = formulario_combinado.cleaned_data['video_tipo']
+                # registro_calificacion.codigo_barras = maestro_cintas.video_cbarras
+
+
                 maestro_cintas.form_clave = formulario_combinado.cleaned_data['form_clave']
                 maestro_cintas.tipo_id = formulario_combinado.cleaned_data['tipo_id']
-
-                 # Cambiar el valor de estatusCalif de 'P' a 'R'
-                # registro_calificacion.estatusCalif = 'R' esto ser == a Videoteca
-                # Actualizar otros campos si es necesario
-                registro_calificacion.save()
+                maestro_cintas.video_codificacion = formulario_combinado.cleaned_data['video_codificacion']
+                maestro_cintas.video_tipo = formulario_combinado.cleaned_data['video_tipo']
+                maestro_cintas.video_anoproduccion = formulario_combinado.cleaned_data['video_anoproduccion']
+                maestro_cintas.origen_id = formulario_combinado.cleaned_data['origen_id']
                 maestro_cintas.save()
 
-                # Procesar los demás formularios y guardar los cambios en los modelos relacionados
-                formulario_descripcion = Descripcion(request.POST, instance=registro_calificacion)
+                ano_produccion = maestro_cintas.video_anoproduccion
+                registro_calificacion.codigo_barras = maestro_cintas
+                registro_calificacion.fecha_calificacion = formulario_combinado.cleaned_data['fecha_calificacion']
+                registro_calificacion.aho_produccion = ano_produccion
+                registro_calificacion.calificador = formulario_combinado.cleaned_data['calificador']
+                registro_calificacion.save()
+
                 formulario_mapa = Mapa(request.POST, instance=registro_calificacion)
-                formulario_tecnicas = Tecnicas(request.POST, instance=registro_calificacion)
-                formulario_realizacion = Realizacion(request.POST, instance=registro_calificacion)
-                
-                if (formulario_descripcion.is_valid() and formulario_mapa.is_valid() and
-                    formulario_tecnicas.is_valid() and formulario_realizacion.is_valid()):
-                    formulario_descripcion.save()#
+
+                if ( formulario_mapa.is_valid() ):
                     formulario_mapa.save()
-                    formulario_tecnicas.save()
-                    formulario_realizacion.save()
                     return JsonResponse({'success': True, 'message': 'Cambios guardados exitosamente.'})
                 else:
                     errors = {
-                        'formulario_descripcion': formulario_descripcion.errors,
                         'formulario_mapa': formulario_mapa.errors,
-                        'formulario_tecnicas': formulario_tecnicas.errors,
-                        'formulario_realizacion': formulario_realizacion.errors,
+
                     }
-                    return JsonResponse({'success': False, 'message': 'El formulario no es válido.', 'errors': errors})
+                    # print(errors)
+                    return JsonResponse({'success': False, 'message': 'El formulario de mapa no es válido.', 'errors': errors})
             else:
                 errors = {
                     'formulario_combinado': formulario_combinado.errors,
                 }
-                return JsonResponse({'success': False, 'message': 'El formulario no es válido.', 'errors': errors})
+                return JsonResponse({'success': False, 'message': 'El formulario combinado no es válido.', 'errors': errors})
         else:
             # Preparar los formularios con los datos actuales
             formulario_combinado = FormularioCombinadoEditar(initial={
-                'registro_id':          registro_calificacion.id,  
-                'codigo_barras':        registro_calificacion.codigo_barras,
-                'fecha_calificacion':   registro_calificacion.fecha_calificacion,
-                'productor':            registro_calificacion.productor,
-                'coordinador':          registro_calificacion.coordinador,
-                'video_anoproduccion':  maestro_cintas.video_anoproduccion,
-                'video_estatus':        maestro_cintas.video_estatus,
-                'video_observaciones':  maestro_cintas.video_observaciones,
-                'origen_id':            maestro_cintas.origen_id,
-                'video_tipo':           maestro_cintas.video_tipo,
-                'form_clave':           maestro_cintas.form_clave,
-                'tipo_id':              maestro_cintas.tipo_id,
+                'registro_id'         : registro_calificacion.id,  
+                'codigo_barras'       : registro_calificacion.codigo_barras,
+                'fecha_calificacion'  : registro_calificacion.fecha_calificacion,
+                'calificador'         : registro_calificacion.calificador,
+            # --------------------------------------------------------------------
+                'video_anoproduccion' : maestro_cintas.video_anoproduccion,
+                'form_clave'          : maestro_cintas.form_clave,
+                'tipo_id'             : maestro_cintas.tipo_id,
+                'video_codificacion'  : maestro_cintas.video_codificacion,
+                # 'video_observaciones' : maestro_cintas.video_observaciones,
+                'video_tipo'          : maestro_cintas.video_tipo,
+                'origen_id'           : maestro_cintas.origen_id,
             })
 
             for registro in registro_programas:
@@ -375,22 +418,26 @@ def editar(request, id, codigo_barras):
                     'tiempoin':              registro.tiempoin,
                     'tiempoout':             registro.tiempoout,
                     'tiempodur':             registro.tiempodur,
-                    'observaciones': registro.observaciones
+                    'observaciones':         registro.observaciones,
+                    'orientacion':           registro.orientacion,
+                    'derechoPatrimonial':    registro.derechoPatrimonial,
+                    'grado':                 registro.grado,
+                    'idiomaOriginal':        registro.idiomaOriginal,
+                    'elenco':                registro.elenco,
+                    'participantes':         registro.participantes,
+                    'personajes':            registro.personajes,
+                    'conductor':             registro.conductor,
+                    'productor':             registro.productor,
+                    'investigador':          registro.investigador,
                 })
 
-            formulario_descripcion = Descripcion(instance=registro_calificacion)
             formulario_mapa = Mapa(instance=registro_calificacion)
-            formulario_tecnicas = Tecnicas(instance=registro_calificacion)
-            formulario_realizacion = Realizacion(instance=registro_calificacion)
+
 
             # Renderizar la página de edición con los formularios y datos
             return render(request, 'calificaForm/editar.html', {
                 'formulario_combinado':     formulario_combinado,
-                'formulario_descripcion':   formulario_descripcion,
                 'formulario_mapa':          formulario_mapa,
-                'formulario_tecnicas':      formulario_tecnicas,
-                'formulario_realizacion':   formulario_realizacion,
-                'codigo_barras':            codigo_barras,
                 'programas_data':           programas_data,
             })
 
@@ -402,13 +449,23 @@ def editar(request, id, codigo_barras):
 def cambiarEstatusCalificacion(request, id):
     try:
         if request.method == 'POST':
+            
             registro = calificacionRegistro.objects.get(pk=id)
-            # Cambiar el valor de estatusCalif de 'P' a 'R'
-            registro.estatusCalif = 'R'
+            
+            # Obtener el código de barras directamente desde la relación
+            codigo_barras = registro.codigo_barras.video_cbarras
+
+            # Actualizar el estatus en MaestroCintas
+            maestro_cintas = MaestroCintas.objects.get(video_cbarras=codigo_barras)
+            maestro_cintas.video_estatus = 'En Videoteca'
+            maestro_cintas.save()
+
+            # Actualizar el estatus en calificacionRegistro
+            registro.estatusCalif = 'En Videoteca'
             registro.save()
 
             estatus_calif = registro.estatusCalif
 
-        return JsonResponse({'success': True, 'message': "¡Calificado! Se a cerrado la revición.",'estatusCalif': estatus_calif})  # Cambia 'pagina_de_exito' al nombre de tu página de éxito
+        return JsonResponse({'success': True, 'message': "¡Calificado! Se ha cerrado la revisión.", 'estatusCalif': estatus_calif})
     except calificacionRegistro.DoesNotExist:
-        return JsonResponse({'error': True, 'message': 'A ocurrido un error al realizar el cambio de estatus, favor de contactar al área de Desarrollo e Innovación.'})
+        return JsonResponse({'error': True, 'message': 'Ha ocurrido un error al realizar el cambio de estatus, favor de contactar al área de Desarrollo e Innovación.'})

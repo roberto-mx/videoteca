@@ -9,7 +9,7 @@
     <strong>Consulta formulario</strong>
     <div class="d-flex justify-content-between">
       <div>
-        <a name="" id="" class="btn btn-form" href="{% url 'formulario' %}" style="background:#9D2449" role="button">
+        <a name="" id="" class="btn btn-form" href="{% url 'formulario' %}" style="background:#11558E" role="button">
           <div style="display: flex; flex-direction: column; align-items: center;">
             <span style="color: white;">Llenar formulario</span>
             <i class='fab fa-wpforms' style="color:white;"></i>
@@ -28,39 +28,38 @@
           <tr>
             <th>Id</th>
             <th>Código de Barras</th>
-            <th>Productor</th>
-            <th>Institucion Productora</th>
-            <th>Fecha Calificación</th> 
-            <th>Estatus</th> 
+            <th>Fecha Calificación</th>
+            <th>Año producción</th>
+            <th>Calificador</th> 
+            <th>Tema</th> 
+            <th>Área Conocimiento</th> 
+            <th>Eje tematico</th> 
+            <th>Nivel Educativo</th> 
+            <th>Institución Productora</th> 
+            <th>Asignatura Materia</th>
+            <th>Estatus de la Cinta</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {% for data in formulario %}
           <tr>
-            <td>{{ data.id }}</td>+
-            <td>{{ data.codigo_barras }}</td>
-            <td>{{ data.productor }}</td>
-            {% comment %} <td>{{ data.sinopsis }}</td> {% endcomment %}
-            <td>
-              {%if data.institucion_productora == None %}              
-                Sin información
-              {%else%}
-                {{ data.institucion_productora }}
-              {%endif%}
-            </td>
+            <td>{{ data.id }}</td>
+            <td>{{ data.codigo_barras_id }}</td>
             <td>{{ data.fecha_calificacion }}</td>
-            <td>
-              {% if data.estatusCalif == 'P' %}
-                  En Calificación
-              {% else %}
-                  En Videoteca
-              {% endif %}
-          </td>
-            {% comment %} <td>{{ data.estatusCalif }}</td> {% endcomment %}
+            <td>{{ data.aho_produccion }}</td>
+            <td>{{ data.calificador }}</td>
+            <td>{{ data.tema }}</td>
+            <td>{{ data.areaConocimiento }}</td>
+            <td>{{ data.ejeTematico }}</td>
+            <td>{{ data.nivelEducativo }}</td>
+            <td>{{ data.institucionProductora }}</td>
+            <td>{{ data.asignaturaMateria }}</td>
+            <td>{{ data.estatusCalif }}</td>
+
             <td class="d-flex justify-content-center">
               <!-- Editar -->
-              <a href="{% url 'editar' data.id data.codigo_barras %}" class="btn btn-editar btn-sm active text-white" style="background-color:#13322B;" title="Editar">
+              <a href="{% url 'editar' data.id data.codigo_barras_id %}" class="btn btn-editar btn-sm active text-white" style="background-color:#13322B;" title="Editar">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <i class="fas fa-edit"></i>
                   <span></span>
@@ -68,12 +67,13 @@
               </a>
 
               <!-- Ver -->
-              <a href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#6E6F6F;" data-bs-toggle="modal" data-bs-target="#modalViewProgramAndSeries{{ data.codigo_barras }}" title="Ver programas"> 
+              <button href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#6E6F6F;" data-bs-toggle="modal" data-bs-target="#modalViewProgramAndSeries{{ data.codigo_barras_id }}" title="Ver programas"> 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                  <i class='far fa-eye'></i>
-                  <span></span>
+                    <i class='far fa-eye'></i>
+                    <span></span>
                 </div>
-              </a>
+              </button>
+            
 
               <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
                   data-id="eliminar-{{ data.id }}"  
@@ -94,11 +94,11 @@
 
 {% for data in formulario %}
 <!-- Modal de Observaciones -->
-<div class="modal fade" id="modalViewProgramAndSeries{{ data.codigo_barras }}" tabindex="-1" aria-labelledby="modalViewProgramAndSeriesLabel" aria-hidden="true">
+<div class="modal fade" id="modalViewProgramAndSeries{{ data.codigo_barras_id }}" tabindex="-1" aria-labelledby="modalViewProgramAndSeriesLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header" style="background-color:#18463b;">
-        <h4 class="modal-title fs-5" id="modalViewProgramAndSeriesLabel" style="color: white;">Programas y series de la cinta ( {{data.codigo_barras}} ) </h4>
+        <h4 class="modal-title fs-5" id="modalViewProgramAndSeriesLabel" style="color: white;">Programas y series de la cinta ( {{data.codigo_barras_id}} ) </h4>
       </div>
       <div class="modal-body">
         <div class="table-responsive">
@@ -110,28 +110,51 @@
                 <th>Serie</th>
                 <th>Subtítulo Programa</th>
                 <th>Subtítulo Serie</th>
-                <th>Programa Observaciones</th> 
-                <th>Sinopsis</th>
-                <th>Tiempo Duración</th>
-                <th>Tiempo Inicio</th>
+                <th>Sinopsis</th> 
+                <th>Tiempo Inicio</th> 
                 <th>Tiempo Final</th>
+                <th>Tiempo Duración</th> 
+                <th>Programa Observaciones</th> 
+                <th>Orientación</th> 
+                <th>Derecho Patrimonial</th> 
+                <th>Grado</th> 
+                <th>Idioma Original</th> 
+                <th>Elenco</th> 
+                <th>Participantes</th> 
+                <th>Personajes</th> 
+                <th>Conductor</th>
+                <th>Productor</th>
+                <th>Investigador</th>
+              
               </tr>
             </thead>
             <tbody>
               {% for program_series in consulta %}
-              {% if program_series.codigo_barras.video_cbarras == data.codigo_barras %}
-              <tr>
-                <td>{{program_series.codigo_barras.video_cbarras}}</td>
-                <td>{{program_series.programa}}</td>
-                <td>{{program_series.serie}}</td>
-                <td>{{program_series.subtituloPrograma}}</td>
-                <td>{{program_series.subtituloSerie}}</td>
-                <td>{{program_series.observaciones}}</td>
-                <td>{{program_series.sinopsis}}</td>
-                <td>{{program_series.tiempodur}}</td>
-                <td>{{program_series.tiempoin}}</td>
-                <td>{{program_series.tiempoout}}</td>
-              </tr>
+              {% if program_series.codigo_barras == data.codigo_barras_id %}
+                <tr>
+                    <!-- ... otras columnas ... -->
+                    <td>{{ program_series.codigo_barras }}</td>         
+                    <td>{{ program_series.programa }}</td> 
+                    <td>{{ program_series.serie }}</td> 
+                    <td>{{program_series.subtituloPrograma}}</td> 
+                    <td>{{program_series.subtituloSerie}}</td> 
+                    <td>{{program_series.sinopsis}}</td> 
+                    <td>{{program_series.tiempoin}}</td> 
+                    <td>{{program_series.tiempoout}}</td> 
+                    <td>{{program_series.tiempodur}}</td> 
+                    <td>{{program_series.observaciones}}</td> 
+                    <td>{{program_series.orientacion}}</td> 
+                    <td>{{program_series.derechoPatrimonial}}</td> 
+                    <td>{{program_series.grado}}</td> 
+                    <td>{{program_series.idiomaOriginal}}</td> 
+                    <td>{{program_series.elenco}}</td> 
+                    <td>{{program_series.participantes}}</td> 
+                    <td>{{program_series.personajes}}</td> 
+                    <td>{{program_series.conductor}}</td> 
+                    <td>{{program_series.productor}}</td> 
+                    <td>{{program_series.investigador}}</td> 
+
+                </tr>
               {% endif %}
               {% endfor %}
             </tbody>

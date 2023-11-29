@@ -8,10 +8,9 @@
   <div class="card-header text-center" style="background:#F1F7F8">
       <div class="d-flex justify-content-between">
         <div>
-          <a name="" id="" class="btn btn-form" href="{% url 'consultaFormulario' %}" style="background:#B93158" role="button">
+          <a name="" id="" class="btn btn-form" href="{% url 'consultaFormulario' %}" style="background:#11558E" role="button">
             <div style="display: flex; flex-direction: column; align-items: center;">
               <span style="color: white;"> Regresar a Consulta </span>
-              <i class="fas fa-search" style="color:white;"></i>
             </div>
           </a>
         </div>
@@ -474,8 +473,6 @@
       const cellSub_Investigador      = newRow.insertCell(20);
       const cellAcciones              = newRow.insertCell(21);
 
-
-  
       cellId.innerHTML                = datos.id;
       cellCodigoBarras.innerHTML      = datos.codigoBarras;
       cellSerie.innerHTML             = datos.serie;
@@ -522,7 +519,7 @@ $("#revicionForm").click(function(event) {
   console.log(`${codigoBarras}`);
 
   if(codigoBarras === ""){
-    messageAlerta('warning', `Es necesario ingresar un código de barras, para haer el registro.`, '¡Alto!', '#18463b');
+    messageAlerta('warning', `Es necesario ingresar un código de barras, para hacer el registro.`, '¡Alto!', '#18463b');
     return;
 
   }else{
