@@ -172,7 +172,7 @@
                                             </div>
                                           </button>
   
-                                          <button class="btn btn-eliminar btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
+                                          <button disabled class="btn btn-eliminar btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
                                               data-id="eliminar-{{ programa.id }}"  
                                               onclick="eliminarFila('{{ programa.id }}')">
                                               <div style="display: flex; flex-direction: column; align-items: center;">
@@ -393,62 +393,135 @@
             <div class="modal-body">
                   <form id="formularioEditar{{ programa.id }}" method="post" action="">
                     {% csrf_token %}
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="mb-3">
-                          <label for="programa{{ programa.id }}" class="form-label">Programa</label>
-                          <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" value="{{ programa.programa }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="serie{{ programa.id }}" class="form-label">Serie</label>
-                            <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" value="{{ programa.serie }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="programaSubtitulo{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
-                            <input type="text" id="programaSubtitulo{{ programa.id }}" name="programaSubtitulo" class="form-control form-control-sm" value="{{ programa.programaSubtitulo }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="serieSubtitulo{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
-                            <input type="text" id="serieSubtitulo{{ programa.id }}" name="serieSubtitulo" class="form-control form-control-sm" value="{{ programa.serieSubtitulo }}">
-                        </div>
-                      </div>
-
-                      <div class="col-md-6">
-                        <div class="mb-3">
-                          <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
-                          <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" value="{{ programa.sinopsis }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
-                            <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" value="{{ programa.tiempoin }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
-                            <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" value="{{ programa.tiempoout }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
-                            <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" value="{{ programa.tiempodur }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
-                            <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" rows="4">{{ programa.observaciones }}</textarea>
-                        </div>
-                      </div>
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                      <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapsePro" style ="background:#EFF5F3"  aria-expanded="false" aria-controls="collapsePro" >
+                        <strong style = "color:black;"> Datos programa</strong>
+                      </button>
                     </div>
+  
+                    <div class="collapse" id="collapsePro">
+                      <div class="row">
+                          <div class="col-md-6 mt-2">
+                              <div class="mb-3">
+                                  <label for="programa{{ programa.id }}" class="form-label">Programa</label>
+                                  <input type="text" id="programa{{ programa.id }}" name="programa" class="form-control form-control-sm" placeholder="Programa" value="{{ programa.programa }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="serie{{ programa.id }}" class="form-label">Serie</label>
+                                  <input type="text" id="serie{{ programa.id }}" name="serie" class="form-control form-control-sm" placeholder="Serie" value="{{ programa.serie }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="subtituloPrograma{{ programa.id }}" class="form-label">Subtítulo del Programa</label>
+                                  <input type="text" id="subtituloPrograma{{ programa.id }}" name="subtituloPrograma" class="form-control form-control-sm" placeholder="Subtítulo del Programa" value="{{ programa.subtituloPrograma }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="subtituloSerie{{ programa.id }}" class="form-label">Subtítulo de Serie</label>
+                                  <input type="text" id="subtituloSerie{{ programa.id }}" name="subtituloSerie" class="form-control form-control-sm" placeholder="Subtítulo de Serie" value="{{ programa.subtituloSerie }}">
+                              </div>
+                          </div>
+                  
+                          <div class="col-md-6 mt-2">
+                              <div class="mb-3">
+                                  <label for="sinopsis{{ programa.id }}" class="form-label">Sinopsis</label>
+                                  <input type="text" id="sinopsis{{ programa.id }}" name="sinopsis" class="form-control form-control-sm" placeholder="Sinopsis" value="{{ programa.sinopsis }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="tiempoin{{ programa.id }}" class="form-label">Tiempo inicio</label>
+                                  <input type="text" id="tiempoin{{ programa.id }}" name="tiempoin" class="form-control form-control-sm" placeholder="Tiempo inicio" value="{{ programa.tiempoin }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="tiempoout{{ programa.id }}" class="form-label">Tiempo Final</label>
+                                  <input type="text" id="tiempoout{{ programa.id }}" name="tiempoout" class="form-control form-control-sm" placeholder="Tiempo Final" value="{{ programa.tiempoout }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="tiempodur{{ programa.id }}" class="form-label">Duración</label>
+                                  <input type="text" id="tiempodur{{ programa.id }}" name="tiempodur" class="form-control form-control-sm" placeholder="Duración" value="{{ programa.tiempodur }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="observaciones{{ programa.id }}" class="form-label">Observaciones</label>
+                                  <textarea id="observaciones{{ programa.id }}" name="observaciones" class="form-control form-control-sm little-input" placeholder="Observaciones" rows="4">{{ programa.observaciones }}</textarea>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div class="d-grid gap-2 mt-2">
+                      <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseDes" style="background:#EFF5F3" aria-expanded="false" aria-controls="collapseDes">
+                          <strong style="color:black;">Detalle programa</strong>
+                      </button>
+                  </div>
+                  
+                  <div class="collapse mt-2" id="collapseDes">
+                      <div class="row">
+                          <div class="col-md-6">
+                              <div class="mb-2">
+                                  <label for="participantes{{ programa.id }}" class="form-label">Participantes</label>
+                                  <input type="text" id="participantes{{ programa.id }}" name="participantes" class="form-control form-control-sm" placeholder="Participantes" value="{{ programa.participantes }}">
+                              </div>
+                  
+                              <div class="mb-2">
+                                  <label for="personajes{{ programa.id }}" class="form-label">Personajes</label>
+                                  <input type="text" id="personajes{{ programa.id }}" name="personajes" class="form-control form-control-sm" placeholder="Personajes" value="{{ programa.personajes }}">
+                              </div>
+                  
+                              <div class="mb-2">
+                                  <label for="derechoPatrimonial{{ programa.id }}" class="form-label">Derecho patrimonial</label>
+                                  <input type="text" id="derechoPatrimonial{{ programa.id }}" name="derechoPatrimonial" class="form-control form-control-sm" placeholder="Derecho patrimonial" value="{{ programa.derechoPatrimonial }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="idiomaOriginal{{ programa.id }}" class="form-label">Idioma Original</label>
+                                  <input type="text" id="idiomaOriginal{{ programa.id }}" name="idiomaOriginal" class="form-control form-control-sm" placeholder="Idioma Original" value="{{ programa.idiomaOriginal }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="elenco{{ programa.id }}" class="form-label">Elenco</label>
+                                  <input type="text" id="elenco{{ programa.id }}" name="elenco" class="form-control form-control-sm" placeholder="Elenco" value="{{ programa.elenco }}">
+                              </div>
+                          </div>
+                  
+                          <div class="col-md-6">
+                              <div class="mb-3">
+                                  <label for="orientacion{{ programa.id }}" class="form-label">Orientación</label>
+                                  <input type="text" id="orientacion{{ programa.id }}" name="orientacion" class="form-control form-control-sm" placeholder="Orientación" value="{{ programa.orientacion }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="grado{{ programa.id }}" class="form-label">Grado</label>
+                                  <input type="text" id="grado{{ programa.id }}" name="grado" class="form-control form-control-sm" placeholder="Grado" value="{{ programa.grado }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="conductor{{ programa.id }}" class="form-label">Conductor</label>
+                                  <input type="text" id="conductor{{ programa.id }}" name="conductor" class="form-control form-control-sm" placeholder="Conductor" value="{{ programa.conductor }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="productor{{ programa.id }}" class="form-label">Productor</label>
+                                  <input type="text" id="productor{{ programa.id }}" name="productor" class="form-control form-control-sm" placeholder="Productor" value="{{ programa.productor }}">
+                              </div>
+                  
+                              <div class="mb-3">
+                                  <label for="investigador{{ programa.id }}" class="form-label">Investigador</label>
+                                  <input type="text" id="investigador{{ programa.id }}" name="investigador" class="form-control form-control-sm" placeholder="Investigador" value="{{ programa.investigador }}">
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
+                    {% comment %} <button type="button" class="btn btn-primary guardarCambiosBtn" data-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>  {% endcomment %}
+                    <button type="button" class="btn btn-primary guardarCambiosBtn" data-programa-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>
+                  </div>
                   </form>     
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style="background-color:#9D2449" data-bs-dismiss="modal">Cerrar</button>
-                {% comment %} <button type="button" class="btn btn-primary guardarCambiosBtn" data-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>  {% endcomment %}
-                <button type="button" class="btn btn-primary guardarCambiosBtn" data-programa-id="{{ programa.id }}" data-codigo-barras="{{ programa.codigo_barras }}" style="background-color:#1F5E49">Guardar cambios</button>
             </div>
         </div>
     </div>
@@ -474,8 +547,8 @@
         const modal                   = $(this).closest('.modal');
         const programa                = modal.find('[name="programa"]').val();
         const serie                   = modal.find('[name="serie"]').val();
-        const programaSubtitulo       = modal.find('[name="programaSubtitulo"]').val();
-        const serieSubtitulo          = modal.find('[name="serieSubtitulo"]').val();
+        const subtituloPrograma       = modal.find('[name="subtituloPrograma"]').val();
+        const subtituloSerie          = modal.find('[name="subtituloSerie"]').val();
         const sinopsis                = modal.find('[name="sinopsis"]').val();
         const tiempoin                = modal.find('[name="tiempoin"]').val();
         const tiempoout               = modal.find('[name="tiempoout"]').val();
@@ -712,39 +785,50 @@
       
       const programa = document.getElementById('programa').value;
       const serie = document.getElementById('serie').value;
-      const programaSubtitulo = document.getElementById('programaSubtitulo').value;
-      const serieSubtitulo = document.getElementById('serieSubtitulo').value;
+      const subtituloPrograma = document.getElementById('subtituloPrograma').value;
+      const subtituloSerie = document.getElementById('subtituloSerie').value;
       const sinopsis = document.getElementById('sinopsis').value;
       const tiempoin = document.getElementById('tiempoin').value;
       const tiempoout = document.getElementById('tiempoout').value;
       const tiempodur = document.getElementById('tiempodur').value;
       const observaciones = document.getElementById('observaciones').value;
-      const codigoBarrasValor = document.getElementById('codigo_barras').value;
-    //------------------------------------------------------------------------------------------------
-    
+      //------------------------------------------------------------------------------------------------
       const participantes = document.getElementById('participantes').value;
       const personajes = document.getElementById('personajes').value;
       const derechoPatrimonial = document.getElementById('derechoPatrimonial').value;
       const orientacion = document.getElementById('orientacion').value;
       const grado = document.getElementById('grado').value;
       const idiomaOriginal = document.getElementById('idiomaOriginal').value;
-    //------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------
       const elenco = document.getElementById('elenco').value;
       const conductor = document.getElementById('conductor').value;
       const productor = document.getElementById('productor').value;
       const investigador = document.getElementById('investigador').value;
+      const codigoBarrasValor = document.getElementById('codigo_barras').value;
       $('#codigoId').val(`Código - ${codigoBarrasValor}`).prop('disabled', true);
 
       programasYSeries.push({
         programa:               programa,
         serie:                  serie,
-        programaSubtitulo:      programaSubtitulo,
-        serieSubtitulo:         serieSubtitulo,
+        subtituloPrograma:      subtituloPrograma,
+        subtituloSerie:         subtituloSerie,
         sinopsis:               sinopsis,
         tiempoin:               tiempoin,
         tiempoout:              tiempoout,
         tiempodur:              tiempodur,
-        observaciones:  observaciones,
+        observaciones:          observaciones,
+        //----------------------------------------------------------------
+        participantes:          participantes,
+        personajes:             personajes,
+        derechoPatrimonial:     derechoPatrimonial,
+        orientacion:            orientacion,
+        grado:                  grado,
+        idiomaOriginal:         idiomaOriginal,
+        //----------------------------------------------------------------
+        elenco:                 elenco,
+        conductor:              conductor,
+        productor:              productor,
+        investigador:           investigador,
         codigoBarras:           codigoBarrasValor,
       });
   
@@ -759,6 +843,7 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
+        
             // Llama a la función para actualizar la tabla
             actualizarTablaPrograma();
             limpiarFormulario();
@@ -791,8 +876,8 @@
         newRow.insertCell().textContent = datos.codigoBarras;
         newRow.insertCell().textContent = datos.programa;
         newRow.insertCell().textContent = datos.serie;
-        newRow.insertCell().textContent = datos.programaSubtitulo;
-        newRow.insertCell().textContent = datos.serieSubtitulo;
+        newRow.insertCell().textContent = datos.subtituloPrograma;
+        newRow.insertCell().textContent = datos.subtituloSerie;
         newRow.insertCell().textContent = datos.sinopsis;
         newRow.insertCell().textContent = datos.tiempoin;
         newRow.insertCell().textContent = datos.tiempoout;

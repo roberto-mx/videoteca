@@ -196,7 +196,7 @@ def agregarProgramaEdit(request, codigo_barras):
         
         if request.method == 'POST':
             datos_modal_form = json.loads(request.body)
-            
+            print(datos_modal_form)
             for item in datos_modal_form:
                 programa              = item.get('programa')
                 serie                 = item.get('serie')
