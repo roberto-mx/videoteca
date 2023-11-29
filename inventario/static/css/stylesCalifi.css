@@ -16,6 +16,15 @@
     white-space:inherit;
   }
   
+#tableMuestraPrograma th {
+  background-color: rgb(19, 87, 104); /* Color de fondo de las celdas de encabezado */
+  color: white; /* añadido para cambiar el color de las letras */
+  }
+
+  #tableMuestraPrograma td {
+    white-space:inherit;
+  }
+  
 #tableMaestroCintas th {
   background-color: #1d5248; /* Color de fondo de las celdas de encabezado */
   color: rgb(255, 246, 246); /* añadido para cambiar el color de las letras */
