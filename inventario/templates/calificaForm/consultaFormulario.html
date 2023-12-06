@@ -8,13 +8,22 @@
   <div class="card-header text-center" style="background-color:#F1F7F8;">
     <strong>Consulta formulario</strong>
     <div class="d-flex justify-content-between">
-      <div>
-        <a name="" id="" class="btn btn-form" href="{% url 'formulario' %}" style="background:#11558E" role="button">
+      <div class="d-flex justify-content-start">
+        <a name="" id="" class="btn btn-form" href="{% url 'formulario' %}" style="background:#BC955C" role="button">
           <div style="display: flex; flex-direction: column; align-items: center;">
             <span style="color: white;">Llenar formulario</span>
-            <i class='fab fa-wpforms' style="color:white;"></i>
+            {% comment %} <i class='fab fa-wpforms' style="color:white;"></i> {% endcomment %}
           </div>
         </a>
+      </div>
+      
+      <div class="d-flex justify-content-end">
+        <a name="" id="" class="btn btn-form"  href="{%url 'filtrarBusqueda'%}" style="background:#830EF1" role="button">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color: white;">Filtra Información </span>
+          </div>
+        </a>
+
       </div>
     </div>
   </div>
@@ -102,7 +111,7 @@
       </div>
       <div class="modal-body">
         <div class="table-responsive">
-          <table class="table table-striped table-hover"  name="tableMuestraPrograma" id="tableMuestraPrograma">
+          <table class="table table-striped"  id="tableMuestraPrograma">
             <thead>
               <tr>
                 <th>Código Barras</th>
@@ -129,33 +138,33 @@
               </tr>
             </thead>
             <tbody>
-              {% for program_series in consulta %}
-              {% if program_series.codigo_barras == data.codigo_barras_id %}
-                <tr>
-                    <!-- ... otras columnas ... -->
-                    <td>{{ program_series.codigo_barras }}</td>         
-                    <td>{{ program_series.programa }}</td> 
-                    <td>{{ program_series.serie }}</td> 
-                    <td>{{program_series.subtituloPrograma}}</td> 
-                    <td>{{program_series.subtituloSerie}}</td> 
-                    <td>{{program_series.sinopsis}}</td> 
-                    <td>{{program_series.tiempoin}}</td> 
-                    <td>{{program_series.tiempoout}}</td> 
-                    <td>{{program_series.tiempodur}}</td> 
-                    <td>{{program_series.observaciones}}</td> 
-                    <td>{{program_series.orientacion}}</td> 
-                    <td>{{program_series.derechoPatrimonial}}</td> 
-                    <td>{{program_series.grado}}</td> 
-                    <td>{{program_series.idiomaOriginal}}</td> 
-                    <td>{{program_series.elenco}}</td> 
-                    <td>{{program_series.participantes}}</td> 
-                    <td>{{program_series.personajes}}</td> 
-                    <td>{{program_series.conductor}}</td> 
-                    <td>{{program_series.productor}}</td> 
-                    <td>{{program_series.investigador}}</td> 
-
-                </tr>
-              {% endif %}
+              {% for video_cbarras, programa_series_list in consulta.items %}
+                {% if video_cbarras == data.codigo_barras_id %}
+                  {% for program_series in programa_series_list %}
+                    <tr>
+                        <td>{{ program_series.codigo_barras_id }}</td>         
+                        <td>{{ program_series.programa }}</td> 
+                        <td>{{ program_series.serie }}</td> 
+                        <td>{{program_series.subtituloPrograma}}</td> 
+                        <td>{{program_series.subtituloSerie}}</td> 
+                        <td>{{program_series.sinopsis}}</td> 
+                        <td>{{program_series.tiempoin}}</td> 
+                        <td>{{program_series.tiempoout}}</td> 
+                        <td>{{program_series.tiempodur}}</td> 
+                        <td>{{program_series.observaciones}}</td> 
+                        <td>{{program_series.orientacion}}</td> 
+                        <td>{{program_series.derechoPatrimonial}}</td> 
+                        <td>{{program_series.grado}}</td> 
+                        <td>{{program_series.idiomaOriginal}}</td> 
+                        <td>{{program_series.elenco}}</td> 
+                        <td>{{program_series.participantes}}</td> 
+                        <td>{{program_series.personajes}}</td> 
+                        <td>{{program_series.conductor}}</td> 
+                        <td>{{program_series.productor}}</td> 
+                        <td>{{program_series.investigador}}</td> 
+                    </tr>
+                  {% endfor %}
+                {% endif %}
               {% endfor %}
             </tbody>
           </table>
@@ -173,14 +182,16 @@
 
   $(document).ready(function() {
     $('#datatable').DataTable({
-      // Configuración del DataTable
+      // Configuración del DataTable para la tabla principal
       ...len
     });
+  
     $('#tableMuestraPrograma').DataTable({
-      // Configuración del DataTable
+      // Configuración del DataTable para la tabla en el modal
       ...len
     });
   });
+  
 
   const eliminarFila = (id) => {
     Swal.fire({

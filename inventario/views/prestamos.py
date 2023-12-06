@@ -287,7 +287,7 @@ def GetFolioDetail(request):
 @csrf_exempt
 def RegisterInVideoteca(request):
     usuario = request.POST['matricula']
-    admin = request.user
+    # admin = request.user
 
     if request.method == 'POST':
         codigoBarras = request.POST['codigoBarras']
@@ -320,7 +320,7 @@ def RegisterInVideoteca(request):
             detallePrestamo.depr_estatus = 'I'
             detallePrestamo.pres_fecha_devolucion = now
             detallePrestamo.usuario_devuelve = usuario
-            detallePrestamo.usuario_recibe = admin.username
+            # detallePrestamo.usuario_recibe = usuario
             detallePrestamo.save()
 
             maestroCinta.video_estatus = 'En Videoteca'
@@ -477,7 +477,7 @@ def RegisterOutVideoteca(request):
             detPrestamos.depr_estatus = 'X'
             detPrestamos.pres_fecha_devolucion = None
             detPrestamos.usuario_devuelve = None
-            detPrestamos.usuario_recibe = None
+            detPrestamos.usuario_recibe = usuario
             detPrestamos.vide_codigo = maestroCinta
             detPrestamos.save()
     

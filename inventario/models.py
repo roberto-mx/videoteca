@@ -22,6 +22,13 @@ class CatStatus(models.Model):
 
     def __str__(self):
         return self.status
+    
+    def to_json(self):
+        return {
+            'id_status': self.id_status,
+            'status': self.status,
+            'abreviacion': self.abreviacion,
+        }
 
 
 class FormatosCintas(models.Model):
@@ -96,7 +103,7 @@ class MaestroCintas(models.Model):
     
 class ProgramaSeries(models.Model):
     
-    codigo_barras = models.CharField(max_length=12)
+    codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     programa = models.CharField("Programa",max_length=250, blank=True, null=True)
     serie = models.CharField("Serie",max_length=250, blank=True, null=True)
     subtituloPrograma = models.CharField("Subtitulo de Programa",max_length=250, blank=True, null=True)
@@ -114,7 +121,7 @@ class ProgramaSeries(models.Model):
     participantes = models.TextField(blank=True, null=True)
     personajes = models.CharField(max_length=45, blank=True, null=True)
     conductor = models.TextField(blank=True, null=True)
-    productor = models.TextField(blank=True, null=True)
+    productor = models.TextField(blank=True, null=True) 
     investigador = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -122,6 +129,7 @@ class ProgramaSeries(models.Model):
         verbose_name = 'ProgramasSeries'
 
 class calificacionRegistro(models.Model):
+    
     codigo_barras = models.OneToOneField(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     fecha_calificacion = models.DateTimeField(blank=True, null=True)
     aho_produccion = models.CharField(max_length=10, blank=True, null=True)

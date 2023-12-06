@@ -321,7 +321,7 @@ $(document).ready(function() {
             
             if (!foliosVistos.has(prestamo.pres_folio)) {
               prestamosUnicos.push(prestamo);
-              console.log(`Son los datos ingresados: ${prestamosUnicos}`)
+              //console.log(`Son los datos ingresados: ${prestamosUnicos}`)
               foliosVistos.add(prestamo.pres_folio);
             }
           }
@@ -379,9 +379,9 @@ $('#datatablePrestamos').on('click', '.ver-detalle', function() {
             let thead = $('<thead>').append(
               '<tr><th>Código de Barras</th>' +
               '<th>Fecha de Devolución</th>' +
-              '<th>Usuario Devuelve</th>' +
-              '<th>Usuario Recibe</th>' +
-              '<th>Nombre Devolvio</th>' +
+              '<th>Usuario  Devuelve</th>' +
+              '<th>Usuario  Recibe</th>' +
+              '<th>Nombre   Recibe</th>' +
               '<th>Estatus</th>' +
               '</tr>'
             );
@@ -509,6 +509,7 @@ function guardarRegistro(usuario, codigoBarras) {
     url: "{% url 'registro_salida_videoteca' %}",
     type: 'POST',
     success: function(data) {
+      console.log(data)
       // Verificar si existe el error
       if (data.error) {
         $('#resultTableOut').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
@@ -697,7 +698,7 @@ $(document).on("click",".glyphicon-plus",function(){
 
 //Validación de prestamos
 function addItemOut() {
-  console.log('Evento keyup disparado');
+  //console.log('Evento keyup disparado');
   const codigoBarras = $('#searchBarCodeOut').val();
   const usuario = $('#searchUsuarioOut').val();
 

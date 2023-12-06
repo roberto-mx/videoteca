@@ -39,8 +39,13 @@ from .formularios import (
     editar_programa,
     agregarProgramaEdit,
     cambiarEstatusCalificacion,
-    eliminarRegistro
-    # formularioPrograma
+    eliminarRegistro,
+
+)
+
+from .filtradoProgramas import (
+    filtrarBusqueda
+
 )
 
 from .prestamos import (

@@ -42,7 +42,8 @@ from inventario.views import (
     cambiarEstatusCalificacion,
     formulario,
     inventarioRegistro,
-    consultaInventario
+    consultaInventario,
+    filtrarBusqueda
 )
 from django.contrib.auth import(
     views
@@ -73,6 +74,10 @@ urlpatterns = [
     path('calificaciones/eliminar/<int:id>/', eliminarProgramaSerie, name='eliminar'),
     path('calificaciones/eliminarRegistro/<int:id>/', eliminarRegistro, name='eliminarRegistro'),
     path('calificaciones/cambiarEstatusCalificacion/<int:id>/', cambiarEstatusCalificacion, name='cambiarEstatusCalificacion'),
+
+    #Filtra Calif registros antiguo
+    path('calificaciones/filtrarBusqueda/', filtrarBusqueda, name='filtrarBusqueda'),
+
 
     # #InventarioTemplate 
     path('cintas/inventarioRegistro/', inventarioRegistro, name='inventarioRegistro'),

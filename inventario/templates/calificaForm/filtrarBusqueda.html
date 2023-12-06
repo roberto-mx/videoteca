@@ -1,0 +1,179 @@
+{% extends 'templateBase.html' %}
+
+{% block titulo %} Calificación {% endblock %}
+
+{% block Contenido %}
+
+{% comment %} <div class="card col-12 col-md-12 col-lg-12 col-xl-15 mt-3"> {% endcomment %}
+<div class="card col-12 col-md-12 col-lg-12 col-xl-23 mt-5">
+    <div class="card-header text-center" style="background-color:#F1F7F8;">
+        <strong>Filtrar Datos</strong>
+        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-start">
+            <a name="" id="" class="btn btn-form" href="{% url 'formulario' %}" style="background:#BC955C" role="button">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color: white;">Llenar formulario</span>
+                {% comment %} <i class='fab fa-wpforms' style="color:white;"></i> {% endcomment %}
+            </div>
+            </a>
+        </div>
+        </div>
+    </div>
+  
+    <div class="container mt-2">
+        <div class="row mt-2">
+            <div class="col-md-12 mt-2">
+                <form method="get" action="{% url 'filtrarBusqueda' %}">
+                    {% csrf_token %}
+                    <!-- ... otros campos del formulario ... -->
+                    <div class="form-group row mt-2">
+                        <label class="col-md-4 col-form-label">Serie:</label>
+                        <div class="col-md-8 mb-1">
+                            <input type="text" autocomplete="on" class="form-control" id="serie" name="serie" placeholder="Ingresa serie">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group row mt-2">
+                        <label class="col-md-4 col-form-label">Subtítulo serie:</label>
+                        <div class="col-md-8 mb-1">
+                            <input type="text" autocomplete="on" class="form-control" id="subtituloSerie" name="subtituloSerie" placeholder="Ingresa subtítulo de serie">
+                        </div>
+                    </div>
+            
+                    <div class="form-group row mt-2">
+                        <label class="col-md-4 col-form-label">Programa:</label>
+                        <div class="col-md-8 mb-1">
+                            <input type="text" autocomplete="off" class="form-control" id="programa" name="programa" placeholder="Ingresa el programa">
+                        </div>
+                    </div>
+            
+                    <div class="form-group row mt-2">
+                        <label class="col-md-4 col-form-label"> Subtítulo programa:</label>
+                        <div class="col-md-8 mb-1">
+                            <input type="text" autocomplete="on" class="form-control" id="subtituloPrograma" name="subtituloPrograma" placeholder="Ingresa el subtítulo de programa">
+                        </div>
+                    </div>
+            
+                    <div class="form-group row mt-2">
+                        <label class="col-md-4 col-form-label">Código de Barras:</label>
+                        <div class="col-md-8 mb-1">
+                            <input type="text" autocomplete="on" class="form-control" id="codigo_barras" name="codigo_barras" placeholder="Ingresa el código">
+                        </div>
+                    </div>
+            
+                    <div class="form-group row mt-2">
+                        <label class="col-md-4 col-form-label">Sinpsis:</label>
+                        <div class="col-md-8 mb-1">
+                            <input type="text" autocomplete="on" class="form-control" id="sinopsis" name="sinopsis" placeholder="Ingresa sinopsis">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                      <button title="Buscar" id="btnBuscar" name="btnBuscar" class="btn btn-revicion btn-sm active mt-3" style="background-color:#900C3F" type="button" >  
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                           <span style="color: white;">Filtrar</span>
+                        </div> 
+                      </button> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 mt-1">
+        <div class="card-body mt-3">
+            <div class="table-responsive"> <!-- Agregar esta clase -->
+              <table class="table table-hover" id="datatableFiltrado">
+                <!-- ... Código de la tabla ... -->
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Serie</th>
+                    <th>Programa</th>
+                    <th>Subtítulo Programa</th> 
+                    <th>Tipo</th> 
+                    <th>Estado</th> 
+                    {% comment %} <th>Acciones</th>  {% endcomment %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% comment %} {% for resultado in resultados %}
+                  <tr>
+                    <td>{{ resultado.codigo_barras }}</td>
+                    <td>{{ resultado.serie }}</td>
+                    <td>{{ resultado.programa }}</td>
+                    <td>{{ resultado.subtituloPrograma }}</td>
+                    {% with maestro_cintas=resultado.codigo_barras %}
+                        <td>{{ maestro_cintas.video_tipo }}</td>
+                        <td>{{ maestro_cintas.video_estatus }}</td>
+                    {% endwith %}
+                    <td class="d-flex justify-content-center">
+                      <!-- Editar -->
+                      <a href="" class="btn btn-editar btn-sm active text-white" style="background-color:#13322B;" title="Editar">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                          <i class="fas fa-edit"></i>
+                          <span></span>
+                        </div>
+                      </a>
+                    </td> 
+                  </tr>
+                  {% empty %}
+                  {% endfor %} {% endcomment %}
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script>
+$(document).ready(function() {
+// Inicializar el DataTable con las columnas especificadas
+    const dataTable = $('#datatableFiltrado').DataTable({
+        "columns": [
+            { "data": "codigo_barras" },
+            { "data": "serie" },
+            { "data": "programa" },
+            { "data": "subtituloPrograma" },
+            { "data": "tipo" },
+            { "data": "estatus" },
+            // Agrega más columnas si es necesario
+        ],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+        }
+    });
+
+    $('#btnBuscar').click(function() {
+        let serie = $("#serie").val();
+        let subtituloSerie = $("#subtituloSerie").val();
+        let programa = $("#programa").val();
+        let subtituloPrograma = $("#subtituloPrograma").val();
+        let codigo_barras = $("#codigo_barras").val();
+        let sinopsis = $("#sinopsis").val();
+
+        $.ajax({
+            url: '{% url "filtrarBusqueda" %}',
+            type: 'GET',
+            data: {
+                serie: serie,
+                subtituloSerie: subtituloSerie,
+                programa: programa,
+                subtituloPrograma: subtituloPrograma,
+                codigo_barras: codigo_barras,
+                sinopsis: sinopsis
+            },
+            success: function(response) {
+                // Limpiar y agregar filas al DataTable
+                var dataTableData = response.data;
+                dataTable.clear().rows.add(dataTableData).draw();
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    });
+});
+    
+</script>
+
+
+{% endblock %}

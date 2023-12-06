@@ -24,6 +24,15 @@
   #tableMuestraPrograma td {
     white-space:inherit;
   }
+
+#datatableFiltrado th {
+  background-color: #16584A; /* Color de fondo de las celdas de encabezado */
+  color: white; /* añadido para cambiar el color de las letras */
+  }
+
+  #datatableFiltrado td {
+    white-space:inherit;
+  }
   
 #tableMaestroCintas th {
   background-color: #1d5248; /* Color de fondo de las celdas de encabezado */

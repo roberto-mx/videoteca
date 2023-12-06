@@ -7,7 +7,6 @@ from ..forms import (
 )
 from ..models import( 
     MaestroCintas, 
-    RegistroCalificacion, 
     ProgramaSeries, 
     calificacionRegistro
 )
@@ -162,15 +161,28 @@ def consultaFormulario(request):
         return redirect('prestamos_list')  # Redirige al usuario a otra página
 
     calificaciones = calificacionRegistro.objects.filter(estatusCalif__in=['En Calificación', 'En Videoteca']).values(
-
     ).order_by('-id')
     
-
     programas_series = ProgramaSeries.objects.all()  # Obtén todos los datos de ProgramaSeries
-    consultaForm = {'formulario': calificaciones, 'consulta': programas_series}  # Pasa ambos conjuntos de datos
+
+    # Crear un diccionario para almacenar los resultados
+    resultados = {}
+
+    for programa_serie in programas_series:
+        # Obtener el código de barras relacionado con el programa_serie actual
+        video_cbarras = programa_serie.codigo_barras.video_cbarras
+        if video_cbarras not in resultados:
+            resultados[video_cbarras] = []
+        resultados[video_cbarras].append(programa_serie)
+
+    
+        print(resultados)
+
+    consultaForm = {'formulario': calificaciones, 'consulta': resultados}
+    
+    return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
    
 
-    return render(request, 'calificaForm/consultaFormulario.html', consultaForm)
 def eliminarProgramaSerie(request, id):
     id = request.POST.get('eliminar_id')
     try:
@@ -469,3 +481,4 @@ def cambiarEstatusCalificacion(request, id):
         return JsonResponse({'success': True, 'message': "¡Calificado! Se ha cerrado la revisión.", 'estatusCalif': estatus_calif})
     except calificacionRegistro.DoesNotExist:
         return JsonResponse({'error': True, 'message': 'Ha ocurrido un error al realizar el cambio de estatus, favor de contactar al área de Desarrollo e Innovación.'})
+
