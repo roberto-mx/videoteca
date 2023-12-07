@@ -560,8 +560,8 @@ class Recupera(models.Model):
 
 class RegistroCalificacion(models.Model):
     codigo_original = models.CharField(max_length=15, blank=True, null=True)
-    codigo_barras = models.CharField(max_length=12) 
-    # codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
+    # codigo_barras = models.CharField(max_length=12) 
+    codigo_barras = models.ForeignKey(MaestroCintas, on_delete=models.CASCADE, to_field='video_cbarras')
     serie = models.TextField(blank=True, null=True)
     programa = models.TextField(blank=True, null=True)
     subtitulo_programa = models.TextField(blank=True, null=True)
