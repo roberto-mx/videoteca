@@ -446,18 +446,11 @@ class PDF_FOLIO(FPDF):
             self.cell(80, 10, str(row['pres_fechahora']), 1)
             self.cell(80, 10, str(row['pres_fecha_devolucion']), 1)
             self.cell(40, 10, str(row['pres_estatus']), 1)
+            self.cell(40, 10, str(row['codigo_barras']), 1)
             self.ln()
 
            
-        for codigo_barras_id in row['codigo_barras_ids']:
-            self.ln()
-            self.cell(40, 10, str(row['pres_folio']), 1)  # Celda con el pres_folio
-            self.cell(40, 10, str(row['usua_clave']), 1)  # Celda con el usua_clave
-            self.cell(80, 10, str(row['pres_fechahora']), 1)  # Celda con el pres_fechahora
-            self.cell(80, 10, str(row['pres_fecha_devolucion']), 1)  # Celda con el pres_fecha_devolucion
-            self.cell(40, 10, str(row['pres_estatus']), 1)  # Celda con el pres_estatus
-            self.cell(40, 10, str(codigo_barras_id), 1)  # Celda con el código de barras
-
+    
 def generate_pdf_resgister_folio(request):
     q = request.GET.get('q')
     detalle_prestamos = DetallePrestamos.objects.filter(pres_folio=q)
@@ -467,21 +460,27 @@ def generate_pdf_resgister_folio(request):
 
     for pres_folio_id in pres_folios:
         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
-        if prestamo and detalle_prestamos.filter(pres_folio=pres_folio_id).exists():
-            
-            # Obtener una lista de códigos de barras únicos
-            codigo_barras_ids = list(set(prestamo.values_list('vide_codigo_id', flat=True)))
+        detalles_prestamo = DetallePrestamos.objects.filter(pres_folio=pres_folio_id)
 
-            prestamo_data = {
-                "pres_folio": prestamo.pres_folio,
-                "usua_clave": prestamo.usua_clave,
-                "pres_fechahora": prestamo.pres_fechahora,
-                "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
-                "pres_estatus": prestamo.pres_estatus,
-                "codigo_barras_ids": codigo_barras_ids,
-            }
-            prestamos_data.append(prestamo_data)
-            matri = prestamo.usua_clave  # Asignar el valor de matri dentro del bucle
+        # Asegúrate de que los detalles_prestamo estén vacíos antes de comenzar a agregar datos
+        if prestamo and detalles_prestamo.exists():
+            matri = prestamo.usua_clave  # Asignar el valor de matri antes del bucle
+
+            for detalle in detalles_prestamo:
+                maestro_cintas = detalle.vide_codigo  # Accede al objeto MaestroCintas
+                codigo_barras = maestro_cintas.video_cbarras if maestro_cintas else None
+
+                # Verifica si el código de barras ya existe en la lista antes de agregarlo
+                if not any(entry["codigo_barras"] == codigo_barras for entry in prestamos_data):
+                    prestamo_data = {
+                        "pres_folio": prestamo.pres_folio,
+                        "usua_clave": prestamo.usua_clave,
+                        "pres_fechahora": prestamo.pres_fechahora,
+                        "pres_fecha_devolucion": prestamo.pres_fecha_devolucion,
+                        "pres_estatus": prestamo.pres_estatus,
+                        "codigo_barras": codigo_barras,
+                    }
+                    prestamos_data.append(prestamo_data)
 
     if matri is not None:
         cursor = connections['users'].cursor()

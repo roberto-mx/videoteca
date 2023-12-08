@@ -6,9 +6,6 @@ from django.db.models import Q
 from django.db.models import Value, CharField, F
 
 @csrf_exempt
-
-@csrf_exempt
-@csrf_exempt
 def filtrarBusqueda(request):
     if request.method == 'GET':
         serie = request.GET.get('serie', '')
@@ -61,8 +58,8 @@ def filtrarBusqueda(request):
                 'serie': resultado.serie,
                 'programa': resultado.programa,
                 'subtituloPrograma': resultado.subtitulo_programa,
-                'tipo': None,  # Puedes ajustar esto según tus necesidades
-                'estatus': None,  # Puedes ajustar esto según tus necesidades
+                'tipo': cat_status.status,
+                'estatus': maestro_cintas.video_estatus
             })
 
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
