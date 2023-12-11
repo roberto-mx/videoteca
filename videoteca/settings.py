@@ -115,6 +115,7 @@ DATABASES = {
 #         'HOST': 'localhost',
 #         'PORT': '5450'
 #     }
+#     # password recurspostgres
 # }
 
 # Password validation
@@ -155,6 +156,8 @@ USE_TZ = False
 STATIC_URL = '/static/'
 import os
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# ALLOWED_HOSTS = ['172.16.110.17']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
