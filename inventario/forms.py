@@ -5,13 +5,13 @@ from .models import (
         UsuariosVid,
         DetallePrestamos,
         Prestamos,
-        RegistroCalificacion,
+        # RegistroCalificacion,
         FormatosCintas,
         CatStatus,
         TipoSerie,
         OrigenSerie,
         calificacionRegistro,
-        ProgramaSeries
+        # ProgramaSeries
 )
 
 from django.forms.models import inlineformset_factory

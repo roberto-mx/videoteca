@@ -76,7 +76,7 @@ urlpatterns = [
     path('calificaciones/cambiarEstatusCalificacion/<int:id>/', cambiarEstatusCalificacion, name='cambiarEstatusCalificacion'),
 
     #Filtra Calif registros antiguo
-    path('calificaciones/filtrarBusqueda/', filtrarBusqueda, name='filtrarBusqueda'),
+    # path('calificaciones/filtrarBusqueda/', filtrarBusqueda, name='filtrarBusqueda'),
 
 
     # #InventarioTemplate 
