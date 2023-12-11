@@ -85,38 +85,18 @@ DATABASES = {
         'NAME': 'videoteca',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'db',  # Usar el nombre del servicio definido en Docker Compose
-        'PORT': '5432'
+        'HOST': 'db',  # Nombre del servicio del contenedor de la base de datos
+        'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'recursoshumanos',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'rh',  # Usar el nombre del servicio definido en Docker Compose
-        'PORT': '5432'
+        'HOST': 'rh',  # Nombre del servicio del contenedor de recursos humanos
+        'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'videoteca',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',
-#         'PORT': '5432'
-#     },
-#     'users': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'recursos_humanos',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',
-#         'PORT': '5450'
-#     }
-#     # password recurspostgres
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
