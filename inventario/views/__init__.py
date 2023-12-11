@@ -31,22 +31,22 @@ from.inventarioTemplate import(
     consultaInventario
 )
 
-# from .formularios import (
-#     formulario,
-#     editar,
-#     eliminarProgramaSerie,
-#     consultaFormulario,
-#     editar_programa,
-#     agregarProgramaEdit,
-#     cambiarEstatusCalificacion,
-#     eliminarRegistro,
+from .formularios import (
+    formulario,
+    editar,
+    eliminarProgramaSerie,
+    consultaFormulario,
+    editar_programa,
+    agregarProgramaEdit,
+    cambiarEstatusCalificacion,
+    eliminarRegistro,
 
-# )
+)
 
-# from .filtradoProgramas import (
-#     filtrarBusqueda
+from .filtradoProgramas import (
+    filtrarBusqueda
 
-# )
+)
 
 from .prestamos import (
     PrestamosListView,
