@@ -82,15 +82,15 @@ class PrestamosListView(View):
     def get(self, request, *args, **kwargs):
         current_year = datetime.now().year
 
-        # Obtener los préstamos filtrados por el año actual
-        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year)
+        # Obtener los préstamos filtrados por el año 2023 y ordenados por fecha en orden descendente
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=2023).order_by('-pres_fecha_prestamo')
 
         # Obtener las matrículas
-        matriculas = Prestamos.objects.filter(pres_fecha_prestamo__year__gte=current_year).values_list('usua_clave', flat=True)
+        matriculas = queryset.values_list('usua_clave', flat=True)
         matriculas_list = list(matriculas)
 
         context = {'prestamos': queryset}
-        
+        print(context)
 
         if matriculas_list:
             cursor = connections['users'].cursor()

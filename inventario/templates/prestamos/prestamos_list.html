@@ -141,7 +141,12 @@
           
           <div class="modal-body">
              <div id="inputUsuario">
-            <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Gafete de Usuario que devuelve" id="searchUsuarioIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+               {% comment %} <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Gafete de Usuario que devuelve" id="searchUsuarioIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off"> {% endcomment %}
+               <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;" 
+               type="text" placeholder="Gafete de Usuario que devuelve" id="searchUsuarioIn" 
+               minlength="7" maxlength="15" class="form-control" 
+               aria-label="Large" aria-describedby="inputGroup-sizing-sm" 
+               autocomplete="off">        
             </div>
             <div id="inputVideo">
                  <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Ingrese con el Lector código de barras" id="searchBarCodeIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
@@ -190,7 +195,12 @@
           </div>
           <div class="modal-body">
             <div id="buscarUsuario">
-            <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Usuario" id="searchUsuarioOut" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+              {% comment %} <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Usuario" id="searchUsuarioOut" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off"> {% endcomment %}
+              <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;" 
+              type="text" placeholder="Usuario" id="searchUsuarioOut" 
+              minlength="7" maxlength="15" class="form-control" 
+              aria-label="Large" aria-describedby="inputGroup-sizing-sm" 
+              autocomplete="off">
             </div>
             <div id="buscarCodigo">
               <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Ingrese con el Lector código de barras" id="searchBarCodeOut" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
@@ -233,6 +243,21 @@
     </div><!-- /.modal -->
 <script>
 
+  const inputUsuarioOut = document.getElementById('searchUsuarioOut');
+  const inputUsuarioIn = document.getElementById('searchUsuarioIn');
+  
+  // Función para convertir el texto a mayúsculas
+  const convertirAMayusculas = (event) => {
+    event.target.value = event.target.value.toUpperCase();
+  }
+  
+  // Agregar un evento de escucha para el evento de entrada (input) al primer input
+  inputUsuarioOut.addEventListener('input', convertirAMayusculas);
+  
+  // Agregar un evento de escucha para el evento de entrada (input) al segundo input
+  inputUsuarioIn.addEventListener('input', convertirAMayusculas);
+  
+  
 //PDF para los folios
 $(document).ready(function() {
   $('#btn-generar-pdf').on('click', function() {
