@@ -547,17 +547,17 @@ def json_to_pdf(request, row, codes, user):
     return output_file  # Return the file path
    
   
-# def GetFilePdf(request):
-#     file = request.GET.get('q')
-#     if os.path.isfile(file):
-#         print('Report generated successfully!')
-#         with open(file, 'rb') as pdf:
-#             response = HttpResponse(pdf.read(),content_type='application/pdf')
-#             response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
-#         return response
+def GetFilePdf(request):
+    file = request.GET.get('q')
+    if os.path.isfile(file):
+        print('Report generated successfully!')
+        with open(file, 'rb') as pdf:
+            response = HttpResponse(pdf.read(),content_type='application/pdf')
+            response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
+        return response
   
-#     else:
-#         print('Report not generated!')
+    else:
+        print('Report not generated!')
   
 def CreateJsonInReport(row, codes, user):
     data = {}
