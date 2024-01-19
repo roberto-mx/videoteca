@@ -55,6 +55,10 @@
    
               <a href="{% url 'consultaFormulario' %}" class="btn-button" title="Calificación">
                 <span> Calificacion </span>
+              </a> 
+                
+              <a href="{% url 'filtrarBusqueda' %}" class="btn-button" title="Búsqueda">
+                <span> Búsqueda </span>
               </a>   
        
               <a href="{% url 'logout' %}" class="btn-button" title="Cerrar sesión">
@@ -62,9 +66,9 @@
                   <i class="fas fa-sign-out-alt"></i>
               </a>   
              
-              <a href="https://www.gob.mx/busqueda" title="Búsqueda">
+              {% comment %} <a href="https://www.gob.mx/busqueda" title="Búsqueda">
                 <i class="fas fa-search" style="color:white;"></i>
-              </a>
+              </a> {% endcomment %}
             </div>
             <div class="card-header text-center" style="background-color:#1B473D;">
               <div class="card-body text-right">
