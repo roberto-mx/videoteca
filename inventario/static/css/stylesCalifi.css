@@ -17,8 +17,8 @@
   }
 
 #filtraFecha th {
-  background-color: #65a1ad; /* Color de fondo de las celdas de encabezado */
-  color: white; /* añadido para cambiar el color de las letras */
+  background-color: #183e46; /* Color de fondo de las celdas de encabezado */
+  color: rgb(255, 255, 255); /* añadido para cambiar el color de las letras */
   }
 
   #filtraFecha td {
