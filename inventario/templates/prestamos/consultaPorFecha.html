@@ -1,0 +1,156 @@
+{% extends 'templateBase.html' %}
+
+{% block Contenido %}
+
+<div class="card mt-5">
+    <div class="card-header text-center" style="background-color:#F1F7F8;">
+        <strong>Búsqueda de Reportes Filtrada</strong>
+    </div>
+
+    <div class="container mt-3">
+        <form id="searchForm" action="getBusqueda" method="get">
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Buscar por</label>
+                <div class="col-sm-4">
+                    <select class="form-control" id="searchType" placeholder="Selecciona" name="searchType">
+                        <option>---Seleccione---</option>
+                        <option value ="byDay">Por, día</option>
+                        <option value ="byWeek">Por, semana</option>
+                        <option value ="byMonth">Por, mes</option>
+                    </select>
+                </div>
+            </div> 
+
+            <div class="row mb-3" id="dayInput" style="display: none;">
+                <label for="day" class="col-sm-2 col-form-label">Día</label>
+                <div class="col-sm-4">
+                    <!-- <input type="date" class="form-control" id="day" value = "" name="day"> -->
+                    <input type="date" class = "form-control" id="day" name="day" >
+                </div>
+            </div>
+
+            <div class="row mb-3" id="weekInput" style="display: none;">
+                <label for="week" class="col-sm-2 col-form-label">Semana</label>
+                <div class="col-sm-4">
+                    <input type="week" class="form-control" id="week" name="week" min="1" max="52">
+                </div>
+            </div>
+
+            <div class="row mb-3" id="monthInput" style="display: none;">
+                <label for="month" class="col-sm-2 col-form-label">Mes</label>
+                <div class="col-sm-4">
+                  <input type="month" class="form-control" id="month" name="month">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-sm-4 offset-sm-2 d-flex justify-content-end">
+                    <button type="button" id="searchButton" class="btn btn-success btn-sm"  style="background-color:#589a97;" title="Filtrar">
+                        <i class="fa-solid fa-filter"></i>
+                        <strong>Filtrar</strong>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            <div class="table-responsive"> <!-- Agregar esta clase -->
+                <table id="filtraFecha" class="table is-striped" style="width:100%">
+                <!-- ... Código de la tabla ... -->
+                <thead>
+                    <tr>
+                    <th>Folio</th>
+                    <th>Usuario</th>
+                    <th>Fecha del Préstamo</th>  
+                    <th>Estado</th> 
+                    {% comment %} <th>Acciones</th>  {% endcomment %}
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+        
+    let fecha = new Date(); 
+    let mes = fecha.getMonth()+1; 
+    let dia = fecha.getDate(); 
+    let ano = fecha.getFullYear();
+
+    dia < 10 ? dia='0'+dia : undefined; 
+    mes < 10 ? mes='0'+mes : undefined; 
+
+    document.getElementById('day').value = ano + "-" + mes + "-" + dia;
+        
+    $('#filtraFecha').hide();
+        
+    $(document).ready(function() {
+        const searchTypeSelect = document.getElementById("searchType");
+        const dayInput = document.getElementById("dayInput")
+        let selectedValues = {}
+
+        searchTypeSelect.addEventListener("change", (event) => {
+
+            selectedValues.searchType = searchTypeSelect.value;
+            selectedValues.day = document.getElementById("day").value;
+            selectedValues.week = document.getElementById("week").value;
+            selectedValues.month = document.getElementById("month").value
+            dayInput.style.display = selectedValues.searchType === "byDay" ? "flex" : "none";
+            weekInput.style.display = selectedValues.searchType === "byWeek" ? "flex" : "none";
+            monthInput.style.display = selectedValues.searchType === "byMonth" ? "flex" : "none";
+        });
+
+    });
+
+    const dataTable = $("#filtraFecha").DataTable({
+        searching: false,
+        lengthChange: false,
+        info: false ,
+        ...len,
+      
+        columns: [
+            { data: "pres_folio" },
+            { data: "usua_clave" },
+            { data: "pres_fecha_prestamo" },
+            { 
+                data: "pres_estatus",
+                render: (data) => {
+                    return data === "I" ? "Devuelto"  : "En préstamo";
+                }
+            },
+        ],
+    });
+
+    $("#searchButton").click(function () {
+        const formData = new FormData(document.getElementById("searchForm"));
+
+        fetch("{% url 'getBusqueda' %}?" + new URLSearchParams(formData), {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            // Limpia la tabla antes de agregar nuevas filas
+            dataTable.clear().draw();
+            $('#filtraFecha').show();
+
+
+            // Agrega las nuevas filas al DataTable
+            dataTable.rows.add(data.prestamos).draw();
+        })
+        .catch((error) => console.error(error));
+    });
+});
+
+</script>
+    
+{% endblock %}
+

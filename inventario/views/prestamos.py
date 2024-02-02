@@ -510,3 +510,57 @@ def EndInVideoteca(request):
 
     return JsonResponse(registro_data, safe=True)
 
+
+@csrf_exempt
+def getBusqueda(request):
+    if request.method == 'GET':
+        searchType = request.GET.get('searchType', None)
+        day = request.GET.get('day', None)
+        week = request.GET.get('week', None)
+        month = request.GET.get('month', None)
+        template_name = 'prestamos/consultPorFecha.html'
+
+        if searchType == 'byDay' and day:
+            # Búsqueda por día
+            day_datetime = datetime.strptime(day, "%Y-%m-%d")
+            prestamos = Prestamos.objects.filter(pres_fecha_prestamo__date=day_datetime)
+            prestamos_list = list(prestamos.values())
+            registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list}
+            return JsonResponse(registro_data, safe=False)
+
+        elif searchType == 'byWeek' and week:
+            # Descomponer la cadena de semana en año y número de semana
+            year, week_number = map(int, week.split('-W'))
+
+            # Obtener el primer día de la semana
+            inicio_semana = datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w").date()
+
+            # Obtener el último día de la semana sumando 6 días al primer día
+            fin_semana = inicio_semana + timedelta(days=6)
+
+            # Filtrar por el rango de fechas
+            queryset = Prestamos.objects.filter(pres_fecha_prestamo__range=(inicio_semana, fin_semana)).order_by('-pres_fecha_prestamo')
+            prestamos_list = list(queryset.values())
+            print(prestamos_list)
+
+            registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list}
+            return JsonResponse(registro_data, safe=False)
+                    
+        elif searchType == 'byMonth' and month:
+            print('Entra en mes', month)
+            # Extraer el año y el mes de la cadena proporcionada
+            year, month_number = map(int, month.split('-'))
+            # Filtrar por año y mes
+            queryset = Prestamos.objects.filter(
+                pres_fecha_prestamo__year__gte=year,
+                pres_fecha_prestamo__month__gte=month_number
+            ).order_by('-pres_fecha_prestamo')
+            prestamos_list = list(queryset.values())
+            print(prestamos_list)
+            
+            print(queryset)
+            registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list}
+            return JsonResponse(registro_data, safe=False)
+
+    return render(request, template_name)
+

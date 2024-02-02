@@ -60,6 +60,7 @@ from .prestamos import (
     PrestamoDetalle,
     Filtrar_prestamos,
     EndInVideoteca,
+    getBusqueda
     
     
 )
