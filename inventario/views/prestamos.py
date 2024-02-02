@@ -525,6 +525,25 @@ def getBusqueda(request):
             day_datetime = datetime.strptime(day, "%Y-%m-%d")
             prestamos = Prestamos.objects.filter(pres_fecha_prestamo__date=day_datetime)
             prestamos_list = list(prestamos.values())
+
+            # Acceder a la información de usua_clave en cada registro
+            matriculas_list = [prestamo['usua_clave'] for prestamo in prestamos_list]
+            cursor = connections['users'].cursor()
+
+            if matriculas_list:
+                cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
+                users_data = cursor.fetchall()
+            else:
+                users_data = []
+
+            usuarios_dict = {row[0]: f"{row[1]} {row[2]} {row[3]}" if row[3] else f"{row[1]} {row[2]}" for row in users_data}        
+           
+                # Actualizar cada diccionario en prestamos_list con el nombre del usuario
+            for prestamo in prestamos_list:
+                matricula = prestamo['usua_clave']
+                nombreUsuario = usuarios_dict.get(matricula, '')
+                prestamo['nombre_usuario'] = nombreUsuario
+
             registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list}
             return JsonResponse(registro_data, safe=False)
 
