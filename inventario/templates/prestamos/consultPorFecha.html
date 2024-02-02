@@ -43,6 +43,26 @@
                   <input type="month" class="form-control" id="month" name="month">
                 </div>
             </div>
+            
+            <div class="row mb-3" id="matriculaInput" style="display: none;">
+                <label for="matricula" class="col-sm-2 col-form-label">Matrícula</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="matricula" name="matricula">
+                </div>
+            </div>
+            
+
+            <div class="row mb-3">
+                <div class="col-sm-4 offset-sm-2 d-flex justify-content-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkAdeudos" name="checkAdeudos">
+                        <label class="form-check-label" for="checkAdeudos">
+                            Buscar adeudos por matrícula
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
 
             <div class="row mb-3">
                 <div class="col-sm-4 offset-sm-2 d-flex justify-content-end">
@@ -106,6 +126,23 @@ document.addEventListener("DOMContentLoaded", () => {
             monthInput.style.display = selectedValues.searchType === "byMonth" ? "flex" : "none";
         });
 
+        checkAdeudos.addEventListener("change", (event) => {
+            matriculaInput.style.display = checkAdeudos.checked ? "flex" : "none";
+            let selectedSearchType = searchTypeSelect.value;
+
+            // Si el check está marcado, deshabilita la búsqueda por fecha
+            if (checkAdeudos.checked) {
+                searchTypeSelect.style.display = "none";
+                // También puedes desactivar la opción seleccionada para evitar que se envíe al servidor
+                searchTypeSelect.value = "";  // Esto establece la opción seleccionada en el valor vacío
+            } else {
+                // Si el check no está marcado, muestra el select
+                searchTypeSelect.style.display = "flex";
+                // Restaura el valor del select al valor original (si es necesario)
+                searchTypeSelect.value = selectedSearchType;
+            }
+        });
+
     });
 
     const dataTable = $("#filtraFecha").DataTable({
@@ -153,4 +190,3 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
     
 {% endblock %}
-
