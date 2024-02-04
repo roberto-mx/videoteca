@@ -94,11 +94,18 @@
     </div>
 </div>
 <script>
-
+    
     document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("searchForm").addEventListener("submit", function(event) {
             event.preventDefault();
         });
+
+        const matri = document.getElementById("matricula");
+        const convertirAMayusculas = (event) => {
+            event.target.value = event.target.value.toUpperCase();
+        }
+
+        matri.addEventListener('input', convertirAMayusculas);
 
         let fecha = new Date();
         let mes = fecha.getMonth() + 1;
