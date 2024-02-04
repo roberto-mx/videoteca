@@ -511,6 +511,8 @@ def EndInVideoteca(request):
     return JsonResponse(registro_data, safe=True)
 
 
+
+
 @csrf_exempt
 def getBusqueda(request):
     if request.method == 'GET':
@@ -518,6 +520,7 @@ def getBusqueda(request):
         day = request.GET.get('day', None)
         week = request.GET.get('week', None)
         month = request.GET.get('month', None)
+        matricula = request.GET.get('matricula', None)
         template_name = 'prestamos/consultPorFecha.html'
 
         if searchType == 'byDay' and day:
@@ -609,7 +612,27 @@ def getBusqueda(request):
 
             registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list}
             return JsonResponse(registro_data, safe=False)
-       
+        elif matricula:
+            cursor = connections['users'].cursor()
+            cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula = %s", (matricula,))
+            users_data = cursor.fetchall()
+
+            if users_data:
+                # Obtener información de préstamos para la matrícula
+                prestamos = Prestamos.objects.filter(usua_clave=matricula, pres_estatus='X')
+                prestamos_list = list(prestamos.values())
+
+                # Actualizar cada diccionario en prestamos_list con el nombre del usuario
+                for prestamo in prestamos_list:
+                    prestamo['nombre_usuario'] = f"{users_data[0][1]} {users_data[0][2]} {users_data[0][3]}" if users_data[0][3] else f"{users_data[0][1]} {users_data[0][2]}"
+
+                if prestamos_list:
+                    # Si hay adeudos, agregar SweetAlert a la respuesta
+                    registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list, 'adeudos': True}
+                else:
+                    registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list, 'adeudos': False}
+                    
+                return JsonResponse(registro_data, safe=False)
 
     return render(request, template_name)
 
