@@ -108,7 +108,7 @@
         const registrationSpaces = inputElement.value;
         if (registrationSpaces.length > 7) {
             messageAlerta('warning', `Revisa el número de credencial (${registrationSpaces}) ya que excede el límite de caracteres establecido. `, '¡Alto!', '#18463b');
-            inputElement.value = registrationSpaces.slice(0, 7); 
+            inputElement.value = registrationSpaces.slice(0, 8); 
             inputElement.readOnly = true; // Deshabilitar entrada
         } else {
             inputElement.readOnly = false; // Habilitar entrada si la longitud es 7 o menos
@@ -210,12 +210,10 @@
             })
             .then((response) => response.json())
             .then((data) => {
-
-                console.log(data.prestamos);
                 
                 // Obtener solo los valores de usua_clave
-                const usuaClaves = data.prestamos.map(prestamo => prestamo.usua_clave);
-                console.log(usuaClaves);
+                // const usuaClaves = data.prestamos.map(prestamo => prestamo.usua_clave);
+                // console.log(usuaClaves);
 
                 dataTable.clear().draw();
                 dataTable.rows.add(data.prestamos).draw();
