@@ -627,7 +627,6 @@ def getBusqueda(request):
                     prestamo['nombre_usuario'] = f"{users_data[0][1]} {users_data[0][2]} {users_data[0][3]}" if users_data[0][3] else f"{users_data[0][1]} {users_data[0][2]}"
 
                 if prestamos_list:
-                    # Si hay adeudos, agregar SweetAlert a la respuesta
                     registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list, 'adeudos': True}
                 else:
                     registro_data = {"error": False, "errorMessage": "Listo", 'prestamos': prestamos_list, 'adeudos': False}

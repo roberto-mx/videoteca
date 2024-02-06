@@ -65,9 +65,18 @@
             <div class="row mb-3">
                 <div class="col-sm-4 offset-sm-2 d-flex justify-content-end">
                     <button type="button" id="searchButton" class="btn btn-success btn-sm"  style="background-color:#13322B;" title="Filtrar">
-                        <i class="fa-solid fa-filter"></i>
                         <strong>Filtrar</strong>
+                        <i class="fa-solid fa-filter"></i>
                     </button>
+                    <button type="button" class="btn btn-sm"  style="background-color:#89b342;" onClick="window.location.reload();">
+                        <strong style="color:white;">Recargar Página</strong>
+                        <i class="fa-solid fa-rotate-right" style="color:white"></i>
+                    </button>
+
+                    <!-- <button type="button" id="reload" class="btn btn-success btn-sm"  style="background-color:#b5df6c;" title="reload">
+                        <i class="fa-solid fa-filter"></i>
+                        <strong>Reload</strong>
+                    </button> -->
                 </div>
             </div>
         </form>
@@ -100,11 +109,10 @@
             event.preventDefault();
         });
 
-        const matri = document.getElementById("matricula");
         const convertirAMayusculas = (event) => {
             event.target.value = event.target.value.toUpperCase();
         }
-
+        const matri = document.getElementById("matricula");
         matri.addEventListener('input', convertirAMayusculas);
 
         let fecha = new Date();
@@ -181,37 +189,37 @@
         $("#searchButton").click(function () {
             event.preventDefault();
             const formData = new FormData(document.getElementById("searchForm"));
-
+    
             fetch("{% url 'getBusqueda' %}?" + new URLSearchParams(formData), {
                 method: "GET",
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                 },
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    dataTable.clear().draw();
+            .then((response) => response.json())
+            .then((data) => {
 
-                    dataTable.rows.add(data.prestamos).draw();
-                    dataTable.table().container().style.display = '';
+                console.log(data.prestamos);
+                
+                // Obtener solo los valores de usua_clave
+                const usuaClaves = data.prestamos.map(prestamo => prestamo.usua_clave);
+                console.log(usuaClaves);
 
-                    // data.adeudos 
-                    //     ? messageAlerta('warning', 'Este usuario tiene adeudos', '¡Adeudo encontrado!', '#18463b') 
-                    //     : messageAlerta('success', 'Este usuario no tiene adeudos.', '¡Genial!', '#18463b');
-                      // Verificar si hay 'adeudos' en la respuesta
-                    if ('adeudos' in data) {
-                        // Verificar si hay adeudos y mostrar la alerta correspondiente
-                        if (data.adeudos) {
-                            messageAlerta('warning', 'Este usuario tiene adeudos', '¡Adeudo encontrado!', '#18463b');
-                        } else {
-                            messageAlerta('success', 'Este usuario no tiene adeudos.', '¡Genial!', '#18463b');
-                        }
+                dataTable.clear().draw();
+                dataTable.rows.add(data.prestamos).draw();
+                dataTable.table().container().style.display = '';
+
+                if ('adeudos' in data) {
+                    // Verificar si hay adeudos y mostrar la alerta correspondiente
+                    if (data.adeudos) {
+                        messageAlerta('warning', 'Este usuario tiene adeudos', '¡Adeudo encontrado!', '#18463b');
                     } else {
-                        console.error('La respuesta del servidor no incluye información sobre adeudos.');
+                        messageAlerta('success', 'Este usuario no tiene adeudos.', '¡Genial!', '#18463b');
                     }
+                }
 
-                })
-                .catch((error) => console.error(error));
+            })
+            .catch((error) => messageAlerta('error', 'Ocurrio un error, comúnicate con el área de sistemas','Error 404','#18463b'));                
         });
     });
 
