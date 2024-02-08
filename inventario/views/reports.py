@@ -13,6 +13,8 @@ from django.db import connections
 import json
 from datetime import datetime
 from django.db import connections
+from datetime import datetime, timedelta, date
+
 
 class PDF(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
@@ -523,6 +525,141 @@ def generate_pdf_resgister_folio(request):
     return HttpResponse("No se encontró la matrícula correspondiente.")
 
  # ---------------------------------------------------------------------------------------------------------------------------#
+class pdfPrestamo(FPDF):
+
+    def __init__(self, orientation='P', unit='mm', format='A4', q=None, day=None, week=None, month=None, matricula=None, search_type=None):
+        super().__init__(orientation, unit, format)
+        MEDIA_ROOT = settings.MEDIA_ROOT
+        self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'static','Montserrat-Regular.ttf'), uni=True)
+        self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static','Montserrat-Bold.ttf'), uni=True)
+        self.q = q
+        self.day = day
+        self.week = week
+        self.month = month
+        self.matricula = matricula
+        self.search_type = search_type
+        
+    def header(self):
+        self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=40)
+        self.image('media/images/logo-aprendemx.png', x=57, y=6, w=40)
+        self.ln()
+        self.set_font('Montserrat', 'B', 8)
+        self.cell(462, 1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.ln(3)
+        self.cell(417, 1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
+        self.ln(3)
+        self.cell(434, 1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
+        self.ln(80)
+        self.set_xy(10.0, 33.0)
+
+        # Establecer color de fondo basado en el tipo de búsqueda
+        if self.search_type == 'byDay':
+            self.set_fill_color(144, 12, 63)  # Rojo
+        elif self.search_type == 'byWeek':
+            self.set_fill_color(0, 128, 0)  # Verde
+        elif self.search_type == 'byMonth':
+            self.set_fill_color(0, 0, 255)  # Azul
+        elif self.search_type == 'byMatricula':
+            self.set_fill_color(255, 165, 0)  # Naranja
+
+      
+        if self.q == 'byDay':
+            self.cell(280, 10, f'Búsqueda por día: ({self.day})', 0, 0, 'C')
+        elif self.q == 'byWeek':
+            self.cell(280, 10, f'Búsqueda por semana: ({self.week})', 0, 0, 'C')
+        elif self.q == 'byMonth':
+            self.cell(280, 10, f'Búsqueda por mes: ({self.month})', 0, 0, 'C')
+        self.ln()
+
+        self.set_text_color(255, 255, 255)  # Establecer color de texto en blanco
+        self.cell(40, 10, 'Folio', 1, 0, '', True)
+        self.cell(40, 10, 'Usuario', 1, 0, '', True)
+        self.cell(80, 10, 'Nombre', 1, 0, '', True)
+        self.cell(50, 10, 'Fecha', 1, 0, '', True)
+        self.cell(50, 10, 'Estatus', 1, 0, '', True)
+        self.set_text_color(0, 0, 0)  # Restaurar color de texto a negro
+        self.ln()
+    
+
+
+    def footer(self):
+        self.set_font('Montserrat', 'B', 8)
+        self.set_xy(90.5, 50.0)
+        self.set_y(-15)
+        self.set_font('Montserrat', '', 8)
+        self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
+
+    def generate_table(self, data):
+        for row in data:
+            self.cell(40, 10, str(row['pres_folio']), 1)
+            self.cell(40, 10, str(row['usua_clave']), 1)
+            self.cell(80, 10, str(row['nombre_usuario']), 1)
+            self.cell(50, 10, str(row['pres_fecha_prestamo']), 1)
+            self.cell(50, 10, str(row['pres_estatus']), 1)
+            self.ln()
+
+def generate_pdf_prestamo(request):
+    search_type = request.GET.get('searchType')
+    day = request.GET.get('day')
+    week = request.GET.get('week')
+    month = request.GET.get('month')
+    matricula = request.GET.get('matricula')
+
+    if search_type == 'byDay':
+        day_datetime = datetime.strptime(day, "%Y-%m-%d")
+        prestamos = Prestamos.objects.filter(pres_fecha_prestamo__date=day_datetime)
+        return generate_pdf_response(prestamos, matricula, day=day, search_type=search_type)
+
+    elif search_type == 'byWeek':
+        year, week_number = map(int, week.split('-W'))
+        inicio_semana = datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w").date()
+        fin_semana = inicio_semana + timedelta(days=6)
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__range=(inicio_semana, fin_semana)).order_by('-pres_fecha_prestamo')
+        return generate_pdf_response(queryset, matricula, week=week, search_type=search_type)
+
+    elif search_type == 'byMonth':
+        year, month_number = map(int, month.split('-'))
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year=year, pres_fecha_prestamo__month=month_number).order_by('-pres_fecha_prestamo')
+        return generate_pdf_response(queryset, matricula, month=month, search_type=search_type)
+
+    elif search_type == 'byMatricula':
+        prestamos = Prestamos.objects.filter(usua_clave=matricula, pres_estatus='X')
+        return generate_pdf_response(prestamos, matricula, search_type=search_type)
+
+    else:
+        return HttpResponse("Tipo de búsqueda no válido.")
+
+def generate_pdf_response(queryset, matricula, day=None, week=None, month=None, search_type=None):
+    prestamos_list = list(queryset.values())
+    matriculas_list = [prestamo['usua_clave'] for prestamo in prestamos_list]
+    cursor = connections['users'].cursor()
+
+    if matriculas_list:
+        cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
+        users_data = cursor.fetchall()
+    else:
+        users_data = []
+
+    usuarios_dict = {row[0]: f"{row[1]} {row[2]} {row[3]}" if row[3] else f"{row[1]} {row[2]}" for row in users_data}        
+        
+    for prestamo in prestamos_list:
+        matricula = prestamo['usua_clave']
+        nombre_usuario = usuarios_dict.get(matricula, '')
+        prestamo['nombre_usuario'] = nombre_usuario
+
+    if prestamos_list:
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{matricula}.pdf"'
+        
+        pdf = pdfPrestamo('P', 'mm', (280, 200), q=search_type, day=day, week=week, month=month, matricula=matricula, search_type=search_type)
+        pdf.add_page()
+        pdf.generate_table(prestamos_list)
+        response.write(pdf.output(dest='S').encode('latin1'))
+        return response
+    else:
+        return HttpResponse("No se encontraron préstamos para esta búsqueda.")
+
+ # ---------------------------------------------------------------------------------------------------------------------------#
 
 @csrf_exempt      
 def json_to_pdf(request, row, codes, user):
@@ -583,4 +720,58 @@ def CreateJsonInReport(row, codes, user):
                 
     with open(settings.MEDIA_ROOT+ '/Formatos/dataHeader.json', 'w',  encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False) 
-   
+
+#-------------------------------------------------------------------------------------------------#
+
+
+def json_to_pdf_prestamos(request, productos, user):
+    input_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.jrxml'
+    CreateJsonInReportProductos(productos, user)
+    output_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.pdf'
+    conn = {
+        'driver': 'json',
+        'data_file': settings.MEDIA_ROOT + '/Formatos/dataHeader.json',
+        'json_query': 'reporte'
+    }
+    pyreportjasper = PyReportJasper()
+    pyreportjasper.config(
+        input_file,
+        output_file=output_file,
+        output_formats=["pdf"],
+        db_connection=conn
+    )
+    pyreportjasper.process_report()
+    return output_file
+
+def getReport(request):
+    file = request.GET.get('q')
+    if os.path.isfile(file):
+        print('Report generated successfully!')
+        with open(file, 'rb') as pdf:
+            response = HttpResponse(pdf.read(),content_type='application/pdf')
+            response['Content-Disposition'] = 'filename=ReportePorDía.pdf'
+        return response
+  
+    else:
+        print('Report not generated!')
+
+def CreateJsonInReportProductos(row, user):
+    data = {'reporte': []}
+    now = datetime.now().strftime("%d-%m-%Y")
+    # for i, code in enumerate(row, start=1):
+    #     data['reporte'].append({
+    #         'nombre_usuario': code[0][0] + ' ' + code[0][1] + ' ' + code[0][2],
+    #         'Direccion':  code[0][5],
+    #         'Puesto':  code[0][6],
+    #         'Extension': code[0][3],
+    #         'Correo':   code[0][4],
+    #         'Matricula':   code[0][7],
+    #         'pres_fecha_prestamo': now,
+    #         'Recibe': user,
+    #         'img1': settings.MEDIA_ROOT + '/Formatos/logo-sep.png',
+    #         'img2':  settings.MEDIA_ROOT + '/Formatos/logo-aprendemx.png',
+    #         'pres_folio': code[1],
+    #         'idConsecutivo': i
+    #     })
+    with open(settings.MEDIA_ROOT + '/Formatos/dataHeader.json', 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False)

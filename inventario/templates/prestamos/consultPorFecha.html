@@ -64,9 +64,9 @@
             
             <div class="row mb-3">
                 <div class="col-sm-4 offset-sm-2 d-flex justify-content-end">
-                    <button type="button" id="searchButton" class="btn btn-success btn-sm"  style="background-color:#276e54;" title="Filtrar">
-                        <strong>Búscar</strong>
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <button type="button" id="searchButton" class="btn btn-sm"  style="background-color:#276e54;" title="Búscar">
+                        <strong style="color:white;">Búscar</strong>
+                        <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
                     </button>
                     <button type="button" class="btn btn-sm"  style="background-color:#89b342;" onClick="window.location.reload();">
                         <strong style="color:white;">Recargar Página</strong>
@@ -76,11 +76,6 @@
                         <strong style="color:white;">Exportar</strong>
                         <i class="fa-regular fa-file-pdf" style="color:white"></i>
                     </button>
-
-                    <!-- <button type="button" id="reload" class="btn btn-success btn-sm"  style="background-color:#b5df6c;" title="reload">
-                        <i class="fa-solid fa-filter"></i>
-                        <strong>Reload</strong>
-                    </button> -->
                 </div>
             </div>
         </form>
@@ -121,91 +116,91 @@
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        $("#generaPDF").hide();
-        document.getElementById("searchForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-        });
+            // $("#generaPDF").hide();
+            document.getElementById("searchForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+            });
 
-        const convertirAMayusculas = (event) => {
-            event.target.value = event.target.value.toUpperCase();
-        }
-        const matri = document.getElementById("matricula");
-        matri.addEventListener('input', convertirAMayusculas);
-
-        let fecha = new Date();
-        let mes = fecha.getMonth() + 1;
-        let dia = fecha.getDate();
-        let ano = fecha.getFullYear();
-
-        dia < 10 ? (dia = '0' + dia) : undefined;
-        mes < 10 ? (mes = '0' + mes) : undefined;
-
-        document.getElementById('day').value = ano + "-" + mes + "-" + dia;
-
-        //$('#filtraFecha').hide();
-
-        const searchTypeSelect = document.getElementById("searchType");
-        const dayInput = document.getElementById("dayInput");
-        const weekInput = document.getElementById("weekInput"); 
-        const monthInput = document.getElementById("monthInput"); 
-        const matriculaInput = document.getElementById("matriculaInput"); 
-        const checkAdeudos = document.getElementById("checkAdeudos"); 
-        let selectedValues = {};
-
-        searchTypeSelect.addEventListener("change", (event) => {
-            selectedValues.searchType = searchTypeSelect.value;
-            selectedValues.day = document.getElementById("day").value;
-            selectedValues.week = document.getElementById("week").value;
-            selectedValues.month = document.getElementById("month").value;
-            dayInput.style.display = selectedValues.searchType === "byDay" ? "flex" : "none";
-            weekInput.style.display = selectedValues.searchType === "byWeek" ? "flex" : "none";
-            monthInput.style.display = selectedValues.searchType === "byMonth" ? "flex" : "none";
-        });
-
-        checkAdeudos.addEventListener("change", (event) => {
-            matriculaInput.style.display = checkAdeudos.checked ? "flex" : "none";
-
-            // Si el check está marcado, deshabilita la búsqueda por fecha
-            if (checkAdeudos.checked) {
-                searchTypeSelect.disabled = true;
-                document.getElementById("day").disabled = true;
-                document.getElementById("week").disabled = true;
-                document.getElementById("month").disabled = true; 
-
-                searchTypeSelect.value = ""; // Esto establece la opción seleccionada en el valor vacío
-            } else {
-                searchTypeSelect.disabled = false;
-                document.getElementById("day").disabled = false;
-                document.getElementById("week").disabled = false;
-                document.getElementById("month").disabled = false; 
-                searchTypeSelect.value = selectedValues.searchType;
+            const convertirAMayusculas = (event) => {
+                event.target.value = event.target.value.toUpperCase();
             }
-        });
+            const matri = document.getElementById("matricula");
+            matri.addEventListener('input', convertirAMayusculas);
 
-        const dataTable = $("#filtraFecha").DataTable({
-            ...len,
-            columns: [
-                { data: "pres_folio" },
-                { data: "usua_clave" },
-                { data: "pres_fecha_prestamo" },
-                { data: "nombre_usuario", 
-                render: (data) => {
-                    return data;
+            let fecha = new Date();
+            let mes = fecha.getMonth() + 1;
+            let dia = fecha.getDate();
+            let ano = fecha.getFullYear();
+
+            dia < 10 ? (dia = '0' + dia) : undefined;
+            mes < 10 ? (mes = '0' + mes) : undefined;
+
+            document.getElementById('day').value = ano + "-" + mes + "-" + dia;
+
+            //$('#filtraFecha').hide();
+
+            const searchTypeSelect = document.getElementById("searchType");
+            const dayInput = document.getElementById("dayInput");
+            const weekInput = document.getElementById("weekInput"); 
+            const monthInput = document.getElementById("monthInput"); 
+            const matriculaInput = document.getElementById("matriculaInput"); 
+            const checkAdeudos = document.getElementById("checkAdeudos"); 
+            let selectedValues = {};
+
+            searchTypeSelect.addEventListener("change", (event) => {
+                selectedValues.searchType = searchTypeSelect.value;
+                selectedValues.day = document.getElementById("day").value;
+                selectedValues.week = document.getElementById("week").value;
+                selectedValues.month = document.getElementById("month").value;
+                dayInput.style.display = selectedValues.searchType === "byDay" ? "flex" : "none";
+                weekInput.style.display = selectedValues.searchType === "byWeek" ? "flex" : "none";
+                monthInput.style.display = selectedValues.searchType === "byMonth" ? "flex" : "none";
+            });
+
+            checkAdeudos.addEventListener("change", (event) => {
+                matriculaInput.style.display = checkAdeudos.checked ? "flex" : "none";
+
+                // Si el check está marcado, deshabilita la búsqueda por fecha
+                if (checkAdeudos.checked) {
+                    searchTypeSelect.disabled = true;
+                    document.getElementById("day").disabled = true;
+                    document.getElementById("week").disabled = true;
+                    document.getElementById("month").disabled = true; 
+
+                    searchTypeSelect.value = ""; // Esto establece la opción seleccionada en el valor vacío
+                } else {
+                    searchTypeSelect.disabled = false;
+                    document.getElementById("day").disabled = false;
+                    document.getElementById("week").disabled = false;
+                    document.getElementById("month").disabled = false; 
+                    searchTypeSelect.value = selectedValues.searchType;
                 }
-            },
-            {
-                data: "pres_estatus",
-                render: (data) => {
-                    return data === "I" ? "Devuelto" : "En préstamo";
+            });
+
+            const dataTable = $("#filtraFecha").DataTable({
+                ...len,
+                columns: [
+                    { data: "pres_folio" },
+                    { data: "usua_clave" },
+                    { data: "pres_fecha_prestamo" },
+                    { data: "nombre_usuario", 
+                    render: (data) => {
+                        return data;
+                    }
                 },
-            },
-        ],
-    });
-    
-    dataTable.table().container().style.display = 'none';
-    $("#searchButton").click(function () {
-        event.preventDefault();
-        $("#generaPDF").show();
+                {
+                    data: "pres_estatus",
+                    render: (data) => {
+                        return data === "I" ? "Devuelto" : "En préstamo";
+                    },
+                },
+            ],
+        });
+        
+        dataTable.table().container().style.display = 'none';
+        $("#searchButton").click(function () {
+            event.preventDefault();
+            // $("#generaPDF").show();
             const formData = new FormData(document.getElementById("searchForm"));
     
             fetch("{% url 'getBusqueda' %}?" + new URLSearchParams(formData), {
@@ -216,11 +211,6 @@
             })
             .then((response) => response.json())
             .then((data) => {
-                
-                // Obtener solo los valores de usua_clave
-                // const usuaClaves = data.prestamos.map(prestamo => prestamo.usua_clave);
-                // console.log(usuaClaves);
-
                 dataTable.clear().draw();
                 dataTable.rows.add(data.prestamos).draw();
                 dataTable.table().container().style.display = '';
@@ -237,6 +227,30 @@
             })
             .catch((error) => messageAlerta('error', 'Ocurrio un error, comúnicate con el área de sistemas','Error 404','#18463b'));                
         });
+
+        $("#generaPDF").click(function (event) {
+            event.preventDefault();
+            const formData2 = new FormData(document.getElementById("searchForm"));
+
+            fetch("{% url 'generate_pdf_prestamo' %}?" + new URLSearchParams(formData2), {
+                method: "GET",
+            })
+            .then(response => {
+            console.log({1: response.ok, 2: response});
+                if (!response.ok) {
+                    throw new Error('Ocurrió un error al generar el PDF.');
+                }
+                return response.blob(); 
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                window.open(url); // Abrir el PDF en una nueva ventana
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
     });
 
 </script>
