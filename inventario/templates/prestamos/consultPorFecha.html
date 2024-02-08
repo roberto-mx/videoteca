@@ -72,6 +72,10 @@
                         <strong style="color:white;">Recargar Página</strong>
                         <i class="fa-solid fa-rotate-right" style="color:white"></i>
                     </button>
+                    <button type="button" id="generaPDF" class="btn btn-sm"  style="background-color:#771414;">
+                        <strong style="color:white;">Exportar</strong>
+                        <i class="fa-regular fa-file-pdf" style="color:white"></i>
+                    </button>
 
                     <!-- <button type="button" id="reload" class="btn btn-success btn-sm"  style="background-color:#b5df6c;" title="reload">
                         <i class="fa-solid fa-filter"></i>
@@ -117,6 +121,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
 
+        $("#generaPDF").hide();
         document.getElementById("searchForm").addEventListener("submit", function(event) {
             event.preventDefault();
         });
@@ -141,10 +146,10 @@
 
         const searchTypeSelect = document.getElementById("searchType");
         const dayInput = document.getElementById("dayInput");
-        const weekInput = document.getElementById("weekInput"); // Asegúrate de que estas variables estén declaradas
-        const monthInput = document.getElementById("monthInput"); // Asegúrate de que estas variables estén declaradas
-        const matriculaInput = document.getElementById("matriculaInput"); // Asegúrate de que esta variable esté declarada
-        const checkAdeudos = document.getElementById("checkAdeudos"); // Asegúrate de que esta variable esté declarada
+        const weekInput = document.getElementById("weekInput"); 
+        const monthInput = document.getElementById("monthInput"); 
+        const matriculaInput = document.getElementById("matriculaInput"); 
+        const checkAdeudos = document.getElementById("checkAdeudos"); 
         let selectedValues = {};
 
         searchTypeSelect.addEventListener("change", (event) => {
@@ -184,22 +189,23 @@
                 { data: "usua_clave" },
                 { data: "pres_fecha_prestamo" },
                 { data: "nombre_usuario", 
-                    render: (data) => {
-                        return data;
-                    }
+                render: (data) => {
+                    return data;
+                }
+            },
+            {
+                data: "pres_estatus",
+                render: (data) => {
+                    return data === "I" ? "Devuelto" : "En préstamo";
                 },
-                {
-                    data: "pres_estatus",
-                    render: (data) => {
-                        return data === "I" ? "Devuelto" : "En préstamo";
-                    },
-                },
-                ],
-            });
-
-        dataTable.table().container().style.display = 'none';
-        $("#searchButton").click(function () {
-            event.preventDefault();
+            },
+        ],
+    });
+    
+    dataTable.table().container().style.display = 'none';
+    $("#searchButton").click(function () {
+        event.preventDefault();
+        $("#generaPDF").show();
             const formData = new FormData(document.getElementById("searchForm"));
     
             fetch("{% url 'getBusqueda' %}?" + new URLSearchParams(formData), {
