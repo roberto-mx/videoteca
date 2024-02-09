@@ -5,7 +5,7 @@ from pyreportjasper import PyReportJasper
 # from pyreportjasper import JasperGenerator
 from fpdf import FPDF
 from ..models import Prestamos, DetallePrestamos
-from django.http.response import HttpResponse  
+from django.http.response import HttpResponse, JsonResponse 
 import os
 from django.db.models import Q
 from reportlab.lib.pagesizes import letter, landscape
@@ -14,6 +14,7 @@ import json
 from datetime import datetime
 from django.db import connections
 from datetime import datetime, timedelta, date
+
 
 
 class PDF(FPDF):
@@ -572,9 +573,10 @@ class pdfPrestamo(FPDF):
         self.ln()
 
         self.set_text_color(255, 255, 255)  # Establecer color de texto en blanco
+        self.cell(10, 10, 'Id', 1, 0, '', True)
         self.cell(40, 10, 'Folio', 1, 0, '', True)
         self.cell(40, 10, 'Usuario', 1, 0, '', True)
-        self.cell(80, 10, 'Nombre', 1, 0, '', True)
+        self.cell(50, 10, 'Nombre', 1, 0, '', True)
         self.cell(50, 10, 'Fecha', 1, 0, '', True)
         self.cell(50, 10, 'Estatus', 1, 0, '', True)
         self.set_text_color(0, 0, 0)  # Restaurar color de texto a negro
@@ -589,13 +591,29 @@ class pdfPrestamo(FPDF):
         self.set_font('Montserrat', '', 8)
         self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
+
+
     def generate_table(self, data):
+        total_registros = len(data)
+        consecutivo = 1
         for row in data:
+            self.cell(10, 10, str(consecutivo), 1)  # Agregar consecutivo
+            consecutivo += 1 
             self.cell(40, 10, str(row['pres_folio']), 1)
             self.cell(40, 10, str(row['usua_clave']), 1)
             self.cell(80, 10, str(row['nombre_usuario']), 1)
-            self.cell(50, 10, str(row['pres_fecha_prestamo']), 1)
-            self.cell(50, 10, str(row['pres_estatus']), 1)
+            if row['pres_fecha_prestamo']:
+                formatted_date = row['pres_fecha_prestamo'].strftime('%d-%m-%Y')
+                self.cell(50, 10, formatted_date, 1)
+            else:
+                self.cell(50, 10, '', 1)  # Celda vacía si no hay fecha
+
+            if row['pres_estatus'] == 'I':
+                self.cell(50, 10, "Entregado", 1)
+            else:
+                self.cell(50, 10, "En préstamo", 1)
+            self.cell(10, 10)  # Celda vacía para el consecutivo
+            self.cell(160, 10, f"Total de registros: {total_registros}", 1, 0, 'C')
             self.ln()
 
 def generate_pdf_prestamo(request):
@@ -723,55 +741,123 @@ def CreateJsonInReport(row, codes, user):
 
 #-------------------------------------------------------------------------------------------------#
 
-
-def json_to_pdf_prestamos(request, productos, user):
-    input_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.jrxml'
-    CreateJsonInReportProductos(productos, user)
-    output_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.pdf'
-    conn = {
-        'driver': 'json',
-        'data_file': settings.MEDIA_ROOT + '/Formatos/dataHeader.json',
-        'json_query': 'reporte'
-    }
-    pyreportjasper = PyReportJasper()
-    pyreportjasper.config(
-        input_file,
-        output_file=output_file,
-        output_formats=["pdf"],
-        db_connection=conn
-    )
-    pyreportjasper.process_report()
-    return output_file
-
 def getReport(request):
-    file = request.GET.get('q')
-    if os.path.isfile(file):
-        print('Report generated successfully!')
-        with open(file, 'rb') as pdf:
-            response = HttpResponse(pdf.read(),content_type='application/pdf')
-            response['Content-Disposition'] = 'filename=ReportePorDía.pdf'
-        return response
-  
+    search_type = request.GET.get('searchType')
+    day = request.GET.get('day')
+    week = request.GET.get('week')
+    month = request.GET.get('month')
+    matricula = request.GET.get('matricula')
+    
+    # Seleccionar el tipo de búsqueda
+    if search_type == 'byDay':
+        day_datetime = datetime.strptime(day, "%Y-%m-%d")
+        prestamos = Prestamos.objects.filter(pres_fecha_prestamo__date=day_datetime)
+        return generateJson(prestamos, matricula, day=day, search_type=search_type)
+      
+    elif search_type == 'byWeek':
+        year, week_number = map(int, week.split('-W'))
+        inicio_semana = datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w").date()
+        fin_semana = inicio_semana + timedelta(days=6)
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__range=(inicio_semana, fin_semana)).order_by('-pres_fecha_prestamo')
+        return generateJson(queryset, matricula, week=week, search_type=search_type)
+       
+    elif search_type == 'byMonth':
+        year, month_number = map(int, month.split('-'))
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year=year, pres_fecha_prestamo__month=month_number).order_by('-pres_fecha_prestamo')
+        year, month_number = map(int, month.split('-'))
+        queryset = Prestamos.objects.filter(pres_fecha_prestamo__year=year, pres_fecha_prestamo__month=month_number).order_by('-pres_fecha_prestamo')
+        return generateJson(queryset, matricula, month=month, search_type=search_type)
+       
+    elif search_type == 'byMatricula':
+        prestamos = Prestamos.objects.filter(usua_clave=matricula, pres_estatus='X')
+        return generateJson(prestamos, matricula, search_type=search_type)
     else:
-        print('Report not generated!')
+        return HttpResponse("Tipo de búsqueda no válido.")
+    
+ 
+def generateJson(queryset, matricula=None, day=None, week=None, month=None, search_type=None):
+    prestamos_list = list(queryset.values())
+    matriculas_list = [prestamo['usua_clave'] for prestamo in prestamos_list]
+    cursor = connections['users'].cursor()
 
-def CreateJsonInReportProductos(row, user):
-    data = {'reporte': []}
-    now = datetime.now().strftime("%d-%m-%Y")
-    # for i, code in enumerate(row, start=1):
-    #     data['reporte'].append({
-    #         'nombre_usuario': code[0][0] + ' ' + code[0][1] + ' ' + code[0][2],
-    #         'Direccion':  code[0][5],
-    #         'Puesto':  code[0][6],
-    #         'Extension': code[0][3],
-    #         'Correo':   code[0][4],
-    #         'Matricula':   code[0][7],
-    #         'pres_fecha_prestamo': now,
-    #         'Recibe': user,
-    #         'img1': settings.MEDIA_ROOT + '/Formatos/logo-sep.png',
-    #         'img2':  settings.MEDIA_ROOT + '/Formatos/logo-aprendemx.png',
-    #         'pres_folio': code[1],
-    #         'idConsecutivo': i
-    #     })
-    with open(settings.MEDIA_ROOT + '/Formatos/dataHeader.json', 'w', encoding='utf-8') as file:
-        json.dump(data, file, ensure_ascii=False)
+    if matriculas_list:
+        cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
+        users_data = cursor.fetchall()
+    else:
+        users_data = []
+
+    usuarios_dict = {row[0]: f"{row[1]} {row[2]} {row[3]}" if row[3] else f"{row[1]} {row[2]}" for row in users_data}        
+
+    for prestamo in prestamos_list:
+        matricula = prestamo['usua_clave']
+        nombre_usuario = usuarios_dict.get(matricula, '')
+        prestamo['nombre_usuario'] = nombre_usuario
+
+    # Convertir objetos datetime a cadenas de texto antes de serializar
+    for prestamo in prestamos_list:
+        prestamo['pres_fecha_prestamo'] = prestamo['pres_fecha_prestamo'].strftime('%Y-%m-%d %H:%M:%S')
+
+    if prestamos_list:
+        # Crear un diccionario con la lista de préstamos
+        data = {'prestamos': prestamos_list}
+        print(data)
+        
+        # Ruta donde se guardará el archivo JSON
+        json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')
+
+        # Escribir los datos en el archivo JSON
+        with open(json_file_path, 'w',encoding='utf8') as json_file:
+            json.dump(data, json_file, indent=4,ensure_ascii=False, default=str)
+
+
+        input_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.jrxml'
+        output_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.pdf'  # Specific file path
+        conn = {
+            'driver':       'json',
+            'data_file':    json_file_path,
+            'json_query':   'reporte'
+        }
+        pyreportjasper = PyReportJasper()
+        pyreportjasper.config(
+            input_file,
+            output_file=output_file,
+            output_formats=["pdf"],
+            db_connection=conn,
+            # resource=RESOURCES_DIR
+        )
+        pyreportjasper.process_report()
+        
+
+
+       
+
+        print("Archivo JSON creado exitosamente en:", json_file_path)
+        return HttpResponse("Archivo JSON creado exitosamente en:" + json_file_path)
+    else:
+        print("No se encontraron préstamos para esta búsqueda.")
+        return HttpResponse("No se encontraron préstamos para esta búsqueda.")
+
+    # if prestamos_list:
+    #         data = ['datos']
+    #         # codeJson=json.loads(queryset)
+    #         print(data)
+        #     for code in enumerate(codeJson):
+        #         data['datos'].append(q=search_type, day=day, week=week, month=month, matricula=matricula, search_type=search_type)
+
+        # # if request.GET.get('format') == 'json':
+        # #     response_data = {
+        # #         'prestamos': prestamos_list
+        # #     }
+        #     # Ruta donde se guardará el archivo JSON
+        #     json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')
+        #     with open(json_file_path, 'w') as json_file:
+        #         json.dump(code, json_file)
+                
+        #     # Crear una URL relativa al archivo JSON para enviarla al frontend
+        #     json_file_url = os.path.join(settings.MEDIA_URL, 'Formatos', 'reportePrestamo.json')
+
+        #     return JsonResponse({'url': json_file_url})  
+        
+
+
+

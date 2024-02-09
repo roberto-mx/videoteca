@@ -228,28 +228,50 @@
             .catch((error) => messageAlerta('error', 'Ocurrio un error, comúnicate con el área de sistemas','Error 404','#18463b'));                
         });
 
-        $("#generaPDF").click(function (event) {
+        // $("#generaPDF").click(function (event) {
+        //     event.preventDefault();
+        //     const formData2 = new FormData(document.getElementById("searchForm"));
+
+        //     fetch("{% url 'generate_pdf_prestamo' %}?" + new URLSearchParams(formData2), {
+        //         method: "GET",
+        //     })
+        //     .then(response => {
+        //     console.log({1: response.ok, 2: response});
+        //         if (!response.ok) {
+        //             throw new Error('Ocurrió un error al generar el PDF.');
+        //         }
+        //         return response.blob(); 
+        //     })
+        //     .then(blob => {
+        //         const url = window.URL.createObjectURL(blob);
+        //         window.open(url); // Abrir el PDF en una nueva ventana
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //     });
+        // });
+        document.getElementById("generaPDF").addEventListener("click", function(event) {
             event.preventDefault();
             const formData2 = new FormData(document.getElementById("searchForm"));
 
-            fetch("{% url 'generate_pdf_prestamo' %}?" + new URLSearchParams(formData2), {
+            fetch("{% url 'getReport' %}?" + new URLSearchParams(formData2), {
                 method: "GET",
             })
             .then(response => {
-            console.log({1: response.ok, 2: response});
+                console.log({1: response.ok, 2: response});
                 if (!response.ok) {
-                    throw new Error('Ocurrió un error al generar el PDF.');
+                    throw new Error('Ocurrió un error al generar el JSON.');
                 }
-                return response.blob(); 
+                return response.json(); // Cambiado a response.json() para procesar el JSON devuelto
             })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                window.open(url); // Abrir el PDF en una nueva ventana
+            .then(jsonData => {
+                console.log(jsonData); // Aquí puedes procesar los datos JSON como desees
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         });
+
 
     });
 
