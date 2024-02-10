@@ -800,9 +800,10 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
     if prestamos_list:
         # Crear un diccionario con la lista de préstamos
         data = {'prestamos': prestamos_list}
-        print(data)
+        
         
         # Ruta donde se guardará el archivo JSON
+      
         json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')
 
         # Escribir los datos en el archivo JSON
@@ -810,13 +811,16 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
             json.dump(data, json_file, indent=4,ensure_ascii=False, default=str)
 
 
+
         input_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.jrxml'
-        output_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.pdf'  # Specific file path
+        output_file =  settings.MEDIA_ROOT + '/Formatos/ReportePorDía.pdf'  # Ruta específica del archivo
         conn = {
             'driver':       'json',
-            'data_file':    json_file_path,
-            'json_query':   'reporte'
+            'data_file':    settings.MEDIA_ROOT + '/Formatos/reportePrestamo.json' ,
+            'json_query':   'prestamos'
         }
+
+
         pyreportjasper = PyReportJasper()
         pyreportjasper.config(
             input_file,
@@ -826,10 +830,7 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
             # resource=RESOURCES_DIR
         )
         pyreportjasper.process_report()
-        
-
-
-       
+    
 
         print("Archivo JSON creado exitosamente en:", json_file_path)
         return HttpResponse("Archivo JSON creado exitosamente en:" + json_file_path)

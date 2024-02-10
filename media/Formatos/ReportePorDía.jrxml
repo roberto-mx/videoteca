@@ -15,9 +15,9 @@
 	</queryString>
 	<field name="pres_folio" class="java.lang.String"/>
 	<field name="usua_clave" class="java.lang.String"/>
+	<field name="nombre_completo" class="java.lang.String"/>
 	<field name="pres_fecha_prestamo" class="java.lang.String"/>
 	<field name="pres_estatus" class="java.lang.String"/>
-	<field name="nombre_usuario" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -41,6 +41,14 @@
 				<reportElement x="0" y="100" width="100" height="30" uuid="10285e1d-8bb2-4513-a8a2-d289033f09c9"/>
 				<text><![CDATA[Fecha y Hora de Impresión:]]></text>
 			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="100" y="100" width="100" height="30" uuid="c24efc0d-c528-4133-a38b-31ae692a8c03"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm">
+				<reportElement x="200" y="100" width="100" height="30" uuid="d78ccd59-6d43-413d-b1ff-09498ace48b0"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
 			<image onErrorType="Blank">
 				<reportElement x="0" y="0" width="50" height="50" uuid="1dcd8fe8-5540-40f4-90d4-d361b4d1f16e"/>
 				<imageExpression><![CDATA[$P{img1}]]></imageExpression>
@@ -61,70 +69,64 @@
 	<pageHeader>
 		<band height="39" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="9" width="619" height="30" forecolor="#FFFFFF" backcolor="#336B87" uuid="30c94835-a250-414f-adc3-a4ffbbcea9d9"/>
+				<reportElement mode="Opaque" x="0" y="9" width="590" height="30" forecolor="#FFFFFF" backcolor="#336B87" uuid="30c94835-a250-414f-adc3-a4ffbbcea9d9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[REPORTE DE PRESTAMOS-VIDEOTECA:]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
-	<columnHeader>
-		<band height="36">
-			<staticText>
-				<reportElement x="10" y="10" width="100" height="20" uuid="8e4dc158-48a4-492b-ae1c-a2d115b469a3"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Folio]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="110" y="10" width="100" height="20" uuid="70a8921e-e13a-45e1-bb53-42f68fb28a27"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Matrícula]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="210" y="10" width="200" height="20" uuid="4f8679f1-cda3-4901-924c-42d5a0977808"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Nombre]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="410" y="10" width="110" height="20" uuid="ac19e1cc-4957-40f1-bf6a-1d32c18c73ca"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Fecha]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="520" y="10" width="100" height="20" uuid="d531f3b5-a529-4663-a4aa-19c57374f228"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Estatus]]></text>
-			</staticText>
-		</band>
-	</columnHeader>
 	<detail>
-		<band height="30" splitType="Stretch">
+		<band height="105" splitType="Stretch">
 			<textField>
-				<reportElement x="10" y="-6" width="100" height="30" uuid="64ce4c15-20dd-4c36-add9-ddb48e30382e"/>
+				<reportElement x="0" y="20" width="100" height="30" uuid="64ce4c15-20dd-4c36-add9-ddb48e30382e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{pres_folio}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="8e4dc158-48a4-492b-ae1c-a2d115b469a3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[pres_folio]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="110" y="-6" width="100" height="30" uuid="1454d831-5167-471d-bcdb-dbd1f1ee0366"/>
+				<reportElement x="100" y="20" width="100" height="30" uuid="1454d831-5167-471d-bcdb-dbd1f1ee0366"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{usua_clave}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="210" y="-6" width="200" height="30" uuid="fe37a152-b559-4043-9c7f-487e4bd46287"/>
+			<staticText>
+				<reportElement x="100" y="0" width="100" height="20" uuid="70a8921e-e13a-45e1-bb53-42f68fb28a27"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{nombre_usuario}]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[Matrícula]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="410" y="-6" width="120" height="30" uuid="796a6786-319f-4ed6-ac86-900d27803ae6"/>
+				<reportElement x="200" y="20" width="160" height="30" uuid="fe37a152-b559-4043-9c7f-487e4bd46287"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nombre_completo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="0" width="160" height="20" uuid="4f8679f1-cda3-4901-924c-42d5a0977808"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[nombre_completo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="360" y="20" width="130" height="30" uuid="796a6786-319f-4ed6-ac86-900d27803ae6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{pres_fecha_prestamo}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="360" y="0" width="110" height="20" uuid="ac19e1cc-4957-40f1-bf6a-1d32c18c73ca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="520" y="-6" width="99" height="30" uuid="8c576c7a-6528-44fa-9b3e-ca784f87f0a9">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-				</reportElement>
+				<reportElement x="490" y="20" width="100" height="30" uuid="8c576c7a-6528-44fa-9b3e-ca784f87f0a9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{pres_estatus}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="490" y="0" width="100" height="20" uuid="d531f3b5-a529-4663-a4aa-19c57374f228"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[pres_estatus]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<pageFooter>
