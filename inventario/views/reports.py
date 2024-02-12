@@ -794,6 +794,9 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         matricula = prestamo['usua_clave']
         nombre_usuario = usuarios_dict.get(matricula, '')
         prestamo['nombre_usuario'] = nombre_usuario
+        prestamo['aprende'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos','logo-aprendemx.png')
+        prestamo['sep'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos','logo-sep.png')
+           
 
     # Convertir objetos datetime a cadenas de texto antes de serializar
     for prestamo in prestamos_list:
@@ -802,8 +805,10 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
     if prestamos_list:
         # Crear un diccionario con la lista de préstamos
         data = {'prestamos': prestamos_list}
-        data['logo1'] = settings.MEDIA_ROOT+ '/Formatos/logo-sep.png', 
-        data['logo2'] =  settings.MEDIA_ROOT+ '/Formatos/logo-aprendemx.png', 
+
+        # data['logo1'] = settings.MEDIA_ROOT+ '/Formatos/logo-sep.png',
+        # data['logo2'] = settings.MEDIA_ROOT+ '/Formatos/logo-aprendemx.png', 
+
         
         # Ruta donde se guardará el archivo JSON
         json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')

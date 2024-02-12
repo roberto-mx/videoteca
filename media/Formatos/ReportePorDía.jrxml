@@ -33,11 +33,11 @@
 	</background>
 	<title>
 		<band height="132" splitType="Stretch">
-			<image onErrorType="Blank">
+			<image>
 				<reportElement x="0" y="0" width="50" height="50" uuid="1dcd8fe8-5540-40f4-90d4-d361b4d1f16e"/>
 				<imageExpression><![CDATA[$P{img1}]]></imageExpression>
 			</image>
-			<image onErrorType="Blank">
+			<image>
 				<reportElement x="150" y="0" width="50" height="50" uuid="511f45d1-6991-4632-ab5a-db2b144be9ce"/>
 				<imageExpression><![CDATA[$P{img2}]]></imageExpression>
 			</image>
