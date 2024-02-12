@@ -774,9 +774,11 @@ def getReport(request):
     else:
         return HttpResponse("Tipo de búsqueda no válido.")
     
- 
+
 def generateJson(queryset, matricula=None, day=None, week=None, month=None, search_type=None):
     prestamos_list = list(queryset.values())
+    for i, prestamo in enumerate(prestamos_list, start=1):
+        prestamo['consecutivo'] = i
     matriculas_list = [prestamo['usua_clave'] for prestamo in prestamos_list]
     cursor = connections['users'].cursor()
 
@@ -801,25 +803,21 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         # Crear un diccionario con la lista de préstamos
         data = {'prestamos': prestamos_list}
         
-        
         # Ruta donde se guardará el archivo JSON
-      
         json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')
 
         # Escribir los datos en el archivo JSON
-        with open(json_file_path, 'w',encoding='utf8') as json_file:
-            json.dump(data, json_file, indent=4,ensure_ascii=False, default=str)
+        with open(json_file_path, 'w', encoding='utf8') as json_file:
+            json.dump(data, json_file, indent=4, ensure_ascii=False, default=str)
 
-
-
-        input_file = settings.MEDIA_ROOT + '/Formatos/ReportePorDía.jrxml'
-        output_file =  settings.MEDIA_ROOT + '/Formatos/ReportePorDía.pdf'  # Ruta específica del archivo
+        # Configurar la generación del informe PDF
+        input_file = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'ReportePorDía.jrxml')
+        output_file = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'ReportePorDía.pdf')
         conn = {
-            'driver':       'json',
-            'data_file':    settings.MEDIA_ROOT + '/Formatos/reportePrestamo.json' ,
-            'json_query':   'prestamos'
+            'driver': 'json',
+            'data_file': os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json'),
+            'json_query': 'prestamos'
         }
-
 
         pyreportjasper = PyReportJasper()
         pyreportjasper.config(
@@ -827,38 +825,22 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
             output_file=output_file,
             output_formats=["pdf"],
             db_connection=conn,
-            # resource=RESOURCES_DIR
         )
         pyreportjasper.process_report()
-    
 
         print("Archivo JSON creado exitosamente en:", json_file_path)
-        return HttpResponse("Archivo JSON creado exitosamente en:" + json_file_path)
+
+        # Descargar el archivo PDF generado
+        file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'ReportePorDía.pdf')
+        if os.path.isfile(file_path):
+            print('Reporte generado exitosamente!')
+            with open(file_path, 'rb') as pdf:
+                response = HttpResponse(pdf.read(), content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename=ReportePorDía.pdf'
+            return response
+        else:
+            print('¡Error! El reporte no se generó correctamente.')
+            return HttpResponse("¡Error! El reporte no se generó correctamente.")
     else:
         print("No se encontraron préstamos para esta búsqueda.")
-        return HttpResponse("No se encontraron préstamos para esta búsqueda.")
-
-    # if prestamos_list:
-    #         data = ['datos']
-    #         # codeJson=json.loads(queryset)
-    #         print(data)
-        #     for code in enumerate(codeJson):
-        #         data['datos'].append(q=search_type, day=day, week=week, month=month, matricula=matricula, search_type=search_type)
-
-        # # if request.GET.get('format') == 'json':
-        # #     response_data = {
-        # #         'prestamos': prestamos_list
-        # #     }
-        #     # Ruta donde se guardará el archivo JSON
-        #     json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')
-        #     with open(json_file_path, 'w') as json_file:
-        #         json.dump(code, json_file)
-                
-        #     # Crear una URL relativa al archivo JSON para enviarla al frontend
-        #     json_file_url = os.path.join(settings.MEDIA_URL, 'Formatos', 'reportePrestamo.json')
-
-        #     return JsonResponse({'url': json_file_url})  
-        
-
-
-
+        return HttpResponse("No se encontraron préstamos para esta búsqueda.")

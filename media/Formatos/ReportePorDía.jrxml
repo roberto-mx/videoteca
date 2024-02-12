@@ -27,7 +27,9 @@
 	<field name="pres_fecha_prestamo" class="java.lang.String"/>
 	<field name="pres_estatus" class="java.lang.String"/>
 	<field name="nombre_usuario" class="java.lang.String"/>
-	<field name="Consecutivo" class="java.lang.String"/>
+	<field name="consecutivo" class="java.lang.String"/>
+	<field name="logo1" class="java.lang.String"/>
+	<field name="logo2" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -35,11 +37,11 @@
 		<band height="132" splitType="Stretch">
 			<image onErrorType="Blank">
 				<reportElement x="0" y="0" width="50" height="50" uuid="1dcd8fe8-5540-40f4-90d4-d361b4d1f16e"/>
-				<imageExpression><![CDATA[$P{img1}]]></imageExpression>
+				<imageExpression><![CDATA[$F{logo1}]]></imageExpression>
 			</image>
 			<image onErrorType="Blank">
 				<reportElement x="150" y="0" width="50" height="50" uuid="511f45d1-6991-4632-ab5a-db2b144be9ce"/>
-				<imageExpression><![CDATA[$P{img2}]]></imageExpression>
+				<imageExpression><![CDATA[$F{logo2}]]></imageExpression>
 			</image>
 			<line>
 				<reportElement x="0" y="131" width="776" height="1" uuid="9b121375-b6bb-47c9-906c-59dd7d4faaf1"/>
@@ -54,8 +56,10 @@ Departamento de Conservación de Acervos Videográficos]]></text>
 	<pageHeader>
 		<band height="39" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="9" width="780" height="30" forecolor="#FFFFFF" backcolor="#336B87" uuid="30c94835-a250-414f-adc3-a4ffbbcea9d9"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement mode="Opaque" x="0" y="9" width="776" height="30" forecolor="#FFFFFF" backcolor="#771414" uuid="30c94835-a250-414f-adc3-a4ffbbcea9d9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="12" isBold="true"/>
+				</textElement>
 				<text><![CDATA[REPORTE DE PRESTAMOS-VIDEOTECA:]]></text>
 			</staticText>
 		</band>
@@ -63,32 +67,27 @@ Departamento de Conservación de Acervos Videográficos]]></text>
 	<columnHeader>
 		<band height="36">
 			<staticText>
-				<reportElement x="70" y="16" width="130" height="20" uuid="8e4dc158-48a4-492b-ae1c-a2d115b469a3"/>
+				<reportElement x="90" y="16" width="150" height="20" uuid="8e4dc158-48a4-492b-ae1c-a2d115b469a3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Folio]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="200" y="16" width="120" height="20" uuid="70a8921e-e13a-45e1-bb53-42f68fb28a27"/>
+				<reportElement x="240" y="16" width="140" height="20" uuid="70a8921e-e13a-45e1-bb53-42f68fb28a27"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Matrícula]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="320" y="16" width="200" height="20" uuid="4f8679f1-cda3-4901-924c-42d5a0977808"/>
+				<reportElement x="380" y="16" width="260" height="20" uuid="4f8679f1-cda3-4901-924c-42d5a0977808"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="520" y="16" width="136" height="20" uuid="ac19e1cc-4957-40f1-bf6a-1d32c18c73ca"/>
+				<reportElement x="640" y="16" width="136" height="20" uuid="ac19e1cc-4957-40f1-bf6a-1d32c18c73ca"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="656" y="16" width="120" height="20" uuid="d531f3b5-a529-4663-a4aa-19c57374f228"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Estatus]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="16" width="70" height="20" uuid="31afb7f4-2386-4057-924b-4441615fdc7d">
+				<reportElement x="0" y="16" width="90" height="20" uuid="31afb7f4-2386-4057-924b-4441615fdc7d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="831fec68-0514-4cc0-9ee0-e2ddcb948465"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
@@ -99,38 +98,31 @@ Departamento de Conservación de Acervos Videográficos]]></text>
 	<detail>
 		<band height="41" splitType="Stretch">
 			<textField>
-				<reportElement x="70" y="0" width="130" height="30" uuid="64ce4c15-20dd-4c36-add9-ddb48e30382e"/>
+				<reportElement x="90" y="0" width="150" height="30" uuid="64ce4c15-20dd-4c36-add9-ddb48e30382e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{pres_folio}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="200" y="0" width="120" height="30" uuid="1454d831-5167-471d-bcdb-dbd1f1ee0366"/>
+				<reportElement x="240" y="0" width="140" height="30" uuid="1454d831-5167-471d-bcdb-dbd1f1ee0366"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{usua_clave}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="320" y="0" width="200" height="30" uuid="fe37a152-b559-4043-9c7f-487e4bd46287"/>
+				<reportElement x="380" y="0" width="260" height="30" uuid="fe37a152-b559-4043-9c7f-487e4bd46287"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{nombre_usuario}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="520" y="0" width="136" height="30" uuid="796a6786-319f-4ed6-ac86-900d27803ae6"/>
+				<reportElement x="640" y="0" width="136" height="30" uuid="796a6786-319f-4ed6-ac86-900d27803ae6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{pres_fecha_prestamo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="656" y="0" width="120" height="30" uuid="8c576c7a-6528-44fa-9b3e-ca784f87f0a9">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{pres_estatus}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="0" width="70" height="30" uuid="02c712a7-61d3-4e11-a943-61de4f770b40">
+				<reportElement x="0" y="0" width="90" height="30" uuid="02c712a7-61d3-4e11-a943-61de4f770b40">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="831fec68-0514-4cc0-9ee0-e2ddcb948465"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{Consecutivo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{consecutivo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
