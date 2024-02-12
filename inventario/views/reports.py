@@ -802,6 +802,8 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
     if prestamos_list:
         # Crear un diccionario con la lista de préstamos
         data = {'prestamos': prestamos_list}
+        data['logo1'] = settings.MEDIA_ROOT+ '/Formatos/logo-sep.png', 
+        data['logo2'] =  settings.MEDIA_ROOT+ '/Formatos/logo-aprendemx.png', 
         
         # Ruta donde se guardará el archivo JSON
         json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')
