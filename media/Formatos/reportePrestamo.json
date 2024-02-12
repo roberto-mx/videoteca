@@ -1,34 +1,14 @@
 {
     "prestamos": [
         {
-            "pres_folio": 70310,
+            "pres_folio": 70306,
             "usvi_clave": "ahernandez",
-            "usua_clave": "H210374",
-            "pres_fechahora": "2024-02-06 12:30:04.805007",
-            "pres_fecha_prestamo": "2024-02-06 12:30:04",
+            "usua_clave": "H210405",
+            "pres_fechahora": "2024-02-01 11:27:21.154410",
+            "pres_fecha_prestamo": "2024-02-01 11:27:21",
             "pres_fecha_devolucion": null,
             "pres_estatus": "X",
-            "nombre_usuario": "Enrique Bernardino León Hernández"
-        },
-        {
-            "pres_folio": 70309,
-            "usvi_clave": "ahernandez",
-            "usua_clave": "H210374",
-            "pres_fechahora": "2024-02-06 11:33:07.108030",
-            "pres_fecha_prestamo": "2024-02-06 11:33:07",
-            "pres_fecha_devolucion": null,
-            "pres_estatus": "X",
-            "nombre_usuario": "Enrique Bernardino León Hernández"
-        },
-        {
-            "pres_folio": 70308,
-            "usvi_clave": "ahernandez",
-            "usua_clave": "H210388",
-            "pres_fechahora": "2024-02-02 14:03:06.158728",
-            "pres_fecha_prestamo": "2024-02-02 14:03:06",
-            "pres_fecha_devolucion": null,
-            "pres_estatus": "X",
-            "nombre_usuario": "Julio Cesar Corona Castillo"
+            "nombre_usuario": "Carlos Vázquez Castañeda"
         },
         {
             "pres_folio": 70307,
@@ -39,16 +19,6 @@
             "pres_fecha_devolucion": null,
             "pres_estatus": "X",
             "nombre_usuario": "Julio Cesar Corona Castillo"
-        },
-        {
-            "pres_folio": 70306,
-            "usvi_clave": "ahernandez",
-            "usua_clave": "H210405",
-            "pres_fechahora": "2024-02-01 11:27:21.154410",
-            "pres_fecha_prestamo": "2024-02-01 11:27:21",
-            "pres_fecha_devolucion": null,
-            "pres_estatus": "X",
-            "nombre_usuario": "Carlos Vázquez Castañeda"
         }
     ]
 }
