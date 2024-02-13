@@ -776,11 +776,21 @@ def getReport(request):
     
 
 def generateJson(queryset, matricula=None, day=None, week=None, month=None, search_type=None):
+    # Diccionario para mapear los tipos de reporte de inglés a español
+    tipos_reporte_espanol = {
+        'byDay': 'día',
+        'byWeek': 'semana',
+        'byMonth': 'mes',
+        'byMatricula': 'matrícula'
+    }
+    
     prestamos_list = list(queryset.values())
+    total_registros = len(prestamos_list)
     for i, prestamo in enumerate(prestamos_list, start=1):
         prestamo['consecutivo'] = i
     matriculas_list = [prestamo['usua_clave'] for prestamo in prestamos_list]
     cursor = connections['users'].cursor()
+    print('Tipo de prestamo', search_type)
 
     if matriculas_list:
         cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
@@ -794,9 +804,11 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         matricula = prestamo['usua_clave']
         nombre_usuario = usuarios_dict.get(matricula, '')
         prestamo['nombre_usuario'] = nombre_usuario
-        prestamo['aprende'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos','logo-aprendemx.png')
-        prestamo['sep'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos','logo-sep.png')
-           
+        prestamo['aprende'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos', 'logo-aprendemx.png')
+        prestamo['sep'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos', 'EducaciónAprende.jpeg')
+        prestamo['tipo_reporte'] = tipos_reporte_espanol.get(search_type, search_type)
+        prestamo['fecha'] = day if day else week if week else month
+        prestamo['total_registros'] = total_registros
 
     # Convertir objetos datetime a cadenas de texto antes de serializar
     for prestamo in prestamos_list:
@@ -806,18 +818,12 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         # Crear un diccionario con la lista de préstamos
         data = {'prestamos': prestamos_list}
 
-        # data['logo1'] = settings.MEDIA_ROOT+ '/Formatos/logo-sep.png',
-        # data['logo2'] = settings.MEDIA_ROOT+ '/Formatos/logo-aprendemx.png', 
-
-        
-        # Ruta donde se guardará el archivo JSON
         json_file_path = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'reportePrestamo.json')
 
         # Escribir los datos en el archivo JSON
         with open(json_file_path, 'w', encoding='utf8') as json_file:
             json.dump(data, json_file, indent=4, ensure_ascii=False, default=str)
 
-        # Configurar la generación del informe PDF
         input_file = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'ReportePorDía.jrxml')
         output_file = os.path.join(settings.MEDIA_ROOT, 'Formatos', 'ReportePorDía.pdf')
         conn = {
