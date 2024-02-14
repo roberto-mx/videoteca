@@ -30,9 +30,9 @@
 	</variable>
 	<group name="GroupFooter" isStartNewColumn="true">
 		<groupFooter>
-			<band height="24">
+			<band height="39">
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="-9" y="4" width="143" height="15" uuid="80dbb203-2c96-4b8f-b1ac-227d2dc506b5">
+					<reportElement positionType="FixRelativeToBottom" x="0" y="2" width="99" height="35" uuid="80dbb203-2c96-4b8f-b1ac-227d2dc506b5">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -43,7 +43,7 @@
 					<text><![CDATA[Fecha y hora de impresión:]]></text>
 				</staticText>
 				<textField>
-					<reportElement positionType="FixRelativeToBottom" x="135" y="4" width="134" height="15" uuid="91c63241-48dc-4548-b7ca-03e914f242d9">
+					<reportElement positionType="FixRelativeToBottom" x="100" y="2" width="134" height="15" uuid="91c63241-48dc-4548-b7ca-03e914f242d9">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="284444d7-ea3a-424b-b86e-4cfba1ff29b2"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -52,16 +52,16 @@
 					<textFieldExpression><![CDATA[$F{fecha_hora_actual}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="490" y="5" width="67" height="14" uuid="1bc15b34-b5f1-414e-8084-4ab92a411acd">
+					<reportElement positionType="FixRelativeToBottom" x="480" y="0" width="67" height="30" uuid="1bc15b34-b5f1-414e-8084-4ab92a411acd">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[Registros]]></text>
+					<text><![CDATA[Número de registros]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="557" y="4" width="82" height="15" uuid="471b20e0-398b-47c6-abe4-ba65db1784d2">
+					<reportElement x="547" y="10" width="82" height="15" uuid="471b20e0-398b-47c6-abe4-ba65db1784d2">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ba8e97c7-4c31-4a90-9c71-5b6780f3d996"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
