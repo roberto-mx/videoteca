@@ -11,9 +11,10 @@ from django.db.models import Q
 from reportlab.lib.pagesizes import letter, landscape
 from django.db import connections
 import json
-from datetime import datetime
+# from datetime import datetime
 from django.db import connections
 from datetime import datetime, timedelta, date
+
 
 
 
@@ -592,7 +593,6 @@ class pdfPrestamo(FPDF):
         self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
 
-
     def generate_table(self, data):
         total_registros = len(data)
         consecutivo = 1
@@ -747,6 +747,7 @@ def getReport(request):
     week = request.GET.get('week')
     month = request.GET.get('month')
     matricula = request.GET.get('matricula')
+
     
     # Seleccionar el tipo de búsqueda
     if search_type == 'byDay':
@@ -778,11 +779,14 @@ def getReport(request):
 def generateJson(queryset, matricula=None, day=None, week=None, month=None, search_type=None):
     # Diccionario para mapear los tipos de reporte de inglés a español
     tipos_reporte_espanol = {
-        'byDay': 'día',
-        'byWeek': 'semana',
-        'byMonth': 'mes',
+        'byDay': 'Por día',
+        'byWeek': 'Semanal',
+        'byMonth': 'Mesual',
         'byMatricula': 'matrícula'
     }
+
+    fecha_hora_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    mesesEnEspaniol = ['Enero', 'Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembe', 'Octube','Noviembre','Diciembre' ]
     
     prestamos_list = list(queryset.values())
     total_registros = len(prestamos_list)
@@ -807,8 +811,23 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         prestamo['aprende'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos', 'logo-aprendemx.png')
         prestamo['sep'] =  os.path.join(settings.MEDIA_ROOT, 'Formatos', 'EducaciónAprende.jpeg')
         prestamo['tipo_reporte'] = tipos_reporte_espanol.get(search_type, search_type)
-        prestamo['fecha'] = day if day else week if week else month
         prestamo['total_registros'] = total_registros
+        prestamo['fecha_hora_actual'] = fecha_hora_actual
+
+        if search_type == 'byDay':
+            fecha_dt = datetime.strptime(day, "%Y-%m-%d")
+            fecha = f"{fecha_dt.day} de {mesesEnEspaniol[fecha_dt.month - 1]} de {fecha_dt.year}"
+        elif search_type == 'byWeek':
+            year, week_number = map(int, week.split('-W'))
+            inicio_semana = datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w").date()
+            fin_semana = inicio_semana + timedelta(days=4)
+            fecha = f"del {inicio_semana.day} de {mesesEnEspaniol[inicio_semana.month - 1]} al {fin_semana.day} de {mesesEnEspaniol[fin_semana.month - 1]} de {year}"
+        elif search_type == 'byMonth':
+            year, month_number = map(int, month.split('-'))
+            fecha = f"{mesesEnEspaniol[month_number - 1]} de {year}"
+        else:
+            fecha = ""
+        prestamo['fecha']=fecha
 
     # Convertir objetos datetime a cadenas de texto antes de serializar
     for prestamo in prestamos_list:

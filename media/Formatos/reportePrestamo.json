@@ -12,9 +12,10 @@
             "nombre_usuario": "Enrique Bernardino León Hernández",
             "aprende": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\logo-aprendemx.png",
             "sep": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\EducaciónAprende.jpeg",
-            "tipo_reporte": "mes",
-            "fecha": "2024-02",
-            "total_registros": 5
+            "tipo_reporte": "Mesual",
+            "total_registros": 5,
+            "fecha_hora_actual": "2024-02-13 18:07:21",
+            "fecha": "Febrero de 2024"
         },
         {
             "pres_folio": 70309,
@@ -28,9 +29,10 @@
             "nombre_usuario": "Enrique Bernardino León Hernández",
             "aprende": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\logo-aprendemx.png",
             "sep": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\EducaciónAprende.jpeg",
-            "tipo_reporte": "mes",
-            "fecha": "2024-02",
-            "total_registros": 5
+            "tipo_reporte": "Mesual",
+            "total_registros": 5,
+            "fecha_hora_actual": "2024-02-13 18:07:21",
+            "fecha": "Febrero de 2024"
         },
         {
             "pres_folio": 70308,
@@ -44,9 +46,10 @@
             "nombre_usuario": "Julio Cesar Corona Castillo",
             "aprende": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\logo-aprendemx.png",
             "sep": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\EducaciónAprende.jpeg",
-            "tipo_reporte": "mes",
-            "fecha": "2024-02",
-            "total_registros": 5
+            "tipo_reporte": "Mesual",
+            "total_registros": 5,
+            "fecha_hora_actual": "2024-02-13 18:07:21",
+            "fecha": "Febrero de 2024"
         },
         {
             "pres_folio": 70307,
@@ -60,9 +63,10 @@
             "nombre_usuario": "Julio Cesar Corona Castillo",
             "aprende": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\logo-aprendemx.png",
             "sep": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\EducaciónAprende.jpeg",
-            "tipo_reporte": "mes",
-            "fecha": "2024-02",
-            "total_registros": 5
+            "tipo_reporte": "Mesual",
+            "total_registros": 5,
+            "fecha_hora_actual": "2024-02-13 18:07:21",
+            "fecha": "Febrero de 2024"
         },
         {
             "pres_folio": 70306,
@@ -76,9 +80,10 @@
             "nombre_usuario": "Carlos Vázquez Castañeda",
             "aprende": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\logo-aprendemx.png",
             "sep": "C:\\Users\\MIJIMENEZ\\Desktop\\videoteca\\media\\Formatos\\EducaciónAprende.jpeg",
-            "tipo_reporte": "mes",
-            "fecha": "2024-02",
-            "total_registros": 5
+            "tipo_reporte": "Mesual",
+            "total_registros": 5,
+            "fecha_hora_actual": "2024-02-13 18:07:21",
+            "fecha": "Febrero de 2024"
         }
     ]
 }
