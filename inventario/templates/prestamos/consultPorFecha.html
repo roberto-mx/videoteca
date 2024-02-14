@@ -246,12 +246,10 @@
                 window.open(url); // Abrir el PDF en una nueva ventana
             })
             .catch(error => {
-                console.error('Error:', error);
+                //console.error('Error:', error);
+                messageAlerta('error', error,'¡Oops!','#18463b');  
             });
         });
-    
-
-
     });
 
 </script>

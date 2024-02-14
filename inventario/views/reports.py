@@ -779,9 +779,9 @@ def getReport(request):
 def generateJson(queryset, matricula=None, day=None, week=None, month=None, search_type=None):
     # Diccionario para mapear los tipos de reporte de inglés a español
     tipos_reporte_espanol = {
-        'byDay': 'Por día',
-        'byWeek': 'Semanal',
-        'byMonth': 'Mesual',
+        'byDay': 'POR DÍA',
+        'byWeek': 'SEMANAL',
+        'byMonth': 'MENSUAL',
         'byMatricula': 'matrícula'
     }
 
@@ -816,15 +816,15 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
 
         if search_type == 'byDay':
             fecha_dt = datetime.strptime(day, "%Y-%m-%d")
-            fecha = f"{fecha_dt.day} de {mesesEnEspaniol[fecha_dt.month - 1]} de {fecha_dt.year}"
+            fecha = f"Reporte del día {fecha_dt.day} de {mesesEnEspaniol[fecha_dt.month - 1]} de {fecha_dt.year}"
         elif search_type == 'byWeek':
             year, week_number = map(int, week.split('-W'))
             inicio_semana = datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w").date()
             fin_semana = inicio_semana + timedelta(days=4)
-            fecha = f"del {inicio_semana.day} de {mesesEnEspaniol[inicio_semana.month - 1]} al {fin_semana.day} de {mesesEnEspaniol[fin_semana.month - 1]} de {year}"
+            fecha = f"Reporte del  {inicio_semana.day} de {mesesEnEspaniol[inicio_semana.month - 1]} al {fin_semana.day} de {mesesEnEspaniol[fin_semana.month - 1]} de {year}"
         elif search_type == 'byMonth':
             year, month_number = map(int, month.split('-'))
-            fecha = f"{mesesEnEspaniol[month_number - 1]} de {year}"
+            fecha = f"Reporte del mes de {mesesEnEspaniol[month_number - 1]} de {year}"
         else:
             fecha = ""
         prestamo['fecha']=fecha
