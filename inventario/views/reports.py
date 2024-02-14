@@ -747,7 +747,8 @@ def getReport(request):
     week = request.GET.get('week')
     month = request.GET.get('month')
     matricula = request.GET.get('matricula')
-
+    
+    print('Busque', matricula)
     
     # Seleccionar el tipo de búsqueda
     if search_type == 'byDay':
@@ -769,9 +770,10 @@ def getReport(request):
         queryset = Prestamos.objects.filter(pres_fecha_prestamo__year=year, pres_fecha_prestamo__month=month_number).order_by('-pres_fecha_prestamo')
         return generateJson(queryset, matricula, month=month, search_type=search_type)
        
-    elif search_type == 'byMatricula':
+    elif matricula and request.GET.get('checkAdeudos'):
         prestamos = Prestamos.objects.filter(usua_clave=matricula, pres_estatus='X')
-        return generateJson(prestamos, matricula, search_type=search_type)
+        return generateJson(prestamos, matricula, search_type='matricula')
+    
     else:
         return HttpResponse("Tipo de búsqueda no válido.")
     
@@ -782,7 +784,7 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         'byDay': 'POR DÍA',
         'byWeek': 'SEMANAL',
         'byMonth': 'MENSUAL',
-        'byMatricula': 'matrícula'
+        'matricula': 'ADEUDO POR MATRICULA'
     }
 
     fecha_hora_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -794,8 +796,7 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         prestamo['consecutivo'] = i
     matriculas_list = [prestamo['usua_clave'] for prestamo in prestamos_list]
     cursor = connections['users'].cursor()
-    print('Tipo de prestamo', search_type)
-
+    
     if matriculas_list:
         cursor.execute("SELECT matricula, nombres, apellido1, apellido2 FROM people_person WHERE matricula IN %s", (tuple(matriculas_list),))
         users_data = cursor.fetchall()
