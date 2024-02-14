@@ -88,7 +88,7 @@
 				<imageExpression><![CDATA[$F{aprende}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="300" y="60" width="120" height="21" uuid="28c956a4-00a3-41d5-8df7-f7f51587a5e4">
+				<reportElement x="288" y="60" width="120" height="21" uuid="28c956a4-00a3-41d5-8df7-f7f51587a5e4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c0fdf57e-389a-4567-b3e6-50433f5cf704"/>
 				</reportElement>
 				<textElement>

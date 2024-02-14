@@ -784,7 +784,7 @@ def generateJson(queryset, matricula=None, day=None, week=None, month=None, sear
         'byDay': 'POR DÍA',
         'byWeek': 'SEMANAL',
         'byMonth': 'MENSUAL',
-        'matricula': 'ADEUDO POR MATRICULA'
+        'matricula': 'POR ADEUDO'
     }
 
     fecha_hora_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
