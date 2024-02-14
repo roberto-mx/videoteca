@@ -52,7 +52,7 @@
 					<textFieldExpression><![CDATA[$F{fecha_hora_actual}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="230" y="-1" width="137" height="17" uuid="1bc15b34-b5f1-414e-8084-4ab92a411acd">
+					<reportElement positionType="FixRelativeToBottom" x="269" y="10" width="137" height="17" uuid="1bc15b34-b5f1-414e-8084-4ab92a411acd">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement>
@@ -61,7 +61,7 @@
 					<text><![CDATA[Número de registros]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="340" y="0" width="82" height="15" uuid="471b20e0-398b-47c6-abe4-ba65db1784d2">
+					<reportElement x="379" y="11" width="82" height="15" uuid="471b20e0-398b-47c6-abe4-ba65db1784d2">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ba8e97c7-4c31-4a90-9c71-5b6780f3d996"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
