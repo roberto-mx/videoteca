@@ -43,7 +43,7 @@
 					<text><![CDATA[Fecha y hora de impresión:]]></text>
 				</staticText>
 				<textField>
-					<reportElement positionType="FixRelativeToBottom" x="135" y="4" width="110" height="15" uuid="91c63241-48dc-4548-b7ca-03e914f242d9">
+					<reportElement positionType="FixRelativeToBottom" x="124" y="4" width="110" height="15" uuid="91c63241-48dc-4548-b7ca-03e914f242d9">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="284444d7-ea3a-424b-b86e-4cfba1ff29b2"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -304,13 +304,6 @@ Departamento de Conservación de Acervos Videográficos]]></text>
 				</reportElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="295" y="0" width="45" height="15" uuid="22284190-884c-4d7e-be14-e36ae72a678b"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Página.]]></text>
-			</staticText>
 		</band>
 	</pageFooter>
 </jasperReport>
