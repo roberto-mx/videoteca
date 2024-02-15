@@ -758,7 +758,11 @@ function addItemOut() {
             } else if (response.errorMessage === "El usuario debe devolver las cintas faltantes antes de solicitar nuevos préstamos") {
               // El usuario tiene cintas vencida
               alertMessage('warning', `El usuario debe devolver las siguientes cintas antes de solicitar nuevos préstamos: ${response.cintasFaltantes.join(', ')}`, '¡Alto!');
-            } else {
+            }  else if (response.errorMessage === "La matrícula ingresada, no pertenece a ningún usuario") {
+              // El usuario tiene cintas vencida
+              alertMessage('warning', `${response.errorMessage}`, '¡Alto!');
+            } 
+            else {
               alertMessage('warning', `La cinta con código ${response.codigoBarras} ya está registrada y no ha sido devuelta.`, '¡Oops!');
             }
             cleanTableOut();
