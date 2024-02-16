@@ -27,7 +27,7 @@
 
           <a class="btn btn-button btn-sm" href="{% url 'getBusqueda' %}" type="button" style="background: #A1A6A9">
             <div style="display: flex; flex-direction: column; align-items: center;">
-              <span style="color: white;">Consulta de Prestamos</span>
+              <span style="color: white;">Consulta de préstamos y adeudos</span>
             </div>
           </a>
         </form>
@@ -759,7 +759,7 @@ function addItemOut() {
               // El usuario tiene cintas vencida
               alertMessage('warning', `El usuario debe devolver las siguientes cintas antes de solicitar nuevos préstamos: ${response.cintasFaltantes.join(', ')}`, '¡Alto!');
             }  else if (response.errorMessage === "La matrícula ingresada, no pertenece a ningún usuario") {
-              // El usuario tiene cintas vencida
+              // En caso de ingresar mal la matrícula
               alertMessage('warning', `${response.errorMessage}`, '¡Alto!');
             } 
             else {
