@@ -260,7 +260,7 @@ class GENERATE(FPDF):
             if row['pres_fecha_devolucion']:
                 fecha_devolucion = row['pres_fecha_devolucion'].strftime('%d-%m-%Y')
             else:
-                fecha_devolucion = ""  # Maneja el caso en que sea None
+                fecha_devolucion = "Sin Devolver"  # Maneja el caso en que sea None
             
             self.cell(60, 10, str(row['usuario_devuelve']), 1)
             self.cell(60, 10, fecha_devolucion, 1)
@@ -364,34 +364,28 @@ def generar_pdf_modal(request):
     return response
 
 # ---------------------------------------------------------------------------------------------------------------------------#
-
 class PDF_FOLIO(FPDF):
     def __init__(self, orientation='P', unit='mm', format='A4', q=None):
         super().__init__(orientation, unit, format)
         MEDIA_ROOT = settings.MEDIA_ROOT
-        # print('Este entra a inventario',MEDIA_ROOT)
         self.add_font('Montserrat', '',  os.path.join(MEDIA_ROOT, 'static','Montserrat-Regular.ttf'), uni=True)
         self.add_font('Montserrat', 'B', os.path.join(MEDIA_ROOT, 'static','Montserrat-Bold.ttf'), uni=True)
         self.q = q
         
     def header(self):
-    
         self.image('media/images/EducaciónAprende.jpeg', x=10, y=8, w=50)
         self.image('media/images/logo-aprendemx.png', x=65, y=5, w=50)
         self.ln()
 
         self.set_font('Montserrat', 'B', 8)
-        self.cell(580,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
+        self.cell(400,1, 'SECRETARÍA DE EDUCACIÓN PÚBLICA', 0, 10, 'C')
         self.ln(3)
-        self.cell(535,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
-        # self.ln(3)
-        # self.cell(525,1, 'Audiovisual', 0, 20, 'C')
+        self.cell(355,1, 'Subdirección de Sistematización de Acervos y Desarrollo Audiovisual', 0, 20, 'C')
         self.ln(3)
-        self.cell(550,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
+        self.cell(372,1, 'Departamento de Conservación de Acervos Videográficos', 0, 20, 'C')
         self.ln(80)
 
         if userobjPrestamo:
-        
             email_institucional  = userobjPrestamo['Email']
             extension_telefonica = userobjPrestamo['Extension']
             nombre_completo      = userobjPrestamo['Obtiene']
@@ -415,22 +409,23 @@ class PDF_FOLIO(FPDF):
             self.cell(30.0, 6.0, extension_telefonica, 0, 0, 'L')
             self.ln(15)         
             self.set_font('Montserrat', 'B', 8)
-            self.cell(280, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
+            self.cell(224, 10, f'Prestamos de la cinta ({self.q})', 0, 0, 'C')
             self.ln(15)
+            
+            
 
             self.set_fill_color(144, 12, 63)
             self.set_text_color(255, 255, 255) 
+            self.cell(30, 10, 'Consecutivo', 1, 0, '', True)
             self.cell(40, 10, 'Folio', 1, 0, '', True)
             self.cell(40, 10, 'Usuario', 1, 0, '', True)
-            self.cell(80, 10, 'Fecha y Hora Prestamo', 1, 0, '', True)
-            self.cell(80, 10, 'Fecha de devolución', 1, 0, '', True)
-            self.cell(40, 10, 'Estatus', 1, 0, '', True)
+            self.cell(40, 10, 'Fecha prestamo', 1, 0, '', True)
+            self.cell(30, 10, 'Estatus', 1, 0, '', True)
             self.cell(40, 10, 'Código barras', 1, 0, '', True)
             self.set_text_color(0, 0, 0)
             self.ln()
             
     def footer(self):
-
         self.set_font('Montserrat', 'B', 8)
         self.set_xy(90.5, 50.0)
         self.cell(180, 10, 'Firma:', 0, 0, 'L')
@@ -441,20 +436,30 @@ class PDF_FOLIO(FPDF):
         self.set_font('Montserrat', '', 8)
         self.cell(0, 10, 'Página %s' % self.page_no(), 0, 0, 'C')
 
-
     def generate_table(self, data):
-       
+        consecutivo = 1
+        total_registros = len(data)  
         for row in data:
+            self.cell(30, 10, str(consecutivo), 1)  # Agregar consecutivo
+            consecutivo += 1 
             self.cell(40, 10, str(row['pres_folio']), 1)
             self.cell(40, 10, str(row['usua_clave']), 1)
-            self.cell(80, 10, str(row['pres_fechahora']), 1)
-            self.cell(80, 10, str(row['pres_fecha_devolucion']), 1)
-            self.cell(40, 10, str(row['pres_estatus']), 1)
+            if row['pres_fechahora']:
+                formatted_date = row['pres_fechahora'].strftime('%d-%m-%Y')
+                self.cell(40, 10, formatted_date, 1)
+            else:
+                self.cell(40, 10, '', 1)  # Celda vacía si no hay fecha
+            if row['pres_estatus'] == 'I':
+                self.cell(30, 10, "Entregado", 1)
+            else:
+                self.cell(30, 10, "En préstamo", 1)
             self.cell(40, 10, str(row['codigo_barras']), 1)
-            self.ln()
+            self.ln()  # Salto de línea para pasar a la siguiente fila
 
-           
-    
+        self.cell(0, 10, f'Total de registros: {total_registros}', 0, 0, 'C')
+        self.ln(15)  # Salto de línea adicional
+
+
 def generate_pdf_resgister_folio(request):
     q = request.GET.get('q')
     detalle_prestamos = DetallePrestamos.objects.filter(pres_folio=q)
@@ -516,7 +521,7 @@ def generate_pdf_resgister_folio(request):
 
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
-        pdf = PDF_FOLIO('P', 'mm', (350, 400), q)
+        pdf = PDF_FOLIO('P', 'mm', (240, 250), q)
         pdf.add_page()
 
         pdf.generate_table(prestamos_data)
