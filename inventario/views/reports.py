@@ -600,7 +600,7 @@ def CreateJsonInReport(row, codes, user):
     print('Total de registros en data:', total_registros)
     
     for item in data['reporte']:
-        item['total_registros'] = total_registros  # Agrega el total de registros a cada objeto
+        item['total'] = total_registros  # Agrega el total de registros a cada objeto
 
     with open(settings.MEDIA_ROOT + '/Formatos/dataHeader.json', 'w', encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False)
