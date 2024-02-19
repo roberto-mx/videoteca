@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<!-- Created with Jaspersoft Studio version 6.21.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteDevolucionHeader" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="821fbd96-4215-4202-b330-64a1b3cd4e5c">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Header"/>
 	<queryString language="json">
@@ -18,6 +18,7 @@
 	<field name="Logo1" class="java.lang.String"/>
 	<field name="Logo2" class="java.lang.String"/>
 	<field name="Consecutivo" class="java.lang.String"/>
+	<field name="total_registros" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -176,6 +177,16 @@
 				</textElement>
 				<text><![CDATA[Correo]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="460" y="20" width="100" height="15" uuid="75ac575a-3ae8-4bb3-b873-64b9eccb0878">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="32eeada5-c840-4d59-be98-a2efdb7648a4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{total_registros}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="360" y="17" width="90" height="20" uuid="c064ec2c-ebe0-4ec8-9496-b4da61a104b2"/>
+				<text><![CDATA[Total de registros:]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -210,7 +221,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="33" splitType="Stretch">
+		<band height="43" splitType="Stretch">
 			<textField>
 				<reportElement x="80" y="0" width="100" height="30" uuid="34f578c1-60f2-4de2-b42c-a605b84b9964">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
