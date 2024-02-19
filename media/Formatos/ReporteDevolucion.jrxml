@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
+<!-- Created with Jaspersoft Studio version 6.21.0.final utlizzo versione della libreria JasperReports6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteDevolucionHeader" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="821fbd96-4215-4202-b330-64a1b3cd4e5c">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Header"/>
 	<queryString language="json">
@@ -27,7 +27,7 @@
 			<staticText>
 				<reportElement x="345" y="25" width="220" height="30" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="d89755a1-090f-4e95-bceb-11c8b13aaad8"/>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Formato de Devolución]]></text>
 			</staticText>
@@ -38,7 +38,7 @@
 			<staticText>
 				<reportElement x="345" y="5" width="220" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="68419cb5-311f-4c0d-88ef-0f8783d81ec8"/>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dirección General @prende.mx]]></text>
 			</staticText>
@@ -53,7 +53,7 @@
 			<staticText>
 				<reportElement x="165" y="0" width="220" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="1f1e523e-dc02-4df8-85c6-369a1d62b24c"/>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Devolución de Material]]></text>
 			</staticText>
@@ -62,7 +62,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{FechaDev}]]></textFieldExpression>
 			</textField>
@@ -74,7 +74,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
 			</textField>
@@ -86,7 +86,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Direccion}]]></textFieldExpression>
 			</textField>
@@ -98,7 +98,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Puesto}]]></textFieldExpression>
 			</textField>
@@ -107,7 +107,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Extension}]]></textFieldExpression>
 			</textField>
@@ -119,7 +119,7 @@
 					<bottomPen lineWidth="0.75"/>
 				</box>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Correo}]]></textFieldExpression>
 			</textField>
@@ -128,7 +128,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
@@ -137,7 +137,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dirección]]></text>
 			</staticText>
@@ -146,7 +146,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Puesto]]></text>
 			</staticText>
@@ -155,7 +155,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha de Devolución]]></text>
 			</staticText>
@@ -164,7 +164,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat SemiBold" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Extensión]]></text>
 			</staticText>
@@ -173,20 +173,23 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10" isBold="true"/>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Correo]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="460" y="20" width="100" height="15" uuid="75ac575a-3ae8-4bb3-b873-64b9eccb0878">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="32eeada5-c840-4d59-be98-a2efdb7648a4"/>
+			<staticText>
+				<reportElement x="220" y="30" width="100" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="6a0e466a-ad5b-4abe-b713-128f4c698843">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
+				<textElement>
+					<font fontName="Montserrat Medium" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de registros]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="320" y="33" width="100" height="15" uuid="595e0e93-d6b7-43b5-b648-f8257368ccc8"/>
 				<textFieldExpression><![CDATA[$F{total_registros}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="360" y="17" width="90" height="20" uuid="c064ec2c-ebe0-4ec8-9496-b4da61a104b2"/>
-				<text><![CDATA[Total de registros:]]></text>
-			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -196,16 +199,16 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat SemiBold" size="10"/>
 				</textElement>
 				<text><![CDATA[CONSECUTIVO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="90" y="10" width="100" height="20" uuid="26cff14c-781a-4018-be07-915d0d40d156">
+				<reportElement x="80" y="10" width="100" height="20" uuid="26cff14c-781a-4018-be07-915d0d40d156">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center">
-					<font fontName="Montserrat" size="10"/>
+				<textElement>
+					<font fontName="Montserrat SemiBold" size="10"/>
 				</textElement>
 				<text><![CDATA[CÓDIGO]]></text>
 			</staticText>
@@ -214,20 +217,20 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat SemiBold" size="10"/>
 				</textElement>
 				<text><![CDATA[CÓDIGO BARRAS]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="43" splitType="Stretch">
+		<band height="45" splitType="Stretch">
 			<textField>
 				<reportElement x="80" y="0" width="100" height="30" uuid="34f578c1-60f2-4de2-b42c-a605b84b9964">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center">
-					<font fontName="Montserrat" size="10"/>
+				<textElement>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Codigo}]]></textFieldExpression>
 			</textField>
@@ -235,8 +238,8 @@
 				<reportElement x="-3" y="0" width="86" height="30" uuid="3339eea1-7f34-4d50-8b51-50058f7eea83">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2f371429-a94f-4dec-9e02-76487587c95f"/>
 				</reportElement>
-				<textElement textAlignment="Center">
-					<font fontName="Montserrat" size="10"/>
+				<textElement>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Consecutivo}]]></textFieldExpression>
 			</textField>
@@ -249,49 +252,48 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="81" splitType="Stretch">
+		<band height="79" splitType="Stretch">
 			<staticText>
-				<reportElement x="30" y="0" width="100" height="30" uuid="ca6183a1-36ba-450a-89b4-4e840903332d"/>
+				<reportElement x="25" y="0" width="100" height="30" uuid="ca6183a1-36ba-450a-89b4-4e840903332d"/>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<text><![CDATA[Recibe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="420" y="0" width="100" height="30" uuid="d82c797a-824b-43ec-afbd-6ab06ca2f45a"/>
+				<reportElement x="390" y="0" width="100" height="30" uuid="d82c797a-824b-43ec-afbd-6ab06ca2f45a"/>
 				<textElement>
-					<font fontName="Montserrat" size="10"/>
+					<font fontName="Montserrat Light" size="10"/>
 				</textElement>
 				<text><![CDATA[Entrega]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="49" width="181" height="1" uuid="1d3ba0c3-c75e-44d6-a527-2a63b02b6e74">
+				<reportElement x="0" y="65" width="181" height="1" uuid="1d3ba0c3-c75e-44d6-a527-2a63b02b6e74">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="373" y="48" width="181" height="1" uuid="dee596ef-5ee4-4494-baaf-0d1b69d1e670">
+				<reportElement x="370" y="70" width="181" height="1" uuid="dee596ef-5ee4-4494-baaf-0d1b69d1e670">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 			</line>
-		</band>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch">
 			<textField>
-				<reportElement x="373" y="-32" width="181" height="30" uuid="3be59b7b-633d-4a3d-bb3c-6d25d78db118"/>
-				<textElement textAlignment="Center">
-					<font fontName="Montserrat" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="-31" width="181" height="30" uuid="64dc5eac-2870-4587-82db-6d58ec7f31fd"/>
-				<textElement textAlignment="Center">
-					<font fontName="Montserrat" size="10"/>
+				<reportElement x="0" y="40" width="181" height="30" uuid="64dc5eac-2870-4587-82db-6d58ec7f31fd"/>
+				<textElement>
+					<font fontName="Montserrat Medium" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Recibe}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="370" y="40" width="100" height="30" uuid="3be59b7b-633d-4a3d-bb3c-6d25d78db118"/>
+				<textElement>
+					<font fontName="Montserrat Medium" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
+			</textField>
 		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
 	</summary>
 </jasperReport>
