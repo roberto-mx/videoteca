@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.0.final utlizzo versione della libreria JasperReports6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
+<!-- Created with Jaspersoft Studio version 6.21.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteDevolucionHeader" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="821fbd96-4215-4202-b330-64a1b3cd4e5c">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Header"/>
 	<queryString language="json">
@@ -19,6 +19,10 @@
 	<field name="Logo2" class="java.lang.String"/>
 	<field name="Consecutivo" class="java.lang.String"/>
 	<field name="total_registros" class="java.lang.String"/>
+	<field name="total" class="java.lang.String"/>
+	<variable name="total1" class="java.lang.Integer" resetType="Page" calculation="Count">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -178,7 +182,7 @@
 				<text><![CDATA[Correo]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="220" y="30" width="100" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="6a0e466a-ad5b-4abe-b713-128f4c698843">
+				<reportElement x="220" y="30" width="100" height="15" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="6a0e466a-ad5b-4abe-b713-128f4c698843">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
@@ -187,8 +191,11 @@
 				<text><![CDATA[Total de registros]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="320" y="33" width="100" height="15" uuid="595e0e93-d6b7-43b5-b648-f8257368ccc8"/>
-				<textFieldExpression><![CDATA[$F{total_registros}]]></textFieldExpression>
+				<reportElement x="318" y="30" width="50" height="15" uuid="9c66d44b-898e-40d7-938e-2e887f21de98">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="74aa881b-a98a-4c25-a874-406fe27067b0"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -224,7 +231,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="45" splitType="Stretch">
+		<band height="52" splitType="Stretch">
 			<textField>
 				<reportElement x="80" y="0" width="100" height="30" uuid="34f578c1-60f2-4de2-b42c-a605b84b9964">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
