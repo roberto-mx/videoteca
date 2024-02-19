@@ -90,7 +90,7 @@ class PrestamosListView(View):
         matriculas_list = list(matriculas)
 
         context = {'prestamos': queryset}
-        print(context)
+        # print(context)
 
         if matriculas_list:
             cursor = connections['users'].cursor()
@@ -157,7 +157,7 @@ def DetallesListView(request):
         'nombreCompleto': nombre_completo
     }
 
-    print(template_detalle['nombreCompleto'])
+    # print(template_detalle['nombreCompleto'])
 
     return JsonResponse(template_detalle, safe=False)
 
@@ -587,7 +587,7 @@ def getBusqueda(request):
             return JsonResponse(registro_data, safe=False)
                     
         elif searchType == 'byMonth' and month:
-            print('Entra en mes', month)
+            # print('Entra en mes', month)
             # Extraer el año y el mes de la cadena proporcionada
             year, month_number = map(int, month.split('-'))
             # Filtrar por año y mes
