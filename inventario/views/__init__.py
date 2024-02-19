@@ -69,6 +69,5 @@ from .reports import (
     generar_pdf_modal,
     generate_pdf_resgister_folio,
     GetFilePdf,
-    generate_pdf_prestamo,
     getReport
 )

@@ -45,7 +45,6 @@ from inventario.views import (
     consultaInventario,
     filtrarBusqueda,
     getBusqueda,
-    generate_pdf_prestamo,
     getReport
 )
 from django.contrib.auth import(
@@ -68,7 +67,6 @@ urlpatterns = [
     path('prestamos/generate_pdf_modal', generar_pdf_modal, name='generar_pdf_modal'),
     path('prestamos/person_people', obtenerPeoplePerson, name='obtenerPeoplePerson'),
     path('prestamos/getBusqueda', getBusqueda, name='getBusqueda'),
-    path('prestamos/generate_pdf_prestamo', generate_pdf_prestamo, name='generate_pdf_prestamo'),
     # Form
     path('calificaciones/consultaFormulario', consultaFormulario, name='consultaFormulario'),
     path('calificaciones/formulario', formulario, name='formulario'),
