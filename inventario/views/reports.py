@@ -21,10 +21,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 from io import BytesIO
 from email.mime.application import MIMEApplication
-
-
-
-
+from dotenv import load_dotenv
 
 
 
@@ -539,28 +536,36 @@ def generate_pdf_resgister_folio(request):
         pdf.generate_table(prestamos_data)
         pdf_bytes.write(pdf.output(dest='S').encode('latin1'))
 
-        # Configurar el correo electrónico
-        from_email = '333.mija@gmail.com'
-        password = 'roxbrhvwyjxdyxvg'
+        # Cargar las variables de entorno desde el archivo .env
+        load_dotenv()
+
+        # Configurar el correo electrónico-Acá mando las varibles de entorno|
+        from_email = os.getenv("EMAIL_USER")
+        password = os.getenv("EMAIL_PASSWORD")
+        smtp_server = os.getenv("SMTP")
+        smtp_port = os.getenv("SMTP_PORT")
         to_email = email_institucional
 
         msg = MIMEMultipart()
         msg['From'] = from_email
         msg['To'] = to_email
-        msg['Subject'] = 'Asunto del correo'
+        msg['Subject'] = f'Préstamos al usuario: {nombre_completo}'
 
-        body = 'Este es el cuerpo del correo electrónico.'
+        print(f'Este es el folio: {q}')
+
+        body = f'Se envía el reporte de prestamo, con el folio:{q}, siendo responsable de dichas cintas el usuari@ {nombre_completo}, quein a sido la persona que solicito dicho préstamo.'
         msg.attach(MIMEText(body, 'plain'))
 
         # Adjuntar el archivo PDF al correo electrónico desde BytesIO
-        pdf_bytes.seek(0)  # Reiniciar el cursor al principio del BytesIO
+        pdf_bytes.seek(0) 
         part = MIMEApplication(pdf_bytes.read(), _subtype='pdf')
-        pdf_bytes.seek(0)  # Reiniciar el cursor nuevamente al principio del BytesIO
-        part.add_header('Content-Disposition', f'attachment; filename="Videoteca_Código_{q}.pdf"')
+        pdf_bytes.seek(0)  
+        part.add_header('Content-Disposition', f"attachment; filename=Videoteca_Código_{q}.pdf")
         msg.attach(part)
 
         # Enviar el correo electrónico
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        # server = smtplib.SMTP('smtp.office365.com', 587)
+        server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
         server.login(from_email, password)
         text = msg.as_string()

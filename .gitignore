@@ -10,3 +10,4 @@ inventario/migrations/__pycache__/__init__.cpython-38.pyc
 inventario/migrations/
 videoteca/settings/
 myvenv/
+.env/

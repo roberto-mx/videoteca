@@ -550,14 +550,15 @@ function guardarRegistro(usuario, codigoBarras) {
       $('#searchBarCodeOut').val("").focus();
 
       const muestraFolio = data.Folio;
+      window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
 
-        $.ajax({
-          url: '{% url "generate_pdf_resgister_folio" %}',
-          data: {'q': muestraFolio},
-          success: function() {
-            window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
-          }
-        });
+        // $.ajax({
+        //   url: '{% url "generate_pdf_resgister_folio" %}',
+        //   data: {'q': muestraFolio},
+        //   success: function() {
+        //     window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
+        //   }
+        // });
 
       Swal.fire(
         '¡Exportado!',
