@@ -531,59 +531,59 @@ def generate_pdf_resgister_folio(request):
         global userobjPrestamo
         userobjPrestamo = MatriculaObPrestamo
 
-        user_login = request.user
-        user_email = user_login.email
+        # user_login = request.user
+        # user_email = user_login.email
 
-        if user_email:
+        # if user_email:
             # Generar el PDF y almacenarlo en un BytesIO
-            pdf_bytes = BytesIO()
-            pdf = PDF_FOLIO('P', 'mm', (240, 250), q)
-            pdf.add_page()
-            pdf.generate_table(prestamos_data)
-            pdf_bytes.write(pdf.output(dest='S').encode('latin1'))
+        pdf_bytes = BytesIO()
+        pdf = PDF_FOLIO('P', 'mm', (240, 250), q)
+        pdf.add_page()
+        pdf.generate_table(prestamos_data)
+        pdf_bytes.write(pdf.output(dest='S').encode('latin1'))
 
-            # Configurar el correo electrónico-Acá mando las varibles de entorno|
-            from_email = os.getenv("EMAIL_USER")
-            password = os.getenv("EMAIL_PASSWORD")
-            smtp_server = os.getenv("SMTP")
-            smtp_port = os.getenv("SMTP_PORT")
-            to_email = email_institucional
+        # Configurar el correo electrónico-Acá mando las varibles de entorno|
+        from_email = os.getenv("EMAIL_USER")
+        password = os.getenv("EMAIL_PASSWORD")
+        smtp_server = os.getenv("SMTP")
+        smtp_port = os.getenv("SMTP_PORT")
+        to_email = email_institucional
 
-            recipients = [to_email, user_email]
+        # recipients = [to_email, user_email]
 
-            msg = MIMEMultipart()
-            msg['From'] = from_email
-            # msg['To'] = to_email
-            msg['To'] = ', '.join(recipients)
-            msg['Subject'] = f'Préstamos al usuario: {nombre_completo}'
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = to_email
+        # msg['To'] = ', '.join(recipients)
+        msg['Subject'] = f'Préstamos al usuario: {nombre_completo}'
 
-            print(f'Este es el folio: {q}')
-            # Cuerpo del correo
-            body = f'Se envía el reporte de préstamo con el folio {q}. El usuario {nombre_completo} es responsable de estas cintas, quien solicitó el préstamo.'
-            msg.attach(MIMEText(body, 'plain'))
+        print(f'Este es el folio: {q}')
+        # Cuerpo del correo
+        body = f'Se envía el reporte de préstamo con el folio {q}. El usuario {nombre_completo} es responsable de estas cintas, quien solicitó el préstamo.'
+        msg.attach(MIMEText(body, 'plain'))
 
-            # Adjuntar el archivo PDF al correo electrónico desde BytesIO
-            pdf_bytes.seek(0) 
-            part = MIMEApplication(pdf_bytes.read(), _subtype='pdf')
-            pdf_bytes.seek(0)  
-            part.add_header('Content-Disposition', f"attachment; filename=Videoteca_Código_{q}.pdf")
-            msg.attach(part)
+        # Adjuntar el archivo PDF al correo electrónico desde BytesIO
+        pdf_bytes.seek(0) 
+        part = MIMEApplication(pdf_bytes.read(), _subtype='pdf')
+        pdf_bytes.seek(0)  
+        part.add_header('Content-Disposition', f"attachment; filename=Videoteca_Código_{q}.pdf")
+        msg.attach(part)
 
-            # Enviar el correo electrónico
-            # server = smtplib.SMTP('smtp.office365.com', 587)
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.starttls()
-            server.login(from_email, password)
-            text = msg.as_string()
-            server.sendmail(from_email, recipients, text)
-            server.quit()
+        # Enviar el correo electrónico
+        # server = smtplib.SMTP('smtp.office365.com', 587)
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(from_email, password)
+        text = msg.as_string()
+        server.sendmail(from_email, to_email, text)
+        server.quit()
 
-            # messages.success(request, f"Correo electrónico enviado correctamente a: {', '.join(recipients)}")
-            # print("Correo electrónico enviado correctamente a:", to_email)
-            print("Correo electrónico enviado correctamente a:", {', '.join(recipients)})
+        # messages.success(request, f"Correo electrónico enviado correctamente a: {', '.join(recipients)}")
+        # print("Correo electrónico enviado correctamente a:", to_email)
+        print(f"Correo electrónico enviado correctamente a: {to_email}")
 
 
-            return HttpResponse(content=pdf_bytes.getvalue(), content_type='application/pdf')
+        return HttpResponse(content=pdf_bytes.getvalue(), content_type='application/pdf')
 
     return HttpResponse("No se encontró la matrícula correspondiente.")
 
