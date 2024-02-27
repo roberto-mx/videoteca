@@ -14,6 +14,16 @@ import json
 # from datetime import datetime
 from django.db import connections
 from datetime import datetime, timedelta, date
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+from io import BytesIO
+from email.mime.application import MIMEApplication
+
+
+
 
 
 
@@ -476,15 +486,13 @@ def generate_pdf_resgister_folio(request):
         prestamo = Prestamos.objects.filter(pres_folio=pres_folio_id).first()
         detalles_prestamo = DetallePrestamos.objects.filter(pres_folio=pres_folio_id)
 
-        # Asegúrate de que los detalles_prestamo estén vacíos antes de comenzar a agregar datos
         if prestamo and detalles_prestamo.exists():
-            matri = prestamo.usua_clave  # Asignar el valor de matri antes del bucle
+            matri = prestamo.usua_clave
 
             for detalle in detalles_prestamo:
-                maestro_cintas = detalle.vide_codigo  # Accede al objeto MaestroCintas
+                maestro_cintas = detalle.vide_codigo
                 codigo_barras = maestro_cintas.video_cbarras if maestro_cintas else None
 
-                # Verifica si el código de barras ya existe en la lista antes de agregarlo
                 if not any(entry["codigo_barras"] == codigo_barras for entry in prestamos_data):
                     prestamo_data = {
                         "pres_folio": prestamo.pres_folio,
@@ -505,35 +513,64 @@ def generate_pdf_resgister_folio(request):
         MatriculaObPrestamo = {}
 
         if row is not None:
-            nombres                 = row[0]
-            apellido1               = row[1]
-            apellido2               = row[2]
-            puesto                  = row[3]
-            email_institucional     = row[4]
-            extension_telefonica    = row[5]
+            nombres = row[0]
+            apellido1 = row[1]
+            apellido2 = row[2]
+            puesto = row[3]
+            email_institucional = row[4]
+            extension_telefonica = row[5]
 
             nombre_completo = f"{nombres} {apellido1} {apellido2}" if apellido2 else f"{nombres} {apellido1}"
             MatriculaObPrestamo = {
-                'Obtiene'           : nombre_completo,
-                'Puesto'            : puesto,
-                'Email'             : email_institucional,
-                'Extension'         : extension_telefonica, 
-                'Matricula'         : matri,
+                'Obtiene': nombre_completo,
+                'Puesto': puesto,
+                'Email': email_institucional,
+                'Extension': extension_telefonica,
+                'Matricula': matri,
             }
 
         global userobjPrestamo
         userobjPrestamo = MatriculaObPrestamo
 
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="Videoteca_Código_{q}.pdf"'
+        # Generar el PDF y almacenarlo en un BytesIO
+        pdf_bytes = BytesIO()
         pdf = PDF_FOLIO('P', 'mm', (240, 250), q)
         pdf.add_page()
-
         pdf.generate_table(prestamos_data)
-        response.write(pdf.output(dest='S').encode('latin1'))
-        return response
+        pdf_bytes.write(pdf.output(dest='S').encode('latin1'))
 
-    # Agregar una respuesta HttpResponse adicional para manejar el caso en que matri sea None
+        # Configurar el correo electrónico
+        from_email = '333.mija@gmail.com'
+        password = 'roxbrhvwyjxdyxvg'
+        to_email = email_institucional
+
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = to_email
+        msg['Subject'] = 'Asunto del correo'
+
+        body = 'Este es el cuerpo del correo electrónico.'
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Adjuntar el archivo PDF al correo electrónico desde BytesIO
+        pdf_bytes.seek(0)  # Reiniciar el cursor al principio del BytesIO
+        part = MIMEApplication(pdf_bytes.read(), _subtype='pdf')
+        pdf_bytes.seek(0)  # Reiniciar el cursor nuevamente al principio del BytesIO
+        part.add_header('Content-Disposition', f'attachment; filename="Videoteca_Código_{q}.pdf"')
+        msg.attach(part)
+
+        # Enviar el correo electrónico
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(from_email, password)
+        text = msg.as_string()
+        server.sendmail(from_email, to_email, text)
+        server.quit()
+
+        print("Correo electrónico enviado correctamente a:", to_email)
+
+        return HttpResponse(content=pdf_bytes.getvalue(), content_type='application/pdf')
+
     return HttpResponse("No se encontró la matrícula correspondiente.")
 
 @csrf_exempt      

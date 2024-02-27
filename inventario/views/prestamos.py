@@ -496,8 +496,6 @@ def RegisterOutVideoteca(request):
 def EndInVideoteca(request):
     usuario = request.POST.get('usuario')
     data = request.POST.get('codigos') 
-
-    from django.db import connections
     cursor = connections['users'].cursor()
     cursor.execute("select a.nombres, a.apellido1, a.apellido2, a.extension_telefonica, a.email_institucional, b.nombre as Area, c.nombre as contratacion, a.activo from people_person as a join people_areaorganigrama as b  on a.cat_area_org_id = b.id  join people_contratacion as c on a.cat_contratacion_id = c.id where a.matricula = %s", [usuario])
 
