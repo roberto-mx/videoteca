@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Formatos</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>ReporteDevolucion (2).jasper</name>
+			<type>1</type>
+			<location>/Applications/Jaspersoft Studio 6.21.0.app/Contents/MacOS/C::/Users/MIJIMENEZ/Downloads/ReporteDevolucion (2).jasper</location>
+		</link>
+		<link>
+			<name>ReporteDevolucion_1.jrxml</name>
+			<type>1</type>
+			<location>/Users/marioj/Downloads/ReporteDevolucion.jrxml</location>
+		</link>
+	</linkedResources>
+</projectDescription>

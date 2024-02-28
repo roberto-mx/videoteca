@@ -15,7 +15,6 @@
     </div>
 
     <form class="form-horizontal" role="form" method="post">
-
         <div class="card-body">
             {% csrf_token %}
             {{ form.non_field_errors }}
@@ -40,16 +39,15 @@
             </div>
 
         </div><!-- card-body -->
-
-        <div class="panel-group ficha-collapse" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-parent="#accordion" data-toggle="collapse" href="#panel-dg" aria-expanded="true" aria-controls="panel-dg">
-                  Datos generales
-                  </a>
+        <div class="panel-group ficha-collapse"  >
+            <div class="panel panel-default" >
+              <div class="panel-heading "  style="background-color:#18463b;">
+                <h4 class="panel-title" >
+                    <a data-parent="#accordion" data-toggle="collapse"  href="#panel-dg" aria-expanded="true" aria-controls="panel-dg" style="color: white;">
+                        Datos generales
+                    </a>  
                 </h4>
-                <button type="button" class="collpase-button collapsed" data-parent="#accordion" data-toggle="collapse" href="#panel-dg"></button>
+                <button type="button" class="collpase-button collapsed" style="background-color:#FFFFFF;" data-parent="#accordion" data-toggle="collapse" href="#panel-dg"></button>
               </div>
               <div class="panel-collapse collapse in" id="panel-dg">
                 <div class="panel-body">
@@ -116,16 +114,16 @@
               </div>
             </div>
         </div><!-- panel colapsable -->
-        
+         
         <div class="panel-group ficha-collapse" id="accordion">
             <div class="panel panel-default">
-              <div class="panel-heading">
+              <div class="panel-heading" style="background-color:#18463b;">
                 <h4 class="panel-title">
-                  <a data-parent="#accordion" data-toggle="collapse" href="#panel-inv" aria-expanded="true" aria-controls="panel-inv">
+                  <a data-parent="#accordion" data-toggle="collapse" href="#panel-inv" aria-expanded="true" aria-controls="panel-inv" style="color: white;">
                   Inventario
                   </a>
                 </h4>
-                <button type="button" class="collpase-button collapsed" data-parent="#accordion" data-toggle="collapse" href="#panel-inv"></button>
+                <button type="button" class="collpase-button collapsed" data-parent="#accordion" style="background-color:#FFFFFF;" data-toggle="collapse" href="#panel-inv"></button>
               </div>
               <div class="panel-collapse collapse in" id="panel-inv">
                 <div class="panel-body">
@@ -174,10 +172,12 @@
     
         <div class="clearfix">
             <div class="pull-right">
-                <a class="btn btn-default active" href="/inventario/cintas/{{cinta.video_cbarras}}">Cancelar</a>
-                <button class="btn btn-primary active" type="submit">Actualizar</button>
+                <a class="btn btn-default active" href="/inventario/cintas/{{cinta.video_cbarras}}"><i class="fa-sharp fa-solid fa-ban"></i> Cancelar</a>
+                <button class="btn btn-primary active" type="submit"><i class='fas fa-sync'></i> Actualizar</button>
                 <a class="btn btn-danger active"
-                    href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+                    href="/inventario/cintas/{{cinta.video_cbarras}}/eliminar"><i class="fa-sharp fa-solid fa-trash"></i> 
+                    Eliminar
+                </a>
             </div>
         </div>
 

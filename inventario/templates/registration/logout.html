@@ -6,17 +6,32 @@
 {% endblock %}
 
 {% block content %}
+
+  {% if form.errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+  {% endif %}
+
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p>Your account doesn't have access to this page. To proceed,
+      please login with an account that has access.</p>
+    {% else %}
+      <p>Please login to see this page.</p>
+    {% endif %}
+  {% endif %}
             <form action="#" role="form" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                   <label class="control-label" for="usuario">Usuario:</label>
-                  <input class="form-control" id="usuario" name="usuario" placeholder="Usuario" type="text">
+                  <div>{{ form.username }}</div>
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="pwd">Contraseña</label>
-                  <input class="form-control" id="pwd" name="pwd" placeholder="Contraseña" type="password">
+                  <div>{{ form.password }}</div>
                 </div>
-                <button class="btn btn-primary pull-right active" type="submit">Enviar</button>
+                <input class="btn btn-primary pull-right active" type="submit" value="login">
+                <input type="hidden" name="next" value="{{ next }}">
+               
             </form>
             <br />
             <br />

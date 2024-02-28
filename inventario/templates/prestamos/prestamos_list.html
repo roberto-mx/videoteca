@@ -1,0 +1,859 @@
+{% extends 'templateBase.html' %}
+
+{% block Contenido %}
+
+<div class="card mt-3">
+  <div class="card-header text-center" style="background: #F1F7F8">
+    <div class="d-flex justify-content-between">
+      <div>
+        <form class="container-fluid justify-content-start">
+          <a type="button" class="btn btn-default btn-sm" style="background: #b38e5d" id="buttonOut" data-bs-toggle="modal" data-bs-target="#modalOut">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Préstamo con Código de Barras</span>
+            </div>
+          </a>
+
+          <a type="button" class="btn btn-default btn-sm" style="background: #13322B"  id="buttonIn" {{'url'}} data-bs-toggle="modal" data-bs-target="#modalIn">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Devolución con Código de Barras</span>
+            </div>
+          </a>
+
+          <button id="btn-generar-pdf" class="btn btn-button btn-sm" type="button" style="background: #9D2449">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Exportar Tabla PDF</span>
+            </div>
+          </button>
+
+          <a class="btn btn-button btn-sm" href="{% url 'getBusqueda' %}" type="button" style="background: #A1A6A9">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <span style="color: white;">Consulta de préstamos y adeudos</span>
+            </div>
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title text-center">*** Préstamos ***</h4>
+    <div class="card-body">
+      <div class="col-md-12">
+          <input type="text" required="" class="form-control ms-auto search-input" placeholder="Buscar" id="busqueda">
+          <table class="table table-striped" id="datatablePrestamos">
+            <thead>
+              <tr>
+                <th>Detalles</th>
+                <th>Folio Préstamo</th>
+                <th>Usuario</th>
+                <th>Nombre del Solicitante</th>
+                <th>Fecha-Hora-Préstamo</th>
+                <th>Devolución</th>
+                <th>Estatus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in prestamos %}
+              <tr>
+                <td></td>
+                <td>{{ data.pres_folio }}</td>
+                <td>{{ data.usua_clave }}</td>
+                <td>
+                  {% for usuario in usuarios %}
+                    {% if data.usua_clave == usuario.matricula %}
+                      {{ usuario.nombre_completo }}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                <td>{{ data.pres_fechahora }}</td>
+                <td>
+                  {% if data.pres_fecha_devolucion %}
+                    {{ data.pres_fecha_devolucion }}
+                  {% else %}
+                    No ha habido devolución
+                  {% endif %}
+                </td>
+                <td>
+                  {% if data.pres_estatus == 'X' %}
+                    En préstamo
+                  {% elif data.pres_estatus == 'I' %}
+                    En Videoteca
+                  {% else %}
+                    {{ data.pres_estatus }}
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              {% endfor %}
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal -->
+<div class="modal fade" id="modalCintas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 
+<!-- <div class="modal fade" id="modalCintas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"> -->
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header  text-center" style="background-color:#13322B;">
+        <h5 class="modal-title" id="modalCintasLabel" id="modalAgregarLabel" style="color: white;">Lista de Cintas<i class="fa-sharp fa-solid fa-photo-film"></i></h5>
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex justify-content-end">
+            <input type="text" style="background:#FCFCFC" id="inputDetalles" disabled>
+            <input type="text" style="background:#FCFCFC" id="inputEstatus"  size="15" disabled >
+            <input type="text" style="background:#FCFCFC" id="inputVencimiento"  size="28" disabled >
+          </div>
+          <button type="button" class="btn-close" style="background-color: #F1F7F8;" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="modal-body" id="muestraData">
+        <table class="table table-bordered"  name="DataTable">
+          <thead>
+            <tr>
+              {% comment %} Esta tabla se pinta en el jQuery {% endcomment %}
+            </tr>
+          </thead>
+          <tbody>
+            {% comment %} Aquí no va nada, todo lo puse en mi JavaScript {% endcomment %}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm active"  data-bs-dismiss="modal">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span>Salir</span>
+            <i class="fa fa-reply-all" style="color: white;"></i>
+          </div>
+        </button>
+        <button type="button" class="btn btn-button btn-sm"  style="background: #9D2449" id="btn-descargar-pdf">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span  style="color: white;">Exportar</span>
+            <i class="fas fa-file-pdf"  style="color: white;"></i> 
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %}  {% endcomment %}
+<div class="modal fade"  id="modalIn">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header text-center" style="background-color:#13322B;">
+            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Devolución <i class='fas fa-hand-holding'></i></h5>
+          </div>
+          
+          <div class="modal-body">
+             <div id="inputUsuario">
+               {% comment %} <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Gafete de Usuario que devuelve" id="searchUsuarioIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off"> {% endcomment %}
+               <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;" 
+               type="text" placeholder="Gafete de Usuario que devuelve" id="searchUsuarioIn" 
+               minlength="7" maxlength="15" class="form-control" 
+               aria-label="Large" aria-describedby="inputGroup-sizing-sm" 
+               autocomplete="off">        
+            </div>
+            <div id="inputVideo">
+                 <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Ingrese con el Lector código de barras" id="searchBarCodeIn" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+            </div>
+          </div>
+          <div class="modal-footer">
+
+            <button type="button" class="btn btn-secondary btn-sm active" data-bs-dismiss="modal">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span>Cerrar</span>
+                <i class="fa fa-reply-all" style="color: white;"></i>
+              </div>
+            </button>
+
+              <button type="button" class="btn btn-default btn-sm" style="background: #41ADCD"  id="cleanTableReturn">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span style="color: white;">Limpiar</span>
+                  <i class="fas fa-eraser" style="color: white;"></i>
+                </div>
+              </button>
+
+              <button type="button" class="btn btn-primary btn-sm active" id="endReturn"   style="background: #13322B">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span style="color: white;">Finalizar Entrega</span>
+                  <i class='fas fa-hand-holding' style="color: white;"></i>
+                </div>
+              </button>
+            <table id="resultTableIn">
+            </table>
+          </div>
+          <div class="form-group">
+              <div class="alert alert-success" id="ins_success" style="display:none">
+              </div>
+               <div class="alert alert-danger" id="ins_error" style="display:none">
+
+              </div>
+          </div>  
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div class="modal fade"  id="modalOut" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header text-center" style="background-color:#13322B;">
+            <h5 class="modal-title" id="modalAgregarLabel" style="color: white;">Préstamo  <i class="fa-sharp fa-solid fa-handshake"></i></h5>
+          </div>
+          <div class="modal-body">
+            <div id="buscarUsuario">
+              {% comment %} <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Usuario" id="searchUsuarioOut" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off"> {% endcomment %}
+              <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;" 
+              type="text" placeholder="Usuario" id="searchUsuarioOut" 
+              minlength="7" maxlength="15" class="form-control" 
+              aria-label="Large" aria-describedby="inputGroup-sizing-sm" 
+              autocomplete="off">
+            </div>
+            <div id="buscarCodigo">
+              <input style="font-weight: bold; font-size: 10; text-align: center; height: 50px;"  type="text" placeholder="Ingrese con el Lector código de barras" id="searchBarCodeOut" minlength="7" maxlength="15" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" autocomplete="off">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm active"  data-bs-dismiss="modal">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span>Salir</span>
+                <i class="fa fa-reply-all"></i>  
+              </div>
+            </button>
+
+            <button type="button" class="btn btn-default btn-sm" style="background:#41ADCD"  id="cleanTableReturn">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color: white;">Limpiar</span>
+                <i class="fas fa-eraser" style="color: white;"></i>
+              </div>
+            </button>
+            
+            <button type="button" class="btn btn-default btn-sm active" style="background:#194239" id="continuarPrestamo">  
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="color:white;">Continuar</span>
+                <i class='fas fa-arrow-circle-right' style="color:white;"></i>
+              </div>
+            </button> 
+            
+            <table id="resultTableOut" >
+              
+            </table>
+          </div>
+          <div class="form-group">
+              <div class="alert alert-success" id="out_success" style="display:none">
+              </div>
+               <div class="alert alert-danger" id="out_error" style="display:none">
+              </div>
+          </div>  
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<script>
+
+  const inputUsuarioOut = document.getElementById('searchUsuarioOut');
+  const inputUsuarioIn = document.getElementById('searchUsuarioIn');
+  
+  // Función para convertir el texto a mayúsculas
+  const convertirAMayusculas = (event) => {
+    event.target.value = event.target.value.toUpperCase();
+  }
+  
+  // Agregar un evento de escucha para el evento de entrada (input) al primer input
+  inputUsuarioOut.addEventListener('input', convertirAMayusculas);
+  
+  // Agregar un evento de escucha para el evento de entrada (input) al segundo input
+  inputUsuarioIn.addEventListener('input', convertirAMayusculas);
+  
+  
+//PDF para los folios
+$(document).ready(function() {
+  $('#btn-generar-pdf').on('click', function() {
+    const busquedaVal = $('#busqueda').val();
+    const vide_codigo = busquedaVal;
+    const pres_folio = busquedaVal; 
+
+    if (busquedaVal === '') {
+      alertMessage('warning', 'Debes ingresar un código de barras o un número de folio para generar el PDF.', '¡Ups!', 'swal-wide');
+      return; 
+    }
+
+    $.ajax({
+      url: '{% url "prestamos_filter" %}',
+      data: {'q': vide_codigo, 'pres_folio': pres_folio}, // Agrega pres_folio en los datos a enviar
+      dataType: 'json',
+      success: function(res) {
+        if (res.length === 0) {
+          alertMessage('warning', 'El código de barras o número de folio ingresado no existe.', '¡Ups!', 'swal-wide');
+          return;
+        }
+
+        $.ajax({
+          url: '{% url "generar_pdf" %}',
+          data: {'q': vide_codigo, 'pres_folio': pres_folio}, // Agrega pres_folio en los datos a enviar
+          success: function() {
+            window.open('{% url "generar_pdf" %}?q=' + vide_codigo + '&pres_folio=' + pres_folio); // Agrega pres_folio en la URL
+          }
+        });
+      }
+    });
+  });
+});
+   
+$(document).ready(function() {
+  $('#datatablePrestamos').DataTable({
+    searching: false,
+    ...len,
+    columns: [ 
+    {
+        "data": "pres_folio",
+        "render": function(data, type, row, meta) {
+          return "<a class= 'ver-detalle' id='verDetalle' data-bs-toggle='modal' data-bs-target='#modalCintas'><i class='fa-sharp fa-solid fa-circle-plus'  style='color:#9D2449'></i></a>"   
+        }
+      },
+      {"data": "pres_folio"},
+      {"data": "usua_clave"},
+      {"data": "usuario.nombre_completo"},  
+      {"data": "pres_fechahora"},
+      {"data": "pres_fecha_devolucion"},
+      {"data": "pres_estatus"},
+      ],
+      createdRow: function(row, data, dataIndex) {
+        $(row).data('folio', data.pres_folio);
+      }
+  });
+
+  const tablaOriginal = $('#datatablePrestamos').DataTable().data().toArray();
+  //const tablaOriginal2 = $('#datatablePrestamos').DataTable().data().toArray();
+  
+  $('#busqueda').on('keyup', function() {
+    const valorInput = $(this).val();
+    const vide_codigo = valorInput;
+    const pres_folio = valorInput;
+    const usua_clave = valorInput;
+  
+    if (vide_codigo == '' && pres_folio == '' && usua_clave == '') {
+      // Mostrar la tabla original si todos los inputs están vacíos
+      $('#datatablePrestamos').DataTable().clear().rows.add(tablaOriginal).draw();
+    } else {
+      $.ajax({
+        url: '{% url "prestamos_filter" %}',
+        data: {
+          'q': valorInput,
+          'vide_codigo': vide_codigo,
+          'pres_folio': pres_folio,
+          'usua_clave': usua_clave,
+        },
+        dataType: 'json',
+        success: function(res) {
+          const prestamosUnicos = [];
+          const foliosVistos = new Set();
+          
+          for (let i = 0; i < res.length; i++) {
+            const prestamo = res[i];
+            
+            if (!foliosVistos.has(prestamo.pres_folio)) {
+              prestamosUnicos.push(prestamo);
+              //console.log(`Son los datos ingresados: ${prestamosUnicos}`)
+              foliosVistos.add(prestamo.pres_folio);
+            }
+          }
+          $('#datatablePrestamos').DataTable().clear().rows.add(prestamosUnicos).draw();
+        }
+      });
+    }
+  });
+});
+
+$('#datatablePrestamos').on('click', '.ver-detalle', function() {
+    const detalles = $(this).data('detalles');
+    const pres_folio = $(this).closest('tr').data('folio');
+    
+    // Asignamos el valor de pres_folio al input
+    $('#inputDetalles').val(`No. de Folio - ${pres_folio}`).prop('disabled', true);
+
+    $.ajax({
+      url: '{% url "prestamos_detalles" %}',
+      type: 'GET',
+      data: { 
+        q: pres_folio
+      },
+      success: function(data) {
+        $.ajax({
+          url: '{% url "detalles_list" %}',
+          type: 'GET',
+          data:{
+            a:pres_folio
+          },
+          
+        success: function(response) {
+          $('#inputVencimiento').val(`Fecha vencimiento - ${response.vencioElDia}`).attr('disabled', true);
+          let hoy = new Date();
+          let day = hoy.getDate();
+          let month = hoy.getMonth() + 1;
+          let year = hoy.getFullYear();
+          let fechaHoy = `${day}-${month}-${year}`;
+          
+          const nombreCompleto  = response.nombreCompleto;
+         
+          $('#inputEstatus').val(`Hoy: ${fechaHoy}`).attr('disabled', true);
+            $('#btn-descargar-pdf').on('click', function() {
+              $.ajax({
+                url: '{% url "generar_pdf_modal" %}',
+                data: { 'q': pres_folio },
+                success: function() {
+                  window.open('{% url "generar_pdf_modal" %}?q=' + pres_folio);
+                }
+              });
+            });
+      
+            let tabla = $('<table>');
+            let thead = $('<thead>').append(
+              '<tr><th>Código de Barras</th>' +
+              '<th>Fecha de Devolución</th>' +
+              '<th>Usuario  Devuelve</th>' +
+              '<th>Usuario  Recibe</th>' +
+              '<th>Nombre   Recibe</th>' +
+              '<th>Estatus</th>' +
+              '</tr>'
+            );
+            let tbody = $('<tbody>');
+
+            if ($('li', data).length == 0) {
+              alertMessage('info', 'Solo hay esa cinta!', '¡Ups!');
+              $("#modalCintas").modal('hide');
+            }
+
+            $('li', data).each(function(index) {
+              let liText          = $(this).text().trim();
+              let liParts         = liText.split(' - ');
+              let codigo          = liParts[0];
+              let fecha           = liParts[1];
+              let devuelve        = liParts[2];
+              let recibe          = liParts[3];
+              let estatus         = liParts[4];
+              
+              
+              let row = $('<tr>').append(
+                '<td>' + codigo + '</td><td>' + fecha + '</td><td>' + devuelve + '</td><td>' + recibe + '</td>' + '</td><td>' + nombreCompleto + '</td>');
+
+              (estatus == 'X')
+                ? row.append('<td><div class="estatus-alert alert alert-warning">Pendiente</div></td>')
+                : row.append('<td><div class="estatus-alert alert alert-success">Entregado</div></td>')
+              tbody.append(row);
+              
+            });
+            tabla.append(thead).append(tbody);
+            $('#muestraData').html(tabla);
+            tabla.DataTable({
+              ...tableInventario
+            });
+            $('#modalCintas').on('hidden.bs.modal', function (e) {
+              e.preventDefault();
+            });
+        },
+      });
+    },
+  });
+});
+
+$('#searchBarCodeOut').keyup(function(e){
+    if( e.keyCode == 13 ){
+        addItemOut();
+    }
+});
+
+$('#searchFolio').keyup(function(e){
+    clearTimeout($.data(this, 'timer'));
+    if($("#searchFolio").val()==""){
+        $("#RowsSearch").hide();
+        $("#RowsInicio").show();
+        $("#Pages").show();
+    }
+    else {
+        $(this).data('timer', setTimeout(search, 500));
+    }
+});
+
+$("#buttonIn").click(function(){
+  setTimeout(function() { $('#searchUsuarioIn').val("").focus() }, 1000);
+  
+});
+
+$("#buttonOut").click(function(){
+ 
+  setTimeout(function() { $('#searchUsuarioOut').val("").focus() }, 1000);
+});
+
+function cleanTableReturn(){
+  $("#resultTableIn tr").remove(); 
+}
+
+$("#cleanTableReturn").click(function(){
+   cleanTableReturn(); 
+});
+$("#closeModalReturn").click(function(){
+   cleanTableReturn(); 
+});
+
+function cleanTableOut(){
+  $("#resultTableOut tr").remove(); 
+}
+
+$("#cleanTableOut").click(function(){
+   cleanTableOut(); 
+});
+
+$("#closeModalOut").click(function(){
+   cleanTableOut(); 
+});
+
+$("#continuarPrestamo").hide();
+
+$("#continuarPrestamo").click(function() {
+  let usuario = $('#searchUsuarioOut').val();
+  let codigoBarras = $('#searchBarCodeOut').val();
+  let $button = $(this); // Guardamos una referencia al botón actual
+
+  Swal.fire({
+    title: '¿Estás seguro de que quieres continuar?',
+    text: "¡No podrás revertir esto!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, continuar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      guardarRegistro(usuario, codigoBarras);
+      $button.hide(); 
+    }
+  });
+});
+
+function guardarRegistro(usuario, codigoBarras) {
+  //const dataToSend = JSON.stringify(get_data('#resultTableOut'));
+  let codigosTable = JSON.stringify(get_data('#resultTableOut tr'));
+  console.log(codigosTable)
+
+  $.ajax({
+    data: {'usuario': usuario, 'codigos':codigosTable},
+    url: "{% url 'registro_salida_videoteca' %}",
+    type: 'POST',
+    success: function(data) {
+      console.log(data)
+      // Verificar si existe el error
+      if (data.error) {
+        $('#resultTableOut').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+      } else {
+        $('#resultTableOut').append('<tr class="alert alert-success"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+        $("#resultTableOut tr").remove(); 
+      }
+      $('#searchBarCodeOut').val("").focus();
+
+      const muestraFolio = data.Folio;
+      window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
+
+        // $.ajax({
+        //   url: '{% url "generate_pdf_resgister_folio" %}',
+        //   data: {'q': muestraFolio},
+        //   success: function() {
+        //     window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
+        //   }
+        // });
+
+      Swal.fire(
+        '¡Exportado!',
+        `Su archivo ha sido exportado con el folio ${muestraFolio}.`,
+        'success'
+      );
+      cleanTableOut();
+    },
+    error: function() {
+      $('#alertWarning').show('slow');
+      $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function() { 
+        location.reload();
+      }, 1000);
+    }
+  });
+}
+
+
+$("#endReturn").click(function() {
+  let usuario = $('#searchUsuarioIn').val();
+  let codigoBarras = $('#searchBarCodeIn').val();
+
+  Swal.fire({
+    title: '¿Estás seguro de que quieres continuar?',
+    text: "¡No podrás revertir esto!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, continuar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      finalizarEntrada(usuario, codigoBarras);
+    }
+  });
+});
+
+function finalizarEntrada(usuario, codigoBarras) {
+  $.ajax({
+    data: {
+      'usuario': usuario,
+      'codigos': JSON.stringify(get_data('#resultTableIn tr'))
+    },
+    url: "{% url 'finalizar_entrada_videoteca' %}",
+    type: 'POST',
+    success: function(data) {
+      if (data.error) {
+        $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
+      } else {
+        Swal.fire({
+          title:'¡Exportado!',
+          text: 'Su archivo ha sido exportado.',
+          icon: 'success',
+         
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.open('{% url "get_pdf" %}?q=' + data.file); // Agrega pres_folio en la URL
+          }
+        });
+      }
+      cleanTableReturn();
+      $('#searchBarCodeIn').val("").focus();
+      $("#endReturn").hide();
+    },
+    error: function() {
+      $('#alertWarning').show('slow');
+      $("#alertWarning").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function() {
+        cleanForm();
+        location.reload();
+      }, 3000);
+    }
+  });
+}
+
+$("#endReturn").hide();
+let codigoBarrasList = []; // Arreglo para almacenar los códigos de barras ingresados
+
+function readCodeBar() {
+  let usuario = $('#searchUsuarioIn').val();
+  let codigoBarras = $('#searchBarCodeIn').val();
+
+  // Validación de devolución
+  if (usuario == '') {
+    alertMessage('info', 'Ingresa la matricula del usuario.', '¡Hey!');
+  } else if (codigoBarras == '') {
+    alertMessage('info', 'Debes ingresar un código de barras.', '¡Hey!');
+  } else if (codigoBarrasList.includes(codigoBarras)) {
+    alertMessage('warning', `El código ${codigoBarras} ya ha sido agregado.`, '¡Atención!');
+    $('#searchBarCodeIn').val("").focus();
+
+  } else {
+    codigoBarrasList.push(codigoBarras); // Agregar el código de barras al arreglo
+    $("#endReturn").show();
+    $.ajax({
+      data: { 'codigoBarras': codigoBarras, 'matricula': usuario },
+      url: "{% url 'registro_entrada_videoteca' %}",
+      type: 'POST',
+    })
+    .done(function(response) {
+      //cleanTableReturn()
+      if (response.error) {
+        $('#resultTableIn').prepend('<tr class="alert alert-danger"><td style="display:none"><input type="text" class="codbarrasError" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
+      } else {
+        $('#resultTableIn').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>Resultado: ' + response.errorMessage + '</td></tr>');
+       
+      }
+      $('#searchBarCodeIn').val("").focus();
+    })
+    .fail(function() {
+      $('#ins_error').show('slow');
+      alertMessage('error', 'Favor de comunicarse con el administrador.', 'Error 500');
+      $("#ins_error").text("Hubo un error al procesar el registro, intente nuevamente");
+      setTimeout(function() { $('#ins_error').hide(); }, 1000);
+    });
+  }
+}
+
+$(document).ready(function() {
+  $('#searchBarCodeIn').keypress(function(event) {
+    if (event.which === 13) { // Verifica si se presionó la tecla "Enter"
+      readCodeBar(); // Llama a la función para leer el código de barras
+    }
+  });
+});
+
+$(document).on("click",".glyphicon-plus",function(){
+  var this_html=$(this);
+  var id=this_html.parent().parent().parent().children().first().text();
+
+  $.ajax({
+      url:"{% url 'registro_entrada_videoteca' %}",
+      type:'POST',
+      data:{grupo:$("#idGrupo").val(), alumno: id, diplomado:$("#idDiplomado").val()}
+  })
+  .done(function(response){
+      if(response['error']==false){
+          $("#ins_error").hide();
+          $("#ins_success").text(response['errorMessage']);
+          $("#ins_success").show();
+          $("#noData").hide();
+          var html_data="<tr><td style='display:none'>"+response['id']+"</td><td>"+response["alumno_matricula"]+"</td><td><a href=/alumno/edit/"+ response['id_alumno']+"?redirect_page=>" + response["alumno_nombres"]+" </a></td> ";
+            for (var i = 0; i < response["length"]; i++) {
+                html_data += "<td> 0,0 </td><td>0,0</td>";
+            }
+          
+          html_data +="<td> <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span> Consulta </button> </td> <td>  <button class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button> Eliminar del Grupo </td></tr>";
+          $("#tablaPrincipal tbody").append(html_data);
+      }
+      else{
+          //console.log(":( ");
+          $("#ins_success").hide();
+          $("#ins_error").text(response['errorMessage']);
+          $("#ins_error").show();
+      }
+  })
+  .fail(function(){
+        $("#ins_success").hide();
+        $("#ins_error").text("Something Went Wrong!");
+        $("#ins_error").show();
+  })
+  .always(function(){
+      $(".btn-insert-data").removeAttr("disabled");
+      $(".btn-insert-data").text("INSERT STUDENT");
+  })
+});
+
+//Validación de prestamos
+function addItemOut() {
+  //console.log('Evento keyup disparado');
+  const codigoBarras = $('#searchBarCodeOut').val();
+  const usuario = $('#searchUsuarioOut').val();
+
+  if (codigoBarras == '') {
+    alertMessage('info', 'Debes ingresar un código de barras.', '¡Aguas!');
+  } else if (usuario == '') {
+    alertMessage('info', 'Debes ingresar un usuario.', '¡Aguas!');
+  } else {
+    $.ajax({
+      data: {
+        'usuario': usuario,
+        'codigoBarras': codigoBarras,   
+      },
+      url: "{% url 'validacion_salida_videoteca' %}",
+      type: 'POST',
+      success: function (response) {
+        if (f_valida_repetido(codigoBarras) == 1) {
+          $("#out_error").text("Registro duplicado");
+          $("#out_error").hide();
+          setTimeout(function () {
+            $("#out_error").hide();
+          }, 1000);
+          $('#searchBarCodeOut').val("").focus();
+        } else {
+          if (response.error) {
+            if (response.errorMessage === "No se encontró el código de barras") {
+              alertMessage('error', `No se encontró el código de barras.`, '¡Oops!');
+            } else if (response.errorMessage === "El usuario debe devolver las cintas faltantes antes de solicitar nuevos préstamos") {
+              // El usuario tiene cintas vencida
+              alertMessage('warning', `El usuario debe devolver las siguientes cintas antes de solicitar nuevos préstamos: ${response.cintasFaltantes.join(', ')}`, '¡Alto!');
+            }  else if (response.errorMessage === "La matrícula ingresada, no pertenece a ningún usuario") {
+              // En caso de ingresar mal la matrícula
+              alertMessage('warning', `${response.errorMessage}`, '¡Alto!');
+            } 
+            else {
+              alertMessage('warning', `La cinta con código ${response.codigoBarras} ya está registrada y no ha sido devuelta.`, '¡Oops!');
+            }
+            cleanTableOut();
+          } else {
+            // Registro exitoso
+            if (response.successMessage) {
+              $('#resultTableOut').prepend('<tr class="alert alert-success"><td style="display:none"><input type="text" class="codbarras" value="' + codigoBarras + '"></input></td><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + response.successMessage + '</td><td><button class="btn btn-default btn-xs eliminar" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button></td></tr>');
+              $("#continuarPrestamo").show();
+            } else {
+              alertMessage('error', 'Mensaje de éxito no proporcionado en la respuesta.', '¡Alto!');
+              
+            }
+          }
+          $('#searchBarCodeOut').val("").focus();
+        }
+      },
+      
+      error: function () {
+        // Error en la solicitud AJAX
+        $('#out_error').show('slow');
+        $("#out_error").text("Hubo un error al procesar el registro, intente nuevamente");
+        setTimeout(function () {
+          $("#out_error").hide();
+        }, 1000);
+      }
+    });
+  }
+}
+
+//Acaba validacion
+function f_valida_repetido(codigoBarras){
+  var v_valor = 0;
+  if ($('#resultTableOut tr').length > 0){
+   
+      $('#resultTableOut tr').each(function(){
+        if ($(this).find('input.codbarras').val() == codigoBarras) {
+          alertMessage('info', `Ya se a registrado ${codigoBarras}.`, '¡Ups!');
+          v_valor = 1;
+        }
+      });
+  }           
+      return v_valor;      
+}
+function get_data(table){
+  var data = [];
+  //'#resultTableOut tbody tr'
+  if ($(table).length > 0){
+    $(table).each(function(){
+      data.push($(this).find('input.codbarras').val());
+    });
+  }           
+  return data;      
+}  
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('input[type=text]').forEach( node => node.addEventListener('keypress', e => {
+  }))
+});
+
+function search(force) {
+  var existingString = $("#searchFolio").val();
+    if (!force && existingString.length < 3) return; 
+  $.ajax({
+      type:'GET',
+      data:{q:$("#searchFolio").val()}
+  })
+  .done(function(response){
+    $("#RowsSearch").show();
+    $("#RowsInicio").hide();
+    $("#Pages").hide();
+    $("#RowsSearch").empty();
+    $("#RowsSearch").append(response);
+     
+  })
+  .fail(function(){
+    $("#RowsSearch").hide();
+    $("#RowsInicio").show();
+    $("#Pages").show();
+  })  
+}                
+
+$(document).on("click",".eliminar",function(){
+    var this_html=$(this);
+    var id =this_html.parent().parent().children().eq(0).text();
+    //console.log(this_html.parent().parent().children().eq(0).text());
+    this_html.parent().parent().remove();
+
+});    
+
+</script>
+
+{% endblock %}

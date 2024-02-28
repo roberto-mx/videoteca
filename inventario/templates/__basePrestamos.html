@@ -1,0 +1,92 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  
+<head>
+    <meta charset="utf-8">
+    <!-- CSS -->
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/button.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/miestilodetabla.css' %}">
+     <link href="{% static 'favicon.ico' %}" rel="shortcut icon">
+    <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
+    <script src="{% static 'js/alertMessage.js' %}"></script>
+    <script src="{% static 'js/LengujeDatatable.js' %}"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"></script>
+    <script src="https://framework-gb.cdn.gob.mx/qa/gobmx.js"></script>
+    <script src="https://framework-gb.cdn.gob.mx/assets/scripts/jquery-ui-datepicker.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <script src = "https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js" ></script>
+    <script src = "https://cdn.datatables.net/1.13.3/js/dataTables.bootstrap5.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Contenido -->
+    <main class="page">
+        <nav class="navbar navbar-inverse sub-navbar navbar-fixed-top">
+            <div class="container">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subenlaces">
+                  <span class="sr-only">Interruptor de Navegación</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <div class="d-flex justify-content-center">
+                  <span style="color: #ffffff"> Dirección General @prende-videoteca</span>
+              </div>
+              </div>
+              {% comment %} <ul class="nav navbar-nav navbar-start"><li><a href="/inventario">Inventario</a></li><li><a href="https://www.gob.mx/gobierno">Gobierno</a></li><li><a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="icon-search"></i></a></li></ul> {% endcomment %}
+              <div class="collapse navbar-collapse" id="subenlaces">
+                <ul class="nav navbar-nav navbar-start">
+                  <li><a href="/inventario">Inventario</a></li>
+                  <li><a href="{% url 'prestamos_list' %}">Préstamos</a></li>
+                  <li><a href="{% url 'consultaFormulario' %}">Calificación</a></li>
+                  <li><a href="#">Reportes</a></li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+
+        <div class="container">
+            <br /><br /><br />
+            <div class="row">
+              <div class="col-sm-8">
+                <ol class="breadcrumb">
+                  {% block breadcrumb %}
+                    <li><a href="#"><i class="icon icon-home"></i></a></li>
+                    <li><a href="#">Inicio</a></li>
+                  {% endblock %}
+                </ol>
+              </div>
+              <div class="col-sm-4">
+                 <div class="user-credencials">
+                  <ul class="list-unstyled">
+                         {% if user.is_authenticated %}
+                          <li>
+                            <a type="submit"  class="btn btn-default btn-block " href="{% url 'logout' %}"><strong> Cerrar sesion <i class="fas fa-sign-out-alt"></i> </strong> </a> 
+                          </li>
+                        {% else %}
+                          <a href="{% url 'login' %}" class="header__login d-flex flex-column align-items-center justify-content-center h-100 text-gray-light">
+                            <img src="{% static 'src/img/candado-cerrado.svg' %}" alt="Inicia sesión" class="mb-2 svg svg-currentcolor">
+                            <p class="font-weight-bold text-sm text-uppercase m-0">Ingresar</p>
+                          </a>
+                        {% endif %}
+                    <li>{{ user.get_username }}</li>
+                  </ul>
+                </div> 
+              </div>
+            </div>
+            <br /><br />
+            {% block content %}{% endblock %}
+            
+        </div>
+    </main>
+
+</body>
+</html>

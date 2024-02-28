@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteDevolucionHeader" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="821fbd96-4215-4202-b330-64a1b3cd4e5c">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Header"/>
+	<queryString language="json">
+		<![CDATA[]]>
+	</queryString>
+	<field name="Nombre" class="java.lang.String"/>
+	<field name="Direccion" class="java.lang.String"/>
+	<field name="Puesto" class="java.lang.String"/>
+	<field name="Extension" class="java.lang.String"/>
+	<field name="Correo" class="java.lang.String"/>
+	<field name="Matricula" class="java.lang.String"/>
+	<field name="FechaDev" class="java.lang.String"/>
+	<field name="Recibe" class="java.lang.String"/>
+	<field name="Subreporte" class="java.lang.String"/>
+	<field name="Codigo" class="java.lang.String"/>
+	<field name="Logo1" class="java.lang.String"/>
+	<field name="Logo2" class="java.lang.String"/>
+	<field name="Consecutivo" class="java.lang.String"/>
+	<field name="total" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="345" y="25" width="220" height="30" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="d89755a1-090f-4e95-bceb-11c8b13aaad8"/>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Formato de Devolución]]></text>
+			</staticText>
+			<image>
+				<reportElement x="-5" y="3" width="160" height="42" uuid="546162f3-a87c-4b01-bed9-50dc0bb5c0ab"/>
+				<imageExpression><![CDATA[$F{Logo1}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="345" y="5" width="220" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="68419cb5-311f-4c0d-88ef-0f8783d81ec8"/>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección General @prende.mx]]></text>
+			</staticText>
+			<image>
+				<reportElement x="165" y="5" width="180" height="40" uuid="10ad7ec8-f740-4f98-b48b-04cebf440d40"/>
+				<imageExpression><![CDATA[$F{Logo2}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="200" splitType="Stretch">
+			<staticText>
+				<reportElement x="165" y="0" width="220" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="1f1e523e-dc02-4df8-85c6-369a1d62b24c"/>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Devolución de Material]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="125" y="30" width="100" height="20" uuid="5428e16c-19a0-4ed3-bd88-82068c778506">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FechaDev}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="60" width="300" height="20" uuid="6d9cf580-e83c-4deb-859e-0f1e63acc502">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="91" width="210" height="20" uuid="414907ff-cc1f-4076-aa5c-30c907b23eeb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="123" width="210" height="20" uuid="29473ec2-802f-4d41-b4ba-1418127b9d17">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Puesto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="60" width="100" height="20" uuid="b8b6207e-e1cf-418e-8b32-f5f1e03945ae">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Extension}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="156" width="300" height="20" uuid="8adaf64e-74b0-42e1-a0b3-ba890d91efa6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Correo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-10" y="60" width="70" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="b375db6b-8813-4fb6-ae1f-ac1739687c6f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="91" width="70" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="4f1630ed-f20f-40f5-ab22-619b9f84e93f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="123" width="70" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="48dab57e-e785-44fa-971a-9e1d169850ae">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="30" width="125" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="4dc3b27e-2709-4d62-9755-8b67938fe15e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de Devolución]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="60" width="70" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="a62bfaa1-a6d3-48b5-b0dd-94b11c7d3276">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Extensión]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="156" width="70" height="20" forecolor="rgba(0, 0, 0, 0.6862745)" uuid="cd664ed9-b409-4a72-964c-88309e3d67c1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Correo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="330" y="34" width="100" height="15" uuid="8e64e6a2-7370-42d9-a809-f724a08f5cdc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1421efda-6e1f-410a-be54-8dadd4a9aa62"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="240" y="33" width="90" height="17" uuid="730877db-8f3f-4597-85b7-d37737d49d62">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1421efda-6e1f-410a-be54-8dadd4a9aa62"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat"/>
+				</textElement>
+				<text><![CDATA[Total de registros]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="33">
+			<staticText>
+				<reportElement x="0" y="10" width="80" height="20" uuid="7d58c43f-02c9-4fb0-9bc6-340035ddce26">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<text><![CDATA[CONSECUTIVO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="10" width="100" height="20" uuid="26cff14c-781a-4018-be07-915d0d40d156">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="10" width="100" height="20" uuid="c7298fad-e108-450e-93ad-2830a3ea995b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO BARRAS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="41" splitType="Stretch">
+			<textField>
+				<reportElement x="80" y="0" width="100" height="30" uuid="34f578c1-60f2-4de2-b42c-a605b84b9964">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-3" y="0" width="86" height="30" uuid="3339eea1-7f34-4d50-8b51-50058f7eea83">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2f371429-a94f-4dec-9e02-76487587c95f"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Consecutivo}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="181" y="0" width="100" height="30" uuid="99ee41e8-7438-4551-9401-5a19bc0cadf6"/>
+				<jr:Codabar xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{Codigo}]]></jr:codeExpression>
+				</jr:Codabar>
+			</componentElement>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="87" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="20" width="100" height="30" uuid="ca6183a1-36ba-450a-89b4-4e840903332d"/>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<text><![CDATA[Recibe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="0" width="100" height="30" uuid="d82c797a-824b-43ec-afbd-6ab06ca2f45a"/>
+				<textElement>
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<text><![CDATA[Entrega]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="49" width="181" height="1" uuid="1d3ba0c3-c75e-44d6-a527-2a63b02b6e74">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="370" y="37" width="181" height="1" uuid="dee596ef-5ee4-4494-baaf-0d1b69d1e670">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="-3" y="50" width="181" height="30" uuid="64dc5eac-2870-4587-82db-6d58ec7f31fd"/>
+				<textElement textAlignment="Center">
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Recibe}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="38" width="181" height="30" uuid="3be59b7b-633d-4a3d-bb3c-6d25d78db118"/>
+				<textElement textAlignment="Center">
+					<font fontName="Montserrat" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

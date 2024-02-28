@@ -1,0 +1,242 @@
+{% extends 'templateBase.html' %}
+
+{% block titulo %} Calificación {% endblock %}
+
+{% block Contenido %}
+
+<div class="card col-12 mt-3">
+  <div class="card-header text-center" style="background-color:#F1F7F8;">
+    <strong>Consulta formulario</strong>
+    <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-start">
+        <a name="" id="" class="btn btn-form" href="{% url 'formulario' %}" style="background:#BC955C" role="button">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color: white;">Llenar formulario</span>
+            {% comment %} <i class='fab fa-wpforms' style="color:white;"></i> {% endcomment %}
+          </div>
+        </a>
+      </div>
+      
+      <div class="d-flex justify-content-end">
+        <a name="" id="" class="btn btn-form"  href="{%url 'filtrarBusqueda'%}" style="background:#830EF1" role="button">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color: white;">Filtra Información </span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="card-body">
+    <div class="table-responsive"> <!-- Agregar esta clase -->
+      <table class="table table-hover" id="datatable">
+        <!-- ... Código de la tabla ... -->
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Código de Barras</th>
+            <th>Fecha Calificación</th>
+            <th>Año producción</th>
+            <th>Calificador</th> 
+            <th>Tema</th> 
+            <th>Área Conocimiento</th> 
+            <th>Eje tematico</th> 
+            <th>Nivel Educativo</th> 
+            <th>Institución Productora</th> 
+            <th>Asignatura Materia</th>
+            <th>Estatus de la Cinta</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for data in formulario %}
+          <tr>
+            <td>{{ data.id }}</td>
+            <td>{{ data.codigo_barras_id }}</td>
+            <td>{{ data.fecha_calificacion }}</td>
+            <td>{{ data.aho_produccion }}</td>
+            <td>{{ data.calificador }}</td>
+            <td>{{ data.tema }}</td>
+            <td>{{ data.areaConocimiento }}</td>
+            <td>{{ data.ejeTematico }}</td>
+            <td>{{ data.nivelEducativo }}</td>
+            <td>{{ data.institucionProductora }}</td>
+            <td>{{ data.asignaturaMateria }}</td>
+            <td>{{ data.estatusCalif }}</td>
+
+            <td class="d-flex justify-content-center">
+              <!-- Editar -->
+              <a href="{% url 'editar' data.id data.codigo_barras_id %}" class="btn btn-editar btn-sm active text-white" style="background-color:#13322B;" title="Editar">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <i class="fas fa-edit"></i>
+                  <span></span>
+                </div>
+              </a>
+
+              <!-- Ver -->
+              <button href="#" class="btn btn-ver btn-sm active text-white" id="ver" style="background-color:#6E6F6F;" data-bs-toggle="modal" data-bs-target="#modalViewProgramAndSeries{{ data.codigo_barras_id }}" title="Ver programas"> 
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <i class='far fa-eye'></i>
+                    <span></span>
+                </div>
+              </button>
+            
+
+              <button class="btn btn-añadir btn-sm text-white" style="background-color:#9D2449;" title="Eliminar"
+                  data-id="eliminar-{{ data.id }}"  
+                  onclick="eliminarFila('{{ data.id }}', '{{ codigo_barras }}')">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <i class="fa-sharp fa-solid fa-trash"></i>
+                </div>
+              </button>
+            </td>
+          </tr>
+          {% empty %}
+          {% endfor %}  
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% for data in formulario %}
+<!-- Modal de Observaciones -->
+<div class="modal fade" id="modalViewProgramAndSeries{{ data.codigo_barras_id }}" tabindex="-1" aria-labelledby="modalViewProgramAndSeriesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#0E89F1;">
+        <h4 class="modal-title fs-5" id="modalViewProgramAndSeriesLabel" style="color: white;">Programas y series de la cinta ( {{data.codigo_barras_id}} ) </h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-striped"  id="tableMuestraPrograma">
+            <thead>
+              <tr>
+                <th>Código Barras</th>
+                <th>Programa</th> 
+                <th>Serie</th>
+                <th>Subtítulo Programa</th>
+                <th>Subtítulo Serie</th>
+                <th>Sinopsis</th> 
+                <th>Tiempo Inicio</th> 
+                <th>Tiempo Final</th>
+                <th>Tiempo Duración</th> 
+                <th>Programa Observaciones</th> 
+                <th>Orientación</th> 
+                <th>Derecho Patrimonial</th> 
+                <th>Grado</th> 
+                <th>Idioma Original</th> 
+                <th>Elenco</th> 
+                <th>Participantes</th> 
+                <th>Personajes</th> 
+                <th>Conductor</th>
+                <th>Productor</th>
+                <th>Investigador</th>
+              
+              </tr>
+            </thead>
+            <tbody>
+              {% for video_cbarras, programa_series_list in consulta.items %}
+                {% if video_cbarras == data.codigo_barras_id %}
+                  {% for program_series in programa_series_list %}
+                    <tr>
+                        <td>{{ program_series.codigo_barras_id }}</td>         
+                        <td>{{ program_series.programa }}</td> 
+                        <td>{{ program_series.serie }}</td> 
+                        <td>{{program_series.subtituloPrograma}}</td> 
+                        <td>{{program_series.subtituloSerie}}</td> 
+                        <td>{{program_series.sinopsis}}</td> 
+                        <td>{{program_series.tiempoin}}</td> 
+                        <td>{{program_series.tiempoout}}</td> 
+                        <td>{{program_series.tiempodur}}</td> 
+                        <td>{{program_series.observaciones}}</td> 
+                        <td>{{program_series.orientacion}}</td> 
+                        <td>{{program_series.derechoPatrimonial}}</td> 
+                        <td>{{program_series.grado}}</td> 
+                        <td>{{program_series.idiomaOriginal}}</td> 
+                        <td>{{program_series.elenco}}</td> 
+                        <td>{{program_series.participantes}}</td> 
+                        <td>{{program_series.personajes}}</td> 
+                        <td>{{program_series.conductor}}</td> 
+                        <td>{{program_series.productor}}</td> 
+                        <td>{{program_series.investigador}}</td> 
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm active text-white" style="background-color:#9D2449;" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<script>
+
+  $(document).ready(function() {
+    $('#datatable').DataTable({
+      // Configuración del DataTable para la tabla principal
+      ...len
+    });
+  
+    $('#tableMuestraPrograma').DataTable({
+      // Configuración del DataTable para la tabla en el modal
+      ...len
+    });
+  });
+  
+
+  const eliminarFila = (id) => {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el programa de la base de datos',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/calificaciones/eliminarRegistro/${id}/`, {  // Agrega la barra diagonal al final
+            method: 'POST',
+            headers: {
+              //'Content-Type': 'application/x-www-form-urlencoded', // Cambia al tipo de contenido correcto si es necesario
+              'X-CSRFToken': '{{ csrf_token }}' // Agrega el token CSRF para seguridad
+          },
+            body: new URLSearchParams({
+                eliminar_id: id  // Envía el ID del programa a eliminar
+            })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+                Swal.fire(
+                  'Eliminado!',
+                  'Se eliminó exitosamente el registro.',
+                  'success'
+                ).then(() => {
+                  location.reload(); // Realizar un recarga de la página después de eliminar
+                });
+            } else {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'No se pudo eliminar el registro',
+              });
+            }
+          });
+        }
+    });
+  }
+
+</script>
+
+{% endblock %}

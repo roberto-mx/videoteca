@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-%kq5yuqph!gf@38qp1yg+!ghk34cr4&5x2krhy3bx)uyfy@tej
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['172.16.110.29', 'videoteca.aprende.gob.mx', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ajax_datatable',
+
 ]
 
 MIDDLEWARE = [
@@ -48,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+   # 'inventario.middleware.GroupRedirectMiddleware', 
 ]
 
 ROOT_URLCONF = 'videoteca.urls'
@@ -70,29 +73,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'videoteca.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+#base host servidor 172.16.110.29/
+# settings.py
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'videoteca',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'PASSWORD': 'postgres',
+        'HOST': 'db',  # Nombre del servicio del contenedor de la base de datos
+        'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
     },
     'users': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'user_data',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'recursoshumanos',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'PASSWORD': 'postgres',
+        'HOST': 'rh',  # Nombre del servicio del contenedor de recursos humanos
+        'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -112,13 +116,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 
@@ -131,8 +134,16 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# ALLOWED_HOSTS = ['172.16.110.17']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGOUT_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "prestamos_list"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

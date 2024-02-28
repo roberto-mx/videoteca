@@ -1,0 +1,257 @@
+{% extends 'templateBase.html' %}
+
+{% block Contenido %}
+
+<div class="card mt-5">
+    <div class="card-header text-center" style="background-color:#13322B;">
+        <strong style="color:white;;">Búsqueda de Reportes Filtrada</strong>
+    </div>
+
+    <div class="container mt-3">
+        <form id="searchForm" action="getBusqueda" method="get">
+
+            <div class="row mb-3">
+                <label class="col-sm-1 ">Búscar por</label>
+                <div class="col-sm-2">
+                    <select class="form-control form-control-sm" id="searchType" placeholder="Selecciona" name="searchType">
+                        <option>---Seleccione---</option>
+                        <option value ="byDay">Por, día</option>
+                        <option value ="byWeek">Por, semana</option>
+                        <option value ="byMonth">Por, mes</option>
+                    </select>
+                </div>
+            </div> 
+
+            <div class="row mb-3" id="dayInput" style="display: none;">
+                <label for="day" class="col-sm-1 col-form-label">Día</label>
+                <div class="col-sm-2">
+                    <!-- <input type="date" class="form-control" id="day" value = "" name="day"> -->
+                    <input type="date" class = "form-control form-control-sm" id="day" name="day" >
+                </div>
+            </div>
+
+            <div class="row mb-3" id="weekInput" style="display: none;">
+                <label for="week" class="col-sm-1 col-form-label">Semana</label>
+                <div class="col-sm-2">
+                    <input type="week" class="form-control form-control-sm" id="week" name="week" min="1" max="52">
+                </div>
+            </div>
+
+            <div class="row mb-3" id="monthInput" style="display: none;">
+                <label for="month" class="col-sm-1 col-form-label">Mes</label>
+                <div class="col-sm-2">
+                  <input type="month" class="form-control form-control-sm" id="month" name="month">
+                </div>
+            </div>
+            
+            <div class="row mb-3" id="matriculaInput" style="display: none;">
+                <label for="matricula" class="col-sm-1 col-form-label">Matrícula</label>
+                <div class="col-sm-2">
+                    <input type="text" placeholder="matrícula" oninput="validarInput(this)" class="form-control form-control-sm" id="matricula" name="matricula">
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-sm-2 offset-sm-1 d-flex justify-content-end">
+                    <div class="form-check form-switch ">
+                        <input class="form-check-input" type="checkbox" id="checkAdeudos" name="checkAdeudos">
+                        <label class="form-check-label" for="checkAdeudos">
+                            Búscar adeudos por matrícula
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-sm-4 offset-sm-2 d-flex justify-content-end">
+                    <button type="button" id="searchButton" class="btn btn-sm"  style="background-color:#276e54;" title="Búscar">
+                        <strong style="color:white;">Búscar</strong>
+                        <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm"  style="background-color:#89b342;" onClick="window.location.reload();">
+                        <strong style="color:white;">Recargar Página</strong>
+                        <i class="fa-solid fa-rotate-right" style="color:white"></i>
+                    </button>
+                    <button type="button" id="generaPDF" class="btn btn-sm"  style="background-color:#771414;">
+                        <strong style="color:white;">Exportar</strong>
+                        <i class="fa-regular fa-file-pdf" style="color:white"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            <div class="table-responsive"> <!-- Agregar esta clase -->
+                <table id="filtraFecha" class="table table-striped dataTable no-footer" style="width:100%">
+                <!-- ... Código de la tabla ... -->
+                <thead>
+                    <tr>
+                    <th>Folio</th>
+                    <th>Usuario</th>
+                    <th>Fecha del Préstamo</th>  
+                    <th>Nombre</th>  
+                    <th>Estado</th> 
+                    {% comment %} <th>Acciones</th>  {% endcomment %}
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    
+    const validarInput = (inputElement) => {
+        const registrationSpaces = inputElement.value;
+        if (registrationSpaces.length > 7) {
+            messageAlerta('warning', `Revisa el número de credencial (${registrationSpaces}) ya que excede el límite de caracteres establecido. `, '¡Alto!', '#18463b');
+            inputElement.value = registrationSpaces.slice(0, 8); 
+            inputElement.readOnly = true; // Deshabilitar entrada
+        } else {
+            inputElement.readOnly = false; // Habilitar entrada si la longitud es 7 o menos
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+            // $("#generaPDF").hide();
+            document.getElementById("searchForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+            });
+
+            const convertirAMayusculas = (event) => {
+                event.target.value = event.target.value.toUpperCase();
+            }
+            const matri = document.getElementById("matricula");
+            matri.addEventListener('input', convertirAMayusculas);
+
+            let fecha = new Date();
+            let mes = fecha.getMonth() + 1;
+            let dia = fecha.getDate();
+            let ano = fecha.getFullYear();
+
+            dia < 10 ? (dia = '0' + dia) : undefined;
+            mes < 10 ? (mes = '0' + mes) : undefined;
+
+            document.getElementById('day').value = ano + "-" + mes + "-" + dia;
+
+            //$('#filtraFecha').hide();
+
+            const searchTypeSelect = document.getElementById("searchType");
+            const dayInput = document.getElementById("dayInput");
+            const weekInput = document.getElementById("weekInput"); 
+            const monthInput = document.getElementById("monthInput"); 
+            const matriculaInput = document.getElementById("matriculaInput"); 
+            const checkAdeudos = document.getElementById("checkAdeudos"); 
+            let selectedValues = {};
+
+            searchTypeSelect.addEventListener("change", (event) => {
+                selectedValues.searchType = searchTypeSelect.value;
+                selectedValues.day = document.getElementById("day").value;
+                selectedValues.week = document.getElementById("week").value;
+                selectedValues.month = document.getElementById("month").value;
+                dayInput.style.display = selectedValues.searchType === "byDay" ? "flex" : "none";
+                weekInput.style.display = selectedValues.searchType === "byWeek" ? "flex" : "none";
+                monthInput.style.display = selectedValues.searchType === "byMonth" ? "flex" : "none";
+            });
+
+            checkAdeudos.addEventListener("change", (event) => {
+                matriculaInput.style.display = checkAdeudos.checked ? "flex" : "none";
+
+                // Si el check está marcado, deshabilita la búsqueda por fecha
+                if (checkAdeudos.checked) {
+                    searchTypeSelect.disabled = true;
+                    document.getElementById("day").disabled = true;
+                    document.getElementById("week").disabled = true;
+                    document.getElementById("month").disabled = true; 
+
+                    searchTypeSelect.value = ""; // Esto establece la opción seleccionada en el valor vacío
+                } else {
+                    searchTypeSelect.disabled = false;
+                    document.getElementById("day").disabled = false;
+                    document.getElementById("week").disabled = false;
+                    document.getElementById("month").disabled = false; 
+                    searchTypeSelect.value = selectedValues.searchType;
+                }
+            });
+
+            const dataTable = $("#filtraFecha").DataTable({
+                ...len,
+                columns: [
+                    { data: "pres_folio" },
+                    { data: "usua_clave" },
+                    { data: "pres_fecha_prestamo" },
+                    { data: "nombre_usuario", 
+                    render: (data) => {
+                        return data;
+                    }
+                },
+                {
+                    data: "pres_estatus",
+                    render: (data) => {
+                        return data === "I" ? "Devuelto" : "En préstamo";
+                    },
+                },
+            ],
+        });
+        
+        dataTable.table().container().style.display = 'none';
+        $("#searchButton").click(function () {
+            event.preventDefault();
+            // $("#generaPDF").show();
+            const formData = new FormData(document.getElementById("searchForm"));
+    
+            fetch("{% url 'getBusqueda' %}?" + new URLSearchParams(formData), {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                dataTable.clear().draw();
+                dataTable.rows.add(data.prestamos).draw();
+                dataTable.table().container().style.display = '';
+
+                if ('adeudos' in data) {
+                    // Verificar si hay adeudos y mostrar la alerta correspondiente
+                    if (data.adeudos) {
+                        messageAlerta('warning', 'Este usuario tiene adeudos', '¡Adeudo encontrado!', '#18463b');
+                    } else {
+                        messageAlerta('success', 'Este usuario no tiene adeudos.', '¡Genial!', '#18463b');
+                    }
+                }
+
+            })
+            .catch((error) => messageAlerta('error', 'Ocurrio un error, comúnicate con el área de sistemas','Error 404','#18463b'));                
+        });
+
+        $("#generaPDF").click(function (event) {
+            event.preventDefault();
+            const formData2 = new FormData(document.getElementById("searchForm"))
+            fetch("{% url 'getReport' %}?" + new URLSearchParams(formData2), {
+                method: "GET",
+            })
+            .then(response => {
+            console.log({1: response.ok, 2: response});
+                if (!response.ok) {
+                    throw new Error('Ocurrió un error al generar el PDF.');
+                }
+                return response.blob(); 
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                window.open(url); // Abrir el PDF en una nueva ventana
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+                messageAlerta('error', error,'¡Oops!','#18463b');  
+            });
+        });
+    });
+
+</script>
+    
+{% endblock %}

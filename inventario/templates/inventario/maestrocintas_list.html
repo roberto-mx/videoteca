@@ -8,7 +8,7 @@
 
 {% block content %}
             <p style="text-align: right;">
-              <a class="btn btn-secundary btn-sm" href="/inventario/cintas/registrar">
+              <a class="btn btn-danger btn-sm active" href="/inventario/cintas/registrar">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 <span>Agregar cinta</span>
               </a>
@@ -106,25 +106,12 @@
                   <td>{{ cinta.video_estatus|default:"" }}</td>
                   <td>{{ cinta.video_fingreso|default_if_none:"" }}</td>
                   <td>
-                    <a href="cintas/{{cinta.video_cbarras}}/editar">Editar</a>
-                    <span> | </span>
-                    <a href="cintas/{{cinta.video_cbarras}}/eliminar">Eliminar</a>
+                    <a class ="btn btn-danger btn-sm active" href="cintas/{{cinta.video_cbarras}}/editar"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                    <span>  </span>
+                    <a class = "btn btn-primary btn-sm active" href="cintas/{{cinta.video_cbarras}}/eliminar"><i class="fa-sharp fa-solid fa-trash"></i> Eliminar</a>
                   </td>
                 </tr>
                 {% endfor %}
-              </tbody>
-              <!--<tfoot>
-                <tr>
-                  <td colspan="5">
-                    <span style="visibility:hidden">Material videograbado: 162920 registros.</span>
-                  </td>
-                </tr>
-              </tfoot>-->
-              {% else %}
-              <tbody>
-                <tr>
-                  <td colspan="5">No hay material videograbado registrado con estas características.</td>
-                </tr>
               </tbody>
               {% endif %}
             </table>
