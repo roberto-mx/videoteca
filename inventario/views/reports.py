@@ -540,6 +540,7 @@ def generate_pdf_resgister_folio(request):
         from_email = os.getenv("EMAIL_USER")
         password = os.getenv("EMAIL_PASSWORD")
         smtp_server = os.getenv("SMTP")
+        
         smtp_port = os.getenv("SMTP_PORT")
         to_email = email_institucional
 
@@ -643,7 +644,7 @@ def CreateJsonInReport(row, codes, user):
 
     return email
 
-def GetFilePdf(request):
+def GetFilePdf(request, email):
     load_dotenv()
     file = request.GET.get('q')
     print(file)
@@ -656,10 +657,11 @@ def GetFilePdf(request):
             response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
 
         # Obtener el correo electrónico del JSON
-        recipient_email = CreateJsonInReport(row, codes, user)
+        recipient_email = CreateJsonInReport(email)
+        print(f'emailRecibe{recipient_email}')
 
         # Configurar el mensaje de correo electrónico
-        sender_email = "tucorreo@gmail.com"
+        sender_email = os.getenv('EMAIL_USER')
         message = MIMEMultipart()
         message['From'] = sender_email
         message['To'] = recipient_email
