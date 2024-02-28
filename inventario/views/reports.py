@@ -575,7 +575,7 @@ def generate_pdf_resgister_folio(request):
         server.sendmail(from_email, to_email, text)
         server.quit()
 
-        print(f"Correo electrónico enviado correctamente a: {to_email}")
+        # print(f"Correo electrónico enviado correctamente a: {to_email}")
         return HttpResponse(content=pdf_bytes.getvalue(), content_type='application/pdf')
 
     return HttpResponse("No se encontró la matrícula correspondiente.")
@@ -635,6 +635,9 @@ def CreateJsonInReport(row, codes, user):
                 email = row[0][4]
 
     total_registros = len(data['reporte'])
+    correo = row[0][4]
+    print(f'correo:{correo}')
+
     
     for item in data['reporte']:
         item['total'] = total_registros  
@@ -642,29 +645,31 @@ def CreateJsonInReport(row, codes, user):
     with open(settings.MEDIA_ROOT + '/Formatos/dataHeader.json', 'w', encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False)
 
-    return email
+    return correo
 
-def GetFilePdf(request, email):
+def GetFilePdf(request):
     load_dotenv()
     file = request.GET.get('q')
-    print(file)
+    print(f'valor de file: {file}')
     if os.path.isfile(file):
-        print('Report generated successfully!')
+        
 
         # Esto descarga el PDF
         with open(file, 'rb') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
 
-        # Obtener el correo electrónico del JSON
-        recipient_email = CreateJsonInReport(email)
-        print(f'emailRecibe{recipient_email}')
+        smtp_server = os.getenv("SMTP")
+        smtp_port = os.getenv("SMTP_PORT")
+        smtp_username = os.getenv("EMAIL_USER")
+        smtp_password = os.getenv("EMAIL_PASSWORD")
 
-        # Configurar el mensaje de correo electrónico
+        to_email = "mario.jimenez@nube.sep.gob.mx"
         sender_email = os.getenv('EMAIL_USER')
+
         message = MIMEMultipart()
         message['From'] = sender_email
-        message['To'] = recipient_email
+        message['To'] = to_email
         message['Subject'] = "Asunto del correo electrónico"
         body = "Cuerpo del correo electrónico."
         message.attach(MIMEText(body, 'plain'))
@@ -674,30 +679,20 @@ def GetFilePdf(request, email):
             attachment = MIMEApplication(pdf_file.read(), _subtype="pdf")
             attachment.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file))
             message.attach(attachment)
-
-        # Configurar el servidor SMTP y enviar el correo electrónico
-        smtp_server = os.getenv("SMTP")
-        smtp_port = os.getenv("SMTP_PORT")
-        smtp_username = os.getenv("EMAIL_USER")
-        smtp_password = os.getenv("EMAIL_PASSWORD")
-
-        try:
+   
             server = smtplib.SMTP(smtp_server, smtp_port)
             server.starttls()
             server.login(smtp_username, smtp_password)
             text = message.as_string()
-            server.sendmail(sender_email, recipient_email, text)
-            print("Correo electrónico enviado con éxito!")
-        except Exception as e:
-            print("Error al enviar el correo electrónico:", str(e))
-        finally:
+            server.sendmail(sender_email,to_email, text)
             server.quit()
+            print(f"Correo electrónico enviado correctamente a: {to_email}")
 
         return response
 
     else:
-        print('Report not generated!')
-   
+        print('Report not generated!')
+
   
 
 
