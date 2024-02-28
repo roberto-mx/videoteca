@@ -602,29 +602,15 @@ def json_to_pdf(request, row, codes, user):
     )
     pyreportjasper.process_report()
     return output_file  # Return the file path
-   
-  
-def GetFilePdf(request):
-    file = request.GET.get('q')
-    print(file)
-    if os.path.isfile(file):
-        print('Report generated successfully!')
 
-        #Esto descarga el pdf
-        with open(file, 'rb') as pdf:
-            response = HttpResponse(pdf.read(),content_type='application/pdf')
-            response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
-        return response
-  
-    else:
-        print('Report not generated!')
-  
+
 def CreateJsonInReport(row, codes, user):
     data = {}
     i = 0
     now = datetime.now()
     data['reporte'] = []
     codeJson = json.loads(codes)
+    email = None
 
     for code in enumerate(codeJson):
         if code[1] is not None:
@@ -643,15 +629,74 @@ def CreateJsonInReport(row, codes, user):
                 'Codigo': code[1],
                 'Consecutivo': i
             })
-    print(f'Jalo la data {data}')
-    total_registros = len(data['reporte']) 
-    print('Total de registros en data:', total_registros)
+            # Guardar el correo electrónico
+            if email is None:
+                email = row[0][4]
+
+    total_registros = len(data['reporte'])
     
     for item in data['reporte']:
         item['total'] = total_registros  
 
     with open(settings.MEDIA_ROOT + '/Formatos/dataHeader.json', 'w', encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False)
+
+    return email
+
+def GetFilePdf(request):
+    load_dotenv()
+    file = request.GET.get('q')
+    print(file)
+    if os.path.isfile(file):
+        print('Report generated successfully!')
+
+        # Esto descarga el PDF
+        with open(file, 'rb') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
+
+        # Obtener el correo electrónico del JSON
+        recipient_email = CreateJsonInReport(row, codes, user)
+
+        # Configurar el mensaje de correo electrónico
+        sender_email = "tucorreo@gmail.com"
+        message = MIMEMultipart()
+        message['From'] = sender_email
+        message['To'] = recipient_email
+        message['Subject'] = "Asunto del correo electrónico"
+        body = "Cuerpo del correo electrónico."
+        message.attach(MIMEText(body, 'plain'))
+
+        # Adjuntar el archivo PDF al correo electrónico
+        with open(file, 'rb') as pdf_file:
+            attachment = MIMEApplication(pdf_file.read(), _subtype="pdf")
+            attachment.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file))
+            message.attach(attachment)
+
+        # Configurar el servidor SMTP y enviar el correo electrónico
+        smtp_server = os.getenv("SMTP")
+        smtp_port = os.getenv("SMTP_PORT")
+        smtp_username = os.getenv("EMAIL_USER")
+        smtp_password = os.getenv("EMAIL_PASSWORD")
+
+        try:
+            server = smtplib.SMTP(smtp_server, smtp_port)
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            text = message.as_string()
+            server.sendmail(sender_email, recipient_email, text)
+            print("Correo electrónico enviado con éxito!")
+        except Exception as e:
+            print("Error al enviar el correo electrónico:", str(e))
+        finally:
+            server.quit()
+
+        return response
+
+    else:
+        print('Report not generated!')
+   
+  
 
 
 #-------------------------------------------------------------------------------------------------#
