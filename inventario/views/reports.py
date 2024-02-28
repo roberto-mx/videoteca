@@ -602,20 +602,62 @@ def json_to_pdf(request, row, codes, user):
         # resource=RESOURCES_DIR
     )
     pyreportjasper.process_report()
+    
     return output_file  # Return the file path
    
   
-def GetFilePdf(request):
-    file = request.GET.get('q')
-    if os.path.isfile(file):
+
+def GetFilePdf(request, email_institucional, pdf_bytes, q, nombre_completo):
+    if os.path.isfile(pdf_bytes):
         print('Report generated successfully!')
-        with open(file, 'rb') as pdf:
-            response = HttpResponse(pdf.read(),content_type='application/pdf')
-            response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
+        with open(pdf_bytes, 'rb') as pdf:
+            # Leer el contenido del archivo PDF
+            pdf_content = pdf.read()
+
+        # Configurar el correo electrónico
+        from_email = os.getenv("EMAIL_USER")
+        password = os.getenv("EMAIL_PASSWORD")
+        smtp_server = os.getenv("SMTP")
+        smtp_port = os.getenv("SMTP_PORT")
+
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = email_institucional
+        msg['Subject'] = f'Préstamos al usuario: {nombre_completo}'
+        body = f'''
+            Se envía el reporte de préstamo con el folio <b>{q}</b>.<br>
+            Asignado al usuario {nombre_completo}, quien será el responsable de estas cintas hasta su fecha de devolución.<br><br>
+            <b>ATT. Videoteca Aprende.mx</b>
+        '''
+        msg.attach(MIMEText(body, 'html'))
+
+        # Adjuntar el archivo PDF al correo electrónico
+        part = MIMEApplication(pdf_content, _subtype='pdf')
+        file_name = f"Videoteca_Folio_{q}.pdf"
+        encoded_file_name = f"filename*=utf-8''{quote(file_name)}"
+        part.add_header('Content-Disposition', f'attachment; {encoded_file_name}')
+        msg.attach(part)
+
+        # Enviar el correo electrónico
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(from_email, password)
+        text = msg.as_string()
+        server.sendmail(from_email, email_institucional, text)
+        server.quit()
+
+        print(f"Correo electrónico enviado correctamente a: {email_institucional}")
+
+
+        # Generar la respuesta HTTP con el contenido del PDF
+        response = HttpResponse(pdf_content, content_type='application/pdf')
+        response['Content-Disposition'] = f'filename=Videoteca_Folio_{q}.pdf'
         return response
-  
+
     else:
         print('Report not generated!')
+        return HttpResponse("Report not generated!")
+
   
 def CreateJsonInReport(row, codes, user):
     data = {}
@@ -643,7 +685,13 @@ def CreateJsonInReport(row, codes, user):
             })
 
     total_registros = len(data['reporte']) 
-    print('Total de registros en data:', total_registros)
+
+    # Extraer los correos del reporte
+    correos = [registro['Correo'] for registro in data['reporte']]
+
+    # Imprimir los correos
+    # print(f'Correos de usuario: {correos}')
+
     
     for item in data['reporte']:
         item['total'] = total_registros  # Agrega el total de registros a cada objeto
