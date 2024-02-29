@@ -501,9 +501,9 @@ def EndInVideoteca(request):
 
     row = cursor.fetchall()
     if row:
-        file = json_to_pdf(request, row, data, usuario)
+        file, correo = json_to_pdf(request, row, data, usuario)
         if file:
-            registro_data = {"error": False, "file": file}
+            registro_data = {"error": False, "file": file, "correo":correo}
         else:
             registro_data = {"error": True, "errorMessage": "Error al generar archivo de devolución"}
     else:

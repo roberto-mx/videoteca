@@ -586,7 +586,7 @@ def generate_pdf_resgister_folio(request):
 def json_to_pdf(request, row, codes, user):
     # RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
     input_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.jrxml'
-    CreateJsonInReport(row, codes, user)
+    correo= CreateJsonInReport(row, codes, user)
     output_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.pdf'  # Specific file path
     conn = {
         'driver': 'json',
@@ -602,7 +602,7 @@ def json_to_pdf(request, row, codes, user):
         # resource=RESOURCES_DIR
     )
     pyreportjasper.process_report()
-    return output_file  # Return the file path
+    return output_file, correo  # Return the file path
 
 
 def CreateJsonInReport(row, codes, user):
@@ -650,6 +650,7 @@ def CreateJsonInReport(row, codes, user):
 def GetFilePdf(request):
     load_dotenv()
     file = request.GET.get('q')
+    correo = request.GET.get('correo')  
     print(f'valor de file: {file}')
     if os.path.isfile(file):
         
@@ -664,7 +665,7 @@ def GetFilePdf(request):
         smtp_username = os.getenv("EMAIL_USER")
         smtp_password = os.getenv("EMAIL_PASSWORD")
 
-        to_email = "mario.jimenez@nube.sep.gob.mx"
+        to_email = correo
         sender_email = os.getenv('EMAIL_USER')
 
         message = MIMEMultipart()

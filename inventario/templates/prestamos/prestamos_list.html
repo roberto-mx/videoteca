@@ -606,6 +606,7 @@ function finalizarEntrada(usuario, codigoBarras) {
     url: "{% url 'finalizar_entrada_videoteca' %}",
     type: 'POST',
     success: function(data) {
+
       if (data.error) {
         $('#resultTableIn').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
       } else {
@@ -616,7 +617,8 @@ function finalizarEntrada(usuario, codigoBarras) {
          
         }).then((result) => {
           if (result.isConfirmed) {
-            window.open('{% url "get_pdf" %}?q=' + data.file); // Agrega pres_folio en la URL
+            window.open('{% url "get_pdf" %}?q=' + data.file + '&correo=' + data.correo); 
+            console.log({data: data.correo});
           }
         });
       }
