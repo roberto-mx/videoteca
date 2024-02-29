@@ -21,6 +21,8 @@ from io import BytesIO
 from email.mime.application import MIMEApplication
 from urllib.parse import quote
 from dotenv import load_dotenv
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 
@@ -586,7 +588,7 @@ def generate_pdf_resgister_folio(request):
 def json_to_pdf(request, row, codes, user):
     # RESOURCES_DIR = settings.MEDIA_ROOT + '/Formatos/montserrat.jar'
     input_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.jrxml'
-    correo= CreateJsonInReport(row, codes, user)
+    correo, name = CreateJsonInReport(row, codes, user)
     output_file = settings.MEDIA_ROOT + '/Formatos/ReporteDevolucion.pdf'  # Specific file path
     conn = {
         'driver': 'json',
@@ -602,7 +604,7 @@ def json_to_pdf(request, row, codes, user):
         # resource=RESOURCES_DIR
     )
     pyreportjasper.process_report()
-    return output_file, correo  # Return the file path
+    return output_file, correo, name
 
 
 def CreateJsonInReport(row, codes, user):
@@ -611,7 +613,7 @@ def CreateJsonInReport(row, codes, user):
     now = datetime.now()
     data['reporte'] = []
     codeJson = json.loads(codes)
-    email = None
+   
 
     for code in enumerate(codeJson):
         if code[1] is not None:
@@ -630,13 +632,11 @@ def CreateJsonInReport(row, codes, user):
                 'Codigo': code[1],
                 'Consecutivo': i
             })
-            # Guardar el correo electrónico
-            if email is None:
-                email = row[0][4]
 
     total_registros = len(data['reporte'])
     correo = row[0][4]
-    print(f'correo:{correo}')
+    name = row[0][0] + ' ' + row[0][1] + ' ' + row[0][2]
+ 
 
     
     for item in data['reporte']:
@@ -645,17 +645,16 @@ def CreateJsonInReport(row, codes, user):
     with open(settings.MEDIA_ROOT + '/Formatos/dataHeader.json', 'w', encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False)
 
-    return correo
+    return correo, name
 
 def GetFilePdf(request):
     load_dotenv()
     file = request.GET.get('q')
     correo = request.GET.get('correo')  
-    print(f'valor de file: {file}')
+    name = request.GET.get('name')  
+   
     if os.path.isfile(file):
-        
 
-        # Esto descarga el PDF
         with open(file, 'rb') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
@@ -664,16 +663,24 @@ def GetFilePdf(request):
         smtp_port = os.getenv("SMTP_PORT")
         smtp_username = os.getenv("EMAIL_USER")
         smtp_password = os.getenv("EMAIL_PASSWORD")
+        sender_email = os.getenv('EMAIL_USER')
 
         to_email = correo
-        sender_email = os.getenv('EMAIL_USER')
+        to_name = name
+
+        print(f'el name es {to_name}')
 
         message = MIMEMultipart()
         message['From'] = sender_email
         message['To'] = to_email
-        message['Subject'] = "Asunto del correo electrónico"
-        body = "Cuerpo del correo electrónico."
-        message.attach(MIMEText(body, 'plain'))
+        message['Subject'] = f'Gracias {to_name}, por hacer la devolución del préstamo '
+        body = f'''
+            Se envía el reporte de devolución.<br>
+            .<br><br>
+            <b>ATT. Videoteca Aprende.mx</b>
+        '''
+        message.attach(MIMEText(body, 'html'))  # Adjuntar el cuerpo del correo en formato HTML
+        # message.attach(MIMEText(body, 'plain'))
 
         # Adjuntar el archivo PDF al correo electrónico
         with open(file, 'rb') as pdf_file:
@@ -693,9 +700,6 @@ def GetFilePdf(request):
 
     else:
         print('Report not generated!')
-
-  
-
 
 #-------------------------------------------------------------------------------------------------#
 

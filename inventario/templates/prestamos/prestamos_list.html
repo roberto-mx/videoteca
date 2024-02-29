@@ -617,8 +617,9 @@ function finalizarEntrada(usuario, codigoBarras) {
          
         }).then((result) => {
           if (result.isConfirmed) {
-            window.open('{% url "get_pdf" %}?q=' + data.file + '&correo=' + data.correo); 
-            console.log({data: data.correo});
+            window.open('{% url "get_pdf" %}?q=' + data.file + '&correo=' + data.correo + '&name=' + data.name); 
+
+            console.log({data: data});
           }
         });
       }
