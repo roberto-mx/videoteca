@@ -676,7 +676,7 @@ def GetFilePdf(request):
         message['Subject'] = f'Gracias {to_name}, por hacer la devolución del préstamo '
         body = f'''
             Se envía el reporte de devolución.<br>
-            .<br><br>
+            <br>
             <b>ATT. Videoteca Aprende.mx</b>
         '''
         message.attach(MIMEText(body, 'html'))  # Adjuntar el cuerpo del correo en formato HTML
