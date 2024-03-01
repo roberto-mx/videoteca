@@ -149,7 +149,8 @@ def DetallesListView(request):
         if fecha_actual.weekday() < 5:
             dias_habiles_encontrados += 1
 
-    fecha_vencimiento = fecha_actual.strftime('%d-%m-%Y') if fecha_actual else None
+    # fecha_vencimiento = fecha_actual.strftime('%d-%m-%Y') if fecha_actual else None
+    fecha_vencimiento = fecha_actual.strftime('%Y-%m-%d') if fecha_actual else None
 
     template_detalle = {
         'vencioElDia': fecha_vencimiento,

@@ -539,7 +539,6 @@ function guardarRegistro(usuario, codigoBarras) {
     url: "{% url 'registro_salida_videoteca' %}",
     type: 'POST',
     success: function(data) {
-      console.log(data)
       // Verificar si existe el error
       if (data.error) {
         $('#resultTableOut').append('<tr class="alert alert-danger"><td>Código: ' + codigoBarras + '</td><td>  Resultado: ' + data.errorMessage + '</td></tr>');
@@ -548,18 +547,18 @@ function guardarRegistro(usuario, codigoBarras) {
         $("#resultTableOut tr").remove(); 
       }
       $('#searchBarCodeOut').val("").focus();
-
       const muestraFolio = data.Folio;
-      window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
-
-        // $.ajax({
-        //   url: '{% url "generate_pdf_resgister_folio" %}',
-        //   data: {'q': muestraFolio},
-        //   success: function() {
-        //     window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
-        //   }
-        // });
-
+      $.ajax({
+          url: '{% url "detalles_list" %}',
+          type: 'GET',
+          data:{
+             a:muestraFolio
+          },
+          success: function(response) {
+            console.log(`Fecha vencimiento - ${response.vencioElDia}`);
+            window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio + '&fecha_vencimiento=' + response.vencioElDia);            // window.open('{% url "generate_pdf_resgister_folio" %}?q=' + muestraFolio);
+          }
+      })
       Swal.fire(
         '¡Exportado!',
         `Su archivo ha sido exportado con el folio ${muestraFolio}.`,
@@ -618,8 +617,6 @@ function finalizarEntrada(usuario, codigoBarras) {
         }).then((result) => {
           if (result.isConfirmed) {
             window.open('{% url "get_pdf" %}?q=' + data.file + '&correo=' + data.correo + '&name=' + data.name); 
-
-            console.log({data: data});
           }
         });
       }

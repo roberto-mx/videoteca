@@ -477,6 +477,8 @@ class PDF_FOLIO(FPDF):
 def generate_pdf_resgister_folio(request):
     load_dotenv()
     q = request.GET.get('q')
+    fecha_vencimiento = request.GET.get('fecha_vencimiento')
+    print(f'la fecha que vence es el dia {fecha_vencimiento}')
     detalle_prestamos = DetallePrestamos.objects.filter(pres_folio=q)
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
 
@@ -553,7 +555,7 @@ def generate_pdf_resgister_folio(request):
         msg['Subject'] = f'Préstamos al usuario: {nombre_completo}'
         body = f'''
             Se envía el reporte de préstamo con el folio <b>{q}</b>.<br>
-            Asignado al usuario {nombre_completo}, quien será el responsable de estas cintas hasta su fecha de devolución.<br><br>
+            Asignado al usuario {nombre_completo}, quien será el responsable de estas cintas hasta su fecha de devolución, qué es el día <b>{fecha_vencimiento}</b>.<br><br>
             <b>ATT. Videoteca Aprende.mx</b>
         '''
         msg.attach(MIMEText(body, 'html'))  # Adjuntar el cuerpo del correo en formato HTML
