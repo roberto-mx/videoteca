@@ -20,7 +20,7 @@ from email.mime.text import MIMEText
 from io import BytesIO
 from email.mime.application import MIMEApplication
 from urllib.parse import quote
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
@@ -475,10 +475,10 @@ class PDF_FOLIO(FPDF):
 
 
 def generate_pdf_resgister_folio(request):
-    load_dotenv()
+    # load_dotenv()
     q = request.GET.get('q')
     fecha_vencimiento = request.GET.get('fecha_vencimiento')
-    print(f'la fecha que vence es el dia {fecha_vencimiento}')
+    #print(f'la fecha que vence es el dia {fecha_vencimiento}')
     detalle_prestamos = DetallePrestamos.objects.filter(pres_folio=q)
     pres_folios = detalle_prestamos.values_list('pres_folio_id', flat=True)
 
@@ -541,11 +541,15 @@ def generate_pdf_resgister_folio(request):
         pdf_bytes.write(pdf.output(dest='S').encode('latin1'))
 
         # Configurar el correo electrónico-Acá mando las varibles de entorno|
-        from_email = os.getenv("EMAIL_USER")
-        password = os.getenv("EMAIL_PASSWORD")
-        smtp_server = os.getenv("SMTP")
+        # from_email = os.getenv("EMAIL_USER")
+        # password = os.getenv("EMAIL_PASSWORD")
+        # smtp_server = os.getenv("SMTP")
         
-        smtp_port = os.getenv("SMTP_PORT")
+        # smtp_port = os.getenv("SMTP_PORT")
+        from_email="videoteca.aprende@nube.sep.gob.mx"
+        password="lK91M9l/V6#i"
+        smtp_server="smtp.office365.com"
+        smtp_port="587"
         to_email = email_institucional
 
         msg = MIMEMultipart()
@@ -650,7 +654,7 @@ def CreateJsonInReport(row, codes, user):
     return correo, name
 
 def GetFilePdf(request):
-    load_dotenv()
+    # load_dotenv()
     file = request.GET.get('q')
     correo = request.GET.get('correo')  
     name = request.GET.get('name')  
@@ -661,11 +665,16 @@ def GetFilePdf(request):
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = 'filename=ReporteDevolucion.pdf'
 
-        smtp_server = os.getenv("SMTP")
-        smtp_port = os.getenv("SMTP_PORT")
-        smtp_username = os.getenv("EMAIL_USER")
-        smtp_password = os.getenv("EMAIL_PASSWORD")
-        sender_email = os.getenv('EMAIL_USER')
+        # smtp_server = os.getenv("SMTP")
+        # smtp_port = os.getenv("SMTP_PORT")
+        # smtp_username = os.getenv("EMAIL_USER")
+        # smtp_password = os.getenv("EMAIL_PASSWORD")
+        # sender_email = os.getenv('EMAIL_USER')
+            
+        from_email="videoteca.aprende@nube.sep.gob.mx"
+        password="lK91M9l/V6#i"
+        smtp_server="smtp.office365.com"
+        smtp_port="587"
 
         to_email = correo
         to_name = name
@@ -673,7 +682,7 @@ def GetFilePdf(request):
         print(f'el name es {to_name}')
 
         message = MIMEMultipart()
-        message['From'] = sender_email
+        message['From'] = from_email
         message['To'] = to_email
         message['Subject'] = f'Gracias {to_name}, por hacer la devolución del préstamo '
         body = f'''
@@ -692,9 +701,9 @@ def GetFilePdf(request):
    
             server = smtplib.SMTP(smtp_server, smtp_port)
             server.starttls()
-            server.login(smtp_username, smtp_password)
+            server.login(from_email, password)
             text = message.as_string()
-            server.sendmail(sender_email,to_email, text)
+            server.sendmail(from_email,to_email, text)
             server.quit()
             print(f"Correo electrónico enviado correctamente a: {to_email}")
 
