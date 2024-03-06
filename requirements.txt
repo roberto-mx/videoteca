@@ -1,7 +1,7 @@
 datatable              == 1.1.0
 django-ajax-datatable  == 4.4.5
 django-cron            == 0.6.0
-django-crontab         == 0.7.1
+django-crontab
 django-datatables-view == 1.20.0
 fpdf                   == 1.7.2
 JPype1                 == 1.5.0
@@ -10,4 +10,3 @@ pyreportjasper         == 2.1.3
 python-dotenv          == 1.0.1
 reportlab              == 4.0.9
 sqlparse               == 0.4.4
-
