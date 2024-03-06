@@ -12,8 +12,11 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
+# Copia el resto de los archivos del proyecto
 COPY . .
 
+# Asigna permisos de ejecución al script de manage.py y agrega el cronjob
+RUN chmod +x manage.py && python manage.py crontab add
 EXPOSE 8085
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8085"]
