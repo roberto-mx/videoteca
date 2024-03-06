@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ajax_datatable',
+    'django_cron'   ,
+    'django_crontab',
+
 
 ]
 
@@ -84,17 +89,17 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'videoteca',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',  # Nombre del servicio del contenedor de la base de datos
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',  # Nombre del servicio del contenedor de la base de datos
         'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'recursoshumanos',
+        'NAME': 'recursos_humanos',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'rh',  # Nombre del servicio del contenedor de recursos humanos
-        'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',  # Nombre del servicio del contenedor de recursos humanos
+        'PORT': '5450',  # Puerto en el que se expone la base de datos en el contenedor
     }
 }
 
@@ -115,6 +120,33 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# settings.py
+
+# Configuración de Celery
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# Configuración de Celery Beat
+# CELERY_BEAT_SCHEDULE = {
+#     'ejecutar-tarea-diaria': {
+#         'task': 'inventario.tasks.enviar_recordatorios_prestamos',
+#         'schedule': timedelta(days=1),  # Ejecutar diariamente
+#     },
+# }
+
+
+# CRON_CLASSES = [
+#     "inventario.cron.VerificarPrestamosCronJob",
+#     # "my_app.cron.VerificarPrestamosCronJob",
+# ]
+
+CRONJOBS = [
+('0 7 * * *', 'inventario.cron.my_cron_job'),
+]
+
+# ('*/2 * * * *', 'inventario.cron.my_cron_job')
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
