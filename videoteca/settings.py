@@ -89,17 +89,17 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'videoteca',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',  # Nombre del servicio del contenedor de la base de datos
+        'PASSWORD': 'postgres',
+        'HOST': 'db',  # Nombre del servicio del contenedor de la base de datos
         'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
     },
     'users': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'recursos_humanos',
+        'NAME': 'recursoshumanos',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',  # Nombre del servicio del contenedor de recursos humanos
-        'PORT': '5450',  # Puerto en el que se expone la base de datos en el contenedor
+        'PASSWORD': 'postgres',
+        'HOST': 'rh',  # Nombre del servicio del contenedor de recursos humanos
+        'PORT': '5432',  # Puerto en el que se expone la base de datos en el contenedor
     }
 }
 
