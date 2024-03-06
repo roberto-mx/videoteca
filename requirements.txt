@@ -1,7 +1,4 @@
-asgiref                == 3.7.2
-chardet                == 5.2.0
 datatable              == 1.1.0
-Django                 == 5.0.1
 django-ajax-datatable  == 4.4.5
 django-cron            == 0.6.0
 django-crontab         == 0.7.1
@@ -17,4 +14,4 @@ python-dotenv          == 1.0.1
 reportlab              == 4.0.9
 setuptools             == 69.1.0
 sqlparse               == 0.4.4
-wheel                  == 0.42.0
+
